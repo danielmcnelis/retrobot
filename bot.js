@@ -390,7 +390,8 @@ Elo Rating: ${stats[player].toFixed(2)}`)
             if (err) console.log(err)
         })
 
-        let json = JSON.parse(fs.readFileSync('./records.json'));
+        let rawdata = fs.readFileSync('./records.json')
+        let json = JSON.parse(rawdata);
         json.push({"Result":`${oppo}>${maid}`});
         fs.writeFile("./records.json", JSON.stringify(json), (err) => {
             if (err) console.log(err)
@@ -447,7 +448,8 @@ Elo Rating: ${stats[player].toFixed(2)}`)
             if (err) console.log(err)
         })
 
-        let json = JSON.parse(fs.readFileSync('./records.json'));
+        let rawdata = fs.readFileSync('./records.json')
+        let json = JSON.parse(rawdata);
         json.push({"Result":`${winner}>${loser}`});
         fs.writeFile("./records.json", JSON.stringify(json), (err) => {
             if (err) console.log(err)
