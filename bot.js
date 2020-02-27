@@ -102,8 +102,29 @@ client.on('message', async message => {
         });
 
         console.log(newVar)
+        message.channel.send("I printed your tournament objects to the console.")
     }
 
+
+    if(cmd === `!createTour`) {
+
+        let name = (args[0] ? 'args[0]' : 'test')
+
+
+    client.tournaments.create({
+        tournament: {
+          name: name,
+          url: name,
+          tournamentType: 'double elimination',
+          gameName: 'Yu-Gi-Oh!',
+        },
+        callback: (err, data) => {
+          console.log(err, data);
+        }
+      });
+
+      message.channel.send(`I created a new tournament, called ${name}, located at https://challonge.com/${name}`)
+    }
 
 
     //REPLAY-LINKS AUTO MODERATION
