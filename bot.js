@@ -51,6 +51,8 @@ client.on('message', message => {
   }
 })
 
+//NEW COMMENT
+
 
 //WELCOME
 client.on('guildMemberAdd', member => {
