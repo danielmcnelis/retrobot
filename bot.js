@@ -389,8 +389,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
             if (err) console.log(err)
         })
 
-        let rawdata = fs.readFileSync('./records.json')
-        let json = JSON.parse(rawdata);
+        let json = JSON.parse(fs.readFileSync('./records.json'));
         json.push({"Result":`${oppo}>${maid}`});
         fs.writeFile("./records.json", JSON.stringify(json), (err) => {
             if (err) console.log(err)
@@ -447,8 +446,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
             if (err) console.log(err)
         })
 
-        let rawdata = fs.readFileSync('./records.json')
-        let json = JSON.parse(rawdata);
+        let json = JSON.parse(fs.readFileSync('./records.json'));
         json.push({"Result":`${winner}>${loser}`});
         fs.writeFile("./records.json", JSON.stringify(json), (err) => {
             if (err) console.log(err)
@@ -596,6 +594,12 @@ ${names[p2]} has won ${p2wins}x`)
         let winners = []
         let losers = []
 
+        console.log(rawRecords)
+        console.log(arr2)
+        console.log(arr3)
+        console.log(arr4)
+        console.log(arr5)
+
         if(!message.member.roles.has(modRole)) {
             return message.channel.send("You do not have permission to do that.")
         }
@@ -608,6 +612,7 @@ ${names[p2]} has won ${p2wins}x`)
         
         for (let i = 0; i < rawRecords.length; i++) {
             let record = rawRecords[i].Result
+            console.log(record)
             
             if (record.length === 35) {
                 winners[i] = record.substring(0, 17)
@@ -623,6 +628,11 @@ ${names[p2]} has won ${p2wins}x`)
                 losers[i] = record.substring(19, 37)
             }
             
+            console.log(winners[i])
+            console.log(losers[i])
+            console.log(rawRecords.length)
+            console.log(rawStats.length)
+
             restore(message, winners[i], losers[i], i, rawRecords.length, rawStats.length)
         }
     }
@@ -661,9 +671,13 @@ function reset(arr2, arr3, arr4, arr5, j) {
 
 //RESTORE
 function restore(message, winner, loser, num, length1, length2) {
+    console.log('restoring...')
 	return setTimeout(function(){
+        console.log('restoring timeout running...')
 		let statsLoser = stats[loser]
         let statsWinner = stats[winner]
+        console.log(statsLoser)
+        console.log(statsWinner)
         
 		backup[winner] = statsWinner
 		backup[loser] = statsLoser
