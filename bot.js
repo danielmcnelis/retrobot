@@ -397,7 +397,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
             if (err) console.log(err)
         })
 
-        return message.reply(`Your Goat Format loss to ${names[rM]} has been recorded.`)
+        return message.reply(`Your Goat Format loss to ${names[oppo]} has been recorded.`)
     }
 
 
