@@ -8,6 +8,9 @@ const serverID = '682361248532398143'
 const botRole = '682389567185223713'
 const modRole = '682361608848015409'
 const goatRole = '682461775907913748'
+const challongeClient = challonge.createClient({
+    apiKey: 'JE7pFfKV8XhdZXshqHNjVySDfoVUZeAtDRcULUln'
+});
 
 const blank = require('./blank.json')
 const names = require('./names.json')
@@ -91,10 +94,6 @@ client.on('message', async message => {
 
     //CHALLONGE
     if(cmd === `!tour`) {
-        const challongeClient = challonge.createClient({
-            apiKey: 'JE7pFfKV8XhdZXshqHNjVySDfoVUZeAtDRcULUln'
-        });
-    
         let newVar = challongeClient.tournaments.index({
           callback: (err, data) => {
               console.log(err, data);
@@ -107,21 +106,20 @@ client.on('message', async message => {
 
 
     if(cmd === `!createtour`) {
+        let name = (args[0] ? 'args[0]' : 'test')
+        challongeClient.tournaments.create({
+            tournament: {
+            name: name,
+            url: name,
+            tournamentType: 'double elimination',
+            gameName: 'Yu-Gi-Oh!',
+            },
+            callback: (err, data) => {
+            console.log(err, data);
+            }
+        });
 
-    let name = (args[0] ? 'args[0]' : 'test')
-    challongeClient.tournaments.create({
-        tournament: {
-          name: name,
-          url: name,
-          tournamentType: 'double elimination',
-          gameName: 'Yu-Gi-Oh!',
-        },
-        callback: (err, data) => {
-          console.log(err, data);
-        }
-      });
-
-      message.channel.send(`I created a new tournament, called ${name}, located at https://challonge.com/${name}`)
+        message.channel.send(`I created a new tournament, called ${name}, located at https://challonge.com/${name}`)
     }
 
 
