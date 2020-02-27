@@ -164,12 +164,12 @@ client.on('message', async message => {
         const botEmbed = new Discord.RichEmbed()
 	        .setColor('#38C368')
         	.setTitle('GoatBot')
-	        .setDescription('A rankings bot for Goat Format.\n' )
+	        .setDescription('A Rankings Bot for GoatFormat.com.\n' )
 	        .setURL('https://goatformat.com/')
 	        .setAuthor('Jazz#2704', 'https://i.imgur.com/93IC0Ua.png', 'https://formatlibrary.com/')
         	.setThumbnail('https://i.imgur.com/9lMCJJH.png')
-        	.addField('Ranked Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it. \n')
-        	.addField('Server Commands', '\n!rename - (@user + new name) - Rename a user in the database.\n!census - Add missing names to the database.\n!recalc - Recaluate all Player Stats after manually deleting records.');
+        	.addField('Mod-Only Ranked Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it. \n')
+        	.addField('Mod-Only Server Commands', '\n!rename - (@user + new name) - Rename a user in the database.\n!census - Add missing names to the database.\n!recalc - Recaluate all Player Stats after manually deleting records.');
 
         message.author.send(botEmbed);
         return message.channel.send("I messaged you the Mod-Only Guide.")
@@ -370,7 +370,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
 
         backup[maid] = statsLoser;
         backup[oppo] = statsWinner;
-        fs.writeFile(backupfile, JSON.stringify(backup), (err) => {
+        fs.writeFile("./backup.json", JSON.stringify(backup), (err) => {
             if (err) console.log(err)
         })
 
@@ -427,7 +427,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
 
         backup[loser] = statsLoser;
         backup[winner] = statsWinner;
-        fs.writeFile(backupfile, JSON.stringify(backup), (err) => {
+        fs.writeFile("./backup.json", JSON.stringify(backup), (err) => {
             if (err) console.log(err)
         })
     
@@ -541,24 +541,24 @@ ${names[p2]} has won ${p2wins}x`)
 
         stats[winner] = backup[winner]
         stats[loser] = backup[loser]
-        fs.writeFile(statsfile, JSON.stringify(stats), (err) => {
+        fs.writeFile("./stats.json", JSON.stringify(stats), (err) => {
 	        if (err) console.log(err) });
 
         losses[loser]--
-        fs.writeFile(lossesfile, JSON.stringify(losses), (err) => {
+        fs.writeFile("./losses.json", JSON.stringify(losses), (err) => {
 	        if (err) console.log(err) });
 
         wins[winner]--
-        fs.writeFile(winsfile, JSON.stringify(wins), (err) => {
+        fs.writeFile("./wins.json", JSON.stringify(wins), (err) => {
 	        if (err) console.log(err) });
 
         backup[winner] = "na";
         backup[loser] = "na";
-        fs.writeFile(backupfile, JSON.stringify(backup), (err) => { 
+        fs.writeFile("./backup.json", JSON.stringify(backup), (err) => { 
 	        if (err) console.log(err) }); 
 
         let newobj = rawobj.splice(0, rawobj.length-1);
-        fs.writeFile(recordsfile, JSON.stringify(newobj), (err) => {
+        fs.writeFile("./records.json", JSON.stringify(newobj), (err) => {
 	        if (err) console.log(err) });
 
         return message.channel.send(`The last Goat Format match in which ${names[winner]} defeated ${names[loser]} has been erased.`)
