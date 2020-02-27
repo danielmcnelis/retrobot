@@ -217,7 +217,7 @@ client.on('message', async message => {
             }
         })
 
-        let rank = `# + ${1 + values.map(function(e) {
+        let rank = `#${1 + values.map(function(e) {
             return e
         }).indexOf(stats[player])} out of ${values.length}`
 
