@@ -6,6 +6,8 @@ const serverID = '682361248532398143'
 const botRole = '682389567185223713'
 const modRole = '682361608848015409'
 
+console.log('turning on goatbot...')
+
 const blank = require('./blank.json')
 const names = require('./names.json')
 const decks = require('./decks.json') 
