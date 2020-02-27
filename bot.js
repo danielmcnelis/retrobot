@@ -114,8 +114,8 @@ client.on('message', async message => {
             tournamentType: 'double elimination',
             gameName: 'Yu-Gi-Oh!',
             },
-            callback: (err, data) => {
-            console.log(err, data);
+            callback: () => {
+                return message.channel.send('Error.')
             }
         });
 
