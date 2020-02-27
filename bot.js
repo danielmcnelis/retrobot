@@ -93,7 +93,7 @@ client.on('message', async message => {
 
 
     //CHALLONGE
-    if(cmd === `!tour`) {
+    if(cmd === `!tours`) {
         let newVar = challongeClient.tournaments.index({
           callback: (err, data) => {
               console.log(err, data);
@@ -105,25 +105,48 @@ client.on('message', async message => {
     }
 
 
-    if(cmd === `!createtour`) {
-        let name = (args[0] ? args[0] : 'test')
+    if(cmd === `!create`) {
+        function getRandomString(length, chars) {
+            var result = '';
+            for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+            return result;
+        }
+
+        let str = getRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz');
+        let name = (args[0] ? args[0] : 'New Tournament')
+        let url = (args[0] ? args[0] : str)
         challongeClient.tournaments.create({
             tournament: {
             name: name,
-            url: name,
+            url: url,
             tournamentType: 'double elimination',
             gameName: 'Yu-Gi-Oh!',
             },
             callback: (err, data) => {
             console.log(err, data);
             if(err) {
-                return message.channel.send('There was an error')
+                return message.channel.send(`Error: The name "${url}" was already taken.`)
             } else {
-                message.channel.send(`I created a new tournament, called ${name}, located at https://challonge.com/${name}`)
+                message.channel.send(`I created a new tournament, named ${name}, located at https://challonge.com/${url}`)
             }
             }
         });   
     }
+
+
+    if(cmd === `!destroy`) {
+        let name = args[0]
+        challongeClient.tournaments.destroy({
+            id: 'my-tournament-url',
+            callback: (err, data) => {
+              console.log(err, data);
+            }
+          });  
+    }
+
+
+
+
 
 
     //REPLAY-LINKS AUTO MODERATION
