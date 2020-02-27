@@ -115,7 +115,7 @@ client.on('message', async message => {
             if(err) {
                 return message.channel.send(`Error: The name "${url}" is already taken.`)
             } else {
-                status['tournamet'] = name
+                status['tournament'] = name
                 fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
                     if (err) console.log(err)
                 })
@@ -135,8 +135,8 @@ client.on('message', async message => {
                 if(err) {
                     return message.channel.send(`Error: the tournament you provided, "${name}", could not be deleted.`)
                 } else {
-                    if (status['tournamet'] === name) {
-                        delete status['tournamet']
+                    if (status['tournament'] === name) {
+                        delete status['tournament']
                         fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
                             if (err) console.log(err)
                         })
@@ -157,7 +157,7 @@ client.on('message', async message => {
                 if(err) {
                     return message.channel.send(`Error: the tournament you provided, "${name}", could not be finalized.`)
                 } else {
-                    delete status['tournamet']
+                    delete status['tournament']
                     fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
                         if (err) console.log(err)
                     })
