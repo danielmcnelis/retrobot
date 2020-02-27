@@ -114,12 +114,15 @@ client.on('message', async message => {
             tournamentType: 'double elimination',
             gameName: 'Yu-Gi-Oh!',
             },
-            callback: () => {
-                return message.channel.send('Error.')
+            callback: (err, data) => {
+            console.log(err, data);
+            if(err) {
+                return message.channel.send('There was an error')
+            } else {
+                message.channel.send(`I created a new tournament, called ${name}, located at https://challonge.com/${name}`)
             }
-        });
-
-        message.channel.send(`I created a new tournament, called ${name}, located at https://challonge.com/${name}`)
+            }
+        });   
     }
 
 
