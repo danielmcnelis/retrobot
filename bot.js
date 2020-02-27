@@ -310,19 +310,19 @@ Elo Rating: ${stats[player].toFixed(2)}`)
             if (arr2[i] <= 290) { 
                 medals[i] = sad
             } else if (arr2[i] > 290 && arr2[i] <= 350) {
-                medals[k] = rock
+                medals[i] = rock
             } else if (arr2[i] > 350 && arr2[i] <= 410) {
-                medals[k] = bron
+                medals[i] = bron
             } else if (arr2[i] > 410 && arr2[i] <= 470) {
-                medals[k] = silv
+                medals[i] = silv
             } else if (arr2[i] > 470 && arr2[i] <= 530) {
-                medals[k] = gold
+                medals[i] = gold
             } else if (arr2[i] > 530 && arr2[i] <= 590) {
-                medals[k] = plat
+                medals[i] = plat
             } else if (arr2[i] > 590 && arr2[i] <=650) {
-                medals[k] = dia
+                medals[i] = dia
             } else if (arr2[i] > 650 && arr2[i] <=710) {
-                medals[k] = mast
+                medals[i] = mast
             } else {
                 medals[i] = lgnd
             }
