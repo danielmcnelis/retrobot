@@ -132,10 +132,10 @@ client.on('message', async message => {
     if(cmd === `!destroy`) {
         let name = args[0]
         challongeClient.tournaments.destroy({
-            id: 'my-tournament-url',
+            id: name,
             callback: (err) => {
                 if(err) {
-                    return message.channel.send(`Error: the tournament could not be deleted.`)
+                    return message.channel.send(`Error: the tournament, ${name}, could not be deleted.`)
                 } else {
                     message.channel.send(`I deleted an old tournament, ${name}, from your account.`)
                 }
