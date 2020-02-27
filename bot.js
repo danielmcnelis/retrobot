@@ -246,12 +246,12 @@ client.on('message', async message => {
         }
 
         return message.channel.send(`${goat} --- Goat Format Stats --- ${goat}
-    Name: ${names[player]}
-    Medal: ${medal}
-    Ranking: ${rank}
-    Wins: ${wins[player]}
-    Losses: ${losses[player]}
-    Elo Rating: ${stats[player].toFixed(2)}`)
+Name: ${names[player]}
+Medal: ${medal}
+Ranking: ${rank}
+Wins: ${wins[player]}
+Losses: ${losses[player]}
+Elo Rating: ${stats[player].toFixed(2)}`)
     }
 
 
@@ -337,7 +337,7 @@ client.on('message', async message => {
     
        if (x == 1) {
            return message.channel.send(`${goat} --- The Best Goat Format Player --- ${goat}
-           1. ${medals[0]} ${names[arr4[0]]}`)
+1. ${medals[0]} ${names[arr4[0]]}`)
         } else { 
             message.channel.send(result.slice(0,30));
             message.channel.send(result.slice(30,60));
@@ -502,8 +502,8 @@ client.on('message', async message => {
         }
 
         return message.channel.send(`${goat} --- H2H Goat Results --- ${goat}
-        ${names[p1]} has won ${p1wins}x
-        ${names[p2]} has won ${p2wins}x`)
+${names[p1]} has won ${p1wins}x
+${names[p2]} has won ${p2wins}x`)
     }
 
 
