@@ -6,6 +6,7 @@ const fs = require('fs')
 const serverID = '682361248532398143'
 const botRole = '682389567185223713'
 const modRole = '682361608848015409'
+const goatRole = '682461775907913748'
 
 const blank = require('./blank.json')
 const names = require('./names.json')
