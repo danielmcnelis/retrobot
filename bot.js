@@ -92,19 +92,14 @@ client.on('message', async message => {
     }
 
 
-    //CHALLONGE
+    //CHALLONGE - CHECK
     if(cmd === `!tours`) {
-        let newVar = challongeClient.tournaments.index({
-          callback: (err, data) => {
-              console.log(err, data);
-          }
-        });
-
-        console.log(newVar)
-        message.channel.send("I printed your tournament objects to the console.")
+        console.log(challongeClient.tournaments.index()
+        message.channel.send("I printed your tournaments to the console.")
     }
 
 
+    //CHALLONGE - CREATE
     if(cmd === `!create`) {
         function getRandomString(length, chars) {
             var result = '';
@@ -122,8 +117,7 @@ client.on('message', async message => {
             tournamentType: 'double elimination',
             gameName: 'Yu-Gi-Oh!',
             },
-            callback: (err, data) => {
-            console.log(err, data);
+            callback: (err) => {
             if(err) {
                 return message.channel.send(`Error: The name "${url}" was already taken.`)
             } else {
@@ -134,12 +128,17 @@ client.on('message', async message => {
     }
 
 
+    //CHALLONGE - DESTROY
     if(cmd === `!destroy`) {
         let name = args[0]
         challongeClient.tournaments.destroy({
             id: 'my-tournament-url',
-            callback: (err, data) => {
-              console.log(err, data);
+            callback: (err) => {
+                if(err) {
+                    return message.channel.send(`Error: the tournament could not be deleted.`)
+                } else {
+                    message.channel.send(`I deleted an old tournament, ${name}, from your account.`)
+                }
             }
           });  
     }
