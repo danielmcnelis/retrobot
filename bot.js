@@ -9,6 +9,8 @@ const modRole = '682361608848015409'
 
 console.log('turning on goatbot...')
 
+//a change
+
 const blank = require('./blank.json')
 const names = require('./names.json')
 const decks = require('./decks.json') 
