@@ -170,6 +170,8 @@ client.on('message', async message => {
 
     //CHALLONGE - SHOW
     if(cmd === `!show`) {
+        console.log(args[0])
+        console.log(status['tournament'])
         let name = (args[0] ? args[0] : status['tournament'])
         if (!name) {
             return message.channel.send('There is no active tournament.')
