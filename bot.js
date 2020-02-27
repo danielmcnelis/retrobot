@@ -209,7 +209,8 @@ client.on('message', async message => {
     if(cmd === `!signup`) {
         let name = status['tournament']
         let person = message.mentions.users.first()
-        console.log(person.user.username)
+        console.log(person)
+        console.log('LINE SKIPPPPP')
         console.log(person.username)
 
         if (!name) {
