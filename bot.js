@@ -209,6 +209,8 @@ client.on('message', async message => {
     if(cmd === `!signup`) {
         let name = status['tournament']
         let person = message.mentions.users.first()
+        console.log(person.user.username)
+        console.log(person.username)
 
         if (!name) {
             return message.channel.send('There is no active tournament.')
@@ -219,20 +221,20 @@ client.on('message', async message => {
         challongeClient.participants.create({
             id: name,
             participant: {
-            name: person.user.username
+            name: person.username
             },
             callback: (err) => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
-                    return message.channel.send(`${person.user.username} has been signed-up for the tournament.`)
+                    return message.channel.send(`${person.username} has been signed-up for the tournament.`)
                 }
             }
         })
     }
 
 
-    //CHALLONGE - SIGNUP
+    //CHALLONGE - INSPECT
     if(cmd === `!inspect`) {
         let name = (args[0] ? args[0] : status['tournament'])
         let newVar = challongeClient.participants.index({
