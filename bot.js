@@ -138,7 +138,7 @@ client.on('message', async message => {
         }
 
 
-    //BOT
+    //BOT USER GUIDE
     if(botcom.includes(cmd)) {
         const botEmbed = new Discord.RichEmbed()
 	        .setColor('#38C368')
@@ -155,7 +155,7 @@ client.on('message', async message => {
         return message.channel.send("I messaged you the GoatBot User Guide.")
     }
 
-    //BOT
+    //MOD USER GUIDE
     if(cmd === `!mod`) {
         if(!message.member.roles.has(modRole)) {
             return message.channel.send("You do not have permission to do that.")
