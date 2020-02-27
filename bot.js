@@ -94,7 +94,7 @@ client.on('message', async message => {
 
     //CHALLONGE - CHECK
     if(cmd === `!tours`) {
-        console.log(challongeClient.tournaments.index()
+        console.log(challongeClient.tournaments.index())
         message.channel.send("I printed your tournaments to the console.")
     }
 
