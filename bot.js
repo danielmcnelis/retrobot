@@ -106,12 +106,10 @@ client.on('message', async message => {
     }
 
 
-    if(cmd === `!createTour`) {
+    if(cmd === `!createtour`) {
 
-        let name = (args[0] ? 'args[0]' : 'test')
-
-
-    client.tournaments.create({
+    let name = (args[0] ? 'args[0]' : 'test')
+    challongeClient.tournaments.create({
         tournament: {
           name: name,
           url: name,
