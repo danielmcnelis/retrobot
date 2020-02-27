@@ -257,7 +257,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
         let x = args[0]
         let j = 0;
         let medals = []
-        let result = [`${goat} --- Top ${x} Goat Format Players --- ${goat}`]
+        let result = [`${goat} --- Top ${x} Goat Players --- ${goat}`]
         let rawdata = fs.readFileSync('./stats.json')
         let rawobj = JSON.parse(rawdata)
 
@@ -333,7 +333,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
         }
     
        if (x == 1) {
-           return message.channel.send(`${goat} --- The Best Goat Format Player --- ${goat}
+           return message.channel.send(`${goat} --- The Best Goat Player --- ${goat}
 1. ${medals[0]} ${names[arr4[0]]}`)
         } else { 
             message.channel.send(result.slice(0,30));
@@ -531,7 +531,7 @@ ${names[p2]} has won ${p2wins}x`)
         } else if(backup[winner] === "na" && maid !== loser) { 
             return message.channel.send(`${names[winner]} has no backup stats.`)
         } else if(backup[winner] === "na" && maid === loser) { 
-            return message.channel.send(`Your last opponent, ${names[p1]}, has no backup stats. Please get a Moderator to help you.`)
+            return message.channel.send(`Your last opponent, ${names[winner]}, has no backup stats. Please get a Moderator to help you.`)
         } else if(backup[loser] == "na" && maid !== loser) { 
             return message.channel.send(`${names[loser]} has no backup stats.`)
          } else if(backup[loser] == "na" && maid === loser) { 
