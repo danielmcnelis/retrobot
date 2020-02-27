@@ -144,12 +144,11 @@ client.on('message', async message => {
         const botEmbed = new Discord.RichEmbed()
 	        .setColor('#38C368')
         	.setTitle('GoatBot')
-	        .setDescription('A rankings bot for Goat Format.\n' )
+	        .setDescription('A Rankings Bot for GoatFormat.com.\n' )
 	        .setURL('https://goatformat.com/')
 	        .setAuthor('Jazz#2704', 'https://i.imgur.com/93IC0Ua.png', 'https://formatlibrary.com/')
         	.setThumbnail('https://i.imgur.com/9lMCJJH.png')
-        	.addField('How to Use This Guide', 'All commands begin with an "!". Commands may also use the following inputs: (blank) no input, (@user) mention a user, (n) a number, (link) a URL. ')
-        	.addField('Ranked Commands', '\n!loss - (@user) - Report a loss to another player. \n!stats - (blank or @user) - Post a player’s stats. \n!top - (n) - Post the server’s top players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove the Ranked Goats role. \n!undo - Undo the last loss if you reported it. \n')
+        	.addField('Ranked Commands', '\n!loss - (@user) - Report a loss to another player. \n!stats - (blank or @user) - Post a player’s stats. \n!top - (number) - Post the server’s top players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove the Ranked Goats role. \n!undo - Undo the last loss if you reported it. \n')
         	.addField('Server Commands', '\n!save - (imgur.com link) - Save a deck. \n!decks - (blank or @user) - Post a player’s deck(s). \n!bot - View the GoatBot User Guide. \n!mod - View the Mod-Only Guide.');
 
         message.author.send(botEmbed);
@@ -169,7 +168,6 @@ client.on('message', async message => {
 	        .setURL('https://goatformat.com/')
 	        .setAuthor('Jazz#2704', 'https://i.imgur.com/93IC0Ua.png', 'https://formatlibrary.com/')
         	.setThumbnail('https://i.imgur.com/9lMCJJH.png')
-        	.addField('Mod Only Commands', 'All commands begin with an "!". Commands may also use the following inputs: (blank) no input, (@user) mention a user, (n) a number, (link) a URL. ')
         	.addField('Ranked Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it. \n')
         	.addField('Server Commands', '\n!rename - (@user + new name) - Rename a user in the database.\n!census - Add missing names to the database.\n!recalc - Recaluate all Player Stats after manually deleting records.');
 
