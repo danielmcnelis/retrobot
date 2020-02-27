@@ -1,15 +1,11 @@
 
-//HEAD
+//GOATBOT - A RANKINGS BOT FOR GOATFORMAT.COM
 const Discord = require('discord.js')
 const client = new Discord.Client()
 const fs = require('fs')
 const serverID = '682361248532398143'
 const botRole = '682389567185223713'
 const modRole = '682361608848015409'
-
-console.log('turning on goatbot...')
-
-//a change
 
 const blank = require('./blank.json')
 const names = require('./names.json')
@@ -43,7 +39,7 @@ client.login('NjgyNDAxNzU1MTcwMDc4Nzcw.Xlcpag.XVeTLXJFH92QUrFZYhvjoKqg0QQ')
 
 //READY
 client.on('ready', () => {
-  console.log('GoatBot is ready!')
+  console.log('GoatBot is online!')
 })
 
 
@@ -53,8 +49,6 @@ client.on('message', message => {
     message.channel.send("pong")
   }
 })
-
-//NEW COMMENT
 
 
 //WELCOME
@@ -252,12 +246,12 @@ client.on('message', async message => {
         }
 
         return message.channel.send(`${goat} --- Goat Format Stats --- ${goat}
-        Name: ${names[player]}
-        Medal: ${medal}
-        Ranking: ${rank}
-        Wins: ${wins[player]}
-        Losses: ${losses[player]}
-        Elo Rating: ${stats[player].toFixed(2)}`)
+    Name: ${names[player]}
+    Medal: ${medal}
+    Ranking: ${rank}
+    Wins: ${wins[player]}
+    Losses: ${losses[player]}
+    Elo Rating: ${stats[player].toFixed(2)}`)
     }
 
 
