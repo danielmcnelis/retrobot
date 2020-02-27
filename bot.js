@@ -631,9 +631,9 @@ ${names[p2]} has won ${p2wins}x`)
             console.log(winners[i])
             console.log(losers[i])
             console.log(rawRecords.length)
-            console.log(rawStats.length)
+            console.log(arr2.length)
 
-            restore(message, winners[i], losers[i], i, rawRecords.length, rawStats.length)
+            restore(message, winners[i], losers[i], i, rawRecords.length, arr2.length)
         }
     }
 })
