@@ -247,8 +247,7 @@ client.on('message', async message => {
 Name: ${names[player]}
 Medal: ${medal}
 Ranking: ${rank}
-Wins: ${wins[player]}
-Losses: ${losses[player]}
+Wins: ${wins[player]}, Losses: ${losses[player]}
 Elo Rating: ${stats[player].toFixed(2)}`)
     }
 
