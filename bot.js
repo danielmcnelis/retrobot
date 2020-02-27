@@ -13,6 +13,7 @@ const challongeClient = challonge.createClient({
 });
 
 const blank = require('./blank.json')
+const status = require('./status.json')
 const names = require('./names.json')
 const decks = require('./decks.json') 
 const stats = require('./stats.json')
@@ -92,13 +93,6 @@ client.on('message', async message => {
     }
 
 
-    //CHALLONGE - CHECK
-    if(cmd === `!tours`) {
-        console.log(challongeClient.tournaments.index())
-        message.channel.send("I printed your tournaments to the console.")
-    }
-
-
     //CHALLONGE - CREATE
     if(cmd === `!create`) {
         function getRandomString(length, chars) {
@@ -119,9 +113,13 @@ client.on('message', async message => {
             },
             callback: (err) => {
             if(err) {
-                return message.channel.send(`Error: The name "${url}" was already taken.`)
+                return message.channel.send(`Error: The name "${url}" is already taken.`)
             } else {
-                message.channel.send(`I created a new tournament, named ${name}, located at https://challonge.com/${url}`)
+                status['tournamet'] = name
+                fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
+                    if (err) console.log(err)
+                })
+                return message.channel.send(`I created a new tournament named ${name}, located at https://challonge.com/${url}`)
             }
             }
         });   
@@ -130,17 +128,123 @@ client.on('message', async message => {
 
     //CHALLONGE - DESTROY
     if(cmd === `!destroy`) {
-        let name = args[0]
+        let name = (args[0] ? args[0] : status['tournament'])
         challongeClient.tournaments.destroy({
             id: name,
             callback: (err) => {
                 if(err) {
-                    return message.channel.send(`Error: the tournament, ${name}, could not be deleted.`)
+                    return message.channel.send(`Error: the tournament you provided, "${name}", could not be deleted.`)
                 } else {
-                    message.channel.send(`I deleted an old tournament, ${name}, from your account.`)
+                    if (status['tournamet'] === name) {
+                        delete status['tournamet']
+                        fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
+                            if (err) console.log(err)
+                        })
+                    }
+                    return message.channel.send(`I deleted the tournament named "${name}" from your account.`)
                 }
             }
           });  
+    }
+
+
+    //CHALLONGE - END
+    if(cmd === `!end`) {
+        let name = (args[0] ? args[0] : status['tournament'])
+        challongeClient.tournaments.finalize({
+            id: name,
+            callback: (err) => {
+                if(err) {
+                    return message.channel.send(`Error: the tournament you provided, "${name}", could not be finalized.`)
+                } else {
+                    delete status['tournamet']
+                    fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
+                        if (err) console.log(err)
+                    })
+                    return message.channel.send(`Congratulations, your tournament results have been finalized: https://challonge.com/${name}.`)
+                }
+            }
+          });  
+    }
+
+
+    //CHALLONGE - SHOW
+    if(cmd === `!show`) {
+        let name = (args[0] ? args[0] : status['tournament'])
+        if (!name) {
+            return message.channel.send('There is no active tournament.')
+        }
+        challongeClient.tournaments.show({
+            id: name,
+            callback: (err) => {
+                if(err) {
+                    return message.channel.send(`Error: the tournament you provided, "${name}", could not be found.`)
+                } else {
+                    return message.channel.send(`Here is the link to the tournament you requested: https://challonge.com/${name}.`)
+                }
+            }
+          });  
+    }
+
+
+    //CHALLONGE - START
+    if(cmd === `!start`) {
+        let name = (args[0] ? args[0] : status['tournament'])
+        challongeClient.tournaments.start({
+            id: name,
+            callback: (err) => {
+                if(err) {
+                    return message.channel.send(`Error: the tournament you provided, "${name}", could not be initialized.`)
+                } else {
+                    return message.channel.send(`Let's go! Your tournament is starting now: https://challonge.com/${name}.`)
+                }
+            }
+          });  
+    }
+
+
+    //CHALLONGE - SIGNUP
+    if(cmd === `!signup`) {
+        let name = status['tournament']
+        let person = message.mentions.users.first()
+
+        if (!name) {
+            return message.channel.send('There is no active tournament.')
+        } else if (!person) {
+            return message.channel.send('Please provide an @ mention of the player you wish to sign-up for the tournament.')
+        }
+
+        challongeClient.participants.create({
+            id: name,
+            participant: {
+            name: person.user.username
+            },
+            callback: (err) => {
+                if(err) {
+                    return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+                } else {
+                    return message.channel.send(`${person.user.username} has been signed-up for the tournament.`)
+                }
+            }
+        })
+    }
+
+
+    //CHALLONGE - SIGNUP
+    if(cmd === `!inspect`) {
+        let name = (args[0] ? args[0] : status['tournament'])
+        let newVar = challongeClient.participants.index({
+            id: name,
+            callback: (err) => {
+                if(err) {
+                    return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+                } else {
+                    return message.channel.send(`I printed the current list of tournament participants to the console.`)
+                }
+            }
+        });
+
+        console.log(newVar)
     }
 
 
