@@ -2,6 +2,7 @@
 //GOATBOT - A RANKINGS BOT FOR GOATFORMAT.COM
 const Discord = require('discord.js')
 const client = new Discord.Client()
+const challonge = require('challonge');
 const fs = require('fs')
 const serverID = '682361248532398143'
 const botRole = '682389567185223713'
@@ -88,6 +89,23 @@ client.on('message', async message => {
     }
 
 
+    //CHALLONGE
+    if(cmd === `!tour`) {
+        const challongeClient = challonge.createClient({
+            apiKey: 'JE7pFfKV8XhdZXshqHNjVySDfoVUZeAtDRcULUln'
+        });
+    
+        let newVar = challongeClient.tournaments.index({
+          callback: (err, data) => {
+              console.log(err, data);
+          }
+        });
+
+        console.log(newVar)
+    }
+
+
+
     //REPLAY-LINKS AUTO MODERATION
 
 
@@ -133,10 +151,10 @@ client.on('message', async message => {
     if(rolecom.includes(cmd)) {
 		if(!message.member.roles.has(goatRole)) {
 			message.member.addRole(goatRole);
-			return message.channel.send("I have added you to the Ranked Goats role."); }
+			return message.channel.send("I have given you the Ranked Goats role."); }
 		else {
             message.member.removeRole(goatRole);
-            return message.channel.send("I have removed you from the Ranked Goats role."); }
+            return message.channel.send("You no longer have the Ranked Goats role."); }
         }
 
 
