@@ -329,7 +329,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
         }
     
         for (let i = 0; i < x; i++) { 
-            result[i+1] = `${(i+1)}. ${medals[i]} ${names[arr5[i]]}`
+            result[i+1] = `${(i+1)}. ${medals[i]} ${names[arr4[i]]}`
         }
     
        if (x == 1) {
