@@ -1161,7 +1161,7 @@ const checkMatches = (message, matches, participants, loser, winner) => {
                         if (err) console.log(err)
                     })
 
-                    return message.channel.reply(`Your tournament loss to ${winner.user.username} has been recorded.`)
+                    return message.channel.send(`<@${loser.user.id}>, Your tournament loss to ${winner.user.username} has been recorded.`)
                 }
             }
         })
