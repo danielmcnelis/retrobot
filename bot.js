@@ -217,6 +217,9 @@ client.on('message', async message => {
             return message.channel.send('Please provide an @ mention of the player you wish to sign-up for the tournament.')
         }
 
+        console.log(person.user.id)
+        console.log(person.id)
+
         challongeClient.participants.create({
             id: name,
             participant: {
