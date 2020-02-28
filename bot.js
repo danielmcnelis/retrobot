@@ -1168,7 +1168,7 @@ const addMatchResult = (message, matches, participants, loser, winner) => {
                     
                     message.channel.send(`<@${loser.user.id}>, Your tournament loss to ${winner.user.username} has been recorded.`)
                     return setTimeout(function() {
-                        checkMatches(message, matches, participants, matchID, loserID, winnerID, loser, winner)
+                        getUpdatedMatchesObject(message, participants, matchID, loserID, winnerID, loser, winner)
                     }, 3000)	
                 }
             }
@@ -1176,6 +1176,18 @@ const addMatchResult = (message, matches, participants, loser, winner) => {
     }
 }
 
+const getUpdatedMatchesObject = (message, participants, matchID, loserID, winnerID, loser, winner) => {
+    return challongeClient.matches.index({
+        id: status['tournament'],
+        callback: (err, data) => {
+            if(err) {
+                return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+            } else {
+                return checkMatches(message, data, participants, matchID, loserID, winnerID, loser, winner)
+            }
+        }
+    }) 
+}
 
 
 //CHECK MATCHES
