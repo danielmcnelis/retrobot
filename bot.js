@@ -1238,7 +1238,6 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
                 newMatchIDLoser = matches[elem].match.id
             }
         }
-        
         if (matches[elem].match.id === matchWaitingOnLoser) {
             matchWaitingOnLoserP1ID = matches[elem].match.player1Id
             matchWaitingOnLoserP2ID = matches[elem].match.player2Id
@@ -1249,8 +1248,10 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     })
 
     console.log('done checking matches...')
-    console.log(matchWaitingOnLoser)
-    console.log(matchWaitingOnWinner)
+    console.log('loser is about to play:', newMatchIDLoser, 'vs:', newOppoIDLoser)
+    console.log('loser is waiting on:', matchWaitingOnLoser, ':', matchWaitingOnLoserP1ID, 'vs', matchWaitingOnLoserP2ID)
+    console.log('winner is about to play:', newMatchIDWinner, 'vs:', newOppoIDWinner)
+    console.log('winner is waiting on:', matchWaitingOnWinner, ':', matchWaitingOnWinnerP1ID, 'vs', matchWaitingOnWinnerP2ID)
 
     players.forEach(function(elem) {
         if (participants[elem].participant.id === newOppoIDLoser) {
