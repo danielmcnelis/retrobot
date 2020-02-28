@@ -239,7 +239,7 @@ client.on('message', async message => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
-                    dude.member.addRole(tourRole);
+                    dude.addRole(tourRole);
                     discordIDs[person.username] = person.id
                     fs.writeFile("./discordIDs.json", JSON.stringify(discordIDs), (err) => { 
                         if (err) console.log(err)
@@ -1082,7 +1082,7 @@ const removeParticipant = (message, participants, name, person, drop = false) =>
                     return message.channel.send(`Error: could not find "${person.username}" in the participants list.`)
                 }
             } else {
-                dude.member.removeRole(tourRole)
+                dude.removeRole(tourRole)
                 if (drop) {
                     return message.channel.send(`I have removed you from the tournament. Better luck next time!`)
                 } else {
@@ -1295,7 +1295,7 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     } else if (matchWaitingOnLoser) {
         message.channel.send(`${loser.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
     } else {
-        loser.member.removeRole(tourRole)
+        loser.removeRole(tourRole)
         message.channel.send(`${loser.user.username}, You are eliminated from the tournament. Better luck next time!`)
     }
 
@@ -1306,7 +1306,7 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     } else if (matchWaitingOnWinner) {
         message.channel.send(`${winner.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
     } else {
-        winner.member.removeRole(tourRole)
+        winner.removeRole(tourRole)
         message.channel.send(`<@${winner.user.id}>, You won the tournament! Congratulations on your stellar performance!`)
     }
     
