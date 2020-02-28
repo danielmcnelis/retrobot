@@ -1211,6 +1211,8 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     let keys = Object.keys(matches)
     let players = Object.keys(participants)
 
+    console.log(participants)
+
     console.log('matchID is', matchID)
     console.log('loserID is', loserID)
     console.log('winnerID is', winnerID)
