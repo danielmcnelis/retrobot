@@ -1265,26 +1265,32 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     players.forEach(function(elem) {
         console.log('checking a participant:', participants[elem].participant.id)
          if (participants[elem].participant.id === newOppoIDLoser) {
+            console.log('^ this is the new opponent for the loser')
             newOppoLoser = participants[elem].participant.discordID
          }
 
          if (participants[elem].participant.id === newOppoIDWinner) {
+            console.log('^ this is the new opponent for the winner')
             newOppoWinner = participants[elem].participant.discordID
          }
          
          if (participants[elem].participant.id === matchWaitingOnLoserP1ID) {
+            console.log('^ this is p1 that the loser is waiting on')
             matchWaitingOnLoserP1 = participants[elem].participant.name
          }
          
          if (participants[elem].participant.id === matchWaitingOnLoserP2ID) {
+            console.log('^ this is p2 that the loser is waiting on')
             matchWaitingOnLoserP2 = participants[elem].participant.name
          }
          
          if (participants[elem].participant.id === matchWaitingOnWinnerP1ID) {
+            console.log('^ this is p1 that the winner is waiting on')
             matchWaitingOnWinnerP1 = participants[elem].participant.name
          }
          
          if (participants[elem].participant.id === matchWaitingOnWinnerP2ID) {
+            console.log('^ this is p2 that the winner is waiting on')
             matchWaitingOnWinnerP2 = participants[elem].participant.name
          }
     })
