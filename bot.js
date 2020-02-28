@@ -260,24 +260,67 @@ client.on('message', async message => {
     }
 
 
+    //CHALLONGE - DROP
+    if(cmd === `!drop`) {
+        let name = status['tournament']
+        let person = message.author
 
-    //CHALLONGE - INSPECT
-    if(cmd === `!inspect`) {
-        let name = (args[0] ? args[0] : status['tournament'])
-
+        if (!name) {
+            return message.channel.send('There is no active tournament.')
+        }
+        
         challongeClient.participants.index({
             id: name,
             callback: (err, data) => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
-                    console.log(data)
-                    message.channel.send(`I printed the current list of tournament participants to the console.`)
+                    return removeParticipant(message, data, name, person)
                 }
             }
-        });
+        })
     }
 
+
+
+    //CHALLONGE - INSPECT
+    if(cmd === `!inspect`) {
+        let elem = (args[0] ? args[0] : 'matches')
+        let name = (args[1] ? args[1] : status['tournament'])
+
+        if (elem === 'participants') {
+            challongeClient.participants.index({
+                id: name,
+                callback: (err, data) => {
+                    if(err) {
+                        return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+                    } else {
+                        console.log(data)
+                        message.channel.send(`I printed the list of tournament participants to the console.`)
+                    }
+                }
+            });
+        } else if (elem === 'matches') {}
+            challongeClient.matches.index({
+                id: name,
+                callback: (err, data) => {
+                    if(err) {
+                        return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+                    } else {
+                        console.log(data)
+                        message.channel.send(`I printed the list of tournament matches to the console.`)
+                    }
+                }
+            });
+        } else {
+            return message.channel.send(`Invalid input: ${args[0]} is not a tournament element.`)
+        }
+    }
+
+
+    //CHALLONGE - INSPECT
+    if(cmd === `!inspect`) {
+    
 
 
 
@@ -962,7 +1005,7 @@ function createUser(player, person) {
 
 
 //REMOVE PARTICIPANT
-const removeParticipant = (message, participants, name, person) => {    
+const removeParticipant = (message, participants, name, person, drop = false) => {    
     let participantID
     let keys = Object.keys(participants)
     console.log(keys)
@@ -978,9 +1021,17 @@ const removeParticipant = (message, participants, name, person) => {
         participantID: participantID,
         callback: (err) => {
             if(err) {
-                return message.channel.send(`Error: could not find "${person.username}" in the participants list.`)
+                if (drop) {
+                    return message.channel.send(`Hmm... I don't see you in the participants list.`)
+                } else {
+                    return message.channel.send(`Error: could not find "${person.username}" in the participants list.`)
+                }
             } else {
-                return message.channel.send(`${person.username} has been removed from the tournament.`)
+                if (drop) {
+                    return message.channel.send(`I have removed you from the tournament. Better luck next time!`)
+                } else {
+                    return message.channel.send(`${person.username} has been removed from the tournament.`)
+                }
             }
         }
     })
