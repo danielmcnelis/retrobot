@@ -209,6 +209,11 @@ client.on('message', async message => {
           });  
     }
 
+    //CHALLONGE - SIGNUP
+    if(cmd === `!check`) {
+        let person = message.mentions.users.first()
+        console.log(person)
+    }
 
     //CHALLONGE - SIGNUP
     if(cmd === `!signup`) {
