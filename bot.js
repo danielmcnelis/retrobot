@@ -1194,6 +1194,7 @@ const getUpdatedMatchesObject = (message, participants, matchID, loserID, winner
 const checkMatches = (message, matches, participants, matchID, loserID, winnerID, loser, winner) => {
     let newOppoIDLoser
     let newOppoLoser
+    let newMatchIDLoser
     let matchWaitingOnLoser
     let matchWaitingOnLoserP1ID
     let matchWaitingOnLoserP2ID
@@ -1201,6 +1202,7 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     let matchWaitingOnLoserP2
     let newOppoIDWinner
     let newOppoWinner
+    let newMatchIDWinner
     let matchWaitingOnWinner
     let matchWaitingOnWinnerP1ID
     let matchWaitingOnWinnerP2ID
