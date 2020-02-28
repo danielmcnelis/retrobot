@@ -1263,6 +1263,7 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     console.log(`winner is waiting on ${matchWaitingOnWinner}: ${matchWaitingOnWinnerP1ID} vs ${matchWaitingOnWinnerP2ID}`)
 
     players.forEach(function(elem) {
+        console.log('checking a participant:', participants[elem].participant.id)
          if (participants[elem].participant.id === newOppoIDLoser) {
             newOppoLoser = participants[elem].participant.discordID
          }
