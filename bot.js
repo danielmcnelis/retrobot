@@ -248,18 +248,16 @@ client.on('message', async message => {
             return message.channel.send('Please provide an @ mention of the player you wish to sign-up for the tournament.')
         }
         
-        
-        challongeClient.participants.index({
+        console.log(challongeClient.participants.index({
             id: name,
             callback: (err, data) => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
                     console.log('ok...')
-                    participants = data
                 }
             }
-        });
+        }))
 
         console.log(participants)
 
