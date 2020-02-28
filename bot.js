@@ -608,7 +608,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
                     if(err) {
                         return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                     } else {
-                        return getParticipants(message, data, message.member, dude)
+                        return getParticipants(message, data, message.author, dude)
                     }
                 }
             }) 
@@ -1063,6 +1063,9 @@ const removeParticipant = (message, participants, name, person, drop = false) =>
 
 //TOURNAMENT CHECK
 const getParticipants = (message, matches, loser, winner) => {
+    console.log('getting participants...')
+    console.log(winner)
+    console.log(loser)
     challongeClient.participants.index({
         id: status['tournament'],
         callback: (err, data) => {
@@ -1078,11 +1081,13 @@ const getParticipants = (message, matches, loser, winner) => {
 
 //CHECK MATCHES
 const checkMatches = (message, matches, participants, loser, winner) => {
+    console.log('checking matches...')
     let loserID
     let winnerID
     let matchID
     let matchStatus
     let players = Object.keys(participants)
+    console.log(players)
     players.forEach(function(elem) {
         if (participants[elem].participant.name === loser.username) {
             loserID = participants[elem].participant.id
@@ -1090,6 +1095,9 @@ const checkMatches = (message, matches, participants, loser, winner) => {
             winnerID = participants[elem].participant.id
         }
     })
+
+    console.log(loserID)
+    console.log(winnerID)
 
     let keys = Object.keys(matches)
     keys.forEach(function(elem) {
@@ -1102,7 +1110,11 @@ const checkMatches = (message, matches, participants, loser, winner) => {
         }
     })
 
-    if (matchStatus = 'complete' && !matchID) {
+    if (!winnerID) {
+        return message.channel.send(`${winner.username} is not in the tournament.`)
+    } else if (!loserID) {
+        return message.channel.send(`${loser.username} is not in the tournament.`)
+    } else if (matchStatus = 'complete' && !matchID) {
         return message.channel.send(`The match result between ${winner.username} and ${loser.username} was already recorded.`)
     } else if (!matchStatus && !matchID) {
         return message.channel.send(`${winner.username} and ${loser.username} were not supposed to play a match.`)
