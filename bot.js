@@ -1197,11 +1197,16 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     let keys = Object.keys(matches)
     let players = Object.keys(participants)
 
-    console.log(matchID)
-    console.log(loserID)
-    console.log(winnerID)
+    console.log('matchID is', matchID)
+    console.log('loserID is', loserID)
+    console.log('winner is', winnerID)
 
     keys.forEach(function(elem) {
+        console.log('checking a match...')
+        console.log('player1Id is', matches[elem].match.player1Id)
+        console.log('player2Id is', matches[elem].match.player2Id)
+        console.log('player1PrereqMatchId is', matches[elem].match.player1PrereqMatchId)
+        console.log('player2PrereqMatchId is', matches[elem].match.player2PrereqMatchId)
         if ( (matches[elem].match.player1Id === winnerID || matches[elem].match.player2Id === winnerID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
             if (matches[elem].match.state === 'pending') {
                 matchWaitingOnWinner = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
@@ -1227,6 +1232,7 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
         }     
     })
 
+    console.log('done checking matches...')
     console.log(matchWaitingOnLoser)
     console.log(matchWaitingOnWinner)
 
