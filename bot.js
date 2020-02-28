@@ -1197,6 +1197,10 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     let keys = Object.keys(matches)
     let players = Object.keys(participants)
 
+    console.log(matchID)
+    console.log(loserID)
+    console.log(winnerID)
+
     keys.forEach(function(elem) {
         if ( (matches[elem].match.player1Id === winnerID || matches[elem].match.player2Id === winnerID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
             if (matches[elem].match.state === 'pending') {
