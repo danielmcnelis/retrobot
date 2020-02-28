@@ -1309,7 +1309,7 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     console.log('matchWaitingOnWinnerP2 is', matchWaitingOnWinnerP2)
 
     if (matchWaitingOnLoser) {
-        message.channel.send(`${loser.user.id}, you are waiting for the result of ${matchWaitingOnLoserP1} vs ${matchWaitingOnLoserP2}.`)
+        message.channel.send(`${loser.user.username}, you are waiting for the result of ${matchWaitingOnLoserP1} vs ${matchWaitingOnLoserP2}.`)
     } else if (newOppoLoser) {
         message.channel.send(`New Match: <@${loser.user.id}> vs <@${newOppoLoser}>. Good luck to both duelists.`)
     } else if (matchWaitingOnLoser) {
