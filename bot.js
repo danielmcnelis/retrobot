@@ -318,13 +318,6 @@ client.on('message', async message => {
     }
 
 
-    //CHALLONGE - INSPECT
-    if(cmd === `!inspect`) {
-    
-
-
-
-
 
     //REPLAY-LINKS AUTO MODERATION
 
