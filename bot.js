@@ -1,6 +1,6 @@
 
 //GOATBOT - A RANKINGS BOT FOR GOATFORMAT.COM
-const Discord = require('discord.js'
+const Discord = require('discord.js')
 const client = new Discord.Client()
 const challonge = require('challonge');
 const fs = require('fs')
