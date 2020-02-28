@@ -17,7 +17,7 @@ const blank = require('./blank.json')
 const status = require('./status.json')
 const discordIDs = require('./discordIDs.json')
 const names = require('./names.json')
-const decks = require('./decks.json') 
+const decks = require('./decks.json')
 const stats = require('./stats.json')
 const backup = require('./backup.json') 
 const wins = require('./wins.json') 
@@ -31,6 +31,44 @@ const losscom = ['!lossvs','!loss','!lose','!goatloss','!goatlossvs','!goatlose'
 const h2hcom = ['!h2h', '!head2head', '!headtohead']
 const undocom = ['!undolast', '!undo', '!undoloss']
 const rankcom = ['!rank', '!top', '!ladder']
+const deckTypeAlius = {
+    goatControl: ['Goat Control', 'Goat', 'GC'],
+    chaosControl: ['Chaos Control', 'TD Chaos Control', 'Angel Chaos', 'Angel Chaos Control', 'Skilled Chaos', 'Skilled Chaos Control'],
+    chaosRecruiter: ['Chaos Recruiter', 'Recruiter Chaos'],
+    chaosReturn: ['Chaos Return'],
+    dimensionFusionTurbo: ['Dimension Fusion Turbo', 'DFT', 'Bazoo Fusion Turbo', 'Bazoo Turbo'],
+    reasoningGateTurbo: ['Reasoning Gate Turbo', 'Reasoning Gate', 'Reason Gate Turbo', 'Reason Gate', 'RGT'],
+    chaosFlipTurbo: ['Chaos Turbo', 'Chaos Flip Turbo', 'CFT', 'CT'],
+    flipControl: ['Flip Control', 'Tsuku Lock', 'Tsuk Lock', 'Flip Lock', 'Mask Control'],
+    soulControl: ['Soul Control', 'Monarch', 'Monarchs'],
+    warrior: ['Anti-Meta Warrior', 'Warrior', 'Warriors', 'Warrior Aggro', 'Anti Meta Warrior','Antimeta Warrior', 'Anti-Meta Warriors', 'Anti Meta Warriors','Antimeta Warriors'],
+    gearfried: ['Gearfried', 'Gearfriend Aggro', 'Gearfried Stun'],
+    tigerStun: ['Tiger Stun', 'Wanghu Stun', 'Stun'],
+    drainBeat: ['Drain Beat', 'Drain Beatdown', 'Skill Drain Beatdown'],
+    aggroBurn: ['Aggro Burn', 'Aggro Bomb'],
+    aggroMonarch: ['Aggro Monarch', 'Aggro Monarchs', 'Monarch Aggro'],
+    rescueCat: ['Rescue Cat OTK', 'Rescue Cat', 'Cat', 'Cat OTK'],
+    benKei: ['Ben-Kei OTK', 'Ben Kei', 'Ben-Kei', 'Ben Kei OTK', 'Ben-Kei Combo', 'Ben Kei Combo'],
+    stein: ['Stein OTK', 'Stein', 'Cyber-Stein', 'Cyber Stein', 'Cyber-Stein OTK', 'Cyber Stein OTK'],
+    darkBurn: ['Dark Burn', 'Black Burn', 'Burn'],
+    drainBurn: ['Drain Burn', 'Skill Burn', 'Skill Drain Burn'],
+    speedBurn: ['Speed Burn', 'Turbo Burn', 'Jar Burn'],
+    pacman: ['P.A.C.M.A.N.', 'PACMAN'],
+    economicsFTK: ['Economics FTK', 'Economics', 'Mass Driver FTK', 'Mass Driver'],
+    libraryFTK: ['Library FTK', 'Library'],
+    exodia: ['Exodia', 'Exodia FTK'],
+    lastTurn: ['Last Turn', 'LT'],
+    emptyJar: ['Empty Jar', 'E-Jar', 'E Jar', 'EJar', 'Empty Jar FTK', 'Mill', 'Deck-Out', 'Deck Out'],
+    gravekeeper: ['Gravekeeper', `Gravekeeper's`, 'Gravekeepers'],
+    machine: ['Machine', 'Machines', 'Machine OTK'],
+    water: ['Water'],
+    zombie: ['Zombie', 'Zombies'],
+    darkScorpion: ['Dark Scorpion', 'Dark Scorpions', 'Scorpion', 'Scorpions'],
+    darkMasterZorc: ['Dark Master Zorc', 'Dark Master - Zorc', 'Zorc'],
+    relinquished: ['Relinquished', 'Relinquish', 'Relinq'],
+    strikeNinja: ['Strike Ninja', 'Ninja', 'Strike Ninja Return'],
+    bazooReturn: ['Bazoo Return', 'Bazoo']
+}
 
 const sad = `<:sad:682370580884095006>`
 const rock = `<:rock:682370580909260869>`
@@ -353,16 +391,60 @@ client.on('message', async message => {
 
 
     //DECK-LISTS AUTO MODERATION
+    if(cmd === `!save`) {    
+        if(!decks[maid]) {
+            createUser(maid);
+            return message.channel.send("I have added you to the Goat Format database. Please try again.")
+        }
+        
+        if (!message.content.startsWith("!save https://i") || message.content.length > 46) {		
+            return message.channel.send("I only accept (1) imgur.com link.")
+        } else if (message.content.startsWith("!save https://i.imgur")) {
+            return getDeckType(message, maid, args[0])
+        } else if (message.content.startsWith("!save https://imgur")) {
+            let url = `https://i.${args.join(" ").substring(8, args.join(" ").length)}.png`;
+            return getDeckType(message, maid, url)          
+        }
+    }
 
+
+    //DECK-LISTS AUTO MODERATION
+    if(cmd === `!deck`) {    
+        let person = message.mentions.users.first()
+        let player = (person ? maid : person.id)      
+
+        if(!decks[maid]) {
+            createUser(maid);
+            return message.channel.send("I have added you to the Goat Format database. Please try again.")
+        } else if(!deck[person.id]) {
+            return message.channel.send("That user is not in the Goat Format database.")
+        }
+
+        let rawobj = decks[player]
+        
+        if (!message.content.startsWith("!save https://i") || message.content.length > 46) {		
+            return message.channel.send("I only accept (1) imgur.com link.")
+        } else if(message.content.startsWith("!save https://i.imgur")) {
+
+        decks[maid] = args.join(" ");
+           fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+            if (err) console.log(err) }); }
+    
+    if(message.content.startsWith("!save https://imgur")) {
+        
+        decks[maid] = "https://i." + args.join(" ").substring(8, args.join(" ").length) + ".png";
+           fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+            if (err) console.log(err) }); }
+    
+    
+        return Merch.data.getDeckTitle(client, message, maid)
+    }
 
     //AVATAR
     if(pfpcom.includes(cmd)) {
         let person = message.mentions.users.first()
-        if (person) {
-            return message.channel.send(person.avatarURL)
-     } else {
-            return message.channel.send(message.author.avatarURL)
-        }
+        let reply = (person ? person.avatarURL : message.author.avatarURL)
+        return message.channel.send(reply)
     }
 
 
@@ -1029,7 +1111,232 @@ function createUser(player, person) {
 			if (err) console.log(err) }); }
             
 	if(!decks[player]) {
-		decks[player] = {};
+		decks[player] = {
+            goatControl: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            chaosControl: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            chaosRecruiter: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            dimensionFusionTurbo: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            reasoningGateTurbo: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            chaosFlipTurbo: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            flipControl: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            warrior: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            gearfried: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            tigerStun: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            drainBeat: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            aggroBurn: {
+                url: false,
+                category: 'burn',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            aggroMonarch: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            rescueCat: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            darkBurn: {
+                url: false,
+                category: 'burn',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            drainBurn: {
+                url: false,
+                category: 'burn',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            speedBurn: {
+                url: false,
+                category: 'burn',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            economicsFTK: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            libraryFTK: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            exodia: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            lastTurn: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            emptyJar: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            gravekeeper: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            machine: {
+                url: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            water: {
+                url: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            zombie: {
+                url: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            darkScorpion: {
+                url: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            darkMasterZorc: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            relinquished: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            strikeNinja: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            bazooReturn: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            other: {
+                url: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            }
+        };
    		fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
 			if (err) console.log(err) }); }
 
@@ -1054,6 +1361,79 @@ function createUser(player, person) {
 			if (err) console.log(err) }); }
 
 }
+
+
+
+//GET DECK TYPE
+const getDeckType = (message, maid, url) => {
+    let keys = Objec.keys(deckTypeAlius)
+
+	const filter = m => m.author.id === maid
+	message.channel.send("What kind of deck is this?")
+	message.channel.awaitMessages(filter, {
+		max: 1,
+        time: 200000
+    }).then(collected => {
+
+
+        keys.forEach(function(elem) {
+            if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
+                   if (decks[maid][elem].url) {
+                        return getDeckOverwriteConfirmation(message, maid, url, elem, deckTypeAlius[elem][0])
+                   } else {
+                       decks[maid][elem].url = url
+                       return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)
+                   }
+            }
+        })
+    }).catch(err => {
+        return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. If your deck does not fit into the list below, you can save it as "Other":
+
+Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimension Fusion Turbo, Reasoning Gate Turbo, Soul Control, Flip Control, Anti-Meta Warrior, Gearfried, Tiger Stun, Drain Beat, Aggro Burn, Aggro Monarch, Rescue Cat OTK, Ben-Kei OTK, Stein OTK, Dark Burn, Drain Burn, Speed Burn, P.A.C.M.A.N., Economics FTK, Library FTK, Exodia, Last Turn, Empty Jar, Gravekeeper, Machine, Water, Zombie, Dark Scorpion, Dark Master Zorc, Relinquished, Strike Ninja, Bazoo Return.`)
+    })
+}
+
+
+
+//GETDECKTITLE
+
+getDeckTitle(client, message, dude) {
+
+
+if(!(collected.first().content.toLowerCase() == "no") || !(collected.first().content.toLowerCase() == "n") || !(collected.first().content.toLowerCase() == "nah") || !(collected.first().content.toLowerCase() == "nope") || !(collected.first().content.toLowerCase() == "naw") || !(collected.first().content.toLowerCase() == "na")) {
+	
+	titles[dude] = collected.first().content;
+	fs.writeFile("./titles.json", JSON.stringify(titles), (err) => {
+		if (err) console.log(err) });
+
+	if(easyDiary[message.author.id].E5 == 0) {
+	easyDiary[message.author.id].E5 = 1;
+   	fs.writeFile("./easyDiary.json", JSON.stringify(easyDiary), (err) => {
+	if (err) console.log(err) });
+	setTimeout(function(){ methods.checkDiaries(client, message, message.author.id, 'easy'); }, 6000);
+	setTimeout(function(){ message.channel.send("<@" + message.author.id + "> Congrats, you completed Task #9 in the Easy Diary!\n<:legend:586697813115535389> Save a Deck  <:legend:586697813115535389>");}, 3000); } 
+
+	return message.channel.send("Thanks. I have saved your Deck!");}
+
+}).catch(err => {
+
+	delete titles[dude];
+	fs.writeFile("./titles.json", JSON.stringify(titles), (err) => {
+		if (err) console.log(err) });
+
+	if(easyDiary[message.author.id].E5 == 0) {
+	easyDiary[message.author.id].E5 = 1;
+   	fs.writeFile("./easyDiary.json", JSON.stringify(easyDiary), (err) => {
+	if (err) console.log(err) });
+	setTimeout(function(){ methods.checkDiaries(client, message, message.author.id, 'easy'); }, 6000);
+	setTimeout(function(){ message.channel.send("<@" + message.author.id + "> Congrats, you completed Task #9 in the Easy Diary!\n<:legend:586697813115535389> Save a Deck  <:legend:586697813115535389>");}, 3000); } 
+
+	return message.channel.send("Ok, I will simply save this Deck as \"" + names[dude] + "\'s Deck\"."); });
+
+},
+
+
+
 
 
 //REMOVE PARTICIPANT
