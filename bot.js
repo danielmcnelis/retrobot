@@ -1379,9 +1379,13 @@ const getDeckType = (message, dude, url) => {
     }).then(collected => {
 
         console.log('collected...')
-        console.log('collected...')
+        console.log(collected.first().content.toLowerCase())
 
         keys.forEach(function(elem) {
+
+            console.log(deckTypeAlius[elem])
+            console.log('next element:')
+
             if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
                 console.log('hey in here')   
                 
