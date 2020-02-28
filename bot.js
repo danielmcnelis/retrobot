@@ -585,6 +585,8 @@ Elo Rating: ${stats[player].toFixed(2)}`)
         const statsLoser = stats[maid];
         const statsWinner = stats[oppo];
 
+        console.log(dude)
+
         if(!oppo || oppo == '@') { 
             return message.channel.send("No player specified.")
         } else if(oppo == maid) { 
@@ -1064,14 +1066,20 @@ const removeParticipant = (message, participants, name, person, drop = false) =>
 //TOURNAMENT CHECK
 const getParticipants = (message, matches, loser, winner) => {
     console.log('getting participants...')
-    console.log(winner)
-    console.log(loser)
     challongeClient.participants.index({
         id: status['tournament'],
         callback: (err, data) => {
             if(err) {
-                return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+                return message.channel.send(`Error: the current tournament, "${status['tournament']}", could not be accessed.`)
             } else {
+                if (winner) {
+                    console.log('theres a winner')
+                }
+
+                if (loser) {
+                    console.log('theres a loser')
+                }
+
                 return checkMatches(message, matches, data, loser, winner)
             }
         }
