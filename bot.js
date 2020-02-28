@@ -300,7 +300,7 @@ client.on('message', async message => {
                     }
                 }
             });
-        } else if (elem === 'matches') {}
+        } else if (elem === 'matches') {
             challongeClient.matches.index({
                 id: name,
                 callback: (err, data) => {
