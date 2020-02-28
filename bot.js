@@ -1366,7 +1366,7 @@ function createUser(player, person) {
 
 //GET DECK TYPE
 const getDeckType = (message, maid, url) => {
-    let keys = Objec.keys(deckTypeAlius)
+    let keys = Object.keys(deckTypeAlius)
 
 	const filter = m => m.author.id === maid
 	message.channel.send("What kind of deck is this?")
