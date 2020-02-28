@@ -1389,12 +1389,12 @@ const getDeckType = (message, dude, url) => {
             if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
                 console.log('hey in here')   
                 
-                if (decks[maid][elem].url) {
+                if (decks[dude][elem].url) {
                        console.log('first option')
-                        return getDeckOverwriteConfirmation(message, maid, url, elem, deckTypeAlius[elem][0])
+                        return getDeckOverwriteConfirmation(message, dude, url, elem, deckTypeAlius[elem][0])
                    } else {
                     console.log('second option')
-                       decks[maid][elem].url = url
+                       decks[dude][elem].url = url
                        return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)
                    }
             }
