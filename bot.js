@@ -602,7 +602,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
         }
 
         if (message.member.roles.has(tourRole) || dude.roles.has(tourRole)) {
-            challongeClient.matches.index({
+            return challongeClient.matches.index({
                 id: status['tournament'],
                 callback: (err, data) => {
                     if(err) {
@@ -674,7 +674,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
         }
 
         if (winningDude.roles.has(tourRole) || losingDude.roles.has(tourRole)) {
-            challongeClient.matches.index({
+            return challongeClient.matches.index({
                 id: status['tournament'],
                 callback: (err, data) => {
                     if(err) {
@@ -1093,11 +1093,11 @@ const checkMatches = (message, matches, participants, loser, winner) => {
 
     let keys = Object.keys(matches)
     keys.forEach(function(elem) {
-        if ( (data[elem].match.player1Id === loserID && data[elem].match.player2Id === winnerID) || (data[elem].match.player2Id === loserID && data[elem].match.player1Id === winnerID) ) {
-            if (data[elem].match.state === 'complete') {
+        if ( (matches[elem].match.player1Id === loserID && matches[elem].match.player2Id === winnerID) || (matches[elem].match.player2Id === loserID && matches[elem].match.player1Id === winnerID) ) {
+            if (matches[elem].match.state === 'complete') {
                 matchStatus = 'complete'
-            } else if (data[elem].match.state === 'pending') {
-                matchID = data[elem].match.id
+            } else if (matches[elem].match.state === 'pending') {
+                matchID = matches[elem].match.id
             }
         }
     })
