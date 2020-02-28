@@ -1211,7 +1211,7 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
 
     console.log('matchID is', matchID)
     console.log('loserID is', loserID)
-    console.log('winner is', winnerID)
+    console.log('winnerID is', winnerID)
 
     keys.forEach(function(elem) {
         console.log('checking a match...')
@@ -1221,15 +1221,19 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
         console.log('player2PrereqMatchId is', matches[elem].match.player2PrereqMatchId)
         if ( (matches[elem].match.player1Id === winnerID || matches[elem].match.player2Id === winnerID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
             if (matches[elem].match.state === 'pending') {
+                console.log('this matching match is PENDING...')
                 matchWaitingOnWinner = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
             } else if (matches[elem].match.state === 'open') {
+                console.log('this matching match is OPEN...')
                 newOppoIDWinner = (matches[elem].match.player1Id === winnerID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
                 newMatchIDWinner = matches[elem].match.id
             }
         } else if ( (matches[elem].match.player1Id === loserID || matches[elem].match.player2Id === loserID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
             if (matches[elem].match.state === 'pending') {
+                console.log('this matching match is PENDING...')
                 matchWaitingOnLoser = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
             } else if (matches[elem].match.state === 'open') {
+                console.log('this matching match is OPEN...')
                 newOppoIDLoser = (matches[elem].match.player1Id === loserID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
                 newMatchIDLoser = matches[elem].match.id
             }
