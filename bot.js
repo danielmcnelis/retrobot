@@ -1258,18 +1258,18 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
         } else if (participants[elem].participant.id === newOppoIDWinner) {
             newOppoWinner = participants[elem].participant.discordID
         } else if (participants[elem].participant.id === matchWaitingOnLoserP1ID) {
-            matchWaitingOnLoserP1 = participants[elem].participant.discordID
+            matchWaitingOnLoserP1= participants[elem].participant.name
         } else if (participants[elem].participant.id === matchWaitingOnLoserP2ID) {
-            matchWaitingOnLoserP2 = participants[elem].participant.discordID
+            matchWaitingOnLoserP2 = participants[elem].participant.name
         } else if (participants[elem].participant.id === matchWaitingOnWinnerP1ID) {
-            matchWaitingOnWinnerP1 = participants[elem].participant.discordID
+            matchWaitingOnWinnerP1 = participants[elem].participant.name
         } else if (participants[elem].participant.id === matchWaitingOnWinnerP2ID) {
-            matchWaitingOnWinnerP2 = participants[elem].participant.discordID
+            matchWaitingOnWinnerP2 = participants[elem].participant.name
         }
     })
 
     if (matchWaitingOnLoser) {
-        message.channel.send(`<@${loser.user.id}> you are waiting for the result of the match between ${matchWaitingOnLoserP1.user.username} and ${matchWaitingOnLoserP2.user.username}.`)
+        message.channel.send(`<@${loser.user.id}> you are waiting for the result of the match between ${matchWaitingOnLoserP1} and ${matchWaitingOnLoserP2}.`)
     } else if (newOppoLoser) {
         message.channel.send(`New Match: <@${loser.user.id}> vs <@${newOppoLoser.user.id}>. Good luck to both duelists.`)
     } else {
@@ -1277,7 +1277,7 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     }
 
     if (matchWaitingOnWinner) {
-        message.channel.send(`<@${winner.user.id}> you are waiting for the result of the match between ${matchWaitingOnWinnerP1.user.username} and ${matchWaitingOnWinnerP2.user.username}.`)
+        message.channel.send(`<@${winner.user.id}> you are waiting for the result of the match between ${matchWaitingOnWinnerP1} and ${matchWaitingOnWinnerP2}.`)
     } else if (newOppoWinner) {
         message.channel.send(`New Match: <@${winner.user.id}> vs <@${newOppoWinner.user.id}>. Good luck to both duelists.`)
     } else {
