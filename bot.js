@@ -1084,7 +1084,7 @@ const checkMatches = (message, matches, participants, loser, winner) => {
     let loserID
     let winnerID
     let matchID
-    let matchStatus
+    let matchComplete = false
     let score
     let players = Object.keys(participants)
     players.forEach(function(elem) {
@@ -1102,7 +1102,7 @@ const checkMatches = (message, matches, participants, loser, winner) => {
     keys.forEach(function(elem) {
         if ( (matches[elem].match.player1Id === loserID && matches[elem].match.player2Id === winnerID) || (matches[elem].match.player2Id === loserID && matches[elem].match.player1Id === winnerID) ) {
             if (matches[elem].match.state === 'complete') {
-                matchStatus = 'complete'
+                matchComplete = true
             } else if (matches[elem].match.state === 'open') {
                 matchID = matches[elem].match.id
                 score = (matches[elem].match.player1Id === loserID ? '0-1' : '1-0')
@@ -1110,18 +1110,16 @@ const checkMatches = (message, matches, participants, loser, winner) => {
         }
     })
 
-    console.log(matchStatus)
+    console.log(matchComplete)
     console.log(matchID)
-
-    
 
     if (!winnerID) {
         return message.channel.send(`${winner.user.username} is not in the tournament.`)
     } else if (!loserID) {
         return message.channel.send(`${loser.user.username} is not in the tournament.`)
-    } else if (matchStatus = 'complete' && !matchID) {
+    } else if (matchComplete && !matchID) {
         return message.channel.send(`The match result between ${winner.user.username} and ${loser.user.username} was already recorded.`)
-    } else if (!matchStatus && !matchID) {
+    } else if (!matchComplete && !matchID) {
         return message.channel.send(`${winner.user.username} and ${loser.user.username} were not supposed to play a match.`)
     } else if (matchID) {
         challongeClient.matches.update({
