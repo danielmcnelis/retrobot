@@ -1085,6 +1085,7 @@ const checkMatches = (message, matches, participants, loser, winner) => {
     let winnerID
     let matchID
     let matchStatus
+    let score
     let players = Object.keys(participants)
     players.forEach(function(elem) {
         if (participants[elem].participant.name === loser.user.username) {
@@ -1104,12 +1105,15 @@ const checkMatches = (message, matches, participants, loser, winner) => {
                 matchStatus = 'complete'
             } else if (matches[elem].match.state === 'open') {
                 matchID = matches[elem].match.id
+                score = (matches[elem].match.player1Id === loserID ? '0-1' : '1-0')
             }
         }
     })
 
     console.log(matchStatus)
     console.log(matchID)
+
+    
 
     if (!winnerID) {
         return message.channel.send(`${winner.user.username} is not in the tournament.`)
@@ -1124,7 +1128,7 @@ const checkMatches = (message, matches, participants, loser, winner) => {
             id: status['tournament'],
             matchId: matchID,
             match: {
-              scoresCsv: '1-0',
+              scoresCsv: score,
               winnerId: winnerID
             },
             callback: (err) => {
