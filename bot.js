@@ -1240,13 +1240,18 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
                 newMatchIDLoser = matches[elem].match.id
             }
         }
+    })
+
+    keys.forEach(function(elem) {
         if (matches[elem].match.id === matchWaitingOnLoser) {
             matchWaitingOnLoserP1ID = matches[elem].match.player1Id
             matchWaitingOnLoserP2ID = matches[elem].match.player2Id
-        } else if (matches[elem].match.id === matchWaitingOnWinner) {
+        }
+        
+        if (matches[elem].match.id === matchWaitingOnWinner) {
             matchWaitingOnWinnerP1ID = matches[elem].match.player1Id
             matchWaitingOnWinnerP2ID = matches[elem].match.player2Id
-        }     
+        }
     })
 
     console.log('done checking matches...')
