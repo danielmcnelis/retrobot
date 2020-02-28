@@ -1369,7 +1369,8 @@ const getDeckType = (message, dude, url) => {
     let keys = Object.keys(deckTypeAlius)
 
     console.log(dude)
-    
+    console.log(keys)
+
 	const filter = m => m.author.id === dude
 	message.channel.send("What kind of deck is this?")
 	message.channel.awaitMessages(filter, {
@@ -1378,10 +1379,13 @@ const getDeckType = (message, dude, url) => {
     }).then(collected => {
 
         console.log('collected...')
+        console.log('collected...')
 
         keys.forEach(function(elem) {
             if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
-                   if (decks[maid][elem].url) {
+                console.log('hey in here')   
+                
+                if (decks[maid][elem].url) {
                        console.log('first option')
                         return getDeckOverwriteConfirmation(message, maid, url, elem, deckTypeAlius[elem][0])
                    } else {
