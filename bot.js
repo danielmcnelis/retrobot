@@ -581,11 +581,10 @@ Elo Rating: ${stats[player].toFixed(2)}`)
     //LOSS
     if(losscom.includes(cmd)) {
         const oppo = messageArray[1].replace(/[\\<>@#&!]/g, "")
-        const dude = message.channel.members.find('id', oppo);
+        const winningDude = message.channel.members.find('id', oppo);
+        const losingDude = message.channel.members.find('id', maid);
         const statsLoser = stats[maid];
         const statsWinner = stats[oppo];
-
-        console.log(dude)
 
         if(!oppo || oppo == '@') { 
             return message.channel.send("No player specified.")
@@ -610,7 +609,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
                     if(err) {
                         return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                     } else {
-                        return getParticipants(message, data, message.author, dude)
+                        return getParticipants(message, data, losingDude, winningDude)
                     }
                 }
             }) 
@@ -1072,14 +1071,6 @@ const getParticipants = (message, matches, loser, winner) => {
             if(err) {
                 return message.channel.send(`Error: the current tournament, "${status['tournament']}", could not be accessed.`)
             } else {
-                if (winner) {
-                    console.log('theres a winner')
-                }
-
-                if (loser) {
-                    console.log('theres a loser')
-                }
-
                 return checkMatches(message, matches, data, loser, winner)
             }
         }
@@ -1096,12 +1087,12 @@ const checkMatches = (message, matches, participants, loser, winner) => {
     let matchStatus
     let players = Object.keys(participants)
     console.log(players)
-    console.log(winner.username)
-    console.log(loser.username)
+    console.log(winner.user.username)
+    console.log(loser.user.username)
     players.forEach(function(elem) {
-        if (participants[elem].participant.name === loser.username) {
+        if (participants[elem].participant.name === loser.user.username) {
             loserID = participants[elem].participant.id
-        } else if (participants[elem].participant.name === winner.username) {
+        } else if (participants[elem].participant.name === winner.user.username) {
             winnerID = participants[elem].participant.id
         }
     })
@@ -1121,13 +1112,13 @@ const checkMatches = (message, matches, participants, loser, winner) => {
     })
 
     if (!winnerID) {
-        return message.channel.send(`${winner.username} is not in the tournament.`)
+        return message.channel.send(`${winner.user.username} is not in the tournament.`)
     } else if (!loserID) {
-        return message.channel.send(`${loser.username} is not in the tournament.`)
+        return message.channel.send(`${loser.user.username} is not in the tournament.`)
     } else if (matchStatus = 'complete' && !matchID) {
-        return message.channel.send(`The match result between ${winner.username} and ${loser.username} was already recorded.`)
+        return message.channel.send(`The match result between ${winner.user.username} and ${loser.user.username} was already recorded.`)
     } else if (!matchStatus && !matchID) {
-        return message.channel.send(`${winner.username} and ${loser.username} were not supposed to play a match.`)
+        return message.channel.send(`${winner.user.username} and ${loser.user.username} were not supposed to play a match.`)
     } else if (matchID) {
         challongeClient.matches.update({
             id: status['tournament'],
@@ -1138,7 +1129,7 @@ const checkMatches = (message, matches, participants, loser, winner) => {
             },
             callback: (err) => {
                 if(err) {
-                    return message.channel.send(`Error: The match between ${winner.username} and ${loser.username} could not be updated.`)
+                    return message.channel.send(`Error: The match between ${winner.user.username} and ${loser.user.username} could not be updated.`)
                 } else {
                     const statsLoser = stats[loser.user.id];
                     const statsWinner = stats[winner.user.id];
@@ -1170,7 +1161,7 @@ const checkMatches = (message, matches, participants, loser, winner) => {
                         if (err) console.log(err)
                     })
 
-                    return message.channel.reply(`Your tournament loss to ${winner.username} has been recorded.`)
+                    return message.channel.reply(`Your tournament loss to ${winner.user.username} has been recorded.`)
                 }
             }
         })
