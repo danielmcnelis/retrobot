@@ -1261,19 +1261,12 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     console.log(`winner is waiting on ${matchWaitingOnWinner}: ${matchWaitingOnWinnerP1ID} vs ${matchWaitingOnWinnerP2ID}`)
 
     players.forEach(function(elem) {
-        if (participants[elem].participant.id === newOppoIDLoser) {
-            newOppoLoser = participants[elem].participant.discordID
-        } else if (participants[elem].participant.id === newOppoIDWinner) {
-            newOppoWinner = participants[elem].participant.discordID
-        } else if (participants[elem].participant.id === matchWaitingOnLoserP1ID) {
-            matchWaitingOnLoserP1= participants[elem].participant.name
-        } else if (participants[elem].participant.id === matchWaitingOnLoserP2ID) {
-            matchWaitingOnLoserP2 = participants[elem].participant.name
-        } else if (participants[elem].participant.id === matchWaitingOnWinnerP1ID) {
-            matchWaitingOnWinnerP1 = participants[elem].participant.name
-        } else if (participants[elem].participant.id === matchWaitingOnWinnerP2ID) {
-            matchWaitingOnWinnerP2 = participants[elem].participant.name
-        }
+        newOppoLoser = (participants[elem].participant.id === newOppoIDLoser ? participants[elem].participant.discordID : newOppoLoser)
+        newOppoWinner = (participants[elem].participant.id === newOppoIDWinner ? participants[elem].participant.discordID: newOppoWinner)
+        matchWaitingOnLoserP1 = (participants[elem].participant.id === matchWaitingOnLoserP1ID ? participants[elem].participant.name : matchWaitingOnLoserP1)
+        matchWaitingOnLoserP1 = (participants[elem].participant.id === matchWaitingOnLoserP2ID ? participants[elem].participant.name : matchWaitingOnLoserP1)
+        matchWaitingOnWinnerP1 = (participants[elem].participant.id === matchWaitingOnWinnerP1ID ? participants[elem].participant.name : matchWaitingOnWinnerP1)
+        matchWaitingOnWinnerP2 = (participants[elem].participant.id === matchWaitingOnWinnerP2ID ? participants[elem].participant.name : matchWaitingOnWinnerP2)
     })
 
     if (matchWaitingOnLoser) {
