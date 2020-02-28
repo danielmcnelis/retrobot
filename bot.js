@@ -239,8 +239,6 @@ client.on('message', async message => {
     if(cmd === `!remove`) {
         let name = status['tournament']
         let person = message.mentions.users.first()
-        let participantID
-        let participants
 
         if (!name) {
             return message.channel.send('There is no active tournament.')
@@ -248,37 +246,14 @@ client.on('message', async message => {
             return message.channel.send('Please provide an @ mention of the player you wish to sign-up for the tournament.')
         }
         
-        console.log(challongeClient.participants.index({
+        challongeClient.participants.index({
             id: name,
             callback: (err, data) => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
                     console.log('ok...')
-                }
-            }
-        }))
-
-        console.log(participants)
-
-        let keys = Object.keys(participants)
-        console.log(keys)
-        keys.forEach(function(elem) {
-            if (participants[elem].participant.name === person.username) {
-                participantID = participants[elem].participant.id
-            }
-        })
-
-        console.log(participantID)
-
-        challongeClient.participants.destroy({
-            id: name,
-            participantID: participantID,
-            callback: (err) => {
-                if(err) {
-                    return message.channel.send(`Error: could not find "${person.username}" in the participants list.`)
-                } else {
-                    return message.channel.send(`${person.username} has been removed from the tournament.`)
+                    return removeParticipant(message, data, name, person)
                 }
             }
         })
@@ -986,4 +961,27 @@ function createUser(player, person) {
 }
 
 
+//REMOVE PARTICIPANT
+const removeParticipant = (message, participants, name, person) => {    
+    let participantID
+    let keys = Object.keys(participants)
+    console.log(keys)
+    keys.forEach(function(elem) {
+        if (participants[elem].participant.name === person.username) {
+            participantID = participants[elem].participant.id
+        }
+    })
 
+    console.log(participantID)
+    challongeClient.participants.destroy({
+        id: name,
+        participantID: participantID,
+        callback: (err) => {
+            if(err) {
+                return message.channel.send(`Error: could not find "${person.username}" in the participants list.`)
+            } else {
+                return message.channel.send(`${person.username} has been removed from the tournament.`)
+            }
+        }
+    })
+}
