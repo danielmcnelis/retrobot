@@ -163,6 +163,9 @@ client.on('message', async message => {
                     fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
                         if (err) console.log(err)
                     })
+                    fs.writeFile("./discordIDs.json", JSON.stringify({}), (err) => { 
+                        if (err) console.log(err)
+                    })
                     return message.channel.send(`Congratulations, your tournament results have been finalized: https://challonge.com/${name}.`)
                 }
             }
@@ -1304,7 +1307,6 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     console.log('matchWaitingOnLoserP2 is', matchWaitingOnLoserP2)
     console.log('matchWaitingOnWinnerP1 is', matchWaitingOnWinnerP1)
     console.log('matchWaitingOnWinnerP2 is', matchWaitingOnWinnerP2)
-
 
     if (matchWaitingOnLoser) {
         message.channel.send(`<@${loser.user.id}> you are waiting for the result of the match between ${matchWaitingOnLoserP1} and ${matchWaitingOnLoserP2}.`)
