@@ -601,14 +601,14 @@ Elo Rating: ${stats[player].toFixed(2)}`)
             return message.channel.send("Sorry, that user was not in the Goat Format database. Please try again.")
         }
 
-        if (message.author.roles.has(tourRole) || dude.roles.has(tourRole)) {
+        if (message.member.roles.has(tourRole) || dude.roles.has(tourRole)) {
             challongeClient.matches.index({
                 id: name,
                 callback: (err, data) => {
                     if(err) {
                         return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                     } else {
-                        return getParticipants(message, data, message.author, dude)
+                        return getParticipants(message, data, message.member, dude)
                     }
                 }
             }) 
