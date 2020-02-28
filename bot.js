@@ -603,7 +603,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
 
         if (message.member.roles.has(tourRole) || dude.roles.has(tourRole)) {
             challongeClient.matches.index({
-                id: name,
+                id: status['tournament'],
                 callback: (err, data) => {
                     if(err) {
                         return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
@@ -675,7 +675,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
 
         if (winningDude.roles.has(tourRole) || losingDude.roles.has(tourRole)) {
             challongeClient.matches.index({
-                id: name,
+                id: status['tournament'],
                 callback: (err, data) => {
                     if(err) {
                         return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
