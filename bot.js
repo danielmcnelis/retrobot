@@ -212,18 +212,22 @@ client.on('message', async message => {
     //CHALLONGE - SIGNUP
     if(cmd === `!check`) {
         let person = message.mentions.users.first()
-        console.log(person)
+        let dude = message.channel.members.find('id', person.id);
+        console.log(dude)
     }
 
     //CHALLONGE - SIGNUP
     if(cmd === `!signup`) {
         let name = status['tournament']
         let person = message.mentions.users.first()
+        let dude = message.channel.members.find('id', person.id);
 
         if (!name) {
             return message.channel.send('There is no active tournament.')
         } else if (!person) {
             return message.channel.send('Please provide an @ mention of the player you wish to sign-up for the tournament.')
+        } else if (!dude) {
+            return message.channel.send('I could not find that user in the server.')
         }
 
         challongeClient.participants.create({
@@ -235,7 +239,7 @@ client.on('message', async message => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
-                    person.member.addRole(tourRole);
+                    dude.member.addRole(tourRole);
                     discordIDs[person.username] = person.id
                     fs.writeFile("./discordIDs.json", JSON.stringify(discordIDs), (err) => { 
                         if (err) console.log(err)
@@ -251,11 +255,14 @@ client.on('message', async message => {
     if(cmd === `!remove`) {
         let name = status['tournament']
         let person = message.mentions.users.first()
+        let dude = message.channel.members.find('id', person.id);
 
         if (!name) {
             return message.channel.send('There is no active tournament.')
         } else if (!person) {
             return message.channel.send('Please provide an @ mention of the player you wish to sign-up for the tournament.')
+        } else if (!dude) {
+            return message.channel.send('I could not find that user in the server.')
         }
         
         challongeClient.participants.index({
@@ -264,7 +271,6 @@ client.on('message', async message => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
-                    console.log('ok...')
                     return removeParticipant(message, data, name, person)
                 }
             }
@@ -1054,11 +1060,16 @@ function createUser(player, person) {
 const removeParticipant = (message, participants, name, person, drop = false) => {    
     let participantID
     let keys = Object.keys(participants)
+    let dude = message.channel.members.find('id', person.id)
     keys.forEach(function(elem) {
         if (participants[elem].participant.name === person.username) {
             participantID = participants[elem].participant.id
         }
     })
+
+    if (!dude) {
+        return message.channel.send('I could not find that person in the server.')
+    } 
 
     challongeClient.participants.destroy({
         id: name,
@@ -1071,7 +1082,7 @@ const removeParticipant = (message, participants, name, person, drop = false) =>
                     return message.channel.send(`Error: could not find "${person.username}" in the participants list.`)
                 }
             } else {
-                person.member.removeRole(tourRole)
+                dude.member.removeRole(tourRole)
                 if (drop) {
                     return message.channel.send(`I have removed you from the tournament. Better luck next time!`)
                 } else {
