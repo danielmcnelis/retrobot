@@ -210,9 +210,6 @@ client.on('message', async message => {
     if(cmd === `!signup`) {
         let name = status['tournament']
         let person = message.mentions.users.first()
-        console.log(person)
-        console.log('LINE SKIPPPPP')
-        console.log(person.username)
 
         if (!name) {
             return message.channel.send('There is no active tournament.')
@@ -223,7 +220,8 @@ client.on('message', async message => {
         challongeClient.participants.create({
             id: name,
             participant: {
-            name: person.username
+            name: person.username,
+            discordID: person.user.id
             },
             callback: (err) => {
                 if(err) {
@@ -286,7 +284,7 @@ client.on('message', async message => {
 
     //CHALLONGE - INSPECT
     if(cmd === `!inspect`) {
-        let elem = (args[0] ? args[0] : 'matches')
+        let elem = (args[0] ? args[0] : 'tour')
         let name = (args[1] ? args[1] : status['tournament'])
 
         if (elem === 'participants') {
@@ -313,11 +311,22 @@ client.on('message', async message => {
                     }
                 }
             })
+        } else if (elem === 'tour') {
+            challongeClient.tournaments.show({
+                id: name,
+                callback: (err, data) => {
+                    if(err) {
+                        return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+                    } else {
+                        console.log(data)
+                        message.channel.send(`I printed the current tournament summary to the console.`)
+                    }
+                }
+            })
         } else {
             return message.channel.send(`Invalid input: ${args[0]} is not a tournament element.`)
         }
     }
-
 
 
     //REPLAY-LINKS AUTO MODERATION
@@ -1064,14 +1073,13 @@ const removeParticipant = (message, participants, name, person, drop = false) =>
 
 //TOURNAMENT CHECK
 const getParticipants = (message, matches, loser, winner) => {
-    console.log('getting participants...')
     challongeClient.participants.index({
         id: status['tournament'],
         callback: (err, data) => {
             if(err) {
                 return message.channel.send(`Error: the current tournament, "${status['tournament']}", could not be accessed.`)
             } else {
-                return checkMatches(message, matches, data, loser, winner)
+                return addMatchResult(message, matches, data, loser, winner)
             }
         }
     })
@@ -1079,8 +1087,7 @@ const getParticipants = (message, matches, loser, winner) => {
 
 
 //CHECK MATCHES
-const checkMatches = (message, matches, participants, loser, winner) => {
-    console.log('checking matches...')
+const addMatchResult = (message, matches, participants, loser, winner) => {
     let loserID
     let winnerID
     let matchID
@@ -1095,9 +1102,6 @@ const checkMatches = (message, matches, participants, loser, winner) => {
         }
     })
 
-    console.log(loserID)
-    console.log(winnerID)
-
     let keys = Object.keys(matches)
     keys.forEach(function(elem) {
         if ( (matches[elem].match.player1Id === loserID && matches[elem].match.player2Id === winnerID) || (matches[elem].match.player2Id === loserID && matches[elem].match.player1Id === winnerID) ) {
@@ -1109,9 +1113,6 @@ const checkMatches = (message, matches, participants, loser, winner) => {
             }
         }
     })
-
-    console.log(matchComplete)
-    console.log(matchID)
 
     if (!winnerID) {
         return message.channel.send(`${winner.user.username} is not in the tournament.`)
@@ -1163,9 +1164,94 @@ const checkMatches = (message, matches, participants, loser, winner) => {
                         if (err) console.log(err)
                     })
 
+                    checkMatches(message, matches, participants, matchID, loserID, winnerID, loser, winner)
                     return message.channel.send(`<@${loser.user.id}>, Your tournament loss to ${winner.user.username} has been recorded.`)
                 }
             }
         })
     }
+}
+
+
+
+//CHECK MATCHES
+const checkMatches = (message, matches, participants, matchID, loserID, winnerID, loser, winner) => {
+    let newOppoIDLoser
+    let newOppoLoser
+    let matchWaitingOnLoser
+    let matchWaitingOnLoserP1ID
+    let matchWaitingOnLoserP2ID
+    let matchWaitingOnLoserP1
+    let matchWaitingOnLoserP2
+    let newOppoIDWinner
+    let newOppoWinner
+    let matchWaitingOnWinner
+    let matchWaitingOnWinnerP1ID
+    let matchWaitingOnWinnerP2ID
+    let matchWaitingOnWinnerP1
+    let matchWaitingOnWinnerP2
+    let keys = Object.keys(matches)
+    let players = Object.keys(participants)
+
+    keys.forEach(function(elem) {
+        if ( (matches[elem].match.player1Id === winnerID || matches[elem].match.player2Id === winnerID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
+            if (matches[elem].match.state === 'pending') {
+                newOppoIDWinner = false
+                matchWaitingOnWinner = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
+            } else if (matches[elem].match.state === 'open') {
+                newOppoIDWinner = (matches[elem].match.player1Id === winnerID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
+                newMatchIDWinner = matches[elem].match.id
+            }
+        } else if ( (matches[elem].match.player1Id === loserID || matches[elem].match.player2Id === loserID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
+            if (matches[elem].match.state === 'pending') {
+                newOppoIDLoser = false
+                matchWaitingOnLoser = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
+            } else if (matches[elem].match.state === 'open') {
+                newOppoIDLoser = (matches[elem].match.player1Id === loserID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
+                newMatchIDLoser = matches[elem].match.id
+            }
+        }
+        
+        if (matches[elem].match.id === matchWaitingOnLoser) {
+            matchWaitingOnLoserP1ID = matches[elem].match.player1Id
+            matchWaitingOnLoserP2ID = matches[elem].match.player2Id
+        } else if (matches[elem].match.id === matchWaitingOnWinner) {
+            matchWaitingOnWinnerP1ID = matches[elem].match.player1Id
+            matchWaitingOnWinnerP2ID = matches[elem].match.player2Id
+        }     
+    })
+
+    players.forEach(function(elem) {
+        if (participants[elem].participant.id === newOppoIDLoser) {
+            newOppoLoser = participants[elem].participant.discordID
+        } else if (participants[elem].participant.id === newOppoIDWinner) {
+            newOppoWinner = participants[elem].participant.discordID
+        } else if (participants[elem].participant.id === matchWaitingOnLoserP1ID) {
+            matchWaitingOnLoserP1 = participants[elem].participant.discordID
+        } else if (participants[elem].participant.id === matchWaitingOnLoserP2ID) {
+            matchWaitingOnLoserP2 = participants[elem].participant.discordID
+        } else if (participants[elem].participant.id === matchWaitingOnWinnerP1ID) {
+            matchWaitingOnWinnerP1 = participants[elem].participant.discordID
+        } else if (participants[elem].participant.id === matchWaitingOnWinnerP2ID) {
+            matchWaitingOnWinnerP2 = participants[elem].participant.discordID
+        }
+    })
+
+    if (matchWaitingOnLoser) {
+        message.channel.send(`<@${loser.user.id}> you are waiting for the result of the match between ${matchWaitingOnLoserP1.user.username} and ${matchWaitingOnLoserP2.user.username}.`)
+    } else if (newOppoLoser) {
+        message.channel.send(`New Match: <@${loser.user.id}> vs <@${newOppoLoser.user.id}>. Good luck to both duelists.`)
+    } else {
+        message.channel.send(`<@${loser.user.username}>, you are waiting on multiple matches to finish. Grab a snack and stay hydrated.`)
+    }
+
+    if (matchWaitingOnWinner) {
+        message.channel.send(`<@${winner.user.id}> you are waiting for the result of the match between ${matchWaitingOnWinnerP1.user.username} and ${matchWaitingOnWinnerP2.user.username}.`)
+    } else if (newOppoWinner) {
+        message.channel.send(`New Match: <@${winner.user.id}> vs <@${newOppoWinner.user.id}>. Good luck to both duelists.`)
+    } else {
+        message.channel.send(`<@${winner.user.username}>, you are waiting on multiple matches to finish. Grab a snack and stay hydrated.`)
+    }
+    
+    return
 }
