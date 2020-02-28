@@ -1368,6 +1368,8 @@ function createUser(player, person) {
 const getDeckType = (message, dude, url) => {
     let keys = Object.keys(deckTypeAlius)
 
+    console.log(dude)
+    
 	const filter = m => m.author.id === dude
 	message.channel.send("What kind of deck is this?")
 	message.channel.awaitMessages(filter, {
@@ -1375,12 +1377,15 @@ const getDeckType = (message, dude, url) => {
         time: 200000
     }).then(collected => {
 
+        console.log('collected...')
 
         keys.forEach(function(elem) {
             if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
                    if (decks[maid][elem].url) {
+                       console.log('first option')
                         return getDeckOverwriteConfirmation(message, maid, url, elem, deckTypeAlius[elem][0])
                    } else {
+                    console.log('second option')
                        decks[maid][elem].url = url
                        return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)
                    }
