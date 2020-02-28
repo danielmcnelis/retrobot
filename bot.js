@@ -240,6 +240,7 @@ client.on('message', async message => {
         let name = status['tournament']
         let person = message.mentions.users.first()
         let participantID
+        let participants
 
         if (!name) {
             return message.channel.send('There is no active tournament.')
@@ -248,16 +249,19 @@ client.on('message', async message => {
         }
         
         
-        let participants = challongeClient.participants.index({
+        challongeClient.participants.index({
             id: name,
             callback: (err, data) => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
-                    return data
+                    console.log('ok...')
+                    participants = data
                 }
             }
         });
+
+        console.log(participants)
 
         let keys = Object.keys(participants)
         console.log(keys)
