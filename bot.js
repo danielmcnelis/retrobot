@@ -1088,6 +1088,8 @@ const checkMatches = (message, matches, participants, loser, winner) => {
     let matchStatus
     let players = Object.keys(participants)
     console.log(players)
+    console.log(winner.username)
+    console.log(loser.username)
     players.forEach(function(elem) {
         if (participants[elem].participant.name === loser.username) {
             loserID = participants[elem].participant.id
