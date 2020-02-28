@@ -238,6 +238,8 @@ client.on('message', async message => {
     //CHALLONGE - INSPECT
     if(cmd === `!inspect`) {
         let name = (args[0] ? args[0] : status['tournament'])
+        console.log(name)
+
         let newVar = challongeClient.participants.index({
             id: name,
             callback: (err) => {
