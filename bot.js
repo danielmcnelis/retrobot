@@ -211,7 +211,7 @@ client.on('message', async message => {
         let person = message.mentions.users.first()
         console.log(person)
         console.log('LINE SKIPPPPP')
-        console.log(person.tag)
+        console.log(person.user.tag)
 
         if (!name) {
             return message.channel.send('There is no active tournament.')
@@ -222,13 +222,13 @@ client.on('message', async message => {
         challongeClient.participants.create({
             id: name,
             participant: {
-            name: person.tag
+            name: person.user.tag
             },
             callback: (err) => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
-                    return message.channel.send(`${person.tag} has been signed-up for the tournament.`)
+                    return message.channel.send(`${person.user.tag} has been signed-up for the tournament.`)
                 }
             }
         })
@@ -967,7 +967,7 @@ const removeParticipant = (message, participants, name, person) => {
     let keys = Object.keys(participants)
     console.log(keys)
     keys.forEach(function(elem) {
-        if (participants[elem].participant.name === person.tag) {
+        if (participants[elem].participant.name === person.user.tag) {
             participantID = participants[elem].participant.id
         }
     })
@@ -978,9 +978,9 @@ const removeParticipant = (message, participants, name, person) => {
         participantID: participantID,
         callback: (err) => {
             if(err) {
-                return message.channel.send(`Error: could not find "${person.tag}" in the participants list.`)
+                return message.channel.send(`Error: could not find "${person.user.tag}" in the participants list.`)
             } else {
-                return message.channel.send(`${person.tag} has been removed from the tournament.`)
+                return message.channel.send(`${person.user.tag} has been removed from the tournament.`)
             }
         }
     })
