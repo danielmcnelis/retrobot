@@ -1309,23 +1309,23 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     console.log('matchWaitingOnWinnerP2 is', matchWaitingOnWinnerP2)
 
     if (matchWaitingOnLoser) {
-        message.channel.send(`<@${loser.user.id}> you are waiting for the result of the match between ${matchWaitingOnLoserP1} and ${matchWaitingOnLoserP2}.`)
+        message.channel.send(`${loser.user.id}, you are waiting for the result of ${matchWaitingOnLoserP1} vs ${matchWaitingOnLoserP2}.`)
     } else if (newOppoLoser) {
-        message.channel.send(`New Match: <@${loser.user.id}> vs <@${newOppoLoser.user.id}>. Good luck to both duelists.`)
+        message.channel.send(`New Match: <@${loser.user.id}> vs <@${newOppoLoser}>. Good luck to both duelists.`)
     } else if (matchWaitingOnLoser) {
-        message.channel.send(`${loser.user.username}, you are waiting on multiple matches to finish. Grab a snack and stay hydrated.`)
+        message.channel.send(`${loser.user.username}, you are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
     } else {
-        message.channel.send(`${loser.user.username}, you are eliminated from the tournament. Better luck next time!`)
+        message.channel.send(`<@${loser.user.id}>, you are eliminated from the tournament. Better luck next time!`)
     }
 
     if (matchWaitingOnWinner) {
-        message.channel.send(`<@${winner.user.id}> you are waiting for the result of the match between ${matchWaitingOnWinnerP1} and ${matchWaitingOnWinnerP2}.`)
+        message.channel.send(`${winner.user.username}, you are waiting for the result of ${matchWaitingOnWinnerP1} vs ${matchWaitingOnWinnerP2}.`)
     } else if (newOppoWinner) {
-        message.channel.send(`New Match: <@${winner.user.id}> vs <@${newOppoWinner.user.id}>. Good luck to both duelists.`)
+        message.channel.send(`New Match: <@${winner.user.id}> vs <@${newOppoWinner}>. Good luck to both duelists.`)
     } else if (matchWaitingOnWinner) {
-        message.channel.send(`${winner.user.username}, you are waiting on multiple matches to finish. Grab a snack and stay hydrated.`)
+        message.channel.send(`${winner.user.username}, you are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
     } else {
-        message.channel.send(`${winner.user.username}, congratulations, you won the tournament!`)
+        message.channel.send(`<@${winner.user.id}>, congratulations, you won the tournament!`)
     }
     
     return
