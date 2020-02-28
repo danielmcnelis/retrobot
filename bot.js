@@ -235,6 +235,55 @@ client.on('message', async message => {
     }
 
 
+    //CHALLONGE - REMOVE
+    if(cmd === `!remove`) {
+        let name = status['tournament']
+        let person = message.mentions.users.first()
+        let participantID
+
+        if (!name) {
+            return message.channel.send('There is no active tournament.')
+        } else if (!person) {
+            return message.channel.send('Please provide an @ mention of the player you wish to sign-up for the tournament.')
+        }
+        
+        
+        let participants = challongeClient.participants.index({
+            id: name,
+            callback: (err, data) => {
+                if(err) {
+                    return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+                } else {
+                    return data
+                }
+            }
+        });
+
+        let keys = Object.keys(participants)
+        console.log(keys)
+        keys.forEach(function(elem) {
+            if (participants[elem].participant.name === person.username) {
+                participantID = participants[elem].participant.id
+            }
+        })
+
+        console.log(participantID)
+
+        challongeClient.participants.destroy({
+            id: name,
+            participantID: participantID,
+            callback: (err) => {
+                if(err) {
+                    return message.channel.send(`Error: could not find "${person.username}" in the participants list.`)
+                } else {
+                    return message.channel.send(`${person.username} has been removed from the tournament.`)
+                }
+            }
+        })
+    }
+
+
+
     //CHALLONGE - INSPECT
     if(cmd === `!inspect`) {
         let name = (args[0] ? args[0] : status['tournament'])
