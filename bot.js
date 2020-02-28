@@ -15,6 +15,7 @@ const challongeClient = challonge.createClient({
 
 const blank = require('./blank.json')
 const status = require('./status.json')
+const discordIDs = require('./discordIDs.json')
 const names = require('./names.json')
 const decks = require('./decks.json') 
 const stats = require('./stats.json')
@@ -217,18 +218,19 @@ client.on('message', async message => {
             return message.channel.send('Please provide an @ mention of the player you wish to sign-up for the tournament.')
         }
 
-        console.log(person.id)
-
         challongeClient.participants.create({
             id: name,
             participant: {
             name: person.username,
-            discordID: person.id
             },
             callback: (err) => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
+                    discordIDs[person.username] = person.id
+                    fs.writeFile("./discordIDs.json", JSON.stringify(discordIDs), (err) => { 
+                        if (err) console.log(err)
+                    })
                     return message.channel.send(`${person.username} has been signed-up for the tournament.`)
                 }
             }
@@ -1266,12 +1268,12 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
         console.log('checking a participant:', participants[elem].participant.id)
          if (participants[elem].participant.id === newOppoIDLoser) {
             console.log('^ this is the new opponent for the loser')
-            newOppoLoser = participants[elem].participant.discordID
+            newOppoLoser = discordIDs[participants[elem].participant.name]
          }
 
          if (participants[elem].participant.id === newOppoIDWinner) {
             console.log('^ this is the new opponent for the winner')
-            newOppoWinner = participants[elem].participant.discordID
+            newOppoWinner = discordIDs[participants[elem].participant.name]
          }
          
          if (participants[elem].participant.id === matchWaitingOnLoserP1ID) {
@@ -1295,7 +1297,14 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
          }
     })
 
-    
+
+    console.log('newOppoLoser is', newOppoLoser)
+    console.log('newOppoWinner is', newOppoWinner)
+    console.log('matchWaitingOnLoserP1 is', matchWaitingOnLoserP1)
+    console.log('matchWaitingOnLoserP2 is', matchWaitingOnLoserP2)
+    console.log('matchWaitingOnWinnerP1 is', matchWaitingOnWinnerP1)
+    console.log('matchWaitingOnWinnerP2 is', matchWaitingOnWinnerP2)
+
 
     if (matchWaitingOnLoser) {
         message.channel.send(`<@${loser.user.id}> you are waiting for the result of the match between ${matchWaitingOnLoserP1} and ${matchWaitingOnLoserP2}.`)
