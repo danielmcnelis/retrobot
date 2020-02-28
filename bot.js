@@ -230,6 +230,7 @@ client.on('message', async message => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
+                    person.addRole(tourRole);
                     discordIDs[person.username] = person.id
                     fs.writeFile("./discordIDs.json", JSON.stringify(discordIDs), (err) => { 
                         if (err) console.log(err)
@@ -1065,6 +1066,7 @@ const removeParticipant = (message, participants, name, person, drop = false) =>
                     return message.channel.send(`Error: could not find "${person.username}" in the participants list.`)
                 }
             } else {
+                person.removeRole(tourRole)
                 if (drop) {
                     return message.channel.send(`I have removed you from the tournament. Better luck next time!`)
                 } else {
@@ -1199,7 +1201,6 @@ const getUpdatedMatchesObject = (message, participants, matchID, loserID, winner
 const checkMatches = (message, matches, participants, matchID, loserID, winnerID, loser, winner) => {
     let newOppoIDLoser
     let newOppoLoser
-    let newMatchIDLoser
     let matchWaitingOnLoser
     let matchWaitingOnLoserP1ID
     let matchWaitingOnLoserP2ID
@@ -1207,7 +1208,6 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     let matchWaitingOnLoserP2
     let newOppoIDWinner
     let newOppoWinner
-    let newMatchIDWinner
     let matchWaitingOnWinner
     let matchWaitingOnWinnerP1ID
     let matchWaitingOnWinnerP2ID
@@ -1216,33 +1216,18 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     let keys = Object.keys(matches)
     let players = Object.keys(participants)
 
-    console.log(participants)
-
-    console.log('matchID is', matchID)
-    console.log('loserID is', loserID)
-    console.log('winnerID is', winnerID)
-
     keys.forEach(function(elem) {
-        console.log('checking a match...')
-        console.log('player1Id is', matches[elem].match.player1Id)
-        console.log('player2Id is', matches[elem].match.player2Id)
-        console.log('player1PrereqMatchId is', matches[elem].match.player1PrereqMatchId)
-        console.log('player2PrereqMatchId is', matches[elem].match.player2PrereqMatchId)
         if ( (matches[elem].match.player1Id === winnerID || matches[elem].match.player2Id === winnerID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
             if (matches[elem].match.state === 'pending') {
-                console.log('this matching match is PENDING...')
                 matchWaitingOnWinner = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
             } else if (matches[elem].match.state === 'open') {
-                console.log('this matching match is OPEN...')
                 newOppoIDWinner = (matches[elem].match.player1Id === winnerID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
                 newMatchIDWinner = matches[elem].match.id
             }
         } else if ( (matches[elem].match.player1Id === loserID || matches[elem].match.player2Id === loserID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
             if (matches[elem].match.state === 'pending') {
-                console.log('this matching match is PENDING...')
                 matchWaitingOnLoser = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
             } else if (matches[elem].match.state === 'open') {
-                console.log('this matching match is OPEN...')
                 newOppoIDLoser = (matches[elem].match.player1Id === loserID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
                 newMatchIDLoser = matches[elem].match.id
             }
@@ -1261,71 +1246,52 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
         }
     })
 
-    console.log('done checking matches...')
-    console.log(`loser is about to play in ${newMatchIDLoser} against ${newOppoIDLoser}`)
-    console.log(`loser is waiting on ${matchWaitingOnLoser}: ${matchWaitingOnLoserP1ID} vs ${matchWaitingOnLoserP2ID}`)
-    console.log(`winner is about to play in ${newMatchIDWinner} against ${newOppoIDWinner}`)
-    console.log(`winner is waiting on ${matchWaitingOnWinner}: ${matchWaitingOnWinnerP1ID} vs ${matchWaitingOnWinnerP2ID}`)
-
     players.forEach(function(elem) {
-        console.log('checking a participant:', participants[elem].participant.id)
          if (participants[elem].participant.id === newOppoIDLoser) {
-            console.log('^ this is the new opponent for the loser')
             newOppoLoser = discordIDs[participants[elem].participant.name]
          }
 
          if (participants[elem].participant.id === newOppoIDWinner) {
-            console.log('^ this is the new opponent for the winner')
             newOppoWinner = discordIDs[participants[elem].participant.name]
          }
          
          if (participants[elem].participant.id === matchWaitingOnLoserP1ID) {
-            console.log('^ this is p1 that the loser is waiting on')
             matchWaitingOnLoserP1 = participants[elem].participant.name
          }
          
          if (participants[elem].participant.id === matchWaitingOnLoserP2ID) {
-            console.log('^ this is p2 that the loser is waiting on')
             matchWaitingOnLoserP2 = participants[elem].participant.name
          }
          
          if (participants[elem].participant.id === matchWaitingOnWinnerP1ID) {
-            console.log('^ this is p1 that the winner is waiting on')
             matchWaitingOnWinnerP1 = participants[elem].participant.name
          }
          
          if (participants[elem].participant.id === matchWaitingOnWinnerP2ID) {
-            console.log('^ this is p2 that the winner is waiting on')
             matchWaitingOnWinnerP2 = participants[elem].participant.name
          }
     })
 
-
-    console.log('newOppoLoser is', newOppoLoser)
-    console.log('newOppoWinner is', newOppoWinner)
-    console.log('matchWaitingOnLoserP1 is', matchWaitingOnLoserP1)
-    console.log('matchWaitingOnLoserP2 is', matchWaitingOnLoserP2)
-    console.log('matchWaitingOnWinnerP1 is', matchWaitingOnWinnerP1)
-    console.log('matchWaitingOnWinnerP2 is', matchWaitingOnWinnerP2)
-
     if (matchWaitingOnLoser) {
-        message.channel.send(`${loser.user.username}, you are waiting for the result of ${matchWaitingOnLoserP1} vs ${matchWaitingOnLoserP2}.`)
+        message.channel.send(`${loser.user.username}, You are waiting for the result of ${matchWaitingOnLoserP1} vs ${matchWaitingOnLoserP2}.`)
     } else if (newOppoLoser) {
         message.channel.send(`New Match: <@${loser.user.id}> vs <@${newOppoLoser}>. Good luck to both duelists.`)
     } else if (matchWaitingOnLoser) {
-        message.channel.send(`${loser.user.username}, you are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
+        message.channel.send(`${loser.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
     } else {
-        message.channel.send(`<@${loser.user.id}>, you are eliminated from the tournament. Better luck next time!`)
+        loser.removeRole(tourRole)
+        message.channel.send(`${loser.user.username}, You are eliminated from the tournament. Better luck next time!`)
     }
 
     if (matchWaitingOnWinner) {
-        message.channel.send(`${winner.user.username}, you are waiting for the result of ${matchWaitingOnWinnerP1} vs ${matchWaitingOnWinnerP2}.`)
+        message.channel.send(`${winner.user.username}, You are waiting for the result of ${matchWaitingOnWinnerP1} vs ${matchWaitingOnWinnerP2}.`)
     } else if (newOppoWinner) {
         message.channel.send(`New Match: <@${winner.user.id}> vs <@${newOppoWinner}>. Good luck to both duelists.`)
     } else if (matchWaitingOnWinner) {
-        message.channel.send(`${winner.user.username}, you are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
+        message.channel.send(`${winner.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
     } else {
-        message.channel.send(`<@${winner.user.id}>, congratulations, you won the tournament!`)
+        winner.removeRole(tourRole)
+        message.channel.send(`<@${winner.user.id}>, You won the tournament! Congratulations on your stellar performance!`)
     }
     
     return
