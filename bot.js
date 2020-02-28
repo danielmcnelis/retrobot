@@ -1262,12 +1262,19 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
 
     players.forEach(function(elem) {
         newOppoLoser = (participants[elem].participant.id === newOppoIDLoser ? participants[elem].participant.discordID : newOppoLoser)
-        newOppoWinner = (participants[elem].participant.id === newOppoIDWinner ? participants[elem].participant.discordID: newOppoWinner)
+        newOppoWinner = (participants[elem].participant.id === newOppoIDWinner ? participants[elem].participant.discordID : newOppoWinner)
         matchWaitingOnLoserP1 = (participants[elem].participant.id === matchWaitingOnLoserP1ID ? participants[elem].participant.name : matchWaitingOnLoserP1)
-        matchWaitingOnLoserP1 = (participants[elem].participant.id === matchWaitingOnLoserP2ID ? participants[elem].participant.name : matchWaitingOnLoserP1)
+        matchWaitingOnLoserP2 = (participants[elem].participant.id === matchWaitingOnLoserP2ID ? participants[elem].participant.name : matchWaitingOnLoserP2)
         matchWaitingOnWinnerP1 = (participants[elem].participant.id === matchWaitingOnWinnerP1ID ? participants[elem].participant.name : matchWaitingOnWinnerP1)
         matchWaitingOnWinnerP2 = (participants[elem].participant.id === matchWaitingOnWinnerP2ID ? participants[elem].participant.name : matchWaitingOnWinnerP2)
     })
+
+    console.log(newOppoLoser)
+    console.log(newOppoWinner)
+    console.log(matchWaitingOnLoserP1)
+    console.log(matchWaitingOnLoserP2)
+    console.log(matchWaitingOnWinnerP1)
+    console.log(matchWaitingOnWinnerP2)
 
     if (matchWaitingOnLoser) {
         message.channel.send(`<@${loser.user.id}> you are waiting for the result of the match between ${matchWaitingOnLoserP1} and ${matchWaitingOnLoserP2}.`)
