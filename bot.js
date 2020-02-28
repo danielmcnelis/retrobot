@@ -1395,46 +1395,6 @@ Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimensi
 
 
 
-//GETDECKTITLE
-
-getDeckTitle(client, message, dude) {
-
-
-if(!(collected.first().content.toLowerCase() == "no") || !(collected.first().content.toLowerCase() == "n") || !(collected.first().content.toLowerCase() == "nah") || !(collected.first().content.toLowerCase() == "nope") || !(collected.first().content.toLowerCase() == "naw") || !(collected.first().content.toLowerCase() == "na")) {
-	
-	titles[dude] = collected.first().content;
-	fs.writeFile("./titles.json", JSON.stringify(titles), (err) => {
-		if (err) console.log(err) });
-
-	if(easyDiary[message.author.id].E5 == 0) {
-	easyDiary[message.author.id].E5 = 1;
-   	fs.writeFile("./easyDiary.json", JSON.stringify(easyDiary), (err) => {
-	if (err) console.log(err) });
-	setTimeout(function(){ methods.checkDiaries(client, message, message.author.id, 'easy'); }, 6000);
-	setTimeout(function(){ message.channel.send("<@" + message.author.id + "> Congrats, you completed Task #9 in the Easy Diary!\n<:legend:586697813115535389> Save a Deck  <:legend:586697813115535389>");}, 3000); } 
-
-	return message.channel.send("Thanks. I have saved your Deck!");}
-
-}).catch(err => {
-
-	delete titles[dude];
-	fs.writeFile("./titles.json", JSON.stringify(titles), (err) => {
-		if (err) console.log(err) });
-
-	if(easyDiary[message.author.id].E5 == 0) {
-	easyDiary[message.author.id].E5 = 1;
-   	fs.writeFile("./easyDiary.json", JSON.stringify(easyDiary), (err) => {
-	if (err) console.log(err) });
-	setTimeout(function(){ methods.checkDiaries(client, message, message.author.id, 'easy'); }, 6000);
-	setTimeout(function(){ message.channel.send("<@" + message.author.id + "> Congrats, you completed Task #9 in the Easy Diary!\n<:legend:586697813115535389> Save a Deck  <:legend:586697813115535389>");}, 3000); } 
-
-	return message.channel.send("Ok, I will simply save this Deck as \"" + names[dude] + "\'s Deck\"."); });
-
-},
-
-
-
-
 
 //REMOVE PARTICIPANT
 const removeParticipant = (message, participants, name, person, drop = false) => {    
