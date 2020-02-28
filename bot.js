@@ -1086,9 +1086,6 @@ const checkMatches = (message, matches, participants, loser, winner) => {
     let matchID
     let matchStatus
     let players = Object.keys(participants)
-    console.log(players)
-    console.log(winner.user.username)
-    console.log(loser.user.username)
     players.forEach(function(elem) {
         if (participants[elem].participant.name === loser.user.username) {
             loserID = participants[elem].participant.id
@@ -1105,11 +1102,14 @@ const checkMatches = (message, matches, participants, loser, winner) => {
         if ( (matches[elem].match.player1Id === loserID && matches[elem].match.player2Id === winnerID) || (matches[elem].match.player2Id === loserID && matches[elem].match.player1Id === winnerID) ) {
             if (matches[elem].match.state === 'complete') {
                 matchStatus = 'complete'
-            } else if (matches[elem].match.state === 'pending') {
+            } else if (matches[elem].match.state === 'open') {
                 matchID = matches[elem].match.id
             }
         }
     })
+
+    console.log(matchStatus)
+    console.log(matchID)
 
     if (!winnerID) {
         return message.channel.send(`${winner.user.username} is not in the tournament.`)
