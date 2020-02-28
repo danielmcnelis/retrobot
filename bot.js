@@ -1280,16 +1280,20 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
         message.channel.send(`<@${loser.user.id}> you are waiting for the result of the match between ${matchWaitingOnLoserP1} and ${matchWaitingOnLoserP2}.`)
     } else if (newOppoLoser) {
         message.channel.send(`New Match: <@${loser.user.id}> vs <@${newOppoLoser.user.id}>. Good luck to both duelists.`)
-    } else {
+    } else if (matchWaitingOnLoser) {
         message.channel.send(`${loser.user.username}, you are waiting on multiple matches to finish. Grab a snack and stay hydrated.`)
+    } else {
+        message.channel.send(`${loser.user.username}, you are eliminated from the tournament. Better luck next time!`)
     }
 
     if (matchWaitingOnWinner) {
         message.channel.send(`<@${winner.user.id}> you are waiting for the result of the match between ${matchWaitingOnWinnerP1} and ${matchWaitingOnWinnerP2}.`)
     } else if (newOppoWinner) {
         message.channel.send(`New Match: <@${winner.user.id}> vs <@${newOppoWinner.user.id}>. Good luck to both duelists.`)
-    } else {
+    } else if (matchWaitingOnWinner) {
         message.channel.send(`${winner.user.username}, you are waiting on multiple matches to finish. Grab a snack and stay hydrated.`)
+    } else {
+        message.channel.send(`${winner.user.username}, congratulations, you won the tournament!`)
     }
     
     return
