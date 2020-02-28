@@ -211,7 +211,7 @@ client.on('message', async message => {
         let person = message.mentions.users.first()
         console.log(person)
         console.log('LINE SKIPPPPP')
-        console.log(person.username)
+        console.log(person.user.tag)
 
         if (!name) {
             return message.channel.send('There is no active tournament.')
@@ -222,7 +222,7 @@ client.on('message', async message => {
         challongeClient.participants.create({
             id: name,
             participant: {
-            name: person.username
+            name: person.user.tag
             },
             callback: (err) => {
                 if(err) {
@@ -967,7 +967,7 @@ const removeParticipant = (message, participants, name, person) => {
     let keys = Object.keys(participants)
     console.log(keys)
     keys.forEach(function(elem) {
-        if (participants[elem].participant.name === person.username) {
+        if (participants[elem].participant.name === person.user.tag) {
             participantID = participants[elem].participant.id
         }
     })
