@@ -1165,9 +1165,11 @@ const addMatchResult = (message, matches, participants, loser, winner) => {
                     fs.writeFile("./records.json", JSON.stringify(json), (err) => {
                         if (err) console.log(err)
                     })
-
-                    checkMatches(message, matches, participants, matchID, loserID, winnerID, loser, winner)
-                    return message.channel.send(`<@${loser.user.id}>, Your tournament loss to ${winner.user.username} has been recorded.`)
+                    
+                    message.channel.send(`<@${loser.user.id}>, Your tournament loss to ${winner.user.username} has been recorded.`)
+                    return setTimeout(function() {
+                        checkMatches(message, matches, participants, matchID, loserID, winnerID, loser, winner)
+                    }, 3000)	
                 }
             }
         })
@@ -1198,7 +1200,6 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     keys.forEach(function(elem) {
         if ( (matches[elem].match.player1Id === winnerID || matches[elem].match.player2Id === winnerID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
             if (matches[elem].match.state === 'pending') {
-                newOppoIDWinner = false
                 matchWaitingOnWinner = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
             } else if (matches[elem].match.state === 'open') {
                 newOppoIDWinner = (matches[elem].match.player1Id === winnerID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
@@ -1206,7 +1207,6 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
             }
         } else if ( (matches[elem].match.player1Id === loserID || matches[elem].match.player2Id === loserID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
             if (matches[elem].match.state === 'pending') {
-                newOppoIDLoser = false
                 matchWaitingOnLoser = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
             } else if (matches[elem].match.state === 'open') {
                 newOppoIDLoser = (matches[elem].match.player1Id === loserID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
@@ -1222,6 +1222,9 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
             matchWaitingOnWinnerP2ID = matches[elem].match.player2Id
         }     
     })
+
+    console.log(matchWaitingOnLoser)
+    console.log(matchWaitingOnWinner)
 
     players.forEach(function(elem) {
         if (participants[elem].participant.id === newOppoIDLoser) {
@@ -1244,7 +1247,7 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     } else if (newOppoLoser) {
         message.channel.send(`New Match: <@${loser.user.id}> vs <@${newOppoLoser.user.id}>. Good luck to both duelists.`)
     } else {
-        message.channel.send(`<@${loser.user.username}>, you are waiting on multiple matches to finish. Grab a snack and stay hydrated.`)
+        message.channel.send(`${loser.user.username}, you are waiting on multiple matches to finish. Grab a snack and stay hydrated.`)
     }
 
     if (matchWaitingOnWinner) {
@@ -1252,7 +1255,7 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     } else if (newOppoWinner) {
         message.channel.send(`New Match: <@${winner.user.id}> vs <@${newOppoWinner.user.id}>. Good luck to both duelists.`)
     } else {
-        message.channel.send(`<@${winner.user.username}>, you are waiting on multiple matches to finish. Grab a snack and stay hydrated.`)
+        message.channel.send(`${winner.user.username}, you are waiting on multiple matches to finish. Grab a snack and stay hydrated.`)
     }
     
     return
