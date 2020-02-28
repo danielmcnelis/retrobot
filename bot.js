@@ -8,6 +8,7 @@ const serverID = '682361248532398143'
 const botRole = '682389567185223713'
 const modRole = '682361608848015409'
 const goatRole = '682461775907913748'
+const tourRole = '682748333940277269'
 const challongeClient = challonge.createClient({
     apiKey: 'JE7pFfKV8XhdZXshqHNjVySDfoVUZeAtDRcULUln'
 });
@@ -299,7 +300,7 @@ client.on('message', async message => {
                         message.channel.send(`I printed the list of tournament participants to the console.`)
                     }
                 }
-            });
+            })
         } else if (elem === 'matches') {
             challongeClient.matches.index({
                 id: name,
@@ -311,7 +312,7 @@ client.on('message', async message => {
                         message.channel.send(`I printed the list of tournament matches to the console.`)
                     }
                 }
-            });
+            })
         } else {
             return message.channel.send(`Invalid input: ${args[0]} is not a tournament element.`)
         }
@@ -580,6 +581,7 @@ Elo Rating: ${stats[player].toFixed(2)}`)
     //LOSS
     if(losscom.includes(cmd)) {
         const oppo = messageArray[1].replace(/[\\<>@#&!]/g, "")
+        const dude = message.channel.members.find('id', oppo);
         const statsLoser = stats[maid];
         const statsWinner = stats[oppo];
 
@@ -597,6 +599,19 @@ Elo Rating: ${stats[player].toFixed(2)}`)
         } else if(!stats[oppo]) { 
             createUser(oppo)
             return message.channel.send("Sorry, that user was not in the Goat Format database. Please try again.")
+        }
+
+        if (message.author.roles.has(tourRole) || dude.roles.has(tourRole)) {
+            challongeClient.matches.index({
+                id: name,
+                callback: (err, data) => {
+                    if(err) {
+                        return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+                    } else {
+                        return getParticipants(message, data, message.author, dude)
+                    }
+                }
+            }) 
         }
 
         backup[maid] = statsLoser;
@@ -635,6 +650,8 @@ Elo Rating: ${stats[player].toFixed(2)}`)
     if(cmd === `!manual`) {
         const winner = messageArray[1].replace(/[\\<>@#&!]/g, "");
         const loser = messageArray[2].replace(/[\\<>@#&!]/g, "");
+        const winningDude = message.channel.members.find('id', winner);
+        const losingDude = message.channel.members.find('id', loser);
         const statsLoser = stats[loser];
         const statsWinner = stats[winner];
 
@@ -654,6 +671,19 @@ Elo Rating: ${stats[player].toFixed(2)}`)
         } else if(!stats[winner]) {
 	        createUser(winner);
             return message.channel.send(`Sorry, <@${winner}> was not in the Goat Format database. Please try again.`)
+        }
+
+        if (winningDude.roles.has(tourRole) || losingDude.roles.has(tourRole)) {
+            challongeClient.matches.index({
+                id: name,
+                callback: (err, data) => {
+                    if(err) {
+                        return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+                    } else {
+                        return getParticipants(message, data, losingDude, winningDude)
+                    }
+                }
+            }) 
         }
 
         backup[loser] = statsLoser;
@@ -1001,14 +1031,12 @@ function createUser(player, person) {
 const removeParticipant = (message, participants, name, person, drop = false) => {    
     let participantID
     let keys = Object.keys(participants)
-    console.log(keys)
     keys.forEach(function(elem) {
         if (participants[elem].participant.name === person.username) {
             participantID = participants[elem].participant.id
         }
     })
 
-    console.log(participantID)
     challongeClient.participants.destroy({
         id: name,
         participantID: participantID,
@@ -1028,4 +1056,101 @@ const removeParticipant = (message, participants, name, person, drop = false) =>
             }
         }
     })
+}
+
+
+
+
+//TOURNAMENT CHECK
+const getParticipants = (message, matches, loser, winner) => {
+    challongeClient.participants.index({
+        id: status['tournament'],
+        callback: (err, data) => {
+            if(err) {
+                return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+            } else {
+                return checkMatches(message, matches, data, loser, winner)
+            }
+        }
+    })
+}
+
+
+//CHECK MATCHES
+const checkMatches = (message, matches, participants, loser, winner) => {
+    let loserID
+    let winnerID
+    let matchID
+    let matchStatus
+    let players = Object.keys(participants)
+    players.forEach(function(elem) {
+        if (participants[elem].participant.name === loser.username) {
+            loserID = participants[elem].participant.id
+        } else if (participants[elem].participant.name === winner.username) {
+            winnerID = participants[elem].participant.id
+        }
+    })
+
+    let keys = Object.keys(matches)
+    keys.forEach(function(elem) {
+        if ( (data[elem].match.player1Id === loserID && data[elem].match.player2Id === winnerID) || (data[elem].match.player2Id === loserID && data[elem].match.player1Id === winnerID) ) {
+            if (data[elem].match.state === 'complete') {
+                matchStatus = 'complete'
+            } else if (data[elem].match.state === 'pending') {
+                matchID = data[elem].match.id
+            }
+        }
+    })
+
+    if (matchStatus = 'complete' && !matchID) {
+        return message.channel.send(`The match result between ${winner.username} and ${loser.username} was already recorded.`)
+    } else if (!matchStatus && !matchID) {
+        return message.channel.send(`${winner.username} and ${loser.username} were not supposed to play a match.`)
+    } else if (matchID) {
+        challongeClient.matches.update({
+            id: status['tournament'],
+            matchId: matchID,
+            match: {
+              scoresCsv: '1-0',
+              winnerId: winnerID
+            },
+            callback: (err) => {
+                if(err) {
+                    return message.channel.send(`Error: The match between ${winner.username} and ${loser.username} could not be updated.`)
+                } else {
+                    const statsLoser = stats[loser.user.id];
+                    const statsWinner = stats[winner.user.id];
+                    backup[loser.user.id] = statsLoser;
+                    backup[winner.user.id] = statsWinner;
+                    fs.writeFile("./backup.json", JSON.stringify(backup), (err) => {
+                        if (err) console.log(err)
+                    })
+            
+                    stats[loser.user.id] += 20 * (0 - (1 / (1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
+                    stats[winner.user.id] += 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
+                    fs.writeFile("./stats.json", JSON.stringify(stats), (err) => {
+                        if (err) console.log(err)
+                    })
+            
+                    losses[loser.user.id]++
+                    fs.writeFile("./losses.json", JSON.stringify(losses), (err) => {
+                        if (err) console.log(err)
+                    })
+            
+                    wins[winner.user.id]++;
+                    fs.writeFile("./wins.json", JSON.stringify(wins), (err) => {
+                        if (err) console.log(err)
+                    })
+            
+                    let json = JSON.parse(fs.readFileSync('./records.json'));
+                    json.push({"Result":`${winner.user.id}>${loser.user.id}`});
+                    fs.writeFile("./records.json", JSON.stringify(json), (err) => {
+                        if (err) console.log(err)
+                    })
+
+                    return message.channel.reply(`Your tournament loss to ${winner.username} has been recorded.`)
+                }
+            }
+        })
+    }
 }
