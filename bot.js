@@ -1386,7 +1386,7 @@ const getDeckType = (message, dude, url) => {
             console.log(deckTypeAlius[elem])
             console.log('next element:')
 
-            if (deckTypeAlius[elem].toLowerCase().includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
+            if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
                 console.log('hey in here')   
                 
                 if (decks[maid][elem].url) {
