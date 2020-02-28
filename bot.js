@@ -238,20 +238,18 @@ client.on('message', async message => {
     //CHALLONGE - INSPECT
     if(cmd === `!inspect`) {
         let name = (args[0] ? args[0] : status['tournament'])
-        console.log(name)
 
-        let newVar = challongeClient.participants.index({
+        challongeClient.participants.index({
             id: name,
-            callback: (err) => {
+            callback: (err, data) => {
                 if(err) {
                     return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
                 } else {
-                    return message.channel.send(`I printed the current list of tournament participants to the console.`)
+                    console.log(data)
+                    message.channel.send(`I printed the current list of tournament participants to the console.`)
                 }
             }
         });
-
-        console.log(newVar)
     }
 
 
