@@ -34,6 +34,8 @@ const losscom = ['!lossvs','!loss','!lose','!goatloss','!goatlossvs','!goatlose'
 const h2hcom = ['!h2h', '!head2head', '!headtohead']
 const undocom = ['!undolast', '!undo', '!undoloss']
 const rankcom = ['!rank', '!top', '!ladder']
+const yesSynonyms = ['yes', 'yeah', 'yea', 'ye', 'ya', 'yah', 'yh', 'y']
+const noSynonyms = ['no', 'nah', 'nope', 'naw', 'n', 'na']
 const deckTypeAlius = {
     goatControl: ['Goat Control', 'goat control', 'goat', 'gc'],
     chaosControl: ['Chaos Control', 'chaos control', 'td chaos control', 'angel chaos', 'angel chaos control', 'skilled chaos', 'skilled chaos control'],
@@ -310,7 +312,7 @@ client.on('message', async message => {
                 return person.send.send("I only accept (1) imgur.com or duelingbook.com link.")
             } else if (collected.first().content.startsWith("https://i.imgur") || collected.first().content.startsWith("https://www.duelingbook.com/deck")) {
                 console.log('yo')
-                return getDeckTypeTournament(message, maid, collected.first().content, true)
+                return getDeckTypeTournament(message, maid, collected.first().content)
             } else if (collected.first().content.startsWith("https://imgur")) {
                 console.log('hello')
                 let str = collected.first().content
@@ -319,7 +321,7 @@ client.on('message', async message => {
                 console.log(str)
                 console.log(newStr)
                 console.log(url)
-                return getDeckTypeTournament(message, maid, url, true)          
+                return getDeckTypeTournament(message, maid, url)          
             }
         }).catch(err => {
             clearRegistrationStatus(message)
@@ -1429,11 +1431,11 @@ async function checkResubmission(message, dude) {
             return getDeckURL(message, dude)
         } else if (noSynonyms.includes(collected.first().content.toLowerCase())) {
             clearRegistrationStatus(message)
-            return message.channel.send(`Not a problem. Thanks.`)
+            return person.send(`Not a problem. Thanks.`)
         }
     }).catch(err => {
         clearRegistrationStatus(message)
-        return message.channel.send(`Perhaps another time would be better.`)
+        return person.send(`Perhaps another time would be better.`)
     })
 }
 
@@ -1446,17 +1448,17 @@ async function getDeckURL(message, dude) {
 		max: 1,
         time: 16000
     }).then(collected => {
-        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://duelingbook.com/deck")) || collected.first().content.length > 46) {		
-            return message.channel.send("I only accept (1) imgur.com or duelingbook.com link.")
-        } else if (message.content.startsWith("https://i.imgur") || message.content.startsWith("https://duelingbook.com/deck")) {
-            return getDeckType(message, dude, collected.first().content, true)
-        } else if (message.content.startsWith("https://imgur")) {
+        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 46) {		
+            return person.send("I only accept (1) imgur.com or duelingbook.com link.")
+        } else if (collected.first().content.startsWith("https://i.imgur") || collected.first().content.startsWith("https://www.duelingbook.com/deck")) {
+            return getDeckTypeTournament(message, dude, collected.first().content)
+        } else if (collected.first().content.startsWith("https://imgur")) {
             let url = `https://i.${collected.first().content.join(" ").substring(8, collected.first().content.join(" ").length)}.png`
-            return getDeckType(message, dude, url, true)          
+            return getDeckTypeTournament(message, dude, url)          
         }
     }).catch(err => {
         clearRegistrationStatus(message)
-        return message.author.send('Perhaps another time would be better.')
+        return person.send('Perhaps another time would be better.')
     })
 }
 
@@ -1519,11 +1521,11 @@ async function getDeckTypeTournament(message, dude, url) {
                 if (deckTypeAlius[elem][0] === 'Other') {
                     clearRegistrationStatus(message)
                     sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
-                    return message.channel.send(`Thanks! I have collected your deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+                    return person.send(`Thanks! I have collected your deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
                 } else {
                     clearRegistrationStatus(message)
                     sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
-                    return message.channel.send(`Thanks! I have collected your ${deckTypeAlius[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+                    return person.send(`Thanks! I have collected your ${deckTypeAlius[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
                 }
             } 
         })
@@ -1536,7 +1538,7 @@ async function getDeckTypeTournament(message, dude, url) {
           
         clearRegistrationStatus(message)
         sendToTournamentChannel(dude, url, 'Other')
-        return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
+        return person.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
     })
 }
 
