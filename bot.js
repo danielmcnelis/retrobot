@@ -307,7 +307,6 @@ client.on('message', async message => {
             return message.author.send('Perhaps another time would be better.')
         })
     }
-}
 
     //CHALLONGE - ADD
     if(cmd === `!add`) {
