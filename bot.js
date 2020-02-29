@@ -133,7 +133,6 @@ client.on('message', async message => {
     const args = messageArray.slice(1)
     const maid = message.author.id
         
-if (message.guild.id === serverID) {
 
     if (message.author.bot) {
         return
@@ -1058,7 +1057,7 @@ ${names[p2]} has won ${p2wins}x`)
             restore(message, winners[i], losers[i], i, rawRecords.length, arr2.length)
         }
     }
-}})
+})
 
 
 //FUNCTIONS
