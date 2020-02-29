@@ -1497,7 +1497,7 @@ Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimensi
 
 
 //GET DECK TYPE
-const getDeckTypeTournament = (message, dude, url) => {
+async function getDeckTypeTournament(message, dude, url) {
     let keys = Object.keys(deckTypeAlius)
     let person = message.channel.members.find('id', dude);
 	const filter = m => m.author.id === dude
