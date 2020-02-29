@@ -90,740 +90,6 @@ const downvote = `<:downvote:585263559332855816>`
 client.login('NjgyNDAxNzU1MTcwMDc4Nzcw.Xlcpag.XVeTLXJFH92QUrFZYhvjoKqg0QQ')
 
 
-//FUNCTIONS
-//RESET
-function reset(arr2, arr3, arr4, arr5, j) {
-	return setTimeout(function() {
-		stats[arr2] = 500;
-		fs.writeFile('./stats.json', JSON.stringify(stats), (err) => { 
-            if (err) console.log(err)
-        })
-
-		backup[arr3] = 0;
-		fs.writeFile('./backup.json', JSON.stringify(backup), (err) => { 
-            if (err) console.log(err)
-        })
-
-		wins[arr4] = 0;
-		fs.writeFile('./wins.json', JSON.stringify(wins), (err) => { 
-            if (err) console.log(err)
-        })
-
-		losses[arr5] = 0;
-		fs.writeFile('./losses.json', JSON.stringify(losses), (err) => { 
-            if (err) console.log(err)
-        })
-    }, (j + 1) * 100) 
-}
-
-
-//RESTORE
-function restore(message, winner, loser, num, length1, length2) {
-	return setTimeout(function(){
-		let statsLoser = stats[loser]
-        let statsWinner = stats[winner]
-        console.log(statsLoser)
-        console.log(statsWinner)
-        
-		backup[winner] = statsWinner
-		backup[loser] = statsLoser
-		fs.writeFile('./backup.json', JSON.stringify(backup), (err) => { 
-            if (err) console.log(err)
-        }) 
-
-		stats[loser] += 20 * (0 - (1 / (1 + (Math.pow(10, ((statsWinner-statsLoser) / 400))))))
-		stats[winner] += 20 * (1 - (1 - 1 / (1 + (Math.pow(10, ((statsWinner-statsLoser) / 400))))))
-		fs.writeFile('./stats.json', JSON.stringify(stats), (err) => {
-            if (err) console.log(err)
-        })
-
-		losses[loser]++;
-		fs.writeFile('./losses.json', JSON.stringify(losses), (err) => {
-            if (err) console.log(err)
-        })
-
-		wins[winner]++;
-		fs.writeFile('./wins.json', JSON.stringify(wins), (err) => {
-            if (err) console.log(err)
-        })
-
-		message.channel.send(`Goat Format Match #${(num+1)} in which ${names[winner]} defeated ${names[loser]} has been recorded.`); 
-
-		if (num === length1 - 1 ) {
-            return message.channel.send("Elo recalculation complete!")
-        }
-    }, (num + 1 + ( 1 / 10 * length2)) * 1000)
-}
-
-
-//REVIVE
-function revive(message, person, num) {
-	if(!names[person.user.id] && person.user.username) {
-	    return setTimeout(function() {
-		    names[person.user.id] = person.user.username
-   		    fs.writeFile("./names.json", JSON.stringify(names), (err) => {
-                if (err) console.log(err)
-            })
-
-            message.channel.send(`${names[person.user.id]} has been added to the name database!`)
-        }, num * 500)
-    }
-}
-
-
-//CREATEUSER
-function createUser(player, person) {
-	if(!names[player] && person) {
-		names[player] = person.user.username;
-   		fs.writeFile("./names.json", JSON.stringify(names), (err) => {
-            if (err) console.log(err) }); }
-            
-	if(!blank[player]) {
-		blank[player] = 0;
-   		fs.writeFile("./blank.json", JSON.stringify(blank), (err) => {
-			if (err) console.log(err) }); }
-            
-	if(!decks[player]) {
-		decks[player] = {
-            tournament: {
-                url: false,
-                name: false
-            },
-            goatControl: {
-                url: false,
-                category: 'control',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            chaosControl: {
-                url: false,
-                category: 'control',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            chaosRecruiter: {
-                url: false,
-                category: 'aggro',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            dimensionFusionTurbo: {
-                url: false,
-                category: 'combo',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            reasoningGateTurbo: {
-                url: false,
-                category: 'combo',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            chaosFlipTurbo: {
-                url: false,
-                category: 'control',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            flipControl: {
-                url: false,
-                category: 'control',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            warrior: {
-                url: false,
-                category: 'aggro',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            gearfried: {
-                url: false,
-                category: 'aggro',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            tigerStun: {
-                url: false,
-                category: 'aggro',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            drainBeat: {
-                url: false,
-                category: 'aggro',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            aggroBurn: {
-                url: false,
-                category: 'burn',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            aggroMonarch: {
-                url: false,
-                category: 'aggro',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            rescueCat: {
-                url: false,
-                category: 'combo',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            darkBurn: {
-                url: false,
-                category: 'burn',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            drainBurn: {
-                url: false,
-                category: 'burn',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            speedBurn: {
-                url: false,
-                category: 'burn',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            economicsFTK: {
-                url: false,
-                category: 'combo',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            libraryFTK: {
-                url: false,
-                category: 'combo',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            exodia: {
-                url: false,
-                category: 'combo',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            lastTurn: {
-                url: false,
-                category: 'combo',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            emptyJar: {
-                url: false,
-                category: 'combo',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            gravekeeper: {
-                url: false,
-                category: 'aggro',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            machine: {
-                url: false,
-                category: 'other',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            water: {
-                url: false,
-                category: 'other',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            zombie: {
-                url: false,
-                category: 'other',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            darkScorpion: {
-                url: false,
-                category: 'other',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            darkMasterZorc: {
-                url: false,
-                category: 'control',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            relinquished: {
-                url: false,
-                category: 'control',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            strikeNinja: {
-                url: false,
-                category: 'aggro',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            bazooReturn: {
-                url: false,
-                category: 'aggro',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            },
-            other: {
-                url: false,
-                category: 'other',
-                rating: 0,
-                posRaters: [],
-                negRaters: []
-            }
-        };
-   		fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
-			if (err) console.log(err) }); }
-
-	if(!stats[player]) {
-		stats[player] = 500;
-   		fs.writeFile("./stats.json", JSON.stringify(stats), (err) => {
-			if (err) console.log(err) }); }
-
-	if(!backup[player]) {
-		backup[player] = 0;
-   		fs.writeFile("./backup.json", JSON.stringify(backup), (err) => {
-			if (err) console.log(err) }); }
-
-	if(!wins[player]) {
-		wins[player] = 0;
-   		fs.writeFile("./wins.json", JSON.stringify(wins), (err) => {
-			if (err) console.log(err) }); }
-
-	if(!losses[player]) {
-		losses[player] = 0;
-   		fs.writeFile("./losses.json", JSON.stringify(losses), (err) => {
-			if (err) console.log(err) }); }
-
-}
-
-//CHECK RESUBMISSION
-async function checkResubmission(message, dude) {
-    let person = message.channel.members.find('id', dude);
-    const filter = m => m.author.id === dude
-	const msg = await person.send(`You already signed up for the tournament, do you want to resubmit your deck list?`)
-    const collected = await msg.channel.awaitMessages(filter, {
-		max: 1,
-        time: 10000
-    }).then(collected => {
-        if (yesSynonyms.includes(collected.first().content.toLowerCase())) {
-            return getDeckURL(message, dude)
-        } else if (noSynonyms.includes(collected.first().content.toLowerCase())) {
-            clearRegistrationStatus(message)
-            return message.channel.send(`Not a problem. Thanks.`)
-        }
-    }).catch(err => {
-        clearRegistrationStatus(message)
-        return message.channel.send(`Perhaps another time would be better.`)
-    })
-}
-
-//GET DECK URL
-async function getDeckURL(message, dude) {
-    let person = message.channel.members.find('id', dude);
-    const msg = await person.send("Okay, please provide an imgur screenshot or a duelingbook download link for your tournament deck.");
-    const filter = collected => collected.author.id === dude;
-    const collected = await msg.channel.awaitMessages(filter, {
-		max: 1,
-        time: 16000
-    }).then(collected => {
-        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://duelingbook.com/deck")) || collected.first().content.length > 46) {		
-            return message.channel.send("I only accept (1) imgur.com or duelingbook.com link.")
-        } else if (message.content.startsWith("https://i.imgur") || message.content.startsWith("https://duelingbook.com/deck")) {
-            return getDeckType(message, dude, collected.first().content, true)
-        } else if (message.content.startsWith("https://imgur")) {
-            let url = `https://i.${collected.first().content.join(" ").substring(8, collected.first().content.join(" ").length)}.png`
-            return getDeckType(message, dude, url, true)          
-        }
-    }).catch(err => {
-        clearRegistrationStatus(message)
-        return message.author.send('Perhaps another time would be better.')
-    })
-}
-
-
-//GET DECK TYPE
-const getDeckType = (message, dude, url, tournament = false) => {
-    let keys = Object.keys(deckTypeAlius)
-	const filter = m => m.author.id === dude
-	message.channel.send(`Okay, ${names[dude]}, what kind of deck is this?`)
-	message.channel.awaitMessages(filter, {
-		max: 1,
-        time: 16000
-    }).then(collected => {
-        keys.forEach(function(elem) {
-            if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
-                if (tournament) {
-                    decks[dude].tournament.url = url
-                    decks[dude].tournament.name = elem
-                    fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
-                        if (err) console.log(err)
-                    })
-
-                    if (deckTypeAlius[elem][0] === 'Other') {
-                        clearRegistrationStatus(message)
-                        sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
-                        return message.channel.send(`Thanks! I have collected your deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
-                    } else {
-                        clearRegistrationStatus(message)
-                        sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
-                        return message.channel.send(`Thanks! I have collected your ${deckTypeAlius[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
-                    }
-                } else if (decks[dude][elem].url) {
-                        return getDeckOverwriteConfirmation(message, dude, url, elem, deckTypeAlius[elem][0])
-                   } else {
-                        decks[dude][elem].url = url
-                        fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
-                            if (err) console.log(err)
-                        })
-                        
-                        if (deckTypeAlius[elem][0] === 'Other') {
-                            return message.channel.send(`Thanks! I have saved your deck to the public database.`)
-                        } else {
-                            return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)       
-                        }
-                   }
-            }
-        })
-    }).catch(err => {
-        if (tournament) {
-            decks[dude].tournament.url = url
-            decks[dude].tournament.name = 'other'
-            fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
-                if (err) console.log(err)
-            })
-
-            clearRegistrationStatus(message)
-            sendToTournamentChannel(dude, url, 'Other')
-            return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
-        } else {
-            return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. If your deck is not on the list below, you can save it under "Other":
-
-Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimension Fusion Turbo, Reasoning Gate Turbo, Soul Control, Flip Control, Anti-Meta Warrior, Gearfried, Tiger Stun, Drain Beat, Aggro Burn, Aggro Monarch, Rescue Cat OTK, Ben-Kei OTK, Stein OTK, Dark Burn, Drain Burn, Speed Burn, P.A.C.M.A.N., Economics FTK, Library FTK, Exodia, Last Turn, Empty Jar, Gravekeeper, Machine, Water, Zombie, Dark Scorpion, Dark Master Zorc, Relinquished, Strike Ninja, Bazoo Return.`
-        )}
-    })
-}
-
-
-
-
-//REMOVE PARTICIPANT
-const removeParticipant = (message, participants, name, person, drop = false) => {    
-    let participantID
-    let keys = Object.keys(participants)
-    let dude = message.channel.members.find('id', person.id)
-    keys.forEach(function(elem) {
-        if (participants[elem].participant.name === person.username) {
-            participantID = participants[elem].participant.id
-        }
-    })
-
-    if (!dude) {
-        return message.channel.send('I could not find that person in the server.')
-    } 
-
-    challongeClient.participants.destroy({
-        id: name,
-        participantID: participantID,
-        callback: (err) => {
-            if(err) {
-                if (drop) {
-                    return message.channel.send(`Hmm... I don't see you in the participants list.`)
-                } else {
-                    return message.channel.send(`Error: could not find "${person.username}" in the participants list.`)
-                }
-            } else {
-                dude.removeRole(tourRole)
-                if (drop) {
-                    return message.channel.send(`I have removed you from the tournament. Better luck next time!`)
-                } else {
-                    return message.channel.send(`${person.username} has been removed from the tournament.`)
-                }
-            }
-        }
-    })
-}
-
-
-
-
-//TOURNAMENT CHECK
-const getParticipants = (message, matches, loser, winner) => {
-    challongeClient.participants.index({
-        id: status['tournament'],
-        callback: (err, data) => {
-            if(err) {
-                return message.channel.send(`Error: the current tournament, "${status['tournament']}", could not be accessed.`)
-            } else {
-                return addMatchResult(message, matches, data, loser, winner)
-            }
-        }
-    })
-}
-
-
-//CHECK MATCHES
-const addMatchResult = (message, matches, participants, loser, winner) => {
-    let loserID
-    let winnerID
-    let matchID
-    let matchComplete = false
-    let score
-    let players = Object.keys(participants)
-    players.forEach(function(elem) {
-        if (participants[elem].participant.name === loser.user.username) {
-            loserID = participants[elem].participant.id
-        } else if (participants[elem].participant.name === winner.user.username) {
-            winnerID = participants[elem].participant.id
-        }
-    })
-
-    let keys = Object.keys(matches)
-    keys.forEach(function(elem) {
-        if ( (matches[elem].match.player1Id === loserID && matches[elem].match.player2Id === winnerID) || (matches[elem].match.player2Id === loserID && matches[elem].match.player1Id === winnerID) ) {
-            if (matches[elem].match.state === 'complete') {
-                matchComplete = true
-            } else if (matches[elem].match.state === 'open') {
-                matchID = matches[elem].match.id
-                score = (matches[elem].match.player1Id === loserID ? '0-1' : '1-0')
-            }
-        }
-    })
-
-    if (!winnerID) {
-        return message.channel.send(`${winner.user.username} is not in the tournament.`)
-    } else if (!loserID) {
-        return message.channel.send(`${loser.user.username} is not in the tournament.`)
-    } else if (matchComplete && !matchID) {
-        return message.channel.send(`The match result between ${winner.user.username} and ${loser.user.username} was already recorded.`)
-    } else if (!matchComplete && !matchID) {
-        return message.channel.send(`${winner.user.username} and ${loser.user.username} were not supposed to play a match.`)
-    } else if (matchID) {
-        challongeClient.matches.update({
-            id: status['tournament'],
-            matchId: matchID,
-            match: {
-              scoresCsv: score,
-              winnerId: winnerID
-            },
-            callback: (err) => {
-                if(err) {
-                    return message.channel.send(`Error: The match between ${winner.user.username} and ${loser.user.username} could not be updated.`)
-                } else {
-                    const statsLoser = stats[loser.user.id];
-                    const statsWinner = stats[winner.user.id];
-                    backup[loser.user.id] = statsLoser;
-                    backup[winner.user.id] = statsWinner;
-                    fs.writeFile("./backup.json", JSON.stringify(backup), (err) => {
-                        if (err) console.log(err)
-                    })
-            
-                    stats[loser.user.id] += 20 * (0 - (1 / (1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
-                    stats[winner.user.id] += 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
-                    fs.writeFile("./stats.json", JSON.stringify(stats), (err) => {
-                        if (err) console.log(err)
-                    })
-            
-                    losses[loser.user.id]++
-                    fs.writeFile("./losses.json", JSON.stringify(losses), (err) => {
-                        if (err) console.log(err)
-                    })
-            
-                    wins[winner.user.id]++;
-                    fs.writeFile("./wins.json", JSON.stringify(wins), (err) => {
-                        if (err) console.log(err)
-                    })
-            
-                    let json = JSON.parse(fs.readFileSync('./records.json'));
-                    json.push({"Result":`${winner.user.id}>${loser.user.id}`});
-                    fs.writeFile("./records.json", JSON.stringify(json), (err) => {
-                        if (err) console.log(err)
-                    })
-                    
-                    message.channel.send(`<@${loser.user.id}>, Your tournament loss to ${winner.user.username} has been recorded.`)
-                    return setTimeout(function() {
-                        getUpdatedMatchesObject(message, participants, matchID, loserID, winnerID, loser, winner)
-                    }, 3000)	
-                }
-            }
-        })
-    }
-}
-
-const getUpdatedMatchesObject = (message, participants, matchID, loserID, winnerID, loser, winner) => {
-    return challongeClient.matches.index({
-        id: status['tournament'],
-        callback: (err, data) => {
-            if(err) {
-                return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
-            } else {
-                return checkMatches(message, data, participants, matchID, loserID, winnerID, loser, winner)
-            }
-        }
-    }) 
-}
-
-//CHECK MATCHES
-const checkMatches = (message, matches, participants, matchID, loserID, winnerID, loser, winner) => {
-    let newOppoIDLoser
-    let newOppoLoser
-    let matchWaitingOnLoser
-    let matchWaitingOnLoserP1ID
-    let matchWaitingOnLoserP2ID
-    let matchWaitingOnLoserP1
-    let matchWaitingOnLoserP2
-    let newOppoIDWinner
-    let newOppoWinner
-    let matchWaitingOnWinner
-    let matchWaitingOnWinnerP1ID
-    let matchWaitingOnWinnerP2ID
-    let matchWaitingOnWinnerP1
-    let matchWaitingOnWinnerP2
-    let keys = Object.keys(matches)
-    let players = Object.keys(participants)
-
-    keys.forEach(function(elem) {
-        if ( (matches[elem].match.player1Id === winnerID || matches[elem].match.player2Id === winnerID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
-            if (matches[elem].match.state === 'pending') {
-                matchWaitingOnWinner = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
-            } else if (matches[elem].match.state === 'open') {
-                newOppoIDWinner = (matches[elem].match.player1Id === winnerID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
-                newMatchIDWinner = matches[elem].match.id
-            }
-        } else if ( (matches[elem].match.player1Id === loserID || matches[elem].match.player2Id === loserID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
-            if (matches[elem].match.state === 'pending') {
-                matchWaitingOnLoser = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
-            } else if (matches[elem].match.state === 'open') {
-                newOppoIDLoser = (matches[elem].match.player1Id === loserID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
-                newMatchIDLoser = matches[elem].match.id
-            }
-        }
-    })
-
-    keys.forEach(function(elem) {
-        if (matches[elem].match.id === matchWaitingOnLoser) {
-            matchWaitingOnLoserP1ID = matches[elem].match.player1Id
-            matchWaitingOnLoserP2ID = matches[elem].match.player2Id
-        }
-        
-        if (matches[elem].match.id === matchWaitingOnWinner) {
-            matchWaitingOnWinnerP1ID = matches[elem].match.player1Id
-            matchWaitingOnWinnerP2ID = matches[elem].match.player2Id
-        }
-    })
-
-    players.forEach(function(elem) {
-         if (participants[elem].participant.id === newOppoIDLoser) {
-            newOppoLoser = discordIDs[participants[elem].participant.name]
-         }
-
-         if (participants[elem].participant.id === newOppoIDWinner) {
-            newOppoWinner = discordIDs[participants[elem].participant.name]
-         }
-         
-         if (participants[elem].participant.id === matchWaitingOnLoserP1ID) {
-            matchWaitingOnLoserP1 = participants[elem].participant.name
-         }
-         
-         if (participants[elem].participant.id === matchWaitingOnLoserP2ID) {
-            matchWaitingOnLoserP2 = participants[elem].participant.name
-         }
-         
-         if (participants[elem].participant.id === matchWaitingOnWinnerP1ID) {
-            matchWaitingOnWinnerP1 = participants[elem].participant.name
-         }
-         
-         if (participants[elem].participant.id === matchWaitingOnWinnerP2ID) {
-            matchWaitingOnWinnerP2 = participants[elem].participant.name
-         }
-    })
-
-    if (matchWaitingOnLoser) {
-        message.channel.send(`${loser.user.username}, You are waiting for the result of ${matchWaitingOnLoserP1} vs ${matchWaitingOnLoserP2}.`)
-    } else if (newOppoLoser) {
-        message.channel.send(`New Match: <@${loser.user.id}> vs <@${newOppoLoser}>. Good luck to both duelists.`)
-    } else if (matchWaitingOnLoser) {
-        message.channel.send(`${loser.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
-    } else {
-        loser.removeRole(tourRole)
-        message.channel.send(`${loser.user.username}, You are eliminated from the tournament. Better luck next time!`)
-    }
-
-    if (matchWaitingOnWinner) {
-        message.channel.send(`${winner.user.username}, You are waiting for the result of ${matchWaitingOnWinnerP1} vs ${matchWaitingOnWinnerP2}.`)
-    } else if (newOppoWinner) {
-        message.channel.send(`New Match: <@${winner.user.id}> vs <@${newOppoWinner}>. Good luck to both duelists.`)
-    } else if (matchWaitingOnWinner) {
-        message.channel.send(`${winner.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
-    } else {
-        winner.removeRole(tourRole)
-        message.channel.send(`<@${winner.user.id}>, You won the tournament! Congratulations on your stellar performance!`)
-    }
-    
-    return
-}
-
-
-//CLEAR REGISTRATION STATUS
-const clearRegistrationStatus = (message, x) => {
-    status['registration'] = 'waiting';
-    fs.writeFile("./status.json", JSON.stringify(status), (err) => {
-        if (err) console.log(err) });
-    if (x) {
-        return message.channel.send('The registration status has been manually reset.')
-    }
-}
-
-
-//SEND TO TOURNAMENT CHANNEL
-const sendToTournamentChannel = (player, deckList, deckType) => {
-    return client.channels.get(registrationChannel).send(`<@${player}> submitted a ${deckType} deck list for the tournament. Please confirm this deck is legal and accurate, then add them to the bracket using the **!signup** command:
-${deckList}`)
-}
-
-
 //READY
 client.on('ready', () => {
   console.log('GoatBot is online!')
@@ -869,9 +135,9 @@ client.on('message', async message => {
 
     if (message.author.bot) {
         return
-    } else if (message.guild.id !== serverID) {
-        return
-    }
+    } 
+        
+if (message.guild.id === serverID) {
            
     //CHALLONGE - CREATE
     if(cmd === `!reset`) {
@@ -879,7 +145,7 @@ client.on('message', async message => {
             return message.channel.send('You do not have permission to do that.')
         } else if(!args) {
             return message.channel.send("You did not select a valid Status:\n- Registration (r)")
-        } else if(args[0].toLowerCase() == 'transaction' || args[0].toLowerCase() == 'transactions' || args[0].toLowerCase() == 'trans' || args[0].toLowerCase() == 'x') {
+        } else if(args[0].toLowerCase() == 'registraton' || args[0].toLowerCase() == 'reg' || args[0].toLowerCase() == 'r') {
             return clearRegistrationStatus(message, 1)
         } else {
             return message.channel.send("You did not select a valid Status:\n- Registration (r)")
@@ -1793,3 +1059,740 @@ ${names[p2]} has won ${p2wins}x`)
         }
     }
 })
+
+}
+
+
+
+//FUNCTIONS
+//RESET
+function reset(arr2, arr3, arr4, arr5, j) {
+	return setTimeout(function() {
+		stats[arr2] = 500;
+		fs.writeFile('./stats.json', JSON.stringify(stats), (err) => { 
+            if (err) console.log(err)
+        })
+
+		backup[arr3] = 0;
+		fs.writeFile('./backup.json', JSON.stringify(backup), (err) => { 
+            if (err) console.log(err)
+        })
+
+		wins[arr4] = 0;
+		fs.writeFile('./wins.json', JSON.stringify(wins), (err) => { 
+            if (err) console.log(err)
+        })
+
+		losses[arr5] = 0;
+		fs.writeFile('./losses.json', JSON.stringify(losses), (err) => { 
+            if (err) console.log(err)
+        })
+    }, (j + 1) * 100) 
+}
+
+
+//RESTORE
+function restore(message, winner, loser, num, length1, length2) {
+	return setTimeout(function(){
+		let statsLoser = stats[loser]
+        let statsWinner = stats[winner]
+        console.log(statsLoser)
+        console.log(statsWinner)
+        
+		backup[winner] = statsWinner
+		backup[loser] = statsLoser
+		fs.writeFile('./backup.json', JSON.stringify(backup), (err) => { 
+            if (err) console.log(err)
+        }) 
+
+		stats[loser] += 20 * (0 - (1 / (1 + (Math.pow(10, ((statsWinner-statsLoser) / 400))))))
+		stats[winner] += 20 * (1 - (1 - 1 / (1 + (Math.pow(10, ((statsWinner-statsLoser) / 400))))))
+		fs.writeFile('./stats.json', JSON.stringify(stats), (err) => {
+            if (err) console.log(err)
+        })
+
+		losses[loser]++;
+		fs.writeFile('./losses.json', JSON.stringify(losses), (err) => {
+            if (err) console.log(err)
+        })
+
+		wins[winner]++;
+		fs.writeFile('./wins.json', JSON.stringify(wins), (err) => {
+            if (err) console.log(err)
+        })
+
+		message.channel.send(`Goat Format Match #${(num+1)} in which ${names[winner]} defeated ${names[loser]} has been recorded.`); 
+
+		if (num === length1 - 1 ) {
+            return message.channel.send("Elo recalculation complete!")
+        }
+    }, (num + 1 + ( 1 / 10 * length2)) * 1000)
+}
+
+
+//REVIVE
+function revive(message, person, num) {
+	if(!names[person.user.id] && person.user.username) {
+	    return setTimeout(function() {
+		    names[person.user.id] = person.user.username
+   		    fs.writeFile("./names.json", JSON.stringify(names), (err) => {
+                if (err) console.log(err)
+            })
+
+            message.channel.send(`${names[person.user.id]} has been added to the name database!`)
+        }, num * 500)
+    }
+}
+
+
+//CREATEUSER
+function createUser(player, person) {
+	if(!names[player] && person) {
+		names[player] = person.user.username;
+   		fs.writeFile("./names.json", JSON.stringify(names), (err) => {
+            if (err) console.log(err) }); }
+            
+	if(!blank[player]) {
+		blank[player] = 0;
+   		fs.writeFile("./blank.json", JSON.stringify(blank), (err) => {
+			if (err) console.log(err) }); }
+            
+	if(!decks[player]) {
+		decks[player] = {
+            tournament: {
+                url: false,
+                name: false
+            },
+            goatControl: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            chaosControl: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            chaosRecruiter: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            dimensionFusionTurbo: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            reasoningGateTurbo: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            chaosFlipTurbo: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            flipControl: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            warrior: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            gearfried: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            tigerStun: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            drainBeat: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            aggroBurn: {
+                url: false,
+                category: 'burn',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            aggroMonarch: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            rescueCat: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            darkBurn: {
+                url: false,
+                category: 'burn',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            drainBurn: {
+                url: false,
+                category: 'burn',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            speedBurn: {
+                url: false,
+                category: 'burn',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            economicsFTK: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            libraryFTK: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            exodia: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            lastTurn: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            emptyJar: {
+                url: false,
+                category: 'combo',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            gravekeeper: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            machine: {
+                url: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            water: {
+                url: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            zombie: {
+                url: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            darkScorpion: {
+                url: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            darkMasterZorc: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            relinquished: {
+                url: false,
+                category: 'control',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            strikeNinja: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            bazooReturn: {
+                url: false,
+                category: 'aggro',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            other: {
+                url: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            }
+        };
+   		fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+			if (err) console.log(err) }); }
+
+	if(!stats[player]) {
+		stats[player] = 500;
+   		fs.writeFile("./stats.json", JSON.stringify(stats), (err) => {
+			if (err) console.log(err) }); }
+
+	if(!backup[player]) {
+		backup[player] = 0;
+   		fs.writeFile("./backup.json", JSON.stringify(backup), (err) => {
+			if (err) console.log(err) }); }
+
+	if(!wins[player]) {
+		wins[player] = 0;
+   		fs.writeFile("./wins.json", JSON.stringify(wins), (err) => {
+			if (err) console.log(err) }); }
+
+	if(!losses[player]) {
+		losses[player] = 0;
+   		fs.writeFile("./losses.json", JSON.stringify(losses), (err) => {
+			if (err) console.log(err) }); }
+
+}
+
+//CHECK RESUBMISSION
+async function checkResubmission(message, dude) {
+    let person = message.channel.members.find('id', dude);
+    const filter = m => m.author.id === dude
+	const msg = await person.send(`You already signed up for the tournament, do you want to resubmit your deck list?`)
+    const collected = await msg.channel.awaitMessages(filter, {
+		max: 1,
+        time: 10000
+    }).then(collected => {
+        if (yesSynonyms.includes(collected.first().content.toLowerCase())) {
+            return getDeckURL(message, dude)
+        } else if (noSynonyms.includes(collected.first().content.toLowerCase())) {
+            clearRegistrationStatus(message)
+            return message.channel.send(`Not a problem. Thanks.`)
+        }
+    }).catch(err => {
+        clearRegistrationStatus(message)
+        return message.channel.send(`Perhaps another time would be better.`)
+    })
+}
+
+//GET DECK URL
+async function getDeckURL(message, dude) {
+    let person = message.channel.members.find('id', dude);
+    const msg = await person.send("Okay, please provide an imgur screenshot or a duelingbook download link for your tournament deck.");
+    const filter = collected => collected.author.id === dude;
+    const collected = await msg.channel.awaitMessages(filter, {
+		max: 1,
+        time: 16000
+    }).then(collected => {
+        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://duelingbook.com/deck")) || collected.first().content.length > 46) {		
+            return message.channel.send("I only accept (1) imgur.com or duelingbook.com link.")
+        } else if (message.content.startsWith("https://i.imgur") || message.content.startsWith("https://duelingbook.com/deck")) {
+            return getDeckType(message, dude, collected.first().content, true)
+        } else if (message.content.startsWith("https://imgur")) {
+            let url = `https://i.${collected.first().content.join(" ").substring(8, collected.first().content.join(" ").length)}.png`
+            return getDeckType(message, dude, url, true)          
+        }
+    }).catch(err => {
+        clearRegistrationStatus(message)
+        return message.author.send('Perhaps another time would be better.')
+    })
+}
+
+
+//GET DECK TYPE
+const getDeckType = (message, dude, url, tournament = false) => {
+    let keys = Object.keys(deckTypeAlius)
+	const filter = m => m.author.id === dude
+	message.channel.send(`Okay, ${names[dude]}, what kind of deck is this?`)
+	message.channel.awaitMessages(filter, {
+		max: 1,
+        time: 16000
+    }).then(collected => {
+        keys.forEach(function(elem) {
+            if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
+                if (tournament) {
+                    decks[dude].tournament.url = url
+                    decks[dude].tournament.name = elem
+                    fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+                        if (err) console.log(err)
+                    })
+
+                    if (deckTypeAlius[elem][0] === 'Other') {
+                        clearRegistrationStatus(message)
+                        sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
+                        return message.channel.send(`Thanks! I have collected your deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+                    } else {
+                        clearRegistrationStatus(message)
+                        sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
+                        return message.channel.send(`Thanks! I have collected your ${deckTypeAlius[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+                    }
+                } else if (decks[dude][elem].url) {
+                        return getDeckOverwriteConfirmation(message, dude, url, elem, deckTypeAlius[elem][0])
+                   } else {
+                        decks[dude][elem].url = url
+                        fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+                            if (err) console.log(err)
+                        })
+                        
+                        if (deckTypeAlius[elem][0] === 'Other') {
+                            return message.channel.send(`Thanks! I have saved your deck to the public database.`)
+                        } else {
+                            return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)       
+                        }
+                   }
+            }
+        })
+    }).catch(err => {
+        if (tournament) {
+            decks[dude].tournament.url = url
+            decks[dude].tournament.name = 'other'
+            fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+                if (err) console.log(err)
+            })
+
+            clearRegistrationStatus(message)
+            sendToTournamentChannel(dude, url, 'Other')
+            return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
+        } else {
+            return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. If your deck is not on the list below, you can save it under "Other":
+
+Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimension Fusion Turbo, Reasoning Gate Turbo, Soul Control, Flip Control, Anti-Meta Warrior, Gearfried, Tiger Stun, Drain Beat, Aggro Burn, Aggro Monarch, Rescue Cat OTK, Ben-Kei OTK, Stein OTK, Dark Burn, Drain Burn, Speed Burn, P.A.C.M.A.N., Economics FTK, Library FTK, Exodia, Last Turn, Empty Jar, Gravekeeper, Machine, Water, Zombie, Dark Scorpion, Dark Master Zorc, Relinquished, Strike Ninja, Bazoo Return.`
+        )}
+    })
+}
+
+
+
+
+//REMOVE PARTICIPANT
+const removeParticipant = (message, participants, name, person, drop = false) => {    
+    let participantID
+    let keys = Object.keys(participants)
+    let dude = message.channel.members.find('id', person.id)
+    keys.forEach(function(elem) {
+        if (participants[elem].participant.name === person.username) {
+            participantID = participants[elem].participant.id
+        }
+    })
+
+    if (!dude) {
+        return message.channel.send('I could not find that person in the server.')
+    } 
+
+    challongeClient.participants.destroy({
+        id: name,
+        participantID: participantID,
+        callback: (err) => {
+            if(err) {
+                if (drop) {
+                    return message.channel.send(`Hmm... I don't see you in the participants list.`)
+                } else {
+                    return message.channel.send(`Error: could not find "${person.username}" in the participants list.`)
+                }
+            } else {
+                dude.removeRole(tourRole)
+                if (drop) {
+                    return message.channel.send(`I have removed you from the tournament. Better luck next time!`)
+                } else {
+                    return message.channel.send(`${person.username} has been removed from the tournament.`)
+                }
+            }
+        }
+    })
+}
+
+
+
+
+//TOURNAMENT CHECK
+const getParticipants = (message, matches, loser, winner) => {
+    challongeClient.participants.index({
+        id: status['tournament'],
+        callback: (err, data) => {
+            if(err) {
+                return message.channel.send(`Error: the current tournament, "${status['tournament']}", could not be accessed.`)
+            } else {
+                return addMatchResult(message, matches, data, loser, winner)
+            }
+        }
+    })
+}
+
+
+//CHECK MATCHES
+const addMatchResult = (message, matches, participants, loser, winner) => {
+    let loserID
+    let winnerID
+    let matchID
+    let matchComplete = false
+    let score
+    let players = Object.keys(participants)
+    players.forEach(function(elem) {
+        if (participants[elem].participant.name === loser.user.username) {
+            loserID = participants[elem].participant.id
+        } else if (participants[elem].participant.name === winner.user.username) {
+            winnerID = participants[elem].participant.id
+        }
+    })
+
+    let keys = Object.keys(matches)
+    keys.forEach(function(elem) {
+        if ( (matches[elem].match.player1Id === loserID && matches[elem].match.player2Id === winnerID) || (matches[elem].match.player2Id === loserID && matches[elem].match.player1Id === winnerID) ) {
+            if (matches[elem].match.state === 'complete') {
+                matchComplete = true
+            } else if (matches[elem].match.state === 'open') {
+                matchID = matches[elem].match.id
+                score = (matches[elem].match.player1Id === loserID ? '0-1' : '1-0')
+            }
+        }
+    })
+
+    if (!winnerID) {
+        return message.channel.send(`${winner.user.username} is not in the tournament.`)
+    } else if (!loserID) {
+        return message.channel.send(`${loser.user.username} is not in the tournament.`)
+    } else if (matchComplete && !matchID) {
+        return message.channel.send(`The match result between ${winner.user.username} and ${loser.user.username} was already recorded.`)
+    } else if (!matchComplete && !matchID) {
+        return message.channel.send(`${winner.user.username} and ${loser.user.username} were not supposed to play a match.`)
+    } else if (matchID) {
+        challongeClient.matches.update({
+            id: status['tournament'],
+            matchId: matchID,
+            match: {
+              scoresCsv: score,
+              winnerId: winnerID
+            },
+            callback: (err) => {
+                if(err) {
+                    return message.channel.send(`Error: The match between ${winner.user.username} and ${loser.user.username} could not be updated.`)
+                } else {
+                    const statsLoser = stats[loser.user.id];
+                    const statsWinner = stats[winner.user.id];
+                    backup[loser.user.id] = statsLoser;
+                    backup[winner.user.id] = statsWinner;
+                    fs.writeFile("./backup.json", JSON.stringify(backup), (err) => {
+                        if (err) console.log(err)
+                    })
+            
+                    stats[loser.user.id] += 20 * (0 - (1 / (1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
+                    stats[winner.user.id] += 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
+                    fs.writeFile("./stats.json", JSON.stringify(stats), (err) => {
+                        if (err) console.log(err)
+                    })
+            
+                    losses[loser.user.id]++
+                    fs.writeFile("./losses.json", JSON.stringify(losses), (err) => {
+                        if (err) console.log(err)
+                    })
+            
+                    wins[winner.user.id]++;
+                    fs.writeFile("./wins.json", JSON.stringify(wins), (err) => {
+                        if (err) console.log(err)
+                    })
+            
+                    let json = JSON.parse(fs.readFileSync('./records.json'));
+                    json.push({"Result":`${winner.user.id}>${loser.user.id}`});
+                    fs.writeFile("./records.json", JSON.stringify(json), (err) => {
+                        if (err) console.log(err)
+                    })
+                    
+                    message.channel.send(`<@${loser.user.id}>, Your tournament loss to ${winner.user.username} has been recorded.`)
+                    return setTimeout(function() {
+                        getUpdatedMatchesObject(message, participants, matchID, loserID, winnerID, loser, winner)
+                    }, 3000)	
+                }
+            }
+        })
+    }
+}
+
+const getUpdatedMatchesObject = (message, participants, matchID, loserID, winnerID, loser, winner) => {
+    return challongeClient.matches.index({
+        id: status['tournament'],
+        callback: (err, data) => {
+            if(err) {
+                return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+            } else {
+                return checkMatches(message, data, participants, matchID, loserID, winnerID, loser, winner)
+            }
+        }
+    }) 
+}
+
+//CHECK MATCHES
+const checkMatches = (message, matches, participants, matchID, loserID, winnerID, loser, winner) => {
+    let newOppoIDLoser
+    let newOppoLoser
+    let matchWaitingOnLoser
+    let matchWaitingOnLoserP1ID
+    let matchWaitingOnLoserP2ID
+    let matchWaitingOnLoserP1
+    let matchWaitingOnLoserP2
+    let newOppoIDWinner
+    let newOppoWinner
+    let matchWaitingOnWinner
+    let matchWaitingOnWinnerP1ID
+    let matchWaitingOnWinnerP2ID
+    let matchWaitingOnWinnerP1
+    let matchWaitingOnWinnerP2
+    let keys = Object.keys(matches)
+    let players = Object.keys(participants)
+
+    keys.forEach(function(elem) {
+        if ( (matches[elem].match.player1Id === winnerID || matches[elem].match.player2Id === winnerID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
+            if (matches[elem].match.state === 'pending') {
+                matchWaitingOnWinner = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
+            } else if (matches[elem].match.state === 'open') {
+                newOppoIDWinner = (matches[elem].match.player1Id === winnerID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
+                newMatchIDWinner = matches[elem].match.id
+            }
+        } else if ( (matches[elem].match.player1Id === loserID || matches[elem].match.player2Id === loserID) && (matches[elem].match.player1PrereqMatchId === matchID || matches[elem].match.player2PrereqMatchId === matchID) ) {
+            if (matches[elem].match.state === 'pending') {
+                matchWaitingOnLoser = (matches[elem].match.player1PrereqMatchId === matchID ? matches[elem].match.player2PrereqMatchId : matches[elem].match.player1PrereqMatchId)
+            } else if (matches[elem].match.state === 'open') {
+                newOppoIDLoser = (matches[elem].match.player1Id === loserID ? matches[elem].match.player2Id : matches[elem].match.player1Id)
+                newMatchIDLoser = matches[elem].match.id
+            }
+        }
+    })
+
+    keys.forEach(function(elem) {
+        if (matches[elem].match.id === matchWaitingOnLoser) {
+            matchWaitingOnLoserP1ID = matches[elem].match.player1Id
+            matchWaitingOnLoserP2ID = matches[elem].match.player2Id
+        }
+        
+        if (matches[elem].match.id === matchWaitingOnWinner) {
+            matchWaitingOnWinnerP1ID = matches[elem].match.player1Id
+            matchWaitingOnWinnerP2ID = matches[elem].match.player2Id
+        }
+    })
+
+    players.forEach(function(elem) {
+         if (participants[elem].participant.id === newOppoIDLoser) {
+            newOppoLoser = discordIDs[participants[elem].participant.name]
+         }
+
+         if (participants[elem].participant.id === newOppoIDWinner) {
+            newOppoWinner = discordIDs[participants[elem].participant.name]
+         }
+         
+         if (participants[elem].participant.id === matchWaitingOnLoserP1ID) {
+            matchWaitingOnLoserP1 = participants[elem].participant.name
+         }
+         
+         if (participants[elem].participant.id === matchWaitingOnLoserP2ID) {
+            matchWaitingOnLoserP2 = participants[elem].participant.name
+         }
+         
+         if (participants[elem].participant.id === matchWaitingOnWinnerP1ID) {
+            matchWaitingOnWinnerP1 = participants[elem].participant.name
+         }
+         
+         if (participants[elem].participant.id === matchWaitingOnWinnerP2ID) {
+            matchWaitingOnWinnerP2 = participants[elem].participant.name
+         }
+    })
+
+    if (matchWaitingOnLoser) {
+        message.channel.send(`${loser.user.username}, You are waiting for the result of ${matchWaitingOnLoserP1} vs ${matchWaitingOnLoserP2}.`)
+    } else if (newOppoLoser) {
+        message.channel.send(`New Match: <@${loser.user.id}> vs <@${newOppoLoser}>. Good luck to both duelists.`)
+    } else if (matchWaitingOnLoser) {
+        message.channel.send(`${loser.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
+    } else {
+        loser.removeRole(tourRole)
+        message.channel.send(`${loser.user.username}, You are eliminated from the tournament. Better luck next time!`)
+    }
+
+    if (matchWaitingOnWinner) {
+        message.channel.send(`${winner.user.username}, You are waiting for the result of ${matchWaitingOnWinnerP1} vs ${matchWaitingOnWinnerP2}.`)
+    } else if (newOppoWinner) {
+        message.channel.send(`New Match: <@${winner.user.id}> vs <@${newOppoWinner}>. Good luck to both duelists.`)
+    } else if (matchWaitingOnWinner) {
+        message.channel.send(`${winner.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
+    } else {
+        winner.removeRole(tourRole)
+        message.channel.send(`<@${winner.user.id}>, You won the tournament! Congratulations on your stellar performance!`)
+    }
+    
+    return
+}
+
+
+//CLEAR REGISTRATION STATUS
+const clearRegistrationStatus = (message, x) => {
+    status['registration'] = 'waiting';
+    fs.writeFile("./status.json", JSON.stringify(status), (err) => {
+        if (err) console.log(err) });
+    if (x) {
+        return message.channel.send('The registration status has been manually reset.')
+    }
+}
+
+
+//SEND TO TOURNAMENT CHANNEL
+const sendToTournamentChannel = (player, deckList, deckType) => {
+    return client.channels.get(registrationChannel).send(`<@${player}> submitted a ${deckType} deck list for the tournament. Please confirm this deck is legal and accurate, then add them to the bracket using the **!signup** command:
+${deckList}`)
+}
