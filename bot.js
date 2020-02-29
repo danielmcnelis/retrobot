@@ -451,11 +451,11 @@ async function checkResubmission(message, dude) {
         if (yesSynonyms.includes(collected.first().content.toLowerCase())) {
             return getDeckURL(message, dude)
         } else if (noSynonyms.includes(collected.first().content.toLowerCase())) {
-            clearRegistrationStatus()
+            clearRegistrationStatus(message)
             return message.channel.send(`Not a problem. Thanks.`)
         }
     }).catch(err => {
-        clearRegistrationStatus()
+        clearRegistrationStatus(message)
         return message.channel.send(`Perhaps another time would be better.`)
     })
 }
@@ -478,7 +478,7 @@ async function getDeckURL(message, dude) {
             return getDeckType(message, dude, url, true)          
         }
     }).catch(err => {
-        clearRegistrationStatus()
+        clearRegistrationStatus(message)
         return message.author.send('Perhaps another time would be better.')
     })
 }
@@ -503,11 +503,11 @@ const getDeckType = (message, dude, url, tournament = false) => {
                     })
 
                     if (deckTypeAlius[elem][0] === 'Other') {
-                        clearRegistrationStatus()
+                        clearRegistrationStatus(message)
                         sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
                         return message.channel.send(`Thanks! I have collected your deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
                     } else {
-                        clearRegistrationStatus()
+                        clearRegistrationStatus(message)
                         sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
                         return message.channel.send(`Thanks! I have collected your ${deckTypeAlius[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
                     }
@@ -535,7 +535,7 @@ const getDeckType = (message, dude, url, tournament = false) => {
                 if (err) console.log(err)
             })
 
-            clearRegistrationStatus()
+            clearRegistrationStatus(message)
             sendToTournamentChannel(dude, url, 'Other')
             return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
         } else {
@@ -807,10 +807,13 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
 
 
 //CLEAR REGISTRATION STATUS
-const clearRegistrationStatus = () => {
+const clearRegistrationStatus = (message, x) => {
     status['registration'] = 'waiting';
     fs.writeFile("./status.json", JSON.stringify(status), (err) => {
         if (err) console.log(err) });
+    if (x) {
+        return message.channel.send('The registration status has been manually reset.')
+    }
 }
 
 
@@ -870,6 +873,19 @@ client.on('message', async message => {
         return
     }
            
+    //CHALLONGE - CREATE
+    if(cmd === `!reset`) {
+        if(!message.member.roles.has(modRole)) {
+            return message.channel.send('You do not have permission to do that.')
+        } else if(!args) {
+            return message.channel.send("You did not select a valid Status:\n- Registration (r)")
+        } else if(args[0].toLowerCase() == 'transaction' || args[0].toLowerCase() == 'transactions' || args[0].toLowerCase() == 'trans' || args[0].toLowerCase() == 'x') {
+            return clearRegistrationStatus(message, 1)
+        } else {
+            return message.channel.send("You did not select a valid Status:\n- Registration (r)")
+        }
+    }
+
     //CHALLONGE - CREATE
     if(cmd === `!create`) {
         function getRandomString(length, chars) {
@@ -1035,7 +1051,7 @@ client.on('message', async message => {
                 return getDeckType(message, maid, url, true)          
             }
         }).catch(err => {
-            clearRegistrationStatus()
+            clearRegistrationStatus(message)
             return message.author.send('Perhaps another time would be better.')
         })
     }
