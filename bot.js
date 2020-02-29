@@ -308,14 +308,16 @@ client.on('message', async message => {
             if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 46) {		
                 clearRegistrationStatus(message)
                 return person.send.send("I only accept (1) imgur.com or duelingbook.com link.")
-            } else if (collected.first().content.startsWith("https://i.imgur") || message.content.startsWith("https://www.duelingbook.com/deck")) {
+            } else if (collected.first().content.startsWith("https://i.imgur") || collected.first().content.startsWith("https://www.duelingbook.com/deck")) {
                 console.log('yo')
                 return getDeckTypeTournament(message, maid, collected.first().content, true)
             } else if (collected.first().content.startsWith("https://imgur")) {
                 console.log('hello')
-                let str = collected.first().content.subtring(8, collected.first().content.length)
-                let url = `https://i.${str}.png`;
+                let str = collected.first().content
+                let newStr = str.substring(8, str.length)
+                let url = "https://i." + newStr + ".png";
                 console.log(str)
+                console.log(newStr)
                 console.log(url)
                 return getDeckTypeTournament(message, maid, url, true)          
             }
