@@ -162,6 +162,8 @@ client.on('message', async message => {
                 return message.channel.send(`Error: The name "${url}" is already taken.`)
             } else {
                 status['tournament'] = name
+                status['registration'] = 'waiting'
+                status['round'] = 0
                 fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
                     if (err) console.log(err)
                 })
@@ -204,6 +206,8 @@ client.on('message', async message => {
                     return message.channel.send(`Error: the tournament you provided, "${name}", could not be finalized.`)
                 } else {
                     delete status['tournament']
+                    delete status['round']
+                    status['registration'] = 'waiting'
                     fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
                         if (err) console.log(err)
                     })
@@ -247,6 +251,11 @@ client.on('message', async message => {
                 if(err) {
                     return message.channel.send(`Error: the tournament you provided, "${name}", could not be initialized.`)
                 } else {
+                    status['round'] = 1
+                    fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
+                        if (err) console.log(err)
+                    })
+
                     return message.channel.send(`Let's go! Your tournament is starting now: https://challonge.com/${name}.`)
                 }
             }
