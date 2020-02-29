@@ -1474,6 +1474,9 @@ async function getDeckURL(message, dude) {
 
 //GET DECK TYPE
 const getDeckType = (message, dude, url, tournament = false) => {
+
+    console.log(123)
+
     let keys = Object.keys(deckTypeAlius)
 	const filter = m => m.author.id === dude
 	message.channel.send(`Okay, ${names[dude]}, what kind of deck is this?`)
