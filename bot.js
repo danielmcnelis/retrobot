@@ -133,6 +133,7 @@ client.on('message', async message => {
     const args = messageArray.slice(1)
     const maid = message.author.id
            
+
     //CHALLONGE - CREATE
     if(cmd === `!reset`) {
         if(!message.member.roles.has(modRole)) {
@@ -303,15 +304,19 @@ client.on('message', async message => {
             time: 16000
         }).then(collected => {
             if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://duelingbook.com/deck")) || collected.first().content.length > 46) {		
+                console.log('over here')
                 return message.channel.send("I only accept (1) imgur.com or duelingbook.com link.")
             } else if (collected.first().content.startsWith("https://i.imgur") || message.content.startsWith("https://duelingbook.com/deck")) {
+                console.log('hey')
                 return getDeckType(message, maid, collected.first().content, true)
             } else if (collected.first().content.startsWith("https://imgur")) {
                 let url = `https://i.${collected.first().content.join(" ").substring(8, collected.first().content.join(" ").length)}.png`
+                console.log(url)
                 return getDeckType(message, maid, url, true)          
             }
         }).catch(err => {
             clearRegistrationStatus(message)
+            console.log('hmm')
             return message.author.send('Perhaps another time would be better.')
         })
     }
