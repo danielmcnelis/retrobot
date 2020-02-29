@@ -9,6 +9,7 @@ const botRole = '682389567185223713'
 const modRole = '682361608848015409'
 const goatRole = '682461775907913748'
 const tourRole = '682748333940277269'
+const registrationChannel = '683434748387000364'
 const challongeClient = challonge.createClient({
     apiKey: 'JE7pFfKV8XhdZXshqHNjVySDfoVUZeAtDRcULUln'
 });
@@ -18,10 +19,12 @@ const status = require('./status.json')
 const discordIDs = require('./discordIDs.json')
 const names = require('./names.json')
 const decks = require('./decks.json')
+const replays = require('./replays.json')
 const stats = require('./stats.json')
 const backup = require('./backup.json') 
 const wins = require('./wins.json') 
 const losses = require('./losses.json')
+const matchups = require('./matchups.json')
 
 const pfpcom = ['!pfp', '!profile', '!avatar']
 const botcom = ['!bot', '!help', '!info']
@@ -67,7 +70,8 @@ const deckTypeAlius = {
     darkMasterZorc: ['Dark Master Zorc', 'dark master zorc', 'dark master - zorc', 'zorc'],
     relinquished: ['Relinquished', 'relinquished', 'relinquish', 'relinq'],
     strikeNinja: ['Strike Ninja', 'strike ninja', 'ninja', 'strike ninja return'],
-    bazooReturn: ['Bazoo Return', 'bazoo return', 'bazoo']
+    bazooReturn: ['Bazoo Return', 'bazoo return', 'bazoo'],
+    other: ['Other']
 }
 
 const sad = `<:sad:682370580884095006>`
@@ -80,6 +84,8 @@ const dia = `<:diamond:682370580288372739>`
 const mast = `<:master:682370580711997464>`
 const lgnd = `<:legend:682370580653146326>`
 const goat = `<:token:682370580564934658>`
+const upvote = `<:upvote:585263537358635010>`
+const downvote = `<:downvote:585263559332855816>`
 
 client.login('NjgyNDAxNzU1MTcwMDc4Nzcw.Xlcpag.XVeTLXJFH92QUrFZYhvjoKqg0QQ')
 
@@ -254,8 +260,57 @@ client.on('message', async message => {
         console.log(dude)
     }
 
-    //CHALLONGE - SIGNUP
-    if(cmd === `!signup`) {
+    //CHALLONGE - JOIN
+    if(cmd === `!join`) {
+        let name = status['tournament']
+        let person = message.channel.members.find('id', maid);
+
+        if (!name) {
+            return message.channel.send('There is no active tournament.')
+        } else if (!person) {
+            return message.channel.send('Sorry, I could not find you in the server. Please be sure your availability is not set to invisible.')
+        } else if (!status['round'] !== 0) {
+            return message.channel.send("Sorry, the tournament already started.")
+        } else if (!decks[maid]) {
+            createUser(maid)
+            return message.channel.send("I have added you to the Goat Format database. Please try again.")
+        } else if (status['registration'] === 'running') {
+            return message.channel.send("Another player is currently registering. Please wait.")
+        }
+    
+        status['registration'] = 'running';
+	    fs.writeFile("./status.json", JSON.stringify(status), (err) => {
+            if (err) console.log(err) });
+
+        message.channel.send("Please check your DMs.");
+
+        if(decks[maid].tournament.url) {
+            return checkResubmission(message, maid)
+        }
+
+        const msg = await person.send("Please provide an imgur screenshot or a duelingbook download link for your tournament deck.");
+        const filter = collected => collected.author.id === maid;
+        const collected = await msg.channel.awaitMessages(filter, {
+		    max: 1,
+            time: 16000
+        }).then(collected => {
+            if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://duelingbook.com/deck")) || collected.first().content.length > 46) {		
+                return message.channel.send("I only accept (1) imgur.com or duelingbook.com link.")
+            } else if (message.content.startsWith("https://i.imgur") || message.content.startsWith("https://duelingbook.com/deck")) {
+                return getDeckType(message, maid, collected.first().content, true)
+            } else if (message.content.startsWith("https://imgur")) {
+                let url = `https://i.${collected.first().content.join(" ").substring(8, collected.first().content.join(" ").length)}.png`
+                return getDeckType(message, maid, url, true)          
+            }
+        }).catch(err => {
+            clearRegistrationStatus()
+            return message.author.send('Perhaps another time would be better.')
+        })
+    }
+}
+
+    //CHALLONGE - ADD
+    if(cmd === `!add`) {
         let name = status['tournament']
         let person = message.mentions.users.first()
         let dude = message.channel.members.find('id', person.id);
@@ -392,7 +447,7 @@ client.on('message', async message => {
 
     //DECK-LISTS AUTO MODERATION
     if(cmd === `!save`) {    
-        if(!decks[maid]) {
+        if(!decks[maid] || !replays[maid]) {
             createUser(maid);
             return message.channel.send("I have added you to the Goat Format database. Please try again.")
         }
@@ -419,8 +474,6 @@ client.on('message', async message => {
         } else if(!deck[person.id]) {
             return message.channel.send("That user is not in the Goat Format database.")
         }
-
-        let rawobj = decks[player]
         
         if (!message.content.startsWith("!save https://i") || message.content.length > 46) {		
             return message.channel.send("I only accept (1) imgur.com link.")
@@ -1112,6 +1165,10 @@ function createUser(player, person) {
             
 	if(!decks[player]) {
 		decks[player] = {
+            tournament: {
+                url: false,
+                name: false
+            },
             goatControl: {
                 url: false,
                 category: 'control',
@@ -1362,47 +1419,111 @@ function createUser(player, person) {
 
 }
 
+//CHECK RESUBMISSION
+const checkResubmission = (message, dude) => {
+    let person = message.channel.members.find('id', dude);
+    const filter = m => m.author.id === dude
+	const msg = await person.send(`You already signed up for the tournament, do you want to resubmit your deck list?`)
+    const collected = await msg.channel.awaitMessages(filter, {
+		max: 1,
+        time: 10000
+    }).then(collected => {
+        if (yesSynonyms.includes(collected.first().content.toLowerCase())) {
+            return getDeckURL(message, dude)
+        } else if (noSynonyms.includes(collected.first().content.toLowerCase())) {
+            clearRegistrationStatus()
+            return message.channel.send(`Not a problem. Thanks.`)
+        }
+    }).catch(err => {
+        clearRegistrationStatus()
+        return message.channel.send(`Perhaps another time would be better.`)
+    })
+}
+
+//GET DECK URL
+const getDeckURL = (message, dude) => {
+    let person = message.channel.members.find('id', dude);
+    const msg = await person.send("Okay, please provide an imgur screenshot or a duelingbook download link for your tournament deck.");
+    const filter = collected => collected.author.id === dude;
+    const collected = await msg.channel.awaitMessages(filter, {
+		max: 1,
+        time: 16000
+        }).then(collected => {
+            if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://duelingbook.com/deck")) || collected.first().content.length > 46) {		
+                return message.channel.send("I only accept (1) imgur.com or duelingbook.com link.")
+            } else if (message.content.startsWith("https://i.imgur") || message.content.startsWith("https://duelingbook.com/deck")) {
+                return getDeckType(message, dude, collected.first().content, true)
+            } else if (message.content.startsWith("https://imgur")) {
+                let url = `https://i.${collected.first().content.join(" ").substring(8, collected.first().content.join(" ").length)}.png`
+                return getDeckType(message, dude, url, true)          
+            }
+        }).catch(err => {
+            clearRegistrationStatus()
+            return message.author.send('Perhaps another time would be better.')
+        })
+    }
+}
 
 
 //GET DECK TYPE
-const getDeckType = (message, dude, url) => {
+const getDeckType = (message, dude, url, tournament = false) => {
     let keys = Object.keys(deckTypeAlius)
-
-    console.log(dude)
-    console.log(keys)
-
 	const filter = m => m.author.id === dude
-	message.channel.send("What kind of deck is this?")
+	message.channel.send(`Okay, ${names[dude]}, what kind of deck is this?`)
 	message.channel.awaitMessages(filter, {
 		max: 1,
-        time: 200000
+        time: 16000
     }).then(collected => {
-
-        console.log('collected...')
-        console.log(collected.first().content.toLowerCase())
-
         keys.forEach(function(elem) {
-
-            console.log(deckTypeAlius[elem])
-            console.log('next element:')
-
             if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
-                console.log('hey in here')   
-                
-                if (decks[dude][elem].url) {
-                       console.log('first option')
+                if (tournament) {
+                    decks[dude].tournament.url = url
+                    decks[dude].tournament.name = elem
+                    fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+                        if (err) console.log(err)
+                    })
+
+                    if (deckTypeAlius[elem][0] === 'Other') {
+                        clearRegistrationStatus()
+                        sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
+                        return message.channel.send(`Thanks! I have collected your deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+                    } else {
+                        clearRegistrationStatus()
+                        sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
+                        return message.channel.send(`Thanks! I have collected your ${deckTypeAlius[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+                    }
+                } else if (decks[dude][elem].url) {
                         return getDeckOverwriteConfirmation(message, dude, url, elem, deckTypeAlius[elem][0])
                    } else {
-                    console.log('second option')
-                       decks[dude][elem].url = url
-                       return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)
+                        decks[dude][elem].url = url
+                        fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+                            if (err) console.log(err)
+                        })
+                        
+                        if (deckTypeAlius[elem][0] === 'Other') {
+                            return message.channel.send(`Thanks! I have saved your deck to the public database.`)
+                        } else {
+                            return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)       
+                        }
                    }
             }
         })
     }).catch(err => {
-        return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. If your deck does not fit into the list below, you can save it as "Other":
+        if (tournament) {
+            decks[dude].tournament.url = url
+            decks[dude].tournament.name = 'other'
+            fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+                if (err) console.log(err)
+            })
 
-Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimension Fusion Turbo, Reasoning Gate Turbo, Soul Control, Flip Control, Anti-Meta Warrior, Gearfried, Tiger Stun, Drain Beat, Aggro Burn, Aggro Monarch, Rescue Cat OTK, Ben-Kei OTK, Stein OTK, Dark Burn, Drain Burn, Speed Burn, P.A.C.M.A.N., Economics FTK, Library FTK, Exodia, Last Turn, Empty Jar, Gravekeeper, Machine, Water, Zombie, Dark Scorpion, Dark Master Zorc, Relinquished, Strike Ninja, Bazoo Return.`)
+            clearRegistrationStatus()
+            sendToTournamentChannel(dude, url, 'Other')
+            return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
+        } else {
+            return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. If your deck is not on the list below, you can save it under "Other":
+
+Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimension Fusion Turbo, Reasoning Gate Turbo, Soul Control, Flip Control, Anti-Meta Warrior, Gearfried, Tiger Stun, Drain Beat, Aggro Burn, Aggro Monarch, Rescue Cat OTK, Ben-Kei OTK, Stein OTK, Dark Burn, Drain Burn, Speed Burn, P.A.C.M.A.N., Economics FTK, Library FTK, Exodia, Last Turn, Empty Jar, Gravekeeper, Machine, Water, Zombie, Dark Scorpion, Dark Master Zorc, Relinquished, Strike Ninja, Bazoo Return.`
+        )}
     })
 }
 
@@ -1565,7 +1686,6 @@ const getUpdatedMatchesObject = (message, participants, matchID, loserID, winner
     }) 
 }
 
-
 //CHECK MATCHES
 const checkMatches = (message, matches, participants, matchID, loserID, winnerID, loser, winner) => {
     let newOppoIDLoser
@@ -1664,4 +1784,19 @@ const checkMatches = (message, matches, participants, matchID, loserID, winnerID
     }
     
     return
+}
+
+
+//CLEAR REGISTRATION STATUS
+const clearRegistrationStatus = () => {
+    status['registration'] = 'waiting';
+    fs.writeFile("./status.json", JSON.stringify(status), (err) => {
+        if (err) console.log(err) });
+}
+
+
+//SEND TO TOURNAMENT CHANNEL
+const sendToTournamentChannel = (player, deckList, deckType) => {
+    return client.channels.get(registrationChannel).send(`<@${player}> submitted a ${deckType} deck list for the tournament. Please confirm this deck is legal and accurate, then add them to the bracket using the **!signup** command:
+${deckList}`)
 }
