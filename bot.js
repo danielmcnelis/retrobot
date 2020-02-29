@@ -1518,7 +1518,7 @@ async function getDeckTypeTournament(message, dude, url) {
                     if (err) console.log(err)
                 })
 
-                if (deckTypeAlius[elem][0] === 'Other') {
+                if (elem === 'other') {
                     clearRegistrationStatus(message)
                     sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
                     return person.send(`Thanks! I have collected your deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
@@ -1529,7 +1529,7 @@ async function getDeckTypeTournament(message, dude, url) {
                 }
             } 
         })
-    }).catch(err => {
+
         decks[dude].tournament.url = url
         decks[dude].tournament.name = 'other'
         fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
@@ -1539,6 +1539,16 @@ async function getDeckTypeTournament(message, dude, url) {
         clearRegistrationStatus(message)
         sendToTournamentChannel(dude, url, 'Other')
         return person.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
+    }).catch(err => {
+        decks[dude].tournament.url = url
+        decks[dude].tournament.name = 'other'
+        fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+            if (err) console.log(err)
+        })
+          
+        clearRegistrationStatus(message)
+        sendToTournamentChannel(dude, url, 'Other')
+        return person.send(`Well, let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
     })
 }
 
