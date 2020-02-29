@@ -309,14 +309,15 @@ client.on('message', async message => {
                 clearRegistrationStatus(message)
                 return person.send.send("I only accept (1) imgur.com or duelingbook.com link.")
             } else if (collected.first().content.startsWith("https://i.imgur") || message.content.startsWith("https://www.duelingbook.com/deck")) {
-                return getDeckType(message, maid, collected.first().content, true)
+                console.log('yo')
+                return getDeckTypeTournament(message, maid, collected.first().content, true)
             } else if (collected.first().content.startsWith("https://imgur")) {
                 console.log('hello')
                 let str = collected.first().content.subtring(8, collected.first().content.length)
                 let url = `https://i.${str}.png`;
                 console.log(str)
                 console.log(url)
-                return getDeckType(message, maid, url, true)          
+                return getDeckTypeTournament(message, maid, url, true)          
             }
         }).catch(err => {
             clearRegistrationStatus(message)
@@ -1469,54 +1470,71 @@ const getDeckType = (message, dude, url, tournament = false) => {
     }).then(collected => {
         keys.forEach(function(elem) {
             if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
-                if (tournament) {
-                    decks[dude].tournament.url = url
-                    decks[dude].tournament.name = elem
+                if (decks[dude][elem].url) {
+                    return getDeckOverwriteConfirmation(message, dude, url, elem, deckTypeAlius[elem][0])
+               } else {
+                    decks[dude][elem].url = url
                     fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
                         if (err) console.log(err)
                     })
-
-                    if (deckTypeAlius[elem][0] === 'Other') {
-                        clearRegistrationStatus(message)
-                        sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
-                        return message.channel.send(`Thanks! I have collected your deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
-                    } else {
-                        clearRegistrationStatus(message)
-                        sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
-                        return message.channel.send(`Thanks! I have collected your ${deckTypeAlius[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
-                    }
-                } else if (decks[dude][elem].url) {
-                        return getDeckOverwriteConfirmation(message, dude, url, elem, deckTypeAlius[elem][0])
-                   } else {
-                        decks[dude][elem].url = url
-                        fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
-                            if (err) console.log(err)
-                        })
                         
-                        if (deckTypeAlius[elem][0] === 'Other') {
-                            return message.channel.send(`Thanks! I have saved your deck to the public database.`)
-                        } else {
-                            return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)       
-                        }
-                   }
+                    if (deckTypeAlius[elem][0] === 'Other') {
+                        return message.channel.send(`Thanks! I have saved your deck to the public database.`)
+                    } else {
+                        return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)       
+                    }
+               }
             }
         })
+    }).catch(err => {    
+        return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. If your deck is not on the list below, you can save it under "Other":
+
+Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimension Fusion Turbo, Reasoning Gate Turbo, Soul Control, Flip Control, Anti-Meta Warrior, Gearfried, Tiger Stun, Drain Beat, Aggro Burn, Aggro Monarch, Rescue Cat OTK, Ben-Kei OTK, Stein OTK, Dark Burn, Drain Burn, Speed Burn, P.A.C.M.A.N., Economics FTK, Library FTK, Exodia, Last Turn, Empty Jar, Gravekeeper, Machine, Water, Zombie, Dark Scorpion, Dark Master Zorc, Relinquished, Strike Ninja, Bazoo Return.`)
+    })
+}
+
+
+
+
+//GET DECK TYPE
+const getDeckTypeTournament = (message, dude, url) => {
+    let keys = Object.keys(deckTypeAlius)
+    let person = message.channel.members.find('id', dude);
+	const filter = m => m.author.id === dude
+	const msg = await person.send(`Okay, ${names[dude]}, what kind of deck is this?`)
+    const collected = await msg.channel.awaitMessages(filter, {
+		max: 1,
+        time: 16000
+    }).then(collected => {
+        keys.forEach(function(elem) {
+            if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
+                decks[dude].tournament.url = url
+                decks[dude].tournament.name = elem
+                fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+                    if (err) console.log(err)
+                })
+
+                if (deckTypeAlius[elem][0] === 'Other') {
+                    clearRegistrationStatus(message)
+                    sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
+                    return message.channel.send(`Thanks! I have collected your deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+                } else {
+                    clearRegistrationStatus(message)
+                    sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
+                    return message.channel.send(`Thanks! I have collected your ${deckTypeAlius[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+                }
+            } 
+        })
     }).catch(err => {
-        if (tournament) {
-            decks[dude].tournament.url = url
-            decks[dude].tournament.name = 'other'
-            fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
-                if (err) console.log(err)
-            })
-
-            clearRegistrationStatus(message)
-            sendToTournamentChannel(dude, url, 'Other')
-            return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
-        } else {
-            return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. If your deck is not on the list below, you can save it under "Other":
-
-Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimension Fusion Turbo, Reasoning Gate Turbo, Soul Control, Flip Control, Anti-Meta Warrior, Gearfried, Tiger Stun, Drain Beat, Aggro Burn, Aggro Monarch, Rescue Cat OTK, Ben-Kei OTK, Stein OTK, Dark Burn, Drain Burn, Speed Burn, P.A.C.M.A.N., Economics FTK, Library FTK, Exodia, Last Turn, Empty Jar, Gravekeeper, Machine, Water, Zombie, Dark Scorpion, Dark Master Zorc, Relinquished, Strike Ninja, Bazoo Return.`
-        )}
+        decks[dude].tournament.url = url
+        decks[dude].tournament.name = 'other'
+        fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+            if (err) console.log(err)
+        })
+          
+        clearRegistrationStatus(message)
+        sendToTournamentChannel(dude, url, 'Other')
+        return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
     })
 }
 
