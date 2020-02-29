@@ -303,6 +303,8 @@ client.on('message', async message => {
 		    max: 1,
             time: 16000
         }).then(collected => {
+            console.log(collected.first().content)
+            
             if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://duelingbook.com/deck")) || collected.first().content.length > 46) {		
                 console.log('over here')
                 return message.channel.send("I only accept (1) imgur.com or duelingbook.com link.")
