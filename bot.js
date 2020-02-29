@@ -304,15 +304,17 @@ client.on('message', async message => {
             time: 16000
         }).then(collected => {
             console.log(collected.first().content)
-            
-            if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://duelingbook.com/deck")) || collected.first().content.length > 46) {		
-                console.log('over here')
-                return message.channel.send("I only accept (1) imgur.com or duelingbook.com link.")
-            } else if (collected.first().content.startsWith("https://i.imgur") || message.content.startsWith("https://duelingbook.com/deck")) {
-                console.log('hey')
+
+            if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 46) {		
+                clearRegistrationStatus(message)
+                return person.send.send("I only accept (1) imgur.com or duelingbook.com link.")
+            } else if (collected.first().content.startsWith("https://i.imgur") || message.content.startsWith("https://www.duelingbook.com/deck")) {
                 return getDeckType(message, maid, collected.first().content, true)
             } else if (collected.first().content.startsWith("https://imgur")) {
-                let url = `https://i.${collected.first().content.join(" ").substring(8, collected.first().content.join(" ").length)}.png`
+                console.log('hello')
+                let str = collected.first().content.subtring(8, collected.first().content.length)
+                let url = `https://i.${str}.png`;
+                console.log(str)
                 console.log(url)
                 return getDeckType(message, maid, url, true)          
             }
