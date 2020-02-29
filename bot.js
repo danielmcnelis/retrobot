@@ -132,11 +132,6 @@ client.on('message', async message => {
     const cmd = messageArray[0]
     const args = messageArray.slice(1)
     const maid = message.author.id
-        
-
-    if (message.author.bot) {
-        return
-    } 
            
     //CHALLONGE - CREATE
     if(cmd === `!reset`) {
