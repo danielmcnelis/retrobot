@@ -278,7 +278,7 @@ client.on('message', async message => {
             return message.channel.send('There is no active tournament.')
         } else if (!person) {
             return message.channel.send('Sorry, I could not find you in the server. Please be sure your availability is not set to invisible.')
-        } else if (!status['round'] !== 0) {
+        } else if (status['round'] !== 0) {
             return message.channel.send("Sorry, the tournament already started.")
         } else if (!decks[maid]) {
             createUser(maid)
