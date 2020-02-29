@@ -1419,7 +1419,7 @@ function createUser(player, person) {
 }
 
 //CHECK RESUBMISSION
-const checkResubmission = (message, dude) => {
+async function checkResubmission(message, dude) {
     let person = message.channel.members.find('id', dude);
     const filter = m => m.author.id === dude
 	const msg = await person.send(`You already signed up for the tournament, do you want to resubmit your deck list?`)
@@ -1440,27 +1440,26 @@ const checkResubmission = (message, dude) => {
 }
 
 //GET DECK URL
-const getDeckURL = (message, dude) => {
+async function getDeckURL(message, dude) {
     let person = message.channel.members.find('id', dude);
     const msg = await person.send("Okay, please provide an imgur screenshot or a duelingbook download link for your tournament deck.");
     const filter = collected => collected.author.id === dude;
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
         time: 16000
-        }).then(collected => {
-            if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://duelingbook.com/deck")) || collected.first().content.length > 46) {		
-                return message.channel.send("I only accept (1) imgur.com or duelingbook.com link.")
-            } else if (message.content.startsWith("https://i.imgur") || message.content.startsWith("https://duelingbook.com/deck")) {
-                return getDeckType(message, dude, collected.first().content, true)
-            } else if (message.content.startsWith("https://imgur")) {
-                let url = `https://i.${collected.first().content.join(" ").substring(8, collected.first().content.join(" ").length)}.png`
-                return getDeckType(message, dude, url, true)          
-            }
-        }).catch(err => {
-            clearRegistrationStatus()
-            return message.author.send('Perhaps another time would be better.')
-        })
-    }
+    }).then(collected => {
+        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://duelingbook.com/deck")) || collected.first().content.length > 46) {		
+            return message.channel.send("I only accept (1) imgur.com or duelingbook.com link.")
+        } else if (message.content.startsWith("https://i.imgur") || message.content.startsWith("https://duelingbook.com/deck")) {
+            return getDeckType(message, dude, collected.first().content, true)
+        } else if (message.content.startsWith("https://imgur")) {
+            let url = `https://i.${collected.first().content.join(" ").substring(8, collected.first().content.join(" ").length)}.png`
+            return getDeckType(message, dude, url, true)          
+        }
+    }).catch(err => {
+        clearRegistrationStatus()
+        return message.author.send('Perhaps another time would be better.')
+    })
 }
 
 
