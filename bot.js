@@ -2218,6 +2218,7 @@ function createUser(player, person) {
    		fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
             if (err) console.log(err)
         })
+    }
         
     
     if(!decks[player]) {
