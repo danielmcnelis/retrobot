@@ -150,12 +150,16 @@ client.on('message', async message => {
         if (reaction.emoji.name === 'tweet') {
             console.log('tweet filter activated')
             return true
+        } else {
+            return false
         }
     }
     const upvoteFilter = (reaction) => {
         if (reaction.emoji.name === 'upvote') {
             console.log('upvote filter activated')
             return true
+        } else {
+            return false
         }
     }
     
@@ -163,6 +167,8 @@ client.on('message', async message => {
         if (reaction.emoji.name === 'downvote') {
             console.log('downvote filter activated')
             return true
+        } else {
+            return false
         }
     }
 
@@ -182,7 +188,7 @@ client.on('message', async message => {
     }).then(collected => {
         console.log(collected.first().content)
         return message.channel.send('Increase rating by 1.')
-    }).catch(collected => {
+    }).catch(err => {
         console.log(err)
     })
 
@@ -192,7 +198,7 @@ client.on('message', async message => {
     }).then(collected => {
         console.log(collected.first().content)
         return message.channel.send('Decrease rating by 1.')
-    }).catch(collected => {
+    }).catch(err => {
         console.log(err)
     })
 
