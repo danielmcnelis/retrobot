@@ -146,19 +146,41 @@ client.on('message', async message => {
     }
 
         
-    const rFilter = (reaction) => {
-        console.log(reaction.emoji.name)
-        return reaction.emoji.name === 'tweet'
-    }
+    const tweetFilter = (reaction) => reaction.emoji.name === 'tweet'
+    const upvoteFilter = (reaction) => reaction.emoji.name === 'upvote'
+    const downvoteFilter = (reaction) => reaction.emoji.name === 'downvote'
 
-    message.awaitReactions(rFilter, {
+    message.awaitReactions(tweetFilter, {
         max: 1,
         time: 6000
-    }).then(collected => 
-        message.channel.send('Tweet this message.')
-    ).catch(collected => {
-        console.log(`After a minute, only ${collected.size} out of 4 reacted.`);
+    }).then(collected => {
+        console.log(message.content)
+        return message.channel.send('Tweet this message.')
+    }).catch(err => {
+        console.log(err)
     })
+
+    message.awaitReactions(upvoteFilter, {
+        max: 1,
+        time: 6000
+    }).then(collected => {
+        console.log(message.content)
+        message.channel.send('Tweet this message.')
+    }).catch(collected => {
+        console.log(err)
+    })
+
+    message.awaitReactions(downvoteFilter, {
+        max: 1,
+        time: 6000
+    }).then(collected => {
+        console.log(message.content)
+        message.channel.send('Tweet this message.')
+    }).catch(collected => {
+        console.log(err)
+    })
+
+
 
 
 
