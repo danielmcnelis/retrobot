@@ -145,15 +145,17 @@ client.on('message', async message => {
         return
     }
 
-    const rFilter = (reaction, user) => {
-        return reaction.emoji.name === '👌' && user.id === message.author.id;
-    };
-    
-    message.awaitReactions(rFilter, { max: 4, time: 60000, errors: ['time'] })
-        .then(collected => console.log(collected.size))
-        .catch(collected => {
-            console.log(`After a minute, only ${collected.size} out of 4 reacted.`);
-        });
+        
+    const rFilter = () => reaction.emoji.name === 'ok_hand';
+
+    message.awaitReactions(rFilter, {
+        max: 1,
+        time: 6000
+    }).then(collected => 
+        console.log(collected.size)
+    ).catch(collected => {
+        console.log(`After a minute, only ${collected.size} out of 4 reacted.`);
+    })
 
 
 
