@@ -146,7 +146,10 @@ client.on('message', async message => {
     }
 
         
-    const rFilter = (collected) => reaction.emoji.name === 'ok_hand';
+    const rFilter = (reaction) => {
+        console.log(reaction.emoji.name)
+        return reaction.emoji.name === 'ok_hand'
+    }
 
     message.awaitReactions(rFilter, {
         max: 1,
