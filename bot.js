@@ -148,17 +148,20 @@ client.on('message', async message => {
         
     const tweetFilter = (reaction) => {
         if (reaction.emoji.name === 'tweet') {
+            console.log('tweet filter activated')
             return true
         }
     }
     const upvoteFilter = (reaction) => {
         if (reaction.emoji.name === 'upvote') {
+            console.log('upvote filter activated')
             return true
         }
     }
     
     const downvoteFilter = (reaction) => {
         if (reaction.emoji.name === 'downvote') {
+            console.log('downvote filter activated')
             return true
         }
     }
