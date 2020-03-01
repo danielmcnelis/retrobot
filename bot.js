@@ -145,9 +145,9 @@ client.on('message', async message => {
         return
     }
 
-    const reactionFilter = (reaction) => {        
+    const reactionFilter = (reaction, user) => {        
         console.log('got one')
-        return collected.author.id === maid
+        return user.id === maid
     }
 
     message.awaitReactions(reactionFilter, { max: 10, time: 10000, errors: ['time'] })
