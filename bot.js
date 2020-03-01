@@ -145,20 +145,18 @@ client.on('message', async message => {
         return
     }
 
-    console.log(message)
-
-    message.awaitReactions(filter, { max: 1, time: 10000, errors: ['time'] })
-	    .then(collected => {
+        message.awaitReactions(reactionFilter, { time: 10000, errors: ['time'] })
+        .then(collected => {
             console.log(collected.first())
-            const reaction = collected.first();
             console.log(reaction.emoji.name)
-    		if (reaction.emoji.name === 'tweet') {
-	    		message.reply('Post this to Twitter.');
-		    }
-	    })
-	    .catch(collected => {
-		    message.channel.send('Time out.');
+            if (reaction.emoji.name === 'tweet') {
+                message.reply('Post this to Twitter.');
+            }
         })
+        .catch(collected => {
+            message.channel.send('Time out.');
+        })
+
 
     //CHALLONGE - CREATE
     if(cmd === `!reset`) {
