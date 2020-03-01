@@ -145,11 +145,11 @@ client.on('message', async message => {
         return
     }
 
-    const reactionFilter = (reaction, user) => {
-        return reaction.emoji.name
+    const reactionFilter = (reaction) => {
+        return true
     }
 
-    message.awaitReactions(reactionFilter, { time: 10000, errors: ['time'] })
+    message.awaitReactions(reactionFilter, { max: 10, time: 10000, errors: ['time'] })
     .then(collected => {
         console.log(collected.first())
         console.log(reaction.emoji.name)
