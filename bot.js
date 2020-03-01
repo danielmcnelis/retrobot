@@ -34,7 +34,7 @@ const losscom = ['!lossvs','!loss','!lose','!goatloss','!goatlossvs','!goatlose'
 const h2hcom = ['!h2h', '!head2head', '!headtohead']
 const undocom = ['!undolast', '!undo', '!undoloss']
 const rankcom = ['!rank', '!top', '!ladder']
-const yesSynonyms = ['yes', 'yeah', 'yea', 'ye', 'ya', 'yah', 'yh', 'y']
+const yesSynonyms = ['yes', 'yeah', 'yea', 'ye', 'ya', 'yah', 'yh', 'y', 'sure', 'ok', 'okay', 'k']
 const noSynonyms = ['no', 'nah', 'nope', 'naw', 'n', 'na']
 const deckTypeAlius = {
     goatControl: ['Goat Control', 'goat control', 'goat', 'gc'],
@@ -86,8 +86,9 @@ const dia = `<:diamond:682370580288372739>`
 const mast = `<:master:682370580711997464>`
 const lgnd = `<:legend:682370580653146326>`
 const goat = `<:token:682370580564934658>`
-const upvote = `<:upvote:585263537358635010>`
-const downvote = `<:downvote:585263559332855816>`
+const upvote = `<:upvote:683802905572147240>`
+const downvote = `<:downvote:683802905635061795>`
+const tweet = `<:tweet:683802657017954393>`
 
 client.login('NjgyNDAxNzU1MTcwMDc4Nzcw.Xlcpag.XVeTLXJFH92QUrFZYhvjoKqg0QQ')
 
@@ -135,6 +136,20 @@ client.on('message', async message => {
     const args = messageArray.slice(1)
     const maid = message.author.id
            
+    const filter = (reaction, user) => {
+	    return ['👍', '👎'].includes(reaction.emoji.name) && user.id === message.author.id;
+    }
+
+    message.awaitReactions(filter, { max: 1, time: 10000, errors: ['time'] })
+	    .then(collected => {
+		    const reaction = collected.first();
+    		if (reaction.emoji === tweet) {
+	    		message.reply('Post this to Twitter.');
+		    }
+	    })
+	    .catch(collected => {
+		    message.reply('Time out.');
+        })
 
     //CHALLONGE - CREATE
     if(cmd === `!reset`) {
@@ -274,7 +289,6 @@ client.on('message', async message => {
     if(cmd === `!join`) {
         let name = status['tournament']
         let person = message.channel.members.find('id', maid);
-        
 
         if (!name) {
             return message.channel.send('There is no active tournament.')
@@ -303,29 +317,22 @@ client.on('message', async message => {
         const filter = collected => collected.author.id === maid;
         const collected = await msg.channel.awaitMessages(filter, {
 		    max: 1,
-            time: 16000
+            time: 15000
         }).then(collected => {
-            console.log(collected.first().content)
-
-            if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 46) {		
-                clearRegistrationStatus(message)
-                return person.send.send("I only accept (1) imgur.com or duelingbook.com link.")
+            if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 50) {		
+                clearRegistrationStatus()
+                return person.send.send("Sorry, I only accept (1) imgur.com or duelingbook.com link.")
             } else if (collected.first().content.startsWith("https://i.imgur") || collected.first().content.startsWith("https://www.duelingbook.com/deck")) {
-                console.log('yo')
                 return getDeckTypeTournament(message, maid, collected.first().content)
             } else if (collected.first().content.startsWith("https://imgur")) {
-                console.log('hello')
                 let str = collected.first().content
                 let newStr = str.substring(8, str.length)
                 let url = "https://i." + newStr + ".png";
-                console.log(str)
-                console.log(newStr)
-                console.log(url)
                 return getDeckTypeTournament(message, maid, url)          
             }
         }).catch(err => {
-            clearRegistrationStatus(message)
-            console.log('hmm')
+            console.log(err)
+            clearRegistrationStatus()
             return message.author.send('Perhaps another time would be better.')
         })
     }
@@ -465,6 +472,46 @@ client.on('message', async message => {
     //REPLAY-LINKS AUTO MODERATION
 
 
+    if (cmd === `!cats`) {
+    const deckEmbed = new Discord.RichEmbed()
+    .addField('Control', `Chaos Control
+Chaos Return
+Chaos Turbo
+Dark Master Zorc
+Goat Control
+Flip Control
+Soul Control
+P.A.C.M.A.N.
+Relinquished
+Strike Ninja
+Zombie`, true)
+        .addField('Aggro', `Anti-Meta Warrior
+Aggro Monarch
+Bazoo Return
+Chaos Recruiter
+Dark Scorpion
+Drain Beat
+Gearfried
+Gravekeeper
+Tiger Stun
+Water`, true)
+        .addField('Combo', `Ben-Kei OTK
+Dimension Fusion Turbo
+Economics FTK
+Empty Jar
+Exodia
+Last Turn
+Library FTK
+Machine
+Reasoning Gate Turbo
+Rescue Cat OTK
+Stein OTK`, true)
+    .addField('Burn', `Aggro Burn
+Dark Burn
+Drain Burn
+Speed Burn`, true)
+        return message.channel.send(deckEmbed)
+    }
 
     //DECK-LISTS AUTO MODERATION
     if(cmd === `!save`) {    
@@ -472,14 +519,17 @@ client.on('message', async message => {
             createUser(maid);
             return message.channel.send("I have added you to the Goat Format database. Please try again.")
         }
-        
-        if (!message.content.startsWith("!save https://i") || message.content.length > 46) {		
-            return message.channel.send("I only accept (1) imgur.com link.")
+        https://www.duelingbook.com/replay?id=1498-15832467
+
+        if ( (!message.content.startsWith("!save https://i") && !message.content.startsWith("!save https://www.duelingbook.com/replay?")) || message.content.length > 60) {		
+            return message.channel.send(`If you wish to save a deck, please provide (1) imgur.com link. If you wish to save a replay, please provide (1) duelingbook.com/replay link.`)
         } else if (message.content.startsWith("!save https://i.imgur")) {
             return getDeckType(message, maid, args[0])
         } else if (message.content.startsWith("!save https://imgur")) {
             let url = `https://i.${args.join(" ").substring(8, args.join(" ").length)}.png`;
             return getDeckType(message, maid, url)          
+        } else if (message.content.startsWith("!save https://www.duelingbook.com/replay?")) {
+            return getReplayInfo1(message, maid, url)          
         }
     }
 
@@ -1164,65 +1214,1018 @@ function createUser(player, person) {
             
 	if(!replays[player]) {
 		replays[player] = {
-            0: false,
-            1: false,
-            2: false,
-            3: false,
-            4: false,
-            5: false,
-            6: false,
-            7: false,
-            8: false,
-            9: false,
-            10: false,
-            11: false,
-            12: false,
-            13: false,
-            14: false,
-            15: false,
-            16: false,
-            17: false,
-            18: false,
-            19: false,
-            20: false,
-            21: false,
-            22: false,
-            23: false,
-            24: false,
-            25: false,
-            26: false,
-            27: false,
-            28: false,
-            29: false,
-            30: false,
-            31: false,
-            32: false,
-            33: false,
-            34: false,
-            35: false,
-            36: false,
-            37: false,
-            38: false,
-            39: false,
-            40: false,
-            41: false,
-            42: false,
-            43: false,
-            44: false,
-            45: false,
-            46: false,
-            47: false,
-            48: false,
-            49: false
+            0: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            1: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            2: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            3: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            4: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            5: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            6: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            7: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            8: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            9: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            10: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            11: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            12: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            13: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            14: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            15: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            16: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            17: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            18: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            19: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            20: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            21: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            22: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            23: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            24: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            25: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            26: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            27: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            28: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            29: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            30: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            31: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            32: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            33: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            34: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            35: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            36: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            37: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            38: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            39: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            40: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            41: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            42: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            43: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            44: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            45: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            46: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            47: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            48: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            49: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            50: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            51: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            52: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            53: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            54: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            55: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            56: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            57: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            58: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            59: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            60: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            61: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            62: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            63: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            64: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            65: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            66: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            67: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            68: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            69: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            70: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            71: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            72: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            73: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            74: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            75: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            76: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            77: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            78: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            79: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            80: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            81: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            82: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            83: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            84: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            85: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            86: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            87: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            88: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            89: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            90: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            91: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            92: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            93: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            94: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            95: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            96: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            97: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            98: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            99: {
+                url: false,
+                p1: false,
+                p2: false,
+                deck1: false,
+                deck2: false,
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            }
         }
    		fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
-            if (err) console.log(err) }); }
-            
-	if(!decks[player]) {
-		decks[player] = {
+            if (err) console.log(err)
+        })
+        
+    
+    if(!decks[player]) {
+        decks[player] = {
             tournament: {
                 url: false,
-                name: false
+                name: false,
+                category: false
             },
             goatControl: {
                 url: false,
@@ -1441,16 +2444,35 @@ function createUser(player, person) {
                 posRaters: [],
                 negRaters: []
             },
-            other: {
+            other1: {
                 url: false,
+                name: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            other2: {
+                url: false,
+                name: false,
+                category: 'other',
+                rating: 0,
+                posRaters: [],
+                negRaters: []
+            },
+            other3: {
+                url: false,
+                name: false,
                 category: 'other',
                 rating: 0,
                 posRaters: [],
                 negRaters: []
             }
-        };
-   		fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
-			if (err) console.log(err) }); }
+        }
+        fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+            if (err) console.log(err)
+        })
+    }
 
 	if(!stats[player]) {
 		stats[player] = 500;
@@ -1471,8 +2493,8 @@ function createUser(player, person) {
 		losses[player] = 0;
    		fs.writeFile("./losses.json", JSON.stringify(losses), (err) => {
 			if (err) console.log(err) }); }
-
 }
+
 
 //CHECK RESUBMISSION
 async function checkResubmission(message, dude) {
@@ -1484,116 +2506,110 @@ async function checkResubmission(message, dude) {
         time: 10000
     }).then(collected => {
         if (yesSynonyms.includes(collected.first().content.toLowerCase())) {
-            return getDeckURL(message, dude)
+            return getUpdatedDeckURL(message, dude)
         } else if (noSynonyms.includes(collected.first().content.toLowerCase())) {
-            clearRegistrationStatus(message)
+            clearRegistrationStatus()
             return person.send(`Not a problem. Thanks.`)
         }
     }).catch(err => {
-        clearRegistrationStatus(message)
+        console.log(err)
+        clearRegistrationStatus()
         return person.send(`Perhaps another time would be better.`)
     })
 }
 
 //GET DECK URL
-async function getDeckURL(message, dude) {
+async function getUpdatedDeckURL(message, dude) {
     let person = message.channel.members.find('id', dude);
     const msg = await person.send("Okay, please provide an imgur screenshot or a duelingbook download link for your tournament deck.");
     const filter = collected => collected.author.id === dude;
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
-        time: 16000
+        time: 15000
     }).then(collected => {
-        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 46) {		
-            return person.send("I only accept (1) imgur.com or duelingbook.com link.")
+        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 50) {		
+            clearRegistrationStatus()
+            return person.send.send("Sorry, I only accept (1) imgur.com or duelingbook.com link.")
         } else if (collected.first().content.startsWith("https://i.imgur") || collected.first().content.startsWith("https://www.duelingbook.com/deck")) {
-            return getDeckTypeTournament(message, dude, collected.first().content)
+            return getDeckTypeTournament(message, maid, collected.first().content)
         } else if (collected.first().content.startsWith("https://imgur")) {
-            let url = `https://i.${collected.first().content.join(" ").substring(8, collected.first().content.join(" ").length)}.png`
-            return getDeckTypeTournament(message, dude, url)          
+            let str = collected.first().content
+            let newStr = str.substring(8, str.length)
+            let url = "https://i." + newStr + ".png";
+            return getDeckTypeTournament(message, maid, url)          
         }
     }).catch(err => {
-        clearRegistrationStatus(message)
+        console.log(err)
+        clearRegistrationStatus()
         return person.send('Perhaps another time would be better.')
     })
 }
 
 
 //GET DECK TYPE
-const getDeckType = (message, dude, url, tournament = false) => {
+const getDeckType = (message, dude, url) => {
     let keys = Object.keys(deckTypeAlius)
 	const filter = m => m.author.id === dude
 	message.channel.send(`Okay, ${names[dude]}, what kind of deck is this?`)
 	message.channel.awaitMessages(filter, {
 		max: 1,
-        time: 16000
+        time: 15000
     }).then(collected => {
         keys.forEach(function(elem) {
-            if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
+            if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase())) {
                 if (decks[dude][elem].url) {
                     return getDeckOverwriteConfirmation(message, dude, url, elem, deckTypeAlius[elem][0])
-               } else {
-                    decks[dude][elem].url = url
-                    fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
-                        if (err) console.log(err)
-                    })
-                        
-                    if (deckTypeAlius[elem][0] === 'Other') {
-                        return message.channel.send(`Thanks! I have saved your deck to the public database.`)
-                    } else {
-                        return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)       
-                    }
-               }
+                } else {
+                    return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)
+                }
             }
         })
-        const deckEmbed = new Discord.RichEmbed()
-            .addField('Control', `Chaos Control
-Chaos Return
-Chaos Turbo
-Dark Master Zorc
-Goat Control
-Flip Control
-Soul Control
-P.A.C.M.A.N.
-Relinquished
-Strike Ninja
-Zombie`, true)
-            .addField('Aggro', `Anti-Meta Warrior
-Aggro Monarch
-Bazoo Return
-Chaos Recruiter
-Dark Scorpion
-Drain Beat
-Gearfried
-Gravekeeper
-Tiger Stun
-Water`, true)
-            .addField('Combo', `Ben-Kei OTK
-Dimension Fusion Turbo
-Economics FTK
-Empty Jar
-Exodia
-Last Turn
-Library FTK
-Machine
-Reasoning Gate Turbo
-Rescue Cat OTK
-Stein OTK`, true)
-        .addField('Burn', `Aggro Burn
-Dark Burn
-Drain Burn
-Speed Burn`, true)
-        message.channel.send(`Hmm... ${collected.first().content}? I do not recognize that deck. If your deck is not on the list below, you can save it as "Other":`)
-        return message.channel.send(deckEmbed);
+
+        return getOtherDeckConfirmation(message, dude, url, collected.first().content)
     }).catch(err => {    
         console.log(err)
+        return message.channel.send(`Perhaps another time would be better.`)
+    })
+}
+
+const getOtherDeckConfirmation = (message, dude, url, name) => {
+    let slot
+    if(decks[dude].other1.url && decks[dude].other2.url && decks[dude].other3.url) {
+        return message.channel.send('womp')
+    } else if (!decks[dude].other1.url) {
+        slot = 'other1'
+    } else if (!decks[dude].other2.url) {
+        slot = 'other2'
+    } else {
+        slot = 'other3'
+    }
+    
+	const filter = m => m.author.id === dude
+    message.channel.send(`Hmm... ${name}? I do not recognize that deck. Would you like to save it under the "Other" category?`)
+	message.channel.awaitMessages(filter, {
+		max: 1,
+        time: 10000
+    }).then(collected => {
+        if (yesSynonyms.includes(collected.first().content.toLowerCase())) {
+            decks[dude][slot].url = url
+            decks[dude][slot].name = name
+            fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+                    if (err) console.log(err)
+                })
+
+            return message.channel.send(`Thanks! I have saved your ${name} deck to the public database.`)
+        } else if (noSynonyms.includes(collected.first().content.toLowerCase())) {
+            return message.channel.send(`Not a problem. You can review the available deck categories by using the **!decks** command.`)
+        }
+    }).catch(err => { 
+        console.log(err)    
+        return message.channel.send(`Perhaps another time would be better.`)
     })
 }
 
 
 
-
-//GET DECK TYPE
+//GET DECK TYPE TOURNAMENT
 async function getDeckTypeTournament(message, dude, url) {
     let keys = Object.keys(deckTypeAlius)
     let person = message.channel.members.find('id', dude);
@@ -1601,47 +2617,202 @@ async function getDeckTypeTournament(message, dude, url) {
 	const msg = await person.send(`Okay, ${names[dude]}, what kind of deck is this?`)
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
-        time: 16000
+        time: 15000
     }).then(collected => {
         keys.forEach(function(elem) {
-            if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase()) || collected.first().content.toLowerCase() === 'other') {
+            if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase())) {
                 decks[dude].tournament.url = url
-                decks[dude].tournament.name = elem
+                decks[dude].tournament.name = deckTypeAlius[elem][0]
+                decks[dude].tournament.category = elem
                 fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
                     if (err) console.log(err)
                 })
 
-                if (elem === 'other') {
-                    clearRegistrationStatus(message)
-                    sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
-                    return person.send(`Thanks! I have collected your deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
-                } else {
-                    clearRegistrationStatus(message)
-                    sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
-                    return person.send(`Thanks! I have collected your ${deckTypeAlius[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
-                }
+                clearRegistrationStatus()
+                sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
+                return person.send(`Thanks! I have collected your ${deckTypeAlius[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
             } 
         })
 
         decks[dude].tournament.url = url
-        decks[dude].tournament.name = 'other'
+        decks[dude].tournament.name = collected.first().content
+        decks[dude].tournament.category = 'other'
         fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
             if (err) console.log(err)
         })
           
-        clearRegistrationStatus(message)
+        clearRegistrationStatus()
         sendToTournamentChannel(dude, url, 'Other')
-        return person.send(`Hmm... ${collected.first().content}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
+        return person.send(`Thanks! I have collected your ${collected.first().content} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
     }).catch(err => {
+        console.log(err)
         decks[dude].tournament.url = url
-        decks[dude].tournament.name = 'other'
+        decks[dude].tournament.category = 'other'
+        decks[dude].tournament.name = 'Other'
         fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
             if (err) console.log(err)
         })
           
-        clearRegistrationStatus(message)
+        clearRegistrationStatus()
         sendToTournamentChannel(dude, url, 'Other')
-        return person.send(`Well, let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
+        return person.send(`Something went wrong with saving your deck's name, but we can call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
+    })
+}
+
+
+//GET REPLAY INFO 1
+const getReplayInfo1 = (message, dude, url) => {
+    let keys = Object.keys(replays[dude])
+    let slot
+    for (let i = 0; i < keys.length; i++) {
+        if (!replays[dude][keys[i]]) {
+            slot = keys[i]
+            break
+        }
+    }
+
+    if (!slot) {
+        return message.channel.send(`Your replay storage box is full.`)
+    }
+
+	const filter = m => m.author.id === dude
+	message.channel.send(`Okay, ${names[dude]}, did you play in this replay?`)
+	message.channel.awaitMessages(filter, {
+		max: 1,
+        time: 10000
+    }).then(collected => {
+        if (yesSynonyms.includes(collected.first().content.toLowerCase())) {
+            replays[dude][slot].p1 = dude
+            replays[dude][slot].url = url
+            fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                if (err) console.log(err)
+            })
+
+            return getReplayInfo2(message, dude, slot)
+        } else if (noSynonyms.includes(collected.first().content.toLowerCase())) {
+            replays[dude][slot].url = url
+            fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                if (err) console.log(err)
+            })
+
+            return getReplayAltP1(message, dude, slot, 'you')
+        }
+    }).catch(err => {    
+        console.log(err)
+        return message.channel.send(`Perhaps another time would be better.`)
+    })
+}
+
+
+
+//GET REPLAY ALT P1
+const getReplayAltP1 = (message, dude, slot) => {
+	const filter = m => m.author.id === dude
+	message.channel.send(`Please tag the first player in this replay, or type their name.`)
+	message.channel.awaitMessages(filter, {
+		max: 1,
+        time: 15000
+    }).then(collected => {
+            replays[dude][slot].p1 = messageArray[1].replace(/[\\<>@#&!]/g, "")
+            fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                if (err) console.log(err)
+            })
+
+            return getReplayInfo2(message, dude, slot, 'they')
+    }).catch(err => {    
+        console.log(err)
+        return message.channel.send(`Sorry, you took too long. I will save this replay with the info that I have so far.`)
+    })
+}
+
+
+
+
+//GET REPLAY INFO 2
+const getReplayInfo2 = (message, dude, slot, pronoun) => {
+    let keys = Object.keys(deckTypeAlius)
+	const filter = m => m.author.id === dude
+	message.channel.send(`What deck did ${pronoun} play?`)
+	message.channel.awaitMessages(filter, {
+		max: 1,
+        time: 15000
+    }).then(collected => {
+        keys.forEach(function(elem) {
+            if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase())) {
+                replays[dude][slot].deck1 = elem
+                fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                    if (err) console.log(err)
+                })
+
+                message.channel.send(`Okay, so ${pronoun} played ${deckTypeAlius[elem][0]}.`)
+                return getReplayInfo3(message, dude, slot)
+            } 
+        })
+
+        replays[dude][slot].deck1 = 'other'
+        fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+            if (err) console.log(err)
+        })
+
+        message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now.`)
+        return getReplayInfo(message, dude, slot)        
+    }).catch(err => {    
+        console.log(err)
+        return message.channel.send(`Sorry, you took too long. I will save this replay with the info that I have so far.`)
+    })
+}
+
+
+//GET REPLAY INFO 3
+const getReplayInfo3 = (message, dude, slot) => {
+	const filter = m => m.author.id === dude
+	message.channel.send(`Please tag the other player in this replay, or type their name.`)
+	message.channel.awaitMessages(filter, {
+		max: 1,
+        time: 15000
+    }).then(collected => {
+            replays[dude][slot].p2 = messageArray[1].replace(/[\\<>@#&!]/g, "")
+            fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                if (err) console.log(err)
+            })
+
+            return getReplayInfo4(message, dude, slot)
+    }).catch(err => {    
+        console.log(err)
+        return message.channel.send(`Sorry, you took too long. I will save this replay with the info that I have so far.`)
+    })
+}
+
+
+//GET REPLAY INFO 2
+const getReplayInfo4 = (message, dude, slot) => {
+    let keys = Object.keys(deckTypeAlius)
+	const filter = m => m.author.id === dude
+	message.channel.send(`What deck did they play?`)
+	message.channel.awaitMessages(filter, {
+		max: 1,
+        time: 15000
+    }).then(collected => {
+        keys.forEach(function(elem) {
+            if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase())) {
+                replays[dude][slot].deck1 = elem
+                fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                    if (err) console.log(err)
+                })
+
+                return message.channel.send(`Okay, so they played ${deckTypeAlius[elem][0]}. I have saved this replay to the public database. Thanks!`)
+            } 
+        })
+
+        replays[dude][slot].deck1 = 'other'
+        fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+            if (err) console.log(err)
+        })
+
+        return message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now. Thanks!`)
+    }).catch(err => {    
+        console.log(err)
+        return message.channel.send(`Sorry, you took too long. I will save this replay with the info that I have so far.`)
     })
 }
 
