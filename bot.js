@@ -147,16 +147,18 @@ client.on('message', async message => {
 
     const reactionFilter = (reaction) => {        
         console.log('got one')
-        return true
+        return reaction
     }
 
     message.awaitReactions(reactionFilter, { max: 10, time: 10000, errors: ['time'] })
         .then(collected => {
-        console.log(collected.emoji.name)
+        console.log(collected)
+        console.log(reaction.emoji.name)
         message.channel.send('hey')
     })
-        .catch(collected => {
-        console.log(collected.emoji.name)
+        .catch(collected => {        c
+        console.log(collected)
+        console.log(reaction.emoji.name)
         message.channel.send('Time out.')
     })
 
