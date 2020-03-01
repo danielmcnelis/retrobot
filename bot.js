@@ -148,14 +148,14 @@ client.on('message', async message => {
         
     const rFilter = (reaction) => {
         console.log(reaction.emoji.name)
-        return reaction.emoji.name === 'ok_hand'
+        return reaction.emoji.name === 'tweet'
     }
 
     message.awaitReactions(rFilter, {
         max: 1,
         time: 6000
     }).then(collected => 
-        console.log(collected.size)
+        message.channel.send('Tweet this message.')
     ).catch(collected => {
         console.log(`After a minute, only ${collected.size} out of 4 reacted.`);
     })
