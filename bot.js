@@ -1387,28 +1387,28 @@ function createUser(player, person) {
             },
             machine: {
                 url: false,
-                category: 'other',
+                category: 'combo',
                 rating: 0,
                 posRaters: [],
                 negRaters: []
             },
             water: {
                 url: false,
-                category: 'other',
+                category: 'aggro',
                 rating: 0,
                 posRaters: [],
                 negRaters: []
             },
             zombie: {
                 url: false,
-                category: 'other',
+                category: 'control',
                 rating: 0,
                 posRaters: [],
                 negRaters: []
             },
             darkScorpion: {
                 url: false,
-                category: 'other',
+                category: 'aggro',
                 rating: 0,
                 posRaters: [],
                 negRaters: []
@@ -1429,7 +1429,7 @@ function createUser(player, person) {
             },
             strikeNinja: {
                 url: false,
-                category: 'aggro',
+                category: 'control',
                 rating: 0,
                 posRaters: [],
                 negRaters: []
@@ -1547,42 +1547,42 @@ const getDeckType = (message, dude, url, tournament = false) => {
             }
         })
         const deckEmbed = new Discord.RichEmbed()
-            .addField('Cat 1', `Goat Control
-Chaos Control
-Chaos Recruiter
+            .addField('Control', `Chaos Control
 Chaos Return
 Chaos Turbo
-Dimension Fusion Turbo
-Reasoning Gate Turbo
-Soul Control
-Flip Control`, true)
-            .addField('Cat 2', `Anti-Meta Warrior
-Gearfried
-Tiger Stun
-Drain Beat
-Aggro Burn
-Aggro Monarch
-Rescue Cat OTK
-Ben-Kei OTK
-Stein OTK`, true)
-            .addField('Cat 3', `Dark Burn
-Drain Burn
-Speed Burn
-P.A.C.M.A.N.
-Economics FTK
-Library FTK
-Exodia
-Last Turn
-Empty Jar`, true)
-            .addField('Cat 4', `Gravekeeper
-Machine
-Water
-Zombie
-Dark Scorpion
 Dark Master Zorc
+Goat Control
+Flip Control
+Soul Control
+P.A.C.M.A.N.
 Relinquished
 Strike Ninja
-Bazoo Return`, true)
+Zombie`, true)
+            .addField('Aggro', `Anti-Meta Warrior
+Aggro Monarch
+Bazoo Return
+Chaos Recruiter
+Dark Scorpion
+Drain Beat
+Gearfried
+Gravekeeper
+Tiger Stun
+Water`, true)
+            .addField('Combo', `Ben-Kei OTK
+Dimension Fusion Turbo
+Economics FTK
+Empty Jar
+Exodia
+Last Turn
+Library FTK
+Machine
+Reasoning Gate Turbo
+Rescue Cat OTK
+Stein OTK`, true)
+        .addField('Burn', `Aggro Burn
+Dark Burn
+Drain Burn
+Speed Burn`, true)
         message.channel.send(`Hmm... ${collected.first().content}? I do not recognize that deck. If your deck is not on the list below, you can save it as "Other":`)
         return message.channel.send(deckEmbed);
     }).catch(err => {    
