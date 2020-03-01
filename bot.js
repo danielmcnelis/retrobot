@@ -1162,6 +1162,62 @@ function createUser(player, person) {
    		fs.writeFile("./blank.json", JSON.stringify(blank), (err) => {
 			if (err) console.log(err) }); }
             
+	if(!replays[player]) {
+		replays[player] = {
+            0: false,
+            1: false,
+            2: false,
+            3: false,
+            4: false,
+            5: false,
+            6: false,
+            7: false,
+            8: false,
+            9: false,
+            10: false,
+            11: false,
+            12: false,
+            13: false,
+            14: false,
+            15: false,
+            16: false,
+            17: false,
+            18: false,
+            19: false,
+            20: false,
+            21: false,
+            22: false,
+            23: false,
+            24: false,
+            25: false,
+            26: false,
+            27: false,
+            28: false,
+            29: false,
+            30: false,
+            31: false,
+            32: false,
+            33: false,
+            34: false,
+            35: false,
+            36: false,
+            37: false,
+            38: false,
+            39: false,
+            40: false,
+            41: false,
+            42: false,
+            43: false,
+            44: false,
+            45: false,
+            46: false,
+            47: false,
+            48: false,
+            49: false
+        }
+   		fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+            if (err) console.log(err) }); }
+            
 	if(!decks[player]) {
 		decks[player] = {
             tournament: {
@@ -1491,7 +1547,7 @@ const getDeckType = (message, dude, url, tournament = false) => {
             }
         })
     }).catch(err => {    
-        return message.channel.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. If your deck is not on the list below, you can save it under "Other":
+        return message.channel.send(`Hmm... ${collected.first().content}? I do not recognize that deck. If your deck is not on the list below, you can save it under "Other":
 
 Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimension Fusion Turbo, Reasoning Gate Turbo, Soul Control, Flip Control, Anti-Meta Warrior, Gearfried, Tiger Stun, Drain Beat, Aggro Burn, Aggro Monarch, Rescue Cat OTK, Ben-Kei OTK, Stein OTK, Dark Burn, Drain Burn, Speed Burn, P.A.C.M.A.N., Economics FTK, Library FTK, Exodia, Last Turn, Empty Jar, Gravekeeper, Machine, Water, Zombie, Dark Scorpion, Dark Master Zorc, Relinquished, Strike Ninja, Bazoo Return.`)
     })
@@ -1538,7 +1594,7 @@ async function getDeckTypeTournament(message, dude, url) {
           
         clearRegistrationStatus(message)
         sendToTournamentChannel(dude, url, 'Other')
-        return person.send(`Hmm... ${collected.first().content.toLowerCase()}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
+        return person.send(`Hmm... ${collected.first().content}? I do not recognize that deck. Let's call it "Other" for now. Please wait for the Tournament Organizer to add you to the bracket.`)
     }).catch(err => {
         decks[dude].tournament.url = url
         decks[dude].tournament.name = 'other'
@@ -1825,6 +1881,6 @@ const clearRegistrationStatus = (message, x) => {
 
 //SEND TO TOURNAMENT CHANNEL
 const sendToTournamentChannel = (player, deckList, deckType) => {
-    return client.channels.get(registrationChannel).send(`<@${player}> submitted a ${deckType} deck list for the tournament. Please confirm this deck is legal and accurate, then add them to the bracket using the **!signup** command:
+    return client.channels.get(registrationChannel).send(`<@${player}> submitted their ${deckType} deck list for the tournament. Please confirm this deck is legal and accurately labeled, then add ${names[player]} to the bracket using the **!signup** command:
 ${deckList}`)
 }
