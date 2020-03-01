@@ -157,8 +157,7 @@ client.on('message', async message => {
         message.channel.send('hey')
     })
         .catch(collected => {
-        console.log(collected)
-        console.log(reaction.emoji.name)
+        console.log(collected.message.reaction.name)
         message.channel.send('Time out.')
     })
 
