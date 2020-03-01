@@ -145,33 +145,42 @@ client.on('message', async message => {
         return
     }
 
-        
+    
+    let tweetFilterPassed = false    
     const tweetFilter = (reaction) => {
         if (reaction.emoji.name === 'tweet') {
             console.log('tweet filter activated')
+            tweetFilterPassed = true
             return true
         } else {
             console.log('returning false')
-            return false
-        }
+            tweetFilterPassed = false
+            return        }
     }
+
+    let upvoteFilterPassed = false
     const upvoteFilter = (reaction) => {
         if (reaction.emoji.name === 'upvote') {
             console.log('upvote filter activated')
+            upvoteFilterPassed = true
             return true
         } else {
             console.log('returning false')
-            return false
+            upvoteFilterPassed = false
+            return
         }
     }
     
+    let downvoteFilterPassed = false
     const downvoteFilter = (reaction) => {
         if (reaction.emoji.name === 'downvote') {
+            downvoteFilterPassed = true
             console.log('downvote filter activated')
             return true
         } else {
             console.log('returning false')
-            return false
+            downvoteFilterPassed = false
+            return
         }
     }
 
@@ -186,6 +195,7 @@ client.on('message', async message => {
         console.log(err)
     })
 
+    let downvoteFilterPassed = false
     message.awaitReactions(upvoteFilter, {
         max: 1,
         time: 6000
@@ -201,7 +211,7 @@ client.on('message', async message => {
         max: 1,
         time: 6000
     }).then(collected => {
-        if (collected) {
+        if (true) {
             return message.channel.send('Decrease rating by 1.')
         }
     }).catch(err => {
