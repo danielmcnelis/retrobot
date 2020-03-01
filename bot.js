@@ -145,17 +145,21 @@ client.on('message', async message => {
         return
     }
 
-        message.awaitReactions(reactionFilter, { time: 10000, errors: ['time'] })
-        .then(collected => {
-            console.log(collected.first())
-            console.log(reaction.emoji.name)
-            if (reaction.emoji.name === 'tweet') {
-                message.reply('Post this to Twitter.');
-            }
-        })
-        .catch(collected => {
-            message.channel.send('Time out.');
-        })
+    const reactionFilter = (reaction, user) => {
+        return reaction.emoji.name
+    }
+
+    message.awaitReactions(reactionFilter, { time: 10000, errors: ['time'] })
+    .then(collected => {
+        console.log(collected.first())
+        console.log(reaction.emoji.name)
+        if (reaction.emoji.name === 'tweet') {
+            message.reply('Post this to Twitter.');
+        }
+    })
+    .catch(collected => {
+        message.channel.send('Time out.');
+    })
 
 
     //CHALLONGE - CREATE
