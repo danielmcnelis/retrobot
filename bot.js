@@ -150,20 +150,7 @@ client.on('message', async message => {
     const tweetFilter = (reaction) => {
         if (reaction.emoji.name === 'tweet') {
             tweetFilterPassed = true
-        }
-    }
-
-    let upvoteFilterPassed = false
-    const upvoteFilter = (reaction) => {
-        if (reaction.emoji.name === 'upvote') {
-            upvoteFilterPassed = true
-        }
-    }
-    
-    let downvoteFilterPassed = false
-    const downvoteFilter = (reaction) => {
-        if (reaction.emoji.name === 'downvote') {
-            downvoteFilterPassed = true
+            return true
         }
     }
 
@@ -188,6 +175,22 @@ client.on('message', async message => {
     }).catch(err => {
         console.log(err)
     })
+
+    let upvoteFilterPassed = false
+    const upvoteFilter = (reaction) => {
+        if (reaction.emoji.name === 'upvote') {
+            upvoteFilterPassed = true
+            return true
+        }
+    }
+    
+    let downvoteFilterPassed = false
+    const downvoteFilter = (reaction) => {
+        if (reaction.emoji.name === 'downvote') {
+            downvoteFilterPassed = true
+            return true
+        }
+    }
 
     message.awaitReactions(downvoteFilter, {
         max: 1,
