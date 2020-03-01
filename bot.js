@@ -142,13 +142,15 @@ client.on('message', async message => {
 
     message.awaitReactions(filter, { max: 1, time: 10000, errors: ['time'] })
 	    .then(collected => {
-		    const reaction = collected.first();
-    		if (reaction.emoji === tweet) {
+            console.log(collected.first())
+            const reaction = collected.first();
+            console.log(reaction.emoji.name)
+    		if (reaction.emoji.name === 'tweet') {
 	    		message.reply('Post this to Twitter.');
 		    }
 	    })
 	    .catch(collected => {
-		    message.reply('Time out.');
+		    message.channel.send('Time out.');
         })
 
     //CHALLONGE - CREATE
