@@ -165,17 +165,6 @@ client.on('message', async message => {
         console.log(err)
     })
 
-    message.awaitReactions(upvoteFilter, {
-        max: 1,
-        time: 6000
-    }).then(collected => {
-        if (upvoteFilterPassed) {
-            return message.channel.send('Increase rating by 1.')
-        }
-    }).catch(err => {
-        console.log(err)
-    })
-
     let upvoteFilterPassed = false
     const upvoteFilter = (reaction) => {
         if (reaction.emoji.name === 'upvote') {
@@ -191,6 +180,18 @@ client.on('message', async message => {
             return true
         }
     }
+    
+    message.awaitReactions(upvoteFilter, {
+        max: 1,
+        time: 6000
+    }).then(collected => {
+        if (upvoteFilterPassed) {
+            return message.channel.send('Increase rating by 1.')
+        }
+    }).catch(err => {
+        console.log(err)
+    })
+
 
     message.awaitReactions(downvoteFilter, {
         max: 1,
