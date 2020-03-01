@@ -1547,7 +1547,7 @@ const getDeckType = (message, dude, url, tournament = false) => {
             }
         })
         const deckEmbed = new Discord.RichEmbed()
-            .addField(`Goat Control
+            .addField('', `Goat Control
 Chaos Control
 Chaos Recruiter
 Chaos Return
@@ -1555,8 +1555,8 @@ Chaos Turbo
 Dimension Fusion Turbo
 Reasoning Gate Turbo
 Soul Control
-Flip Control`)
-            .addField(`Anti-Meta Warrior
+Flip Control`, true)
+            .addField('', `Anti-Meta Warrior
 Gearfried
 Tiger Stun
 Drain Beat
@@ -1564,8 +1564,8 @@ Aggro Burn
 Aggro Monarch
 Rescue Cat OTK
 Ben-Kei OTK
-Stein OTK`)
-            .addField(`Dark Burn
+Stein OTK`, true)
+            .addField('', `Dark Burn
 Drain Burn
 Speed Burn
 P.A.C.M.A.N.
@@ -1573,8 +1573,8 @@ Economics FTK
 Library FTK
 Exodia
 Last Turn
-Empty Jar`)
-            .addField(`Gravekeeper
+Empty Jar`, true)
+            .addField('', `Gravekeeper
 Machine
 Water
 Zombie
@@ -1582,7 +1582,7 @@ Dark Scorpion
 Dark Master Zorc
 Relinquished
 Strike Ninja
-Bazoo Return.`)
+Bazoo Return`, true)
         message.channel.send(`Hmm... ${collected.first().content}? I do not recognize that deck. If your deck is not on the list below, you can save it as "Other":`)
         return message.channel.send(deckEmbed);
     }).catch(err => {    
