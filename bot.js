@@ -146,6 +146,7 @@ client.on('message', async message => {
     }
 
     const reactionFilter = (reaction) => {
+        console.log(reaction)
         return true
     }
 
