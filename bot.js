@@ -149,25 +149,14 @@ client.on('message', async message => {
     let tweetFilterPassed = false    
     const tweetFilter = (reaction) => {
         if (reaction.emoji.name === 'tweet') {
-            console.log('tweet filter activated')
             tweetFilterPassed = true
-            return true
-        } else {
-            console.log('returning false')
-            tweetFilterPassed = false
-            return        }
+        }
     }
 
     let upvoteFilterPassed = false
     const upvoteFilter = (reaction) => {
         if (reaction.emoji.name === 'upvote') {
-            console.log('upvote filter activated')
             upvoteFilterPassed = true
-            return true
-        } else {
-            console.log('returning false')
-            upvoteFilterPassed = false
-            return
         }
     }
     
@@ -175,12 +164,6 @@ client.on('message', async message => {
     const downvoteFilter = (reaction) => {
         if (reaction.emoji.name === 'downvote') {
             downvoteFilterPassed = true
-            console.log('downvote filter activated')
-            return true
-        } else {
-            console.log('returning false')
-            downvoteFilterPassed = false
-            return
         }
     }
 
