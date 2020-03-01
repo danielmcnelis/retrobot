@@ -151,6 +151,7 @@ client.on('message', async message => {
             console.log('tweet filter activated')
             return true
         } else {
+            console.log('returning false')
             return false
         }
     }
@@ -159,6 +160,7 @@ client.on('message', async message => {
             console.log('upvote filter activated')
             return true
         } else {
+            console.log('returning false')
             return false
         }
     }
@@ -168,6 +170,7 @@ client.on('message', async message => {
             console.log('downvote filter activated')
             return true
         } else {
+            console.log('returning false')
             return false
         }
     }
@@ -176,7 +179,9 @@ client.on('message', async message => {
         max: 1,
         time: 6000
     }).then(collected => {
-        return message.channel.send('Tweet this message.')
+        if (collected) {
+            return message.channel.send('Tweet this message.')
+        }
     }).catch(err => {
         console.log(err)
     })
@@ -185,7 +190,9 @@ client.on('message', async message => {
         max: 1,
         time: 6000
     }).then(collected => {
-        return message.channel.send('Increase rating by 1.')
+        if (collected) {
+            return message.channel.send('Increase rating by 1.')
+        }
     }).catch(err => {
         console.log(err)
     })
@@ -194,7 +201,9 @@ client.on('message', async message => {
         max: 1,
         time: 6000
     }).then(collected => {
-        return message.channel.send('Decrease rating by 1.')
+        if (collected) {
+            return message.channel.send('Decrease rating by 1.')
+        }
     }).catch(err => {
         console.log(err)
     })
