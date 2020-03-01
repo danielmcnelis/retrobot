@@ -140,6 +140,13 @@ client.on('message', async message => {
 	    return ['👍', '👎'].includes(reaction.emoji.name) && user.id === message.author.id;
     }
 
+    if(message.guild.id === server || message.author.bot) {
+        console.log('aborting...')
+        return
+    }
+
+    console.log(message)
+
     message.awaitReactions(filter, { max: 1, time: 10000, errors: ['time'] })
 	    .then(collected => {
             console.log(collected.first())
