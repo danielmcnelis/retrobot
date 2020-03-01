@@ -1547,7 +1547,7 @@ const getDeckType = (message, dude, url, tournament = false) => {
             }
         })
         const deckEmbed = new Discord.RichEmbed()
-            .addField('', `Goat Control
+            .addField(' ', `Goat Control
 Chaos Control
 Chaos Recruiter
 Chaos Return
@@ -1556,7 +1556,7 @@ Dimension Fusion Turbo
 Reasoning Gate Turbo
 Soul Control
 Flip Control`, true)
-            .addField('', `Anti-Meta Warrior
+            .addField(' ', `Anti-Meta Warrior
 Gearfried
 Tiger Stun
 Drain Beat
@@ -1565,7 +1565,7 @@ Aggro Monarch
 Rescue Cat OTK
 Ben-Kei OTK
 Stein OTK`, true)
-            .addField('', `Dark Burn
+            .addField(' ', `Dark Burn
 Drain Burn
 Speed Burn
 P.A.C.M.A.N.
@@ -1574,7 +1574,7 @@ Library FTK
 Exodia
 Last Turn
 Empty Jar`, true)
-            .addField('', `Gravekeeper
+            .addField(' ', `Gravekeeper
 Machine
 Water
 Zombie
