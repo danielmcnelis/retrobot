@@ -151,11 +151,11 @@ client.on('message', async message => {
     }
 
     message.awaitReactions(reactionFilter, { max: 10, time: 10000, errors: ['time'] })
-        .then(reaction => {
-        console.log(reaction.emoji.name)
+        .then(collected => {
+        console.log(collected.emoji.name)
         message.channel.send('hey')
     })
-        .catch(reaction => {
+        .catch(collected => {
         console.log(reaction.emoji.name)
         message.channel.send('Time out.')
     })
