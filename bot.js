@@ -171,7 +171,8 @@ client.on('message', async message => {
         time: 6000
     }).then(collected => {
         console.log(message.content)
-        return message.channel.send('Tweet this message.')
+        message.channel.send('Tweet this message.')
+        return false
     }).catch(err => {
         console.log(err)
     })
@@ -181,7 +182,8 @@ client.on('message', async message => {
         time: 6000
     }).then(collected => {
         console.log(message.content)
-        return message.channel.send('Increase rating by 1.')
+        message.channel.send('Increase rating by 1.')
+        return false
     }).catch(collected => {
         console.log(err)
     })
@@ -191,7 +193,8 @@ client.on('message', async message => {
         time: 6000
     }).then(collected => {
         console.log(message.content)
-        return message.channel.send('Decrease rating by 1.')
+        message.channel.send('Decrease rating by 1.')
+        return false
     }).catch(collected => {
         console.log(err)
     })
