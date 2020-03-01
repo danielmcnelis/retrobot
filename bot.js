@@ -146,9 +146,22 @@ client.on('message', async message => {
     }
 
         
-    const tweetFilter = (reaction) => reaction.emoji.name === 'tweet'
-    const upvoteFilter = (reaction) => reaction.emoji.name === 'upvote'
-    const downvoteFilter = (reaction) => reaction.emoji.name === 'downvote'
+    const tweetFilter = (reaction) => {
+        if (reaction.emoji.name === 'tweet') {
+            return true
+        }
+    }
+    const upvoteFilter = (reaction) => {
+        if (reaction.emoji.name === 'upvote') {
+            return true
+        }
+    }
+    
+    const downvoteFilter = (reaction) => {
+        if (reaction.emoji.name === 'downvote') {
+            return true
+        }
+    }
 
     message.awaitReactions(tweetFilter, {
         max: 1,
