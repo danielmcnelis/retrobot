@@ -140,7 +140,7 @@ client.on('message', async message => {
 	    return ['👍', '👎'].includes(reaction.emoji.name) && user.id === message.author.id;
     }
 
-    if(message.guild.id === server || message.author.bot) {
+    if(message.guild.id !== serverID || message.author.bot) {
         console.log('aborting...')
         return
     }
