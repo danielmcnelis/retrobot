@@ -145,21 +145,33 @@ client.on('message', async message => {
         return
     }
 
-    const reactionFilter = (reaction) => {        
-        console.log('got one')
-        return reaction
-    }
-
-    message.awaitReactions(reactionFilter, { max: 10, time: 10000, errors: ['time'] })
-        .then(collected => {
-        console.log(collected)
-        console.log(reaction.emoji.name)
-        message.channel.send('hey')
-    })
+    const rFilter = (reaction, user) => {
+        return reaction.emoji.name === '👌' && user.id === message.author.id;
+    };
+    
+    message.awaitReactions(rFilter, { max: 4, time: 60000, errors: ['time'] })
+        .then(collected => console.log(collected.size))
         .catch(collected => {
-        console.log(collected.message.reaction.name)
-        message.channel.send('Time out.')
-    })
+            console.log(`After a minute, only ${collected.size} out of 4 reacted.`);
+        });
+
+
+
+    // const reactionFilter = (reaction) => {        
+    //     console.log('got one')
+    //     return reaction
+    // }
+
+    // message.awaitReactions(reactionFilter, { max: 10, time: 10000, errors: ['time'] })
+    //     .then(collected => {
+    //     console.log(collected)
+    //     console.log(reaction.emoji.name)
+    //     message.channel.send('hey')
+    // })
+    //     .catch(collected => {
+    //     console.log(collected.message.reaction.name)
+    //     message.channel.send('Time out.')
+    // })
 
 
     //CHALLONGE - CREATE
