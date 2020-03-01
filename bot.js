@@ -1546,10 +1546,11 @@ const getDeckType = (message, dude, url, tournament = false) => {
                }
             }
         })
-    }).catch(err => {    
         return message.channel.send(`Hmm... ${collected.first().content}? I do not recognize that deck. If your deck is not on the list below, you can save it under "Other":
 
-Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimension Fusion Turbo, Reasoning Gate Turbo, Soul Control, Flip Control, Anti-Meta Warrior, Gearfried, Tiger Stun, Drain Beat, Aggro Burn, Aggro Monarch, Rescue Cat OTK, Ben-Kei OTK, Stein OTK, Dark Burn, Drain Burn, Speed Burn, P.A.C.M.A.N., Economics FTK, Library FTK, Exodia, Last Turn, Empty Jar, Gravekeeper, Machine, Water, Zombie, Dark Scorpion, Dark Master Zorc, Relinquished, Strike Ninja, Bazoo Return.`)
+        Goat Control, Chaos Control, Chaos Recruiter, Chaos Return, Chaos Turbo, Dimension Fusion Turbo, Reasoning Gate Turbo, Soul Control, Flip Control, Anti-Meta Warrior, Gearfried, Tiger Stun, Drain Beat, Aggro Burn, Aggro Monarch, Rescue Cat OTK, Ben-Kei OTK, Stein OTK, Dark Burn, Drain Burn, Speed Burn, P.A.C.M.A.N., Economics FTK, Library FTK, Exodia, Last Turn, Empty Jar, Gravekeeper, Machine, Water, Zombie, Dark Scorpion, Dark Master Zorc, Relinquished, Strike Ninja, Bazoo Return.`)
+    }).catch(err => {    
+        console.log(err)
     })
 }
 
