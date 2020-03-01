@@ -188,19 +188,18 @@ client.on('message', async message => {
         max: 1,
         time: 6000
     }).then(collected => {
-        if (collected) {
+        if (tweetFilterPassed) {
             return message.channel.send('Tweet this message.')
         }
     }).catch(err => {
         console.log(err)
     })
 
-    let downvoteFilterPassed = false
     message.awaitReactions(upvoteFilter, {
         max: 1,
         time: 6000
     }).then(collected => {
-        if (collected) {
+        if (upvoteFilterPassed) {
             return message.channel.send('Increase rating by 1.')
         }
     }).catch(err => {
@@ -211,7 +210,7 @@ client.on('message', async message => {
         max: 1,
         time: 6000
     }).then(collected => {
-        if (true) {
+        if (downvoteFilterPassed) {
             return message.channel.send('Decrease rating by 1.')
         }
     }).catch(err => {
