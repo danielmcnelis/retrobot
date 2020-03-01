@@ -146,17 +146,14 @@ client.on('message', async message => {
     }
 
     const reactionFilter = (reaction) => {
-        console.log(reaction)
+        console.log('got one')
         return true
     }
 
     message.awaitReactions(reactionFilter, { max: 10, time: 10000, errors: ['time'] })
-    .then(collected => {
-        console.log(collected.first())
+        .then(collected => {
+        console.log(collected)
         console.log(reaction.emoji.name)
-        if (reaction.emoji.name === 'tweet') {
-            message.reply('Post this to Twitter.');
-        }
     })
     .catch(collected => {
         message.channel.send('Time out.');
