@@ -2581,7 +2581,6 @@ function checkForNewRatings(message, player, decktype) {
     }
     
     const downvoteFilter = (reaction, user) => {
-        console.log(reaction.emoji.name)
         if (reaction.emoji.name === 'downvote' && !decks[player][decktype].negRaters.includes(user.id)) {
             console.log('downvote filter found a hit')
             downvoteFilterPassed = true
