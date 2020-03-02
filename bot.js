@@ -110,13 +110,10 @@ client.on('message', message => {
 //PING
 client.on('message', message => {
     if (message.content.startsWith('!test')) {
-      console.log(message.content)
-      console.log(message.member.user.tag)
-      console.log(message.first().content)
-      console.log(message.second().content)
-      console.log(message.third().content)
-      console.log(message.fourth().content)
-      console.log(message.fifth().content)
+        let stringArray = message.content.split(' ')
+        stringArray.forEach(function(elem) {
+            console.log(stringArray[elem])
+        })
     }
   })
 
