@@ -143,7 +143,7 @@ client.on('message', async message => {
         let decktype = message.content.substring((message.content.indexOf(`'s `)+3), message.content.indexOf(` deck`))
         let url = message.content.substring(message.content.indexOf(` deck`)+5)
     
-        return checkForNewRatings(player, decktype, url)
+        return checkForNewRatings(message, player, decktype, url)
     }
 
     if(message.guild.id !== serverID || message.author.bot) {
@@ -2560,7 +2560,7 @@ function createUser(player, person) {
 
 //
 
-function checkForNewRatings(player, decktype, url) {
+function checkForNewRatings(message, player, decktype, url) {
     let upvoteFilterPassed = false
     let downvoteFilterPassed = false
 
