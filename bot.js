@@ -111,6 +111,7 @@ client.on('message', message => {
 client.on('message', message => {
     if (message.content.startsWith('!test')) {
         let stringArray = message.content.split(' ')
+        console.log(stringArray)
         stringArray.forEach(function(elem) {
             console.log(stringArray[elem])
         })
