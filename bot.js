@@ -142,7 +142,6 @@ client.on('message', async message => {
         let player = tags[message.content.substring(0, message.content.indexOf(`'s `))]
         let decktype = message.content.substring((message.content.indexOf(`'s `)+3), message.content.indexOf(` deck`))
         let decktypeCC 
-        let url = args[args.length-1]
         let keys = Object.keys(deckTypeAlius)
         keys.forEach(function(elem) {
             if (deckTypeAlius[elem].includes(decktype)) { 
@@ -150,7 +149,7 @@ client.on('message', async message => {
             }
         })
 
-        return checkForNewRatings(message, player, decktypeCC, url)
+        return checkForNewRatings(message, player, decktypeCC)
     }
 
     if(message.guild.id !== serverID || message.author.bot) {
@@ -2567,7 +2566,7 @@ function createUser(player, person) {
 
 //
 
-function checkForNewRatings(message, player, decktype, url) {
+function checkForNewRatings(message, player, decktype) {
     let upvoteFilterPassed = false
     let downvoteFilterPassed = false
 
@@ -2599,8 +2598,8 @@ function checkForNewRatings(message, player, decktype, url) {
         time: 600000
     }).then(collected => {
         if (upvoteFilterPassed) {
-            decks[player][deck].posRaters.push(user.id)
-            decks[player][deck].rating++
+            decks[player][decktype].posRaters.push(user.id)
+            decks[player][decktype].rating++
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
                 if (err) console.log(err)
             })
@@ -2616,8 +2615,8 @@ function checkForNewRatings(message, player, decktype, url) {
         time: 600000
     }).then(collected => {
         if (downvoteFilterPassed) {
-            decks[player][deck].negRaters.push(user.id)
-            decks[player][deck].rating--
+            decks[player][decktype].negRaters.push(user.id)
+            decks[player][decktype].rating--
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
                 if (err) console.log(err)
             })
