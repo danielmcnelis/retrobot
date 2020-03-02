@@ -2573,7 +2573,6 @@ function checkForNewRatings(message, player, decktype) {
     console.log('checkForNewRatings')
     console.log(player)
     console.log(decktype)
-    console.log(url)
     console.log(decks[player][decktype]) 
 
     const upvoteFilter = (reaction, user) => {
