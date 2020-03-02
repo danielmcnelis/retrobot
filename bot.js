@@ -109,7 +109,7 @@ client.on('message', message => {
 
 //PING
 client.on('message', message => {
-    if (message.content === '!test') {
+    if (message.content.startsWith() === '!test') {
       console.log(message.content)
       console.log(message.member.user.tag)
     }
