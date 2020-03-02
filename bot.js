@@ -2590,7 +2590,7 @@ function checkForNewRatings(message, player, decktype) {
 
     message.awaitReactions(upvoteFilter, {
         max: 20,
-        time: 600000
+        time: 4000
     }).then(collected => {
         console.log('collected something')
         if (upvoteFilterPassed) {
@@ -2603,12 +2603,12 @@ function checkForNewRatings(message, player, decktype) {
             return message.channel.send('Increase rating by 1.')
         }
     }).catch(err => {
-        console.log(err)
+        console.log('timeout')
     })
 
     message.awaitReactions(downvoteFilter, {
         max: 20,
-        time: 600000
+        time: 4000
     }).then(collected => {
         if (downvoteFilterPassed) {
             decks[player][decktype].negRaters.push(user.id)
@@ -2620,7 +2620,7 @@ function checkForNewRatings(message, player, decktype) {
             return message.channel.send('Decrease rating by 1.')
         }
     }).catch(err => {
-        console.log(err)
+        console.log('timeout')
     })
 }
 
