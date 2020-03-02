@@ -2565,6 +2565,9 @@ function checkForNewRatings(message, player, decktype, url) {
     let downvoteFilterPassed = false
 
     console.log('checkForNewRatings')
+    console.log(player)
+    console.log(decktype)
+    console.log(url)
     console.log(decks[player][decktype]) 
 
     const upvoteFilter = (reaction, user) => {
