@@ -18,6 +18,7 @@ const blank = require('./blank.json')
 const status = require('./status.json')
 const discordIDs = require('./discordIDs.json')
 const names = require('./names.json')
+const tags = require('./tags.json')
 const decks = require('./decks.json')
 const replays = require('./replays.json')
 const stats = require('./stats.json')
@@ -136,35 +137,14 @@ client.on('message', async message => {
     const args = messageArray.slice(1)
     const maid = message.author.id
     let tweetFilterPassed = false  
-    let str = message.content
 
-    let arr = message.content.split(' ')
-        arr.forEach(function(elem) {
-            console.log(elem)
-        })
-
-        let player = message.content.substring(0, str.indexOf(`'s `))
-        let deck = message.content.substring((str.indexOf(`'s `)+3), str.indexOf(` deck`))
-        let url = arr[arr.length-1]
-        console.log(player)
-        console.log(deck)
-        console.log(url)
-
-    // if ( (message.content.includes('https://i.imgur.com') || message.content.includes('https://www.duelingbook.com/deck') || message.content.includes('https://www.duelingbook.com/replay') ) && message.author.bot) {
-    //     let arr = message.content.split(' ')
-    //     arr.forEach(function(elem) {
-    //         console.log(elem)
-    //     })
-
-    //     let player = message.content.substring(0, indexOf(`'s `))
-    //     let deck = message.content.substring(indexOf(`'s `), indexOf(`https`))
-    //     let url = arr[arr.length-1]
-    //     console.log(player)
-    //     console.log(deck)
-    //     console.log(url)
+    if ( (message.content.includes('https://i.imgur.com') || message.content.includes('https://www.duelingbook.com/deck') || message.content.includes('https://www.duelingbook.com/replay') ) && message.author.bot) {
+        let player = tags[message.content.substring(0, message.content.indexOf(`'s `))]
+        let decktype = message.content.substring((message.content.indexOf(`'s `)+3), message.content.indexOf(` deck`))
+        let url = message.content.substring(message.content.indexOf(` deck`)+5)
     
-    //     return checkForNewRatings(player, deck, url)
-    // }
+        return checkForNewRatings(player, decktype, url)
+    }
 
     if(message.guild.id !== serverID || message.author.bot) {
         return
@@ -574,27 +554,30 @@ Speed Burn`, true)
     //DECK-LISTS AUTO MODERATION
     if(cmd === `!deck` || cmd === `!decks` || cmd === `!mydeck` || cmd === `!mydecks`) {    
         let person = message.mentions.users.first()
-        let player
+        let playerID
+        let playerTag
         if (person) {
-            player = person.id
+            playerTag = person.tag
+            playerID = person.id
         } else {
-            player = maid
+            playerTag = message.author.tag
+            playerID = message.author.id
         }
 
         if(!decks[maid]) {
             createUser(maid);
             return message.channel.send("I have added you to the Goat Format database. Please try again.")
-        } else if(!decks[player]) {
+        } else if(!decks[playerID]) {
             return message.channel.send("That user is not in the Goat Format database.")
         }
 
-        let keys = Object.keys(decks[player])
+        let keys = Object.keys(decks[playerID])
         let arr1 = []
         let arr2 = []
         keys.forEach(function(elem) {
-            if (decks[player][elem].url) {
+            if (decks[playerID][elem].url) {
                 arr1.push(elem)
-                arr2.push(decks[player][elem].rating)
+                arr2.push(decks[playerID][elem].rating)
             }  
         })
 
@@ -609,8 +592,8 @@ Speed Burn`, true)
         console.log(arr1)
 
         for (let i = 0; i < 3; i++) {
-            if (decks[player][arr1[i]].url) {
-                message.channel.send(`${player[name]}'s ${deckTypeAlius[arr1[i][0]]} deck:
+            if (decks[playerID][arr1[i]].url) {
+                message.channel.send(`${playerTag}'s ${deckTypeAlius[arr1[i][0]]} deck:
 decks[player][arr1[i]].url`)
             }
         }
@@ -1276,6 +1259,11 @@ function createUser(player, person) {
 		names[player] = person.user.username;
    		fs.writeFile("./names.json", JSON.stringify(names), (err) => {
             if (err) console.log(err) }); }
+
+    if(!tags[player] && person) {
+       tags[person.user.tag] = player
+            fs.writeFile("./tags.json", JSON.stringify(tags), (err) => {
+                if (err) console.log(err) }); }
             
 	if(!blank[player]) {
 		blank[player] = 0;
@@ -2569,14 +2557,12 @@ function createUser(player, person) {
 
 //
 
-function checkForNewRatings(content) {
+function checkForNewRatings(player, decktype, url) {
     let upvoteFilterPassed = false
     let downvoteFilterPassed = false
 
-
-
     const upvoteFilter = (reaction, user) => {
-        if (reaction.emoji.name === 'upvote' && !decks[player][deck].posRaters.includes(user.id)) {
+        if (reaction.emoji.name === 'upvote' && !decks[player][decktype].posRaters.includes(user.id)) {
             console.log('upvote filter found a hit')
             upvoteFilterPassed = true
             return true
@@ -2585,7 +2571,7 @@ function checkForNewRatings(content) {
     
     const downvoteFilter = (reaction, user) => {
         console.log(reaction.emoji.name)
-        if (reaction.emoji.name === 'downvote' && !decks[player][deck].negRaters.includes(user.id)) {
+        if (reaction.emoji.name === 'downvote' && !decks[player][decktype].negRaters.includes(user.id)) {
             console.log('downvote filter found a hit')
             downvoteFilterPassed = true
             return true
