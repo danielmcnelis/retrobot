@@ -314,7 +314,7 @@ client.on('message', async message => {
         } else if (status['round'] !== 0) {
             return message.channel.send("Sorry, the tournament already started.")
         } else if (!decks[maid]) {
-            createUser(maid)
+            createUser(maid, message.author)
             return message.channel.send("I have added you to the Goat Format database. Please try again.")
         } else if (status['registration'] === 'running') {
             return message.channel.send("Another player is currently registering. Please wait.")
@@ -533,7 +533,7 @@ Speed Burn`, true)
     //DECK-LISTS AUTO MODERATION
     if(cmd === `!save`) {    
         if(!decks[maid] || !replays[maid]) {
-            createUser(maid);
+            createUser(maid, message.author);
             return message.channel.send("I have added you to the Goat Format database. Please try again.")
         }
         https://www.duelingbook.com/replay?id=1498-15832467
@@ -565,7 +565,7 @@ Speed Burn`, true)
         }
 
         if(!decks[maid]) {
-            createUser(maid);
+            createUser(maid, message.author);
             return message.channel.send("I have added you to the Goat Format database. Please try again.")
         } else if(!decks[playerID]) {
             return message.channel.send("That user is not in the Goat Format database.")
@@ -694,7 +694,7 @@ decks[player][arr1[i]].url`)
         }
         
         if(!stats[player] && maid === player) {
-            createUser(player);
+            createUser(player, message.author);
             return message.channel.send("I have added you to the Goat Format database. Please try again.")
         } else if(!stats[player] && maid !== player) {
             return message.channel.send("That user is not in the Goat Format database.")
@@ -864,10 +864,10 @@ Elo Rating: ${stats[player].toFixed(2)}`)
         } else if(oppo.length < 17 || oppo.length > 18) {
             return message.channel.send("To report a loss, please type the command **!loss** followed by an @ mention of your opponent.")
         } else if(!stats[maid]) {
-	        createUser(maid)
+	        createUser(maid, losingDude)
             return message.channel.send("Sorry, you were not in the Goat Format database. Please try again.")
         } else if(!stats[oppo]) { 
-            createUser(oppo)
+            createUser(oppo, winningDude)
             return message.channel.send("Sorry, that user was not in the Goat Format database. Please try again.")
         }
 
@@ -936,10 +936,10 @@ Elo Rating: ${stats[player].toFixed(2)}`)
         } else if(winner === loser) {
             return message.channel.send("Please specify 2 different players.")
         } else if(!stats[loser]) {
-	        createUser(loser);
+	        createUser(loser, losingDude);
             return message.channel.send(`Sorry, <@${loser}> was not in the Goat Format database. Please try again.`)
         } else if(!stats[winner]) {
-	        createUser(winner);
+	        createUser(winner, winningDude);
             return message.channel.send(`Sorry, <@${winner}> was not in the Goat Format database. Please try again.`)
         }
 
