@@ -571,7 +571,12 @@ Speed Burn`, true)
     //DECK-LISTS AUTO MODERATION
     if(cmd === `!deck`) {    
         let person = message.mentions.users.first()
-        let player = (person ? maid : person.id)      
+        let player
+        if (person) {
+            player = person.id
+        } else {
+            player = maid
+        }
 
         if(!decks[maid]) {
             createUser(maid);
