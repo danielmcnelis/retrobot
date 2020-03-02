@@ -107,18 +107,6 @@ client.on('message', message => {
 })
 
 
-//PING
-client.on('message', message => {
-    if (message.content.startsWith('!test')) {
-        let stringArray = message.content.split(' ')
-        console.log(stringArray)
-        stringArray.forEach(function(elem) {
-            console.log(stringArray[elem])
-        })
-    }
-  })
-
-
 //WELCOME
 client.on('guildMemberAdd', member => {
   	const channel = member.guild.channels.find(ch => ch.name === 'welcome')
@@ -149,13 +137,33 @@ client.on('message', async message => {
     const maid = message.author.id
     let tweetFilterPassed = false  
 
-    if ( (message.content.includes('https://i.imgur.com') || message.content.includes('https://www.duelingbook.com/deck') || message.content.includes('https://www.duelingbook.com/replay') ) && message.author.bot) {
-        
-        let str = message.first().content
-        let player = str.substring(0, str.indexOf())
+    let arr = message.content.split(' ')
+        arr.forEach(function(elem) {
+            console.log(elem)
+        })
+
+        let player = message.content.substring(0, indexOf(`'s `))
+        let deck = message.content.substring(indexOf(`'s `), indexOf(`https`))
+        let url = arr[arr.length-1]
+        console.log(player)
+        console.log(deck)
+        console.log(url)
+
+    // if ( (message.content.includes('https://i.imgur.com') || message.content.includes('https://www.duelingbook.com/deck') || message.content.includes('https://www.duelingbook.com/replay') ) && message.author.bot) {
+    //     let arr = message.content.split(' ')
+    //     arr.forEach(function(elem) {
+    //         console.log(elem)
+    //     })
+
+    //     let player = message.content.substring(0, indexOf(`'s `))
+    //     let deck = message.content.substring(indexOf(`'s `), indexOf(`https`))
+    //     let url = arr[arr.length-1]
+    //     console.log(player)
+    //     console.log(deck)
+    //     console.log(url)
     
-    return checkForNewRatings(message.content)
-    }
+    //     return checkForNewRatings(player, deck, url)
+    // }
 
     if(message.guild.id !== serverID || message.author.bot) {
         return
