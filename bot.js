@@ -107,6 +107,15 @@ client.on('message', message => {
 })
 
 
+//PING
+client.on('message', message => {
+    if (message.content === '!test') {
+      console.log(message.content)
+      console.log(message.member.user.tag)
+    }
+  })
+
+
 //WELCOME
 client.on('guildMemberAdd', member => {
   	const channel = member.guild.channels.find(ch => ch.name === 'welcome')
@@ -135,24 +144,27 @@ client.on('message', async message => {
     const cmd = messageArray[0]
     const args = messageArray.slice(1)
     const maid = message.author.id
-           
-    const filter = (reaction, user) => {
-	    return ['👍', '👎'].includes(reaction.emoji.name) && user.id === message.author.id;
+    let tweetFilterPassed = false  
+
+    if ( (message.content.includes('https://i.imgur.com') || message.content.includes('https://www.duelingbook.com/deck') || message.content.includes('https://www.duelingbook.com/replay') ) && message.author.bot) {
+        
+        let str = message.first().content
+        let player = str.substring(0, str.indexOf())
+    
+    return checkForNewRatings(message.content)
     }
 
     if(message.guild.id !== serverID || message.author.bot) {
         return
     }
 
-    
-    let tweetFilterPassed = false    
     const tweetFilter = (reaction) => {
         if (reaction.emoji.name === 'tweet') {
             tweetFilterPassed = true
             return true
         }
     }
-
+    
     message.awaitReactions(tweetFilter, {
         max: 1,
         time: 86400000
@@ -163,27 +175,6 @@ client.on('message', async message => {
     }).catch(err => {
         console.log(err)
     })
-
-
-
-
-
-    // const reactionFilter = (reaction) => {        
-    //     console.log('got one')
-    //     return reaction
-    // }
-
-    // message.awaitReactions(reactionFilter, { max: 10, time: 10000, errors: ['time'] })
-    //     .then(collected => {
-    //     console.log(collected)
-    //     console.log(reaction.emoji.name)
-    //     message.channel.send('hey')
-    // })
-    //     .catch(collected => {
-    //     console.log(collected.message.reaction.name)
-    //     message.channel.send('Time out.')
-    // })
-
 
     //CHALLONGE - CREATE
     if(cmd === `!reset`) {
@@ -569,7 +560,7 @@ Speed Burn`, true)
 
 
     //DECK-LISTS AUTO MODERATION
-    if(cmd === `!deck`) {    
+    if(cmd === `!deck` || cmd === `!decks` || cmd === `!mydeck` || cmd === `!mydecks`) {    
         let person = message.mentions.users.first()
         let player
         if (person) {
@@ -607,8 +598,8 @@ Speed Burn`, true)
 
         for (let i = 0; i < 3; i++) {
             if (decks[player][arr1[i]].url) {
-                message.channel.send(decks[player][arr1[i]].url)
-                checkForNewRatings(message, player, arr1[i])
+                message.channel.send(`${player[name]}'s ${deckTypeAlius[arr1[i][0]]} deck:
+decks[player][arr1[i]].url`)
             }
         }
     }
@@ -1211,60 +1202,6 @@ function reset(arr2, arr3, arr4, arr5, j) {
     }, (j + 1) * 100) 
 }
 
-
-//RESTORE
-function checkForNewRatings(message, player, deck) {
-    let upvoteFilterPassed = false
-    let downvoteFilterPassed = false
-
-    const upvoteFilter = (reaction, user) => {
-        if (reaction.emoji.name === 'upvote' && !decks[player][deck].posRaters.includes(user.id)) {
-            upvoteFilterPassed = true
-            return true
-        }
-    }
-
-    const downvoteFilter = (reaction) => {
-        if (reaction.emoji.name === 'downvote' && !decks[player][deck].negRaters.includes(user.id)) {
-            downvoteFilterPassed = true
-            return true
-        }
-    }
-
-    message.awaitReactions(upvoteFilter, {
-        max: 20,
-        time: 600000
-    }).then(collected => {
-        if (upvoteFilterPassed) {
-            decks[player][deck].posRaters.push(user.id)
-            decks[player][deck].rating++
-    		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
-                if (err) console.log(err)
-            })
-
-            return message.channel.send('Increase rating by 1.')
-        }
-    }).catch(err => {
-        console.log(err)
-    })
-
-    message.awaitReactions(downvoteFilter, {
-        max: 20,
-        time: 600000
-    }).then(collected => {
-        if (downvoteFilterPassed) {
-            decks[player][deck].negRaters.push(user.id)
-            decks[player][deck].rating--
-    		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
-                if (err) console.log(err)
-            })
-            
-            return message.channel.send('Decrease rating by 1.')
-        }
-    }).catch(err => {
-        console.log(err)
-    })
-}    
 
 
 
@@ -2615,6 +2552,67 @@ function createUser(player, person) {
 		losses[player] = 0;
    		fs.writeFile("./losses.json", JSON.stringify(losses), (err) => {
 			if (err) console.log(err) }); }
+}
+
+
+//
+
+function checkForNewRatings(content) {
+    let upvoteFilterPassed = false
+    let downvoteFilterPassed = false
+
+
+
+    const upvoteFilter = (reaction, user) => {
+        if (reaction.emoji.name === 'upvote' && !decks[player][deck].posRaters.includes(user.id)) {
+            console.log('upvote filter found a hit')
+            upvoteFilterPassed = true
+            return true
+        }
+    }
+    
+    const downvoteFilter = (reaction, user) => {
+        console.log(reaction.emoji.name)
+        if (reaction.emoji.name === 'downvote' && !decks[player][deck].negRaters.includes(user.id)) {
+            console.log('downvote filter found a hit')
+            downvoteFilterPassed = true
+            return true
+        }
+    }
+
+    message.awaitReactions(upvoteFilter, {
+        max: 20,
+        time: 600000
+    }).then(collected => {
+        if (upvoteFilterPassed) {
+            decks[player][deck].posRaters.push(user.id)
+            decks[player][deck].rating++
+    		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
+                if (err) console.log(err)
+            })
+
+            return message.channel.send('Increase rating by 1.')
+        }
+    }).catch(err => {
+        console.log(err)
+    })
+
+    message.awaitReactions(downvoteFilter, {
+        max: 20,
+        time: 600000
+    }).then(collected => {
+        if (downvoteFilterPassed) {
+            decks[player][deck].negRaters.push(user.id)
+            decks[player][deck].rating--
+    		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
+                if (err) console.log(err)
+            })
+            
+            return message.channel.send('Decrease rating by 1.')
+        }
+    }).catch(err => {
+        console.log(err)
+    })
 }
 
 
