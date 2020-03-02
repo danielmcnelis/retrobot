@@ -144,7 +144,7 @@ client.on('message', async message => {
         })
 
         let player = message.content.substring(0, str.indexOf(`'s `))
-        let deck = message.content.substring(str.indexOf(`'s `), str.indexOf(`https`))
+        let deck = message.content.substring((str.indexOf(`'s `)+3), str.indexOf(` deck`))
         let url = arr[arr.length-1]
         console.log(player)
         console.log(deck)
