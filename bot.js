@@ -136,14 +136,15 @@ client.on('message', async message => {
     const args = messageArray.slice(1)
     const maid = message.author.id
     let tweetFilterPassed = false  
+    let str = message.content
 
     let arr = message.content.split(' ')
         arr.forEach(function(elem) {
             console.log(elem)
         })
 
-        let player = message.content.substring(0, indexOf(`'s `))
-        let deck = message.content.substring(indexOf(`'s `), indexOf(`https`))
+        let player = message.content.substring(0, str.indexOf(`'s `))
+        let deck = message.content.substring(str.indexOf(`'s `), str.indexOf(`https`))
         let url = arr[arr.length-1]
         console.log(player)
         console.log(deck)
