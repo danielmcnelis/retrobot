@@ -141,7 +141,6 @@ client.on('message', async message => {
     }
 
     if(message.guild.id !== serverID || message.author.bot) {
-        console.log('aborting...')
         return
     }
 
@@ -156,49 +155,10 @@ client.on('message', async message => {
 
     message.awaitReactions(tweetFilter, {
         max: 1,
-        time: 6000
+        time: 86400000
     }).then(collected => {
         if (tweetFilterPassed) {
             return message.channel.send('Tweet this message.')
-        }
-    }).catch(err => {
-        console.log(err)
-    })
-
-    let upvoteFilterPassed = false
-    const upvoteFilter = (reaction) => {
-        if (reaction.emoji.name === 'upvote') {
-            upvoteFilterPassed = true
-            return true
-        }
-    }
-    
-    let downvoteFilterPassed = false
-    const downvoteFilter = (reaction) => {
-        if (reaction.emoji.name === 'downvote') {
-            downvoteFilterPassed = true
-            return true
-        }
-    }
-    
-    message.awaitReactions(upvoteFilter, {
-        max: 1,
-        time: 6000
-    }).then(collected => {
-        if (upvoteFilterPassed) {
-            return message.channel.send('Increase rating by 1.')
-        }
-    }).catch(err => {
-        console.log(err)
-    })
-
-
-    message.awaitReactions(downvoteFilter, {
-        max: 1,
-        time: 6000
-    }).then(collected => {
-        if (downvoteFilterPassed) {
-            return message.channel.send('Decrease rating by 1.')
         }
     }).catch(err => {
         console.log(err)
@@ -619,6 +579,46 @@ Speed Burn`, true)
         } else if(!deck[player]) {
             return message.channel.send("That user is not in the Goat Format database.")
         }
+
+        let upvoteFilterPassed = false
+        const upvoteFilter = (reaction) => {
+            if (reaction.emoji.name === 'upvote') {
+                upvoteFilterPassed = true
+                return true
+            }
+        }
+    
+        let downvoteFilterPassed = false
+        const downvoteFilter = (reaction) => {
+            if (reaction.emoji.name === 'downvote') {
+                downvoteFilterPassed = true
+                return true
+            }
+        }
+
+        message.awaitReactions(upvoteFilter, {
+            max: 1,
+            time: 6000
+        }).then(collected => {
+            if (upvoteFilterPassed) {
+                return message.channel.send('Increase rating by 1.')
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+
+        message.awaitReactions(downvoteFilter, {
+            max: 1,
+            time: 6000
+        }).then(collected => {
+            if (downvoteFilterPassed) {
+                return message.channel.send('Decrease rating by 1.')
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+
+
     }
 
     //AVATAR
