@@ -2658,6 +2658,7 @@ async function getUpdatedDeckURL(message, dude) {
 //GET DECK TYPE
 const getDeckType = (message, dude, url) => {
     let keys = Object.keys(deckTypeAlius)
+    let check = 0
 	const filter = m => m.author.id === dude
 	message.channel.send(`Okay, ${names[dude]}, what kind of deck is this?`)
 	message.channel.awaitMessages(filter, {
@@ -2666,6 +2667,7 @@ const getDeckType = (message, dude, url) => {
     }).then(collected => {
         keys.forEach(function(elem) {
             if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase())) {
+                check = 1
                 if (decks[dude][elem].url) {
                     return getDeckOverwriteConfirmation(message, dude, url, elem, deckTypeAlius[elem][0])
                 } else {
@@ -2674,7 +2676,9 @@ const getDeckType = (message, dude, url) => {
             }
         })
 
-        return getOtherDeckConfirmation(message, dude, url, collected.first().content)
+        if (check === 0) {
+            return getOtherDeckConfirmation(message, dude, url, collected.first().content)
+        }
     }).catch(err => {    
         console.log(err)
         return message.channel.send(`Perhaps another time would be better.`)
