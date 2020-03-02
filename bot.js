@@ -2592,8 +2592,9 @@ function checkForNewRatings(message, player, decktype) {
         max: 20,
         time: 4000
     }).then(collected => {
-        console.log('collected something')
+        console.log('collected something uvf')
         if (upvoteFilterPassed) {
+            console.log('collected something that passed upvoteFilter')
             decks[player][decktype].posRaters.push(user.id)
             decks[player][decktype].rating++
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
@@ -2610,7 +2611,9 @@ function checkForNewRatings(message, player, decktype) {
         max: 20,
         time: 4000
     }).then(collected => {
+        console.log('collected something dvf')
         if (downvoteFilterPassed) {
+            console.log('collected something that passed downvoteFilter')
             decks[player][decktype].negRaters.push(user.id)
             decks[player][decktype].rating--
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
