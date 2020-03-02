@@ -564,6 +564,9 @@ Speed Burn`, true)
             playerID = message.author.id
         }
 
+        console.log(playerTag)
+        console.log(playerID)
+
         if(!decks[maid]) {
             createUser(maid, message.author);
             return message.channel.send("I have added you to the Goat Format database. Please try again.")
@@ -593,8 +596,8 @@ Speed Burn`, true)
 
         for (let i = 0; i < 3; i++) {
             if (decks[playerID][arr1[i]].url) {
-                message.channel.send(`${playerTag}'s ${deckTypeAlius[arr1[i][0]]} deck:
-decks[player][arr1[i]].url`)
+                message.channel.send(`${playerTag}'s ${deckTypeAlius[arr1[i]][0]} deck:
+${decks[playerID][arr1[i]].url}`)
             }
         }
     }
