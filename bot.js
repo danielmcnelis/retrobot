@@ -576,7 +576,7 @@ Speed Burn`, true)
         if(!decks[maid]) {
             createUser(maid);
             return message.channel.send("I have added you to the Goat Format database. Please try again.")
-        } else if(!deck[player]) {
+        } else if(!decks[player]) {
             return message.channel.send("That user is not in the Goat Format database.")
         }
 
