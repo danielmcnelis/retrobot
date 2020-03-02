@@ -141,9 +141,16 @@ client.on('message', async message => {
     if ( (message.content.includes('https://i.imgur.com') || message.content.includes('https://www.duelingbook.com/deck') || message.content.includes('https://www.duelingbook.com/replay') ) && message.author.bot) {
         let player = tags[message.content.substring(0, message.content.indexOf(`'s `))]
         let decktype = message.content.substring((message.content.indexOf(`'s `)+3), message.content.indexOf(` deck`))
+        let decktypeCC 
         let url = args[args.length-1]
-    
-        return checkForNewRatings(message, player, decktype, url)
+        let keys = Object.keys(deckTypeAlius)
+        keys.forEach(function(elem) {
+            if (deckTypeAlius[elem].includes(decktype)) { 
+                decktypeCC = elem
+            }
+        }
+
+        return checkForNewRatings(message, player, decktypeCC, url)
     }
 
     if(message.guild.id !== serverID || message.author.bot) {
