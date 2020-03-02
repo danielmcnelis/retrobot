@@ -2571,9 +2571,6 @@ function checkForNewRatings(message, player, decktype) {
     let downvoteFilterPassed = false
 
     console.log('checkForNewRatings')
-    console.log(player)
-    console.log(decktype)
-    console.log(decks[player][decktype]) 
 
     const upvoteFilter = (reaction, user) => {
         if (reaction.emoji.name === 'upvote' && !decks[player][decktype].posRaters.includes(user.id)) {
@@ -2596,6 +2593,7 @@ function checkForNewRatings(message, player, decktype) {
         max: 20,
         time: 600000
     }).then(collected => {
+        console.log('collected something')
         if (upvoteFilterPassed) {
             decks[player][decktype].posRaters.push(user.id)
             decks[player][decktype].rating++
