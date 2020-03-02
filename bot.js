@@ -580,45 +580,24 @@ Speed Burn`, true)
             return message.channel.send("That user is not in the Goat Format database.")
         }
 
-        let upvoteFilterPassed = false
-        const upvoteFilter = (reaction) => {
-            if (reaction.emoji.name === 'upvote') {
-                upvoteFilterPassed = true
-                return true
-            }
-        }
-    
-        let downvoteFilterPassed = false
-        const downvoteFilter = (reaction) => {
-            if (reaction.emoji.name === 'downvote') {
-                downvoteFilterPassed = true
-                return true
-            }
-        }
-
-        message.awaitReactions(upvoteFilter, {
-            max: 1,
-            time: 6000
-        }).then(collected => {
-            if (upvoteFilterPassed) {
-                return message.channel.send('Increase rating by 1.')
-            }
-        }).catch(err => {
-            console.log(err)
+        let keys = Object.keys(decks[player])
+        let arr1 = []
+        let arr2 = []
+        keys.forEach(function(elem) {
+            if (decks[player][elem].url) {
+                arr1.push(elem)
+                arr2.push(decks[player][elem].rating)
+            }  
         })
 
-        message.awaitReactions(downvoteFilter, {
-            max: 1,
-            time: 6000
-        }).then(collected => {
-            if (downvoteFilterPassed) {
-                return message.channel.send('Decrease rating by 1.')
-            }
-        }).catch(err => {
-            console.log(err)
+        arr1.sort(function(a, b) {  
+            return arr2.indexOf(a) - arr2.indexOf(b)
         })
 
-
+        for (let i = 0; i < 3; i++) {
+            message.channel.send(decks[player][arr1[i]].url)
+            checkForNewRatings(message, player, arr1[i])
+        }
     }
 
     //AVATAR
@@ -1221,6 +1200,61 @@ function reset(arr2, arr3, arr4, arr5, j) {
 
 
 //RESTORE
+function checkForNewRatings(message, player, deck) {
+    let upvoteFilterPassed = false
+    let downvoteFilterPassed = false
+
+    const upvoteFilter = (reaction, user) => {
+        if (reaction.emoji.name === 'upvote' && !decks[player][deck].posRaters.includes(user.id)) {
+            upvoteFilterPassed = true
+            return true
+        }
+    }
+
+    const downvoteFilter = (reaction) => {
+        if (reaction.emoji.name === 'downvote' && !decks[player][deck].negRaters.includes(user.id)) {
+            downvoteFilterPassed = true
+            return true
+        }
+    }
+
+    message.awaitReactions(upvoteFilter, {
+        max: 20,
+        time: 600000
+    }).then(collected => {
+        if (upvoteFilterPassed) {
+            decks[player][deck].posRaters.push(user.id)
+            decks[player][deck].rating++
+    		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
+                if (err) console.log(err)
+            })
+
+            return message.channel.send('Increase rating by 1.')
+        }
+    }).catch(err => {
+        console.log(err)
+    })
+
+    message.awaitReactions(downvoteFilter, {
+        max: 20,
+        time: 600000
+    }).then(collected => {
+        if (downvoteFilterPassed) {
+            decks[player][deck].negRaters.push(user.id)
+            decks[player][deck].rating--
+    		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
+                if (err) console.log(err)
+            })
+            
+            return message.channel.send('Decrease rating by 1.')
+        }
+    }).catch(err => {
+        console.log(err)
+    })
+}    
+
+
+
 function restore(message, winner, loser, num, length1, length2) {
 	return setTimeout(function(){
 		let statsLoser = stats[loser]
