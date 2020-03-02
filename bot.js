@@ -1256,12 +1256,12 @@ function revive(message, person, num) {
 //CREATEUSER
 function createUser(player, person) {
 	if(!names[player] && person) {
-		names[player] = person.user.username;
+		names[player] = person.username;
    		fs.writeFile("./names.json", JSON.stringify(names), (err) => {
             if (err) console.log(err) }); }
 
     if(!tags[player] && person) {
-       tags[person.user.tag] = player
+       tags[person.tag] = player
             fs.writeFile("./tags.json", JSON.stringify(tags), (err) => {
                 if (err) console.log(err) }); }
             
