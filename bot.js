@@ -2671,6 +2671,7 @@ async function getUpdatedDeckURL(message, dude) {
 //GET DECK TYPE
 const getDeckType = (message, dude, url) => {
     let keys = Object.keys(deckTypeAlius)
+    let success = false
 	const filter = m => m.author.id === dude
 	message.channel.send(`Okay, ${names[dude]}, what kind of deck is this?`)
 	message.channel.awaitMessages(filter, {
@@ -2679,6 +2680,7 @@ const getDeckType = (message, dude, url) => {
     }).then(collected => {
         keys.forEach(function(elem) {
             if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase())) {
+                success = true
                 if (decks[dude][elem].url) {
                     return getDeckOverwriteConfirmation(message, dude, url, elem, deckTypeAlius[elem][0])
                 } else {
@@ -2690,8 +2692,10 @@ const getDeckType = (message, dude, url) => {
                     return message.channel.send(`Thanks! I have saved your ${deckTypeAlius[elem][0]} deck to the public database.`)
                 }
             }
-            return getOtherDeckConfirmation(message, dude, url, collected.first().content)
         })
+        if (!success) {
+            return getOtherDeckConfirmation(message, dude, url, collected.first().content)
+        }
     }).catch(err => {    
         console.log(err)
         return message.channel.send(`Perhaps another time would be better.`)
@@ -2757,18 +2761,18 @@ async function getDeckTypeTournament(message, dude, url) {
                 clearRegistrationStatus()
                 sendToTournamentChannel(dude, url, deckTypeAlius[elem][0])
                 return person.send(`Thanks! I have collected your ${deckTypeAlius[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+            } else {
+                decks[dude].tournament.url = url
+                decks[dude].tournament.name = collected.first().content
+                decks[dude].tournament.category = 'other'
+                fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
+                    if (err) console.log(err)
+                })
+              
+                clearRegistrationStatus()
+                sendToTournamentChannel(dude, url, 'Other')
+                return person.send(`Thanks! I have collected your ${collected.first().content} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
             } 
-
-            decks[dude].tournament.url = url
-            decks[dude].tournament.name = collected.first().content
-            decks[dude].tournament.category = 'other'
-            fs.writeFile("./decks.json", JSON.stringify(decks), (err) => {
-                if (err) console.log(err)
-            })
-          
-            clearRegistrationStatus()
-            sendToTournamentChannel(dude, url, 'Other')
-            return person.send(`Thanks! I have collected your ${collected.first().content} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
         })
     }).catch(err => {
         console.log(err)
@@ -2872,15 +2876,15 @@ const getReplayInfo2 = (message, dude, slot, pronoun) => {
 
                 message.channel.send(`Okay, so ${pronoun} played ${deckTypeAlius[elem][0]}.`)
                 return getReplayInfo3(message, dude, slot)
+            } else {
+                replays[dude][slot].deck1 = 'other'
+                fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                    if (err) console.log(err)
+                })
+        
+                message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now.`)
+                return getReplayInfo(message, dude, slot) 
             }
-
-            replays[dude][slot].deck1 = 'other'
-            fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
-                if (err) console.log(err)
-            })
-    
-            message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now.`)
-            return getReplayInfo(message, dude, slot)     
         })   
     }).catch(err => {    
         console.log(err)
@@ -2927,14 +2931,14 @@ const getReplayInfo4 = (message, dude, slot) => {
                 })
 
                 return message.channel.send(`Okay, so they played ${deckTypeAlius[elem][0]}. I have saved this replay to the public database. Thanks!`)
-            } 
-
-            replays[dude][slot].deck2 = 'other'
-            fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
-                if (err) console.log(err)
-            })
-    
-            return message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now. Thanks!`)
+            } else {
+                replays[dude][slot].deck2 = 'other'
+                fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                    if (err) console.log(err)
+                })
+        
+                return message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now. Thanks!`)
+            }
         })
     }).catch(err => {    
         console.log(err)
