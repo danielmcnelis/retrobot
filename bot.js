@@ -148,7 +148,7 @@ client.on('message', async message => {
             if (deckTypeAlius[elem].includes(decktype)) { 
                 decktypeCC = elem
             }
-        }
+        })
 
         return checkForNewRatings(message, player, decktypeCC, url)
     }
