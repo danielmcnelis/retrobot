@@ -141,7 +141,7 @@ client.on('message', async message => {
     if ( (message.content.includes('https://i.imgur.com') || message.content.includes('https://www.duelingbook.com/deck') || message.content.includes('https://www.duelingbook.com/replay') ) && message.author.bot) {
         let player = tags[message.content.substring(0, message.content.indexOf(`'s `))]
         let decktype = message.content.substring((message.content.indexOf(`'s `)+3), message.content.indexOf(` deck`))
-        let url = message.content.substring(message.content.indexOf(` deck:`)+6)
+        let url = args[args.length-1]
     
         return checkForNewRatings(message, player, decktype, url)
     }
