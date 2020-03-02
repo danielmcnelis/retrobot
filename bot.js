@@ -595,13 +595,21 @@ Speed Burn`, true)
             }  
         })
 
+
+        console.log(arr1)
+        console.log(arr2)
+
         arr1.sort(function(a, b) {  
             return arr2.indexOf(a) - arr2.indexOf(b)
         })
 
+        console.log(arr1)
+
         for (let i = 0; i < 3; i++) {
-            message.channel.send(decks[player][arr1[i]].url)
-            checkForNewRatings(message, player, arr1[i])
+            if (decks[player][arr1[i]].url) {
+                message.channel.send(decks[player][arr1[i]].url)
+                checkForNewRatings(message, player, arr1[i])
+            }
         }
     }
 
