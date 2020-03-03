@@ -2591,7 +2591,6 @@ function checkForNewRatings(message, player, decktype) {
         max: 20,
         time: 4000
     }).then(collected => {
-        console.log('collected something uvf')
         if (upvoteFilterPassed) {
             console.log('collected something that passed upvoteFilter')
             console.log(decks[player][decktype])
@@ -2604,6 +2603,8 @@ function checkForNewRatings(message, player, decktype) {
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
                 if (err) console.log(err)
             })
+
+            console.log('hmm')
 
             return message.channel.send('Increase rating by 1.')
         }
