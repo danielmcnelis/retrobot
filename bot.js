@@ -2934,15 +2934,14 @@ const getReplayInfo2 = (message, dude, slot, pronoun) => {
 
                 message.channel.send(`Okay, so ${pronoun} played ${deckTypeAlius[elem][0]}.`)
                 return getReplayInfo3(message, dude, slot)
-            } else {
-                replays[dude][slot].deck1 = 'other'
-                fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
-                    if (err) console.log(err)
-                })
-        
-                message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now.`)
-                return getReplayInfo3(message, dude, slot) 
             }
+            replays[dude][slot].deck1 = 'other'
+            fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                if (err) console.log(err)
+            })
+    
+            message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now.`)
+            return getReplayInfo3(message, dude, slot) 
         })   
     }).catch(err => {    
         console.log(err)
@@ -2989,15 +2988,14 @@ const getReplayInfo4 = (message, dude, slot) => {
                 })
 
                 return message.channel.send(`Okay, so they played ${deckTypeAlius[elem][0]}. I have saved this replay to the public database. Thanks!`)
-            } else {
-                replays[dude][slot].deck2 = 'other'
-                fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
-                    if (err) console.log(err)
-                })
-        
-                return message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now. Thanks!`)
             }
+            replays[dude][slot].deck2 = 'other'
+            fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                if (err) console.log(err)
+            })
         })
+    
+        return message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now. Thanks!`)
     }).catch(err => {    
         console.log(err)
         return message.channel.send(`Sorry, you took too long. I will save this replay with the info that I have so far.`)
