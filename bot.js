@@ -2566,10 +2566,11 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     const upvoteFilter = (reaction, user) => {
         if (reaction.emoji.name === 'upvote' && !decks[player][decktypeCC].posRaters.includes(user.id)) {
             if (user.id === player) {
+                console.log('hello?')
                 return message.channel.send('Sorry, you cannot rate your own decks.')
             }
             upvoteFilterPassed = true
-            reacter = user.id
+            reacter = user.username
             console.log('upvote filter passed')
             return true
         }
@@ -2581,7 +2582,7 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
                 return message.channel.send('Sorry, you cannot rate your own decks.')
             }
             downvoteFilterPassed = true
-            reacter = user.id
+            reacter = user.username
             console.log('downvote filter passed')
             return true
         }
