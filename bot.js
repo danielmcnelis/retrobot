@@ -2561,7 +2561,7 @@ function createUser(player, person) {
 function checkForNewRatings(message, player, decktype, decktypeCC) {
     let upvoteFilterPassed = false
     let downvoteFilterPassed = false
-    let reactor
+    let reacter
 
     const upvoteFilter = (reaction, user) => {
         if (reaction.emoji.name === 'upvote' && !decks[player][decktypeCC].posRaters.includes(user.id)) {
