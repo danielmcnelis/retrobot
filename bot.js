@@ -2810,7 +2810,7 @@ const getReplayInfo1 = (message, dude, url) => {
     let keys = Object.keys(replays[dude])
     let slot
     for (let i = 0; i < keys.length; i++) {
-        if (!replays[dude][keys[i]]) {
+        if (!replays[dude][keys[i]].url) {
             slot = keys[i]
             break
         }
