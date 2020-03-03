@@ -2569,13 +2569,8 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
                 return message.channel.send('Sorry, you cannot rate your own decks.')
             }
             upvoteFilterPassed = true
-
-            console.log(user.id)
-            console.log('upvote filter passed')
-
             reacter = user.id
-            console.log(reacter)
-            console.log('upvote filter passed 2')
+            console.log('upvote filter passed')
             return true
         }
     }
@@ -2585,16 +2580,16 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
             if (user.id === player) {
                 return message.channel.send('Sorry, you cannot rate your own decks.')
             }
-            console.log('downvote filter passed')
             downvoteFilterPassed = true
             reacter = user.id
+            console.log('downvote filter passed')
             return true
         }
     }
 
     message.awaitReactions(upvoteFilter, {
-        max: 100,
-        time: 600000
+        max: 20,
+        time: 10000
     }).then(collected => {
         if (upvoteFilterPassed) {
             console.log(`received an upvote`)
@@ -2611,8 +2606,8 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     })
 
     message.awaitReactions(downvoteFilter, {
-        max: 100,
-        time: 600000
+        max: 20,
+        time: 10000
     }).then(collected => {
         if (downvoteFilterPassed) {
             console.log(`received a downvote`)
