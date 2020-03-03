@@ -533,7 +533,7 @@ client.on('message', async message => {
 
         for (let i = 0; i < 3; i++) {
             if (replays[playerID][arr1[i]].url) {
-                message.channel.send(`${playerTag}'s replay: ${names[replays[playerID][arr1[i]].p1]} (${deckTypeAlius[replays[playerID][arr1[i]].deck1][0]}) vs ${names[replays[playerID][arr1[i]].p2} (${deckTypeAlius[replays[playerID][arr1[i]].deck2][0]}):
+                message.channel.send(`${playerTag}'s replay: ${names[replays[playerID][arr1[i]].p1]} (${deckTypeAlius[replays[playerID][arr1[i]].deck1][0]}) vs ${names[replays[playerID][arr1[i]].p2]} (${deckTypeAlius[replays[playerID][arr1[i]].deck2][0]}):
 ${replays[playerID][arr1[i]].url}`)
             }
         }
