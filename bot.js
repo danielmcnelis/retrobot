@@ -149,7 +149,7 @@ client.on('message', async message => {
             }
         })
 
-        return checkForNewRatings(message, player, decktypeCC)
+        return checkForNewRatings(message, player, decktype, decktypeCC)
     }
 
     if(message.guild.id !== serverID || message.author.bot) {
@@ -2566,23 +2566,26 @@ function createUser(player, person) {
 
 //
 
-function checkForNewRatings(message, player, decktype) {
+function checkForNewRatings(message, player, decktype, decktypeCC) {
     let upvoteFilterPassed = false
     let downvoteFilterPassed = false
-
+    let reactor
 
     const upvoteFilter = (reaction, user) => {
-        if (reaction.emoji.name === 'upvote' && !decks[player][decktype].posRaters.includes(user.id)) {
-            console.log('upvote filter found a hit')
+        if (reaction.emoji.name === 'upvote' && !decks[player][decktypeCC].posRaters.includes(user.id)) {
+            if (user.id === player) {
+                return message.channel.send('Sorry, you cannot rate your own decks.')
+            }
             upvoteFilterPassed = true
+            reacter = user.id
             return true
         }
     }
     
     const downvoteFilter = (reaction, user) => {
-        if (reaction.emoji.name === 'downvote' && !decks[player][decktype].negRaters.includes(user.id)) {
-            console.log('downvote filter found a hit')
+        if (reaction.emoji.name === 'downvote' && !decks[player][decktypeCC].negRaters.includes(user.id)) {
             downvoteFilterPassed = true
+            reacter = user.id
             return true
         }
     }
@@ -2592,20 +2595,13 @@ function checkForNewRatings(message, player, decktype) {
         time: 4000
     }).then(collected => {
         if (upvoteFilterPassed) {
-            console.log('collected something that passed upvoteFilter')
-            console.log(decks[player][decktype])
-            console.log(decks[player][decktype].posRaters)
-            console.log(decks[player][decktype].rating)
-        
-            decks[player][decktype].posRaters.push(player)
-            decks[player][decktype].rating++
+            decks[player][decktypeCC].posRaters.push(player)
+            decks[player][decktypeCC].rating++
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
                 if (err) console.log(err)
             })
 
-            console.log('hmm')
-
-            return message.channel.send('Increase rating by 1.')
+            return message.channel.send(`${names[player]}'s ${decktype} received an upvote from ${reacter}!`)
         }
     }).catch(err => {
         console.log('timeout')
@@ -2617,8 +2613,8 @@ function checkForNewRatings(message, player, decktype) {
     }).then(collected => {
         if (downvoteFilterPassed) {
             console.log('collected something that passed downvoteFilter')
-            decks[player][decktype].negRaters.push(player)
-            decks[player][decktype].rating--
+            decks[player][decktypeCC].negRaters.push(player)
+            decks[player][decktypeCC].rating--
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
                 if (err) console.log(err)
             })
