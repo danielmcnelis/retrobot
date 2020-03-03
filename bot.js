@@ -2563,6 +2563,10 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     let downvoteFilterPassed = false
     let reacter
 
+    function remove(array, element) {
+        return array.filter(el => el !== element);
+      }
+
     const upvoteFilter = (reaction, user) => {
         if (reaction.emoji.name === 'upvote') {
             if (user.id === player) {
@@ -2573,7 +2577,7 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
                 return message.channel.send(`Sorry, ${user.username}, you already upvoted this deck.`)
             } else {
                 upvoteFilterPassed = true
-                reacter = user.username
+                reacter = user
                 return true
             }
         }
@@ -2588,8 +2592,8 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
                 downFilterPassed = false
                 return message.channel.send(`Sorry, ${user.username}, you already downvoted this deck.`)
             } else {
-                downFilterPassed = true
-                reacter = user.username
+                downvoteFilterPassed = true
+                reacter = user
                 return true
             }
         }
@@ -2598,14 +2602,14 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     const posCollector = message.createReactionCollector(upvoteFilter, { time: 1800000 })
     posCollector.on('collect', () => {
         if (upvoteFilterPassed) {
-
-            decks[player][decktypeCC].posRaters.push(player)
+            decks[player][decktypeCC].negRaters = remove(decks[player][decktypeCC].negRaters, reacter.id)
+            decks[player][decktypeCC].posRaters.push(reacter.id)
             decks[player][decktypeCC].rating++
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
                 if (err) console.log(err)
             })
 
-            return message.channel.send(`${names[player]}'s ${decktype} deck received an upvote from ${reacter}!`)
+            return message.channel.send(`${names[player]}'s ${decktype} deck received an upvote from ${reacter.username}!`)
         }
     })
         
@@ -2614,14 +2618,14 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     const negCollector = message.createReactionCollector(downvoteFilter, { time: 1800000 })
     negCollector.on('collect', () => {
         if (downvoteFilterPassed) {
-            
-            decks[player][decktypeCC].negRaters.push(player)
+            decks[player][decktypeCC].posRaters = remove(decks[player][decktypeCC].posRaters, reacter.id)
+            decks[player][decktypeCC].negRaters.push(reacter.id)
             decks[player][decktypeCC].rating--
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
                 if (err) console.log(err)
             })
 
-            return message.channel.send(`${names[player]}'s ${decktype} deck received a downvote from ${reacter}...`)
+            return message.channel.send(`${names[player]}'s ${decktype} deck received a downvote from ${reacter.username}...`)
         }
     })
         
