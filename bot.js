@@ -2598,7 +2598,7 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     const posCollector = message.createReactionCollector(upvoteFilter, { time: 1800000 })
     posCollector.on('collect', () => {
         if (upvoteFilterPassed) {
-            delete decks[player][decktypeCC].negRaters[player]
+
             decks[player][decktypeCC].posRaters.push(player)
             decks[player][decktypeCC].rating++
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
@@ -2614,7 +2614,7 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     const negCollector = message.createReactionCollector(downvoteFilter, { time: 1800000 })
     negCollector.on('collect', () => {
         if (downvoteFilterPassed) {
-            delete decks[player][decktypeCC].posRaters[player]
+            
             decks[player][decktypeCC].negRaters.push(player)
             decks[player][decktypeCC].rating--
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
