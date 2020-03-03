@@ -543,7 +543,6 @@ Speed Burn`, true)
             createUser(maid, message.author);
             return message.channel.send("I have added you to the Goat Format database. Please try again.")
         }
-        https://www.duelingbook.com/replay?id=1498-15832467
 
         if ( (!message.content.startsWith("!save https://i") && !message.content.startsWith("!save https://www.duelingbook.com/replay?")) || message.content.length > 60) {		
             return message.channel.send(`If you wish to save a deck, please provide (1) imgur.com link. If you wish to save a replay, please provide (1) duelingbook.com/replay link.`)
@@ -553,7 +552,7 @@ Speed Burn`, true)
             let url = `https://i.${args.join(" ").substring(8, args.join(" ").length)}.png`;
             return getDeckType(message, maid, url)          
         } else if (message.content.startsWith("!save https://www.duelingbook.com/replay?")) {
-            return getReplayInfo1(message, maid, url)          
+            return getReplayInfo1(message, maid, args[0])          
         }
     }
 
