@@ -35,6 +35,8 @@ const losscom = ['!lossvs','!loss','!lose','!goatloss','!goatlossvs','!goatlose'
 const h2hcom = ['!h2h', '!head2head', '!headtohead']
 const undocom = ['!undolast', '!undo', '!undoloss']
 const rankcom = ['!rank', '!top', '!ladder']
+const deckscom = ['!deck', '!decks', '!mydeck', '!mydecks']
+const replayscom = ['!replay', '!replays', '!myreplay', '!myreplays']
 const yesSynonyms = ['yes', 'yeah', 'yea', 'ye', 'ya', 'yah', 'yh', 'y', 'sure', 'ok', 'okay', 'k']
 const noSynonyms = ['no', 'nah', 'nope', 'naw', 'n', 'na']
 const deckTypeAlius = {
@@ -495,6 +497,47 @@ client.on('message', async message => {
 
     //REPLAY-LINKS AUTO MODERATION
 
+    //DECK-LISTS AUTO MODERATION
+    if(replayscom.includes(cmd)) {    
+        let person = message.mentions.users.first()
+        let playerID
+        let playerTag
+        if (person) {
+            playerTag = person.tag
+            playerID = person.id
+        } else {
+            playerTag = message.author.tag
+            playerID = message.author.id
+        }
+
+        if(!replays[maid]) {
+            createUser(maid, message.author);
+            return message.channel.send("I have added you to the Goat Format database. Please try again.")
+        } else if(!replays[playerID]) {
+            return message.channel.send("That user is not in the Goat Format database.")
+        }
+
+        let keys = Object.keys(replays[playerID])
+        let arr1 = []
+        let arr2 = []
+        keys.forEach(function(elem) {
+            if (replays[playerID][elem].url) {
+                arr1.push(elem)
+                arr2.push(replays[playerID][elem].rating)
+            }  
+        })
+
+        arr1.sort(function(a, b) {  
+            return arr2.indexOf(a) - arr2.indexOf(b)
+        })
+
+        for (let i = 0; i < 3; i++) {
+            if (replays[playerID][arr1[i]].url) {
+                message.channel.send(`${playerTag}'s replay (${names[replays[playerID][arr1[i]].p1]} vs ${names[replays[playerID][arr1[i]].p12}):
+${replays[playerID][arr1[i]].url}`)
+            }
+        }
+    }
 
     if (cmd === `!cats`) {
     const deckEmbed = new Discord.RichEmbed()
@@ -558,7 +601,7 @@ Speed Burn`, true)
 
 
     //DECK-LISTS AUTO MODERATION
-    if(cmd === `!deck` || cmd === `!decks` || cmd === `!mydeck` || cmd === `!mydecks`) {    
+    if(deckscom.includes(cmd)) {    
         let person = message.mentions.users.first()
         let playerID
         let playerTag
