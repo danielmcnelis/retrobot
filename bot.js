@@ -2568,9 +2568,14 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
             if (user.id === player) {
                 return message.channel.send('Sorry, you cannot rate your own decks.')
             }
-            console.log('upvote filter passed')
             upvoteFilterPassed = true
+
+            console.log(user.id)
+            console.log('upvote filter passed')
+
             reacter = user.id
+            console.log(reacter)
+            console.log('upvote filter passed 2')
             return true
         }
     }
