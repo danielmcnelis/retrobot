@@ -2584,6 +2584,9 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     
     const downvoteFilter = (reaction, user) => {
         if (reaction.emoji.name === 'downvote' && !decks[player][decktypeCC].negRaters.includes(user.id)) {
+            if (user.id === player) {
+                return message.channel.send('Sorry, you cannot rate your own decks.')
+            }
             downvoteFilterPassed = true
             reacter = user.id
             return true
@@ -2591,8 +2594,8 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     }
 
     message.awaitReactions(upvoteFilter, {
-        max: 20,
-        time: 4000
+        max: 100,
+        time: 600000
     }).then(collected => {
         if (upvoteFilterPassed) {
             decks[player][decktypeCC].posRaters.push(player)
@@ -2608,8 +2611,8 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     })
 
     message.awaitReactions(downvoteFilter, {
-        max: 20,
-        time: 4000
+        max: 100,
+        time: 600000
     }).then(collected => {
         if (downvoteFilterPassed) {
             console.log('collected something that passed downvoteFilter')
@@ -2619,7 +2622,7 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
                 if (err) console.log(err)
             })
             
-            return message.channel.send('Decrease rating by 1.')
+            return message.channel.send(`${names[player]}'s ${decktype} received a downvote from ${reacter}.`)
         }
     }).catch(err => {
         console.log('timeout')
