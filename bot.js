@@ -2570,11 +2570,6 @@ function checkForNewRatings(message, player, decktype) {
     let upvoteFilterPassed = false
     let downvoteFilterPassed = false
 
-    console.log('checkForNewRatings')
-    console.log(decks[player][decktype])
-    console.log(decks[player][decktype].posRaters)
-    console.log(decks[player][decktype].rating)
-
 
     const upvoteFilter = (reaction, user) => {
         if (reaction.emoji.name === 'upvote' && !decks[player][decktype].posRaters.includes(user.id)) {
@@ -2599,6 +2594,11 @@ function checkForNewRatings(message, player, decktype) {
         console.log('collected something uvf')
         if (upvoteFilterPassed) {
             console.log('collected something that passed upvoteFilter')
+            console.log(decks[player][decktype])
+            console.log(decks[player][decktype].posRaters)
+            console.log(decks[player][decktype].rating)
+            console.log(user.id)
+        
             decks[player][decktype].posRaters.push(user.id)
             decks[player][decktype].rating++
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
