@@ -2922,6 +2922,7 @@ const getReplayAltP1 = (message, dude, slot) => {
 //GET REPLAY INFO 2
 const getReplayInfo2 = (message, dude, slot, pronoun) => {
     let keys = Object.keys(deckTypeAlius)
+    let success
 	const filter = m => m.author.id === dude
 	message.channel.send(`What deck did ${pronoun} play?`)
 	message.channel.awaitMessages(filter, {
@@ -2930,6 +2931,7 @@ const getReplayInfo2 = (message, dude, slot, pronoun) => {
     }).then(collected => {
         keys.forEach(function(elem) {
             if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase())) {
+                success = true
                 replays[dude][slot].deck1 = elem
                 fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
                     if (err) console.log(err)
@@ -2938,15 +2940,17 @@ const getReplayInfo2 = (message, dude, slot, pronoun) => {
                 message.channel.send(`Okay, so ${pronoun} played ${deckTypeAlius[elem][0]}.`)
                 return getReplayInfo3(message, dude, slot)
             }
-        })   
-
-        replays[dude][slot].deck1 = 'other'
-        fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
-            if (err) console.log(err)
         })
 
-        message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now.`)
-        return getReplayInfo3(message, dude, slot) 
+        if(!success) {
+            replays[dude][slot].deck1 = 'other'
+            fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                if (err) console.log(err)
+            })
+    
+            message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now.`)
+            return getReplayInfo3(message, dude, slot) 
+        }
     }).catch(err => {    
         console.log(err)
         return message.channel.send(`Sorry, you took too long. I will save this replay with the info that I have so far.`)
@@ -2978,6 +2982,7 @@ const getReplayInfo3 = (message, dude, slot) => {
 //GET REPLAY INFO 2
 const getReplayInfo4 = (message, dude, slot) => {
     let keys = Object.keys(deckTypeAlius)
+    let success = false
 	const filter = m => m.author.id === dude
 	message.channel.send(`What deck did they play?`)
 	message.channel.awaitMessages(filter, {
@@ -2986,6 +2991,7 @@ const getReplayInfo4 = (message, dude, slot) => {
     }).then(collected => {
         keys.forEach(function(elem) {
             if (deckTypeAlius[elem].includes(collected.first().content.toLowerCase())) {
+                success = true
                 replays[dude][slot].deck2 = elem
                 fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
                     if (err) console.log(err)
@@ -2995,12 +3001,14 @@ const getReplayInfo4 = (message, dude, slot) => {
             }
         })
 
-        replays[dude][slot].deck2 = 'other'
-        fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
-            if (err) console.log(err)
-        })
-        
-        return message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now. Thanks!`)
+        if(!success) {
+            replays[dude][slot].deck2 = 'other'
+            fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
+                if (err) console.log(err)
+            })
+            
+            return message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now. Thanks!`)    
+        }
     }).catch(err => {    
         console.log(err)
         return message.channel.send(`Sorry, you took too long. I will save this replay with the info that I have so far.`)
