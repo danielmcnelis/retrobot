@@ -2571,6 +2571,10 @@ function checkForNewRatings(message, player, decktype) {
     let downvoteFilterPassed = false
 
     console.log('checkForNewRatings')
+    console.log(decks[player][decktype])
+    console.log(decks[player][decktype].posRaters)
+    console.log(decks[player][decktype].rating)
+
 
     const upvoteFilter = (reaction, user) => {
         if (reaction.emoji.name === 'upvote' && !decks[player][decktype].posRaters.includes(user.id)) {
