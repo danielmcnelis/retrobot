@@ -2566,8 +2566,10 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     const upvoteFilter = (reaction, user) => {
         if (reaction.emoji.name === 'upvote') {
             if (user.id === player) {
+                upvoteFilterPassed = false
                 return message.channel.send(`Sorry, ${user.username}, you cannot rate your own deck.`)
             } else if (decks[player][decktypeCC].posRaters.includes(user.id)) {
+                upvoteFilterPassed = false
                 return message.channel.send(`Sorry, ${user.username}, you already upvoted this deck.`)
             } else {
                 upvoteFilterPassed = true
@@ -2580,8 +2582,10 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
     const downvoteFilter = (reaction, user) => {
         if (reaction.emoji.name === 'downvote') {
             if (user.id === player) {
+                downFilterPassed = false
                 return message.channel.send(`Sorry, ${user.username}, you cannot rate your own deck.`)
             } else if (decks[player][decktypeCC].negRaters.includes(user.id)) {
+                downFilterPassed = false
                 return message.channel.send(`Sorry, ${user.username}, you already downvoted this deck.`)
             } else {
                 downFilterPassed = true
@@ -2591,50 +2595,38 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
         }
     }
 
-
-    const collector = message.createReactionCollector(upvoteFilter, { time: 60000 })
-    collector.on('collect', () => {
+    const posCollector = message.createReactionCollector(upvoteFilter, { time: 60000 })
+    posCollector.on('collect', () => {
         if (upvoteFilterPassed) {
-            console.log(`received an upvote`)
+            delete decks[player][decktypeCC].negRaters[player]
             decks[player][decktypeCC].posRaters.push(player)
             decks[player][decktypeCC].rating++
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
                 if (err) console.log(err)
             })
 
-            return message.channel.send(`${names[player]}'s ${decktype} received an upvote from ${reacter}!`)
+            return message.channel.send(`${names[player]}'s ${decktype} deck received an upvote from ${reacter}!`)
         }
     })
         
-    collector.on('end', collected => console.log(`Collected ${collected.size} items`))
+    posCollector.on('end', err => console.log(err))
 
-
-    // message.awaitReactions(upvoteFilter, {
-    //     max: 20,
-    //     time: 10000
-    // }).then(collected => {
-        
-    // }).catch(err => {
-    //     console.log('timeout')
-    // })
-
-    message.awaitReactions(downvoteFilter, {
-        max: 20,
-        time: 10000
-    }).then(collected => {
+    const negCollector = message.createReactionCollector(upvoteFilter, { time: 60000 })
+    negCollector.on('collect', () => {
         if (downvoteFilterPassed) {
-            console.log(`received a downvote`)
+            delete decks[player][decktypeCC].posRaters[player]
             decks[player][decktypeCC].negRaters.push(player)
             decks[player][decktypeCC].rating--
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
                 if (err) console.log(err)
             })
-            
-            return message.channel.send(`${names[player]}'s ${decktype} received a downvote from ${reacter}.`)
+
+            return message.channel.send(`${names[player]}'s ${decktype} deck received a downvote from ${reacter}...`)
         }
-    }).catch(err => {
-        console.log('timeout')
     })
+        
+    negCollector.on('end', err => console.log(err))
+    
 }
 
 
