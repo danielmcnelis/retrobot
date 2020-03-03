@@ -174,6 +174,7 @@ client.on('message', async message => {
         console.log(err)
     })
 
+
     //CHALLONGE - CREATE
     if(cmd === `!reset`) {
         if(!message.member.roles.has(modRole)) {
@@ -570,9 +571,6 @@ Speed Burn`, true)
             playerID = message.author.id
         }
 
-        console.log(playerTag)
-        console.log(playerID)
-
         if(!decks[maid]) {
             createUser(maid, message.author);
             return message.channel.send("I have added you to the Goat Format database. Please try again.")
@@ -590,15 +588,9 @@ Speed Burn`, true)
             }  
         })
 
-
-        console.log(arr1)
-        console.log(arr2)
-
         arr1.sort(function(a, b) {  
             return arr2.indexOf(a) - arr2.indexOf(b)
         })
-
-        console.log(arr1)
 
         for (let i = 0; i < 3; i++) {
             if (decks[playerID][arr1[i]].url) {
@@ -2576,6 +2568,7 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
             if (user.id === player) {
                 return message.channel.send('Sorry, you cannot rate your own decks.')
             }
+            console.log('upvote filter passed')
             upvoteFilterPassed = true
             reacter = user.id
             return true
@@ -2587,6 +2580,7 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
             if (user.id === player) {
                 return message.channel.send('Sorry, you cannot rate your own decks.')
             }
+            console.log('downvote filter passed')
             downvoteFilterPassed = true
             reacter = user.id
             return true
@@ -2598,6 +2592,7 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
         time: 600000
     }).then(collected => {
         if (upvoteFilterPassed) {
+            console.log(`received an upvote`)
             decks[player][decktypeCC].posRaters.push(player)
             decks[player][decktypeCC].rating++
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
@@ -2615,7 +2610,7 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
         time: 600000
     }).then(collected => {
         if (downvoteFilterPassed) {
-            console.log('collected something that passed downvoteFilter')
+            console.log(`received a downvote`)
             decks[player][decktypeCC].negRaters.push(player)
             decks[player][decktypeCC].rating--
     		fs.writeFile('./decks.json', JSON.stringify(decks), (err) => { 
