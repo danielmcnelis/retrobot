@@ -2833,14 +2833,14 @@ const getReplayInfo1 = (message, dude, url) => {
                 if (err) console.log(err)
             })
 
-            return getReplayInfo2(message, dude, slot)
+            return getReplayInfo2(message, dude, slot, 'you')
         } else if (noSynonyms.includes(collected.first().content.toLowerCase())) {
             replays[dude][slot].url = url
             fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
                 if (err) console.log(err)
             })
 
-            return getReplayAltP1(message, dude, slot, 'you')
+            return getReplayAltP1(message, dude, slot)
         }
     }).catch(err => {    
         console.log(err)
