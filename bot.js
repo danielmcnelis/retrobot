@@ -2858,7 +2858,7 @@ const getReplayAltP1 = (message, dude, slot) => {
 		max: 1,
         time: 15000
     }).then(collected => {
-            replays[dude][slot].p1 = messageArray[1].replace(/[\\<>@#&!]/g, "")
+            replays[dude][slot].p1 = collected.first().content.replace(/[\\<>@#&!]/g, "")
             fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
                 if (err) console.log(err)
             })
@@ -2898,7 +2898,7 @@ const getReplayInfo2 = (message, dude, slot, pronoun) => {
                 })
         
                 message.channel.send(`Hmm... ${collected.first().content}? I'll have to record that as "Other" for now.`)
-                return getReplayInfo(message, dude, slot) 
+                return getReplayInfo3(message, dude, slot) 
             }
         })   
     }).catch(err => {    
@@ -2916,7 +2916,7 @@ const getReplayInfo3 = (message, dude, slot) => {
 		max: 1,
         time: 15000
     }).then(collected => {
-            replays[dude][slot].p2 = messageArray[1].replace(/[\\<>@#&!]/g, "")
+            replays[dude][slot].p2 = collected.first().content.replace(/[\\<>@#&!]/g, "")
             fs.writeFile("./replays.json", JSON.stringify(replays), (err) => {
                 if (err) console.log(err)
             })
