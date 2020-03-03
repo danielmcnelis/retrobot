@@ -2595,7 +2595,7 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
         }
     }
 
-    const posCollector = message.createReactionCollector(upvoteFilter, { time: 60000 })
+    const posCollector = message.createReactionCollector(upvoteFilter, { time: 1800000 })
     posCollector.on('collect', () => {
         if (upvoteFilterPassed) {
             delete decks[player][decktypeCC].negRaters[player]
@@ -2611,7 +2611,7 @@ function checkForNewRatings(message, player, decktype, decktypeCC) {
         
     posCollector.on('end', err => console.log(err))
 
-    const negCollector = message.createReactionCollector(upvoteFilter, { time: 60000 })
+    const negCollector = message.createReactionCollector(downvoteFilter, { time: 1800000 })
     negCollector.on('collect', () => {
         if (downvoteFilterPassed) {
             delete decks[player][decktypeCC].posRaters[player]
