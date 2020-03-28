@@ -1,9 +1,12 @@
 
 //GOATBOT - A RANKINGS BOT FOR GOATFORMAT.COM
 const Discord = require('discord.js')
-const client = new Discord.Client()
-const challonge = require('challonge');
+const { Player, Match }  = require('../db/index.js')
+const Sequelize = require('sequelize')
 const fs = require('fs')
+const challonge = require('challonge')
+const client = new Discord.Client()
+
 const serverID = '682361248532398143'
 const botRole = '682389567185223713'
 const modRole = '682361608848015409'
@@ -176,6 +179,26 @@ client.on('message', async message => {
         console.log(err)
     })
 
+
+
+    if (cmd === !sql, async () => {
+        const person = message.channel.members.find('id', maid)
+        if (!person) return
+        try {
+            const createdPlayer = await Player.create({
+                name: `${person.username}`,
+                discordId: `${person.id}`,
+                tag: `${person.tag}`,
+                stats: 500,
+                wins: 0,
+                losses: 0,
+                backup: 0
+            })
+            console.log(createdPlayer)
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     //CHALLONGE - CREATE
     if(cmd === `!reset`) {
