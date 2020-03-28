@@ -1,7 +1,6 @@
 
 //GOATBOT - A RANKINGS BOT FOR GOATFORMAT.COM
 const Discord = require('discord.js')
-const { Player, Match }  = require('../db/index.js')
 const Sequelize = require('sequelize')
 const fs = require('fs')
 const challonge = require('challonge')
@@ -17,6 +16,7 @@ const challongeClient = challonge.createClient({
     apiKey: 'JE7pFfKV8XhdZXshqHNjVySDfoVUZeAtDRcULUln'
 });
 
+const { Player, Match }  = require('./db/index.js')
 const blank = require('./blank.json')
 const status = require('./status.json')
 const discordIDs = require('./discordIDs.json')
