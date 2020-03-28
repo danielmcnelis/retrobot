@@ -181,24 +181,26 @@ client.on('message', async message => {
 
 
 
-    if (cmd === !sql, async () => {
-        const person = message.channel.members.find('id', maid)
-        if (!person) return
-        try {
-            const createdPlayer = await Player.create({
-                name: `${person.username}`,
-                discordId: `${person.id}`,
-                tag: `${person.tag}`,
-                stats: 500,
-                wins: 0,
-                losses: 0,
-                backup: 0
-            })
-            console.log(createdPlayer)
-        } catch (err) {
-            console.log(err)
+    if(cmd === !sql) {
+        async () => {
+            const person = message.channel.members.find('id', maid)
+            if (!person) return
+            try {
+                const createdPlayer = await Player.create({
+                    name: `${person.username}`,
+                    discordId: `${person.id}`,
+                    tag: `${person.tag}`,
+                    stats: 500,
+                    wins: 0,
+                    losses: 0,
+                    backup: 0
+                })
+                console.log(createdPlayer)
+            } catch (err) {
+                console.log(err)
+            }
         }
-    }
+    }    
 
     //CHALLONGE - CREATE
     if(cmd === `!reset`) {
