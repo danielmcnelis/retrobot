@@ -182,7 +182,10 @@ client.on('message', async message => {
 
 
     if(cmd === `!sql`) {
-        async () => {
+        console.log(maid)
+
+        const myFunc = async (maid) => {
+            console.log('running my function')
             const person = message.channel.members.find('id', maid)
             if (!person) return
             try {
@@ -200,6 +203,8 @@ client.on('message', async message => {
                 console.log(err)
             }
         }
+
+        myFunc(maid)
     }    
 
     //CHALLONGE - CREATE
