@@ -181,7 +181,7 @@ client.on('message', async message => {
 
 
 
-    if(cmd === !sql) {
+    if(cmd === `!sql`) {
         async () => {
             const person = message.channel.members.find('id', maid)
             if (!person) return
