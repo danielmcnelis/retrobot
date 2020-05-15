@@ -11,8 +11,8 @@ const Match = db.define('match', {
         type: Sequelize.STRING,        
         allowNull: false
     },
-    time: {
-        type: Sequelize.NUMBER,        
+    delta: {
+        type: Sequelize.FLOAT,        
         allowNull: false
     }
 })

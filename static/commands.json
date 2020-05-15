@@ -1,0 +1,14 @@
+{
+    "pfpcom": ["!pfp", "!profile", "!avatar"],
+    "botcom": ["!bot", "!help", "!info"],
+    "rolecom": ["!role", "!rankedgoats"],
+    "statscom": ["!stats", "!mystats", "!goatstats"],
+    "losscom": ["!lossvs","!loss","!lose","!goatloss","!goatlossvs","!goatlose"],
+    "h2hcom": ["!h2h", "!head2head", "!headtohead"],
+    "undocom": ["!undolast", "!undo", "!undoloss"],
+    "rankcom": ["!rank", "!top", "!ladder"],
+    "deckscom": ["!deck", "!decks", "!mydeck", "!mydecks"],
+    "replayscom": ["!replay", "!replays", "!myreplay", "!myreplays"],
+    "yescom": ["yes", "yeah", "yea", "ye", "ya", "yah", "yh", "y", "sure", "ok", "okay", "k", "sure"],
+    "nocom": ["no", "nah", "nope", "naw", "n", "na"]
+}

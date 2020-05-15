@@ -3,12 +3,13 @@ const Sequelize = require('sequelize');
 const db = require('./db');
 
 const Player = db.define('player', {
-    name: {
+    id: {
+        primaryKey: true,
         type: Sequelize.STRING,
         allowNull: false
     },
-    discordId: {
-        type: Sequelize.STRING,        
+    name: {
+        type: Sequelize.STRING,
         allowNull: false
     },
     tag: {
@@ -16,19 +17,19 @@ const Player = db.define('player', {
         allowNull: false
     },
     stats: {
-        type: Sequelize.NUMBER,        
+        type: Sequelize.FLOAT,        
         allowNull: false
     },
     backup: {
-        type: Sequelize.NUMBER,        
-        allowNull: false
+        type: Sequelize.FLOAT,        
+        allowNull: true
     },
     wins: {
-        type: Sequelize.NUMBER,        
+        type: Sequelize.INTEGER,        
         allowNull: false
     },
     losses: {
-        type: Sequelize.NUMBER,        
+        type: Sequelize.INTEGER,        
         allowNull: false
     }
 })

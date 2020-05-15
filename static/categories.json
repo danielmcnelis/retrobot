@@ -1,0 +1,7 @@
+{
+    "control": ["goatControl", "chaosControl", "chaosFlipTurbo", "flipControl", "soulControl", "pacman", "zombie", "darkMasterZorc", "relinquished"],
+    "aggro": ["aggroMonarch", "chaosRecruiter", "chaosReturn", "warrior", "gearfried", "tigerStun", "drainBeat", "gravekeeper", "water", "darkScorpion", "strikeNinja", "bazooReturn"],
+    "combo": ["dimensionFusionTurbo", "reasoningGateTurbo", "rescueCat", "benKei", "stein", "economicsFTK", "libraryFTK", "exodia", "lastTurn", "emptyJar", "machine"],
+    "burn": ["aggroBurn", "darkBurn", "drainBurn", "speedBurn"],
+    "other": ["other"]
+}
