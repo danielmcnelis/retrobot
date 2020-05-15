@@ -239,12 +239,12 @@ client.on('message', async (message) => {
             deckRecords[matchup.losingType].losses++
         })
 
-        allMatchups.forEach(function (matchup) {
-            if (!deckCrossTabs[matchup.winningType][matchup.losingType]) deckCrossTabs[matchup.winningType][matchup.losingType] = { wins: 0, losses: 0 }
-            if (!deckCrossTabs[matchup.losingType][matchup.winningType]) deckCrossTabs[matchup.losingType][matchup.winningType] = { wins: 0, losses: 0 }
-            deckCrossTabs[matchup.winningType][matchup.losingType].wins ? deckCrossTabs[matchup.winningType][matchup.losingType].wins++ : deckCrossTabs[matchup.winningType][matchup.losingType].wins = 1
-            deckCrossTabs[matchup.losingType][matchup.winningType].losses ? deckCrossTabs[matchup.losingType][matchup.winningType].losses++ : deckCrossTabs[matchup.losingType][matchup.winningType].losses = 1
-        })
+        // allMatchups.forEach(function (matchup) {
+        //     if (!deckCrossTabs[matchup.winningType][matchup.losingType]) deckCrossTabs[matchup.winningType][matchup.losingType] = { wins: 0, losses: 0 }
+        //     if (!deckCrossTabs[matchup.losingType][matchup.winningType]) deckCrossTabs[matchup.losingType][matchup.winningType] = { wins: 0, losses: 0 }
+        //     deckCrossTabs[matchup.winningType][matchup.losingType].wins ? deckCrossTabs[matchup.winningType][matchup.losingType].wins++ : deckCrossTabs[matchup.winningType][matchup.losingType].wins = 1
+        //     deckCrossTabs[matchup.losingType][matchup.winningType].losses ? deckCrossTabs[matchup.losingType][matchup.winningType].losses++ : deckCrossTabs[matchup.losingType][matchup.winningType].losses = 1
+        // })
 
         let deckRecordsArr = Object.entries(deckRecords).sort((b, a) => b[0].localeCompare(a[0]))
         let arr = deckRecordsArr.map(function(deck) {

@@ -1,9 +1,10 @@
 
 
 const {google} = require('googleapis')
-const {token, credentials} = require('../secrets.json')
+const token = require('./secrets.json')
+const credentials = require('./credentials.json')
 
-const {client_secret, client_id, redirect_uris} = credentials
+const {client_secret, client_id, redirect_uris} = credentials.installed
 const {access_token, refresh_token} = token
 const oAuth2Client = new google.auth.OAuth2(
     client_id, client_secret, redirect_uris[0], access_token, refresh_token)
