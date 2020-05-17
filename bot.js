@@ -386,7 +386,7 @@ client.on('message', async (message) => {
         })
 
         const sheet2Data = [...sheet2DataA, ...typeDataArr2, ...sheet2DataB, ...catDataArr2]
-        const name = (args[0] ? args[0] : status['tournament']) : null
+        const name = (args[0] ? args[0] : status['tournament'])
         if (!name) return message.channel.send(`Error: the tournament you provided, "${name}", could not be accessed.`)
         const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
         const link = `https://docs.google.com/spreadsheets/d/${spreadsheetId}`
