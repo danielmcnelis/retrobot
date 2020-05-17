@@ -123,7 +123,7 @@ client.on('message', async (message) => {
                 return message.channel.send(`Error: The name "${url}" is already taken.`)
             } else {
                 status['tournament'] = name
-                fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
+                fs.writeFile("./static/status.json", JSON.stringify(status), (err) => { 
                     if (err) console.log(err)
                 })
                 return message.channel.send(`I created a new tournament named ${name}, located at https://challonge.com/${url}`)
@@ -145,7 +145,7 @@ client.on('message', async (message) => {
                 } else {
                     if (status['tournament'] === name) {
                         delete status['tournament']
-                        fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
+                        fs.writeFile("./static/status.json", JSON.stringify(status), (err) => { 
                             if (err) console.log(err)
                         })
                     }
@@ -269,7 +269,7 @@ client.on('message', async (message) => {
                     return message.channel.send(`Error: the tournament you provided, "${name}", could not be finalized.`)
                 } else {
                     delete status['tournament']
-                    fs.writeFile("./status.json", JSON.stringify(status), (err) => { 
+                    fs.writeFile("./statis/status.json", JSON.stringify(status), (err) => { 
                         if (err) console.log(err)
                     })
 
@@ -353,6 +353,50 @@ client.on('message', async (message) => {
         })
     }
 
+
+    //CHALLONGE - START
+    if (cmd === `!decksheet`) {
+        if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
+        const unregistered = await Tournament.findAll({ where: { participantId: null } })
+        if (unregistered.length) return message.channel.send('One of more players has not been signed up. Please check the Database.')
+
+        const allDecks = await Tournament.findAll()
+        const typeData = {}
+        const catData = {}
+        const sheet1Data = [['Player', 'Deck', 'Link']]
+        const sheet2DataA = [['Deck', 'Entries', 'Percent']]
+        const sheet2DataB = [[], ['Category', 'Entries', 'Percent']]
+
+        allDecks.forEach(function (deck) {
+            typeData[deck.type] ? typeData[deck.type]++ : typeData[deck.type] = 1
+            catData[deck.category] ? catData[deck.category]++ : catData[deck.category] = 1
+            const row = [deck.pilot, types[deck.type][0], deck.url]
+            sheet1Data.push(row)
+        })
+
+        let typeDataArr = Object.entries(typeData).sort((b, a) => b[0].localeCompare(a[0]))
+        let catDataArr = Object.entries(catData).sort((b, a) => b[0].localeCompare(a[0]))
+
+        let typeDataArr2 = typeDataArr.map(function(elem) {
+            return [types[elem[0]][0], elem[1], `${(elem[1], elem[1] / allDecks.length * 100).toFixed(2)}%`]
+        })
+
+        let catDataArr2 = catDataArr.map(function(elem) {
+            return [capitalize(elem[0]), elem[1], `${(elem[1], elem[1] / allDecks.length * 100).toFixed(2)}%`]
+        })
+
+        const sheet2Data = [...sheet2DataA, ...typeDataArr2, ...sheet2DataB, ...catDataArr2]
+        const name = (args[0] ? args[0] : status['tournament']) : null
+        if (!name) return message.channel.send(`Error: the tournament you provided, "${name}", could not be accessed.`)
+        const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
+        const link = `https://docs.google.com/spreadsheets/d/${spreadsheetId}`
+        await addSheet(spreadsheetId, 'Summary')
+        await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
+        client.channels.cache.get(registrationChannel).send(`Deck list spreadsheet: ${link}`)
+        return message.channel.send(`Success! You can find the deck list spreadsheet in the Tournament Registration channel.`)
+    }
+
+
     //CHALLONGE - JOIN
     if (cmd === `!join`) {
         const name = status['tournament']
@@ -382,7 +426,7 @@ client.on('message', async (message) => {
                     const filter = collected => collected.author.id === maid;
                     const collected = await msg.channel.awaitMessages(filter, {
                         max: 1,
-                        time: 15000
+                        time: 60000
                     }).then(collected => {
                         if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 50) {		
                             return member.user.send("Sorry, I only accept (1) Imgur.com or DuelingBook.com link.")
@@ -700,6 +744,7 @@ Speed Burn`, true)
 
     //BOT USER GUIDE
     if (botcom.includes(cmd)) {
+        console.log
         const botEmbed = new Discord.MessageEmbed()
 	        .setColor('#38C368')
         	.setTitle('GoatBot')

@@ -63,7 +63,7 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
         }
     }).catch(err => {    
     console.log(err)
-    return message.channel.send(`Perhaps another time would be better.`)
+    return member.user.send(`Perhaps another time would be better.`)
 })
 
 }
@@ -82,7 +82,7 @@ const checkResubmission = async (client, message, member) => {
 	const msg = await member.user.send(`You already signed up for the tournament, do you want to resubmit your deck list?`)
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
-        time: 10000
+        time: 15000
     }).then(collected => {
         if (yescom.includes(collected.first().content.toLowerCase())) {
             return getUpdatedDeckURL(client, message, member, true)
@@ -103,7 +103,7 @@ const getUpdatedDeckURL = async (client, message, member, resubmission = false) 
     const filter = collected => collected.author.id === member.user.id;
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
-        time: 15000
+        time: 60000
     }).then(collected => {
         if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 50) {		
             return member.user.send.send("Sorry, I only accept (1) Imgur.com or DuelingBook.com link.")
@@ -330,7 +330,11 @@ const checkMatches = async (message, matches, participants, matchID, loserID, wi
 
 
     if (matchWaitingOnLoser) {
-        message.channel.send(`${loser.user.username}, You are waiting for the result of ${matchWaitingOnLoserP1} vs ${matchWaitingOnLoserP2}.`)
+        if (matchWaitingOnLoserP1 && matchWaitingOnLoserP2) {
+            message.channel.send(`${loser.user.username}, You are waiting for the result of ${matchWaitingOnLoserP1} vs ${matchWaitingOnLoserP2}.`)
+        } else {
+            message.channel.send(`${loser.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`) 
+        }
     } else if (newOppoLoser) {
         const opponent = await Tournament.findOne({ where: { participantId: newOppoLoser } })
         message.channel.send(`New Match: <@${loser.user.id}> vs <@${opponent.playerId}>. Good luck to both duelists.`)
