@@ -182,13 +182,38 @@ const addMatchResult = async (message, matches, participants, loser, winner) => 
     let matchComplete = false
     let score
     let players = Object.keys(participants)
-    players.forEach(function(elem) {
-        if (participants[elem].participant.name === loser.user.username) {
-            loserID = participants[elem].participant.id
-        } else if (participants[elem].participant.name === winner.user.username) {
-            winnerID = participants[elem].participant.id
-        }
-    })
+
+    try {
+        loserID = await Tournament.findOne({
+            where: {
+                playerId: loser.user.id
+            }
+        })
+
+        winnerID = await Tournament.findOne({
+            where: {
+                playerId: winner.user.id
+            }
+        })
+    } catch (err) {
+        console.log(err)
+    }
+
+    if (!loserID) {
+        players.forEach(function(elem) {
+            if (participants[elem].participant.name === loser.user.username) {
+                loserID = participants[elem].participant.id
+            }
+        })
+    }
+
+    if (!winnerID) {
+        players.forEach(function(elem) {
+            if (participants[elem].participant.name === winner.user.username) {
+                winnerID = participants[elem].participant.id
+            }
+        })
+    }
 
     let keys = Object.keys(matches)
     keys.forEach(function(elem) {
@@ -348,7 +373,11 @@ const checkMatches = async (message, matches, participants, matchID, loserID, wi
     }
 
     if (matchWaitingOnWinner) {
-        message.channel.send(`${winner.user.username}, You are waiting for the result of ${matchWaitingOnWinnerP1} vs ${matchWaitingOnWinnerP2}.`)
+        if (matchWaitingOnWinnerP1 && matchWaitingOnWinnerP2) {
+            message.channel.send(`${winner.user.username}, You are waiting for the result of ${matchWaitingOnWinnerP1} vs ${matchWaitingOnWinnerP2}.`)
+        } else {
+            message.channel.send(`${winner.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`) 
+        }
     } else if (newOppoWinner) {
         const opponent = await Tournament.findOne({ where: { participantId: newOppoWinner } })
         message.channel.send(`New Match: <@${winner.user.id}> vs <@${opponent.playerId}>. Good luck to both duelists.`)
