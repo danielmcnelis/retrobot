@@ -184,17 +184,25 @@ const addMatchResult = async (message, matches, participants, loser, winner) => 
     let players = Object.keys(participants)
 
     try {
-        loserID = await Tournament.findOne({
+        let winnerEntry = await Tournament.findOne({
+            where: {
+                playerId: winner.user.id
+            }
+        })
+
+        winnerID = winnerEntry.participantId
+    } catch (err) {
+        console.log(err)
+    }
+
+    try {
+        let loserEntry = await Tournament.findOne({
             where: {
                 playerId: loser.user.id
             }
         })
 
-        winnerID = await Tournament.findOne({
-            where: {
-                playerId: winner.user.id
-            }
-        })
+        loserID = loserEntry.participantId
     } catch (err) {
         console.log(err)
     }
