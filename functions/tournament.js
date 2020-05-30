@@ -17,7 +17,7 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
 	const msg = await member.user.send(`Okay, ${member.user.username}, what kind of deck is this?`)
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
-        time: 15000
+        time: 180000
     }).then(async collected => {
         keys.forEach(async function (elem) {
             if (types[elem].includes(collected.first().content.toLowerCase())) {
@@ -103,7 +103,7 @@ const getUpdatedDeckURL = async (client, message, member, resubmission = false) 
     const filter = collected => collected.author.id === member.user.id;
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
-        time: 60000
+        time: 180000
     }).then(collected => {
         if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 50) {		
             return member.user.send.send("Sorry, I only accept (1) Imgur.com or DuelingBook.com link.")

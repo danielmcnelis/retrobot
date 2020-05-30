@@ -269,7 +269,7 @@ client.on('message', async (message) => {
                     return message.channel.send(`Error: the tournament you provided, "${name}", could not be finalized.`)
                 } else {
                     delete status['tournament']
-                    fs.writeFile("./statis/status.json", JSON.stringify(status), (err) => { 
+                    fs.writeFile("./static/status.json", JSON.stringify(status), (err) => { 
                         if (err) console.log(err)
                     })
 
@@ -1063,6 +1063,9 @@ ${player2.name} has won ${p2Wins}x`)
         const allPlayers = await Player.findAll()
         const allMatches = await Match.findAll()
 
+        console.log('allPlayers.length is', allPlayers.length)
+        console.log('allMatches.length is', allMatches.length)
+
         allPlayers.forEach(async function (player) {
             await player.update({
                 stats: 500,
@@ -1088,6 +1091,9 @@ ${player2.name} has won ${p2Wins}x`)
             await loser.save()
             await match.update(delta)
         })
+
+        message.channel.send(`The recalculation of ${allPlayers.length} players' stats is complete!`)
     }
+
 
 })

@@ -81,7 +81,7 @@ const getDeckType = async (message, member, url) => {
 	message.channel.send(`Okay, ${member.user.username}, what kind of deck is this?`)
 	message.channel.awaitMessages(filter, {
 		max: 1,
-        time: 15000
+        time: 30000
     }).then(collected => {
         keys.forEach(async function (elem) {
             if (types[elem].includes(collected.first().content.toLowerCase())) {
@@ -118,7 +118,7 @@ const getOtherDeckConfirmation = async (message, member, url, name) => {
     message.channel.send(`Hmm... ${name}? I do not recognize that deck. Would you like to save it under the "Other" category?`)
 	message.channel.awaitMessages(filter, {
 		max: 1,
-        time: 10000
+        time: 15000
     }).then(async function (collected) {
         if (yescom.includes(collected.first().content.toLowerCase())) {
             await Deck.create({
