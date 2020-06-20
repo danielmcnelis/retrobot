@@ -105,15 +105,15 @@ const getUpdatedDeckURL = async (client, message, member, resubmission = false) 
 		max: 1,
         time: 180000
     }).then(collected => {
-        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 50) {		
-            return member.user.send.send("Sorry, I only accept (1) Imgur.com or DuelingBook.com link.")
-        } else if (collected.first().content.startsWith("https://i.imgur") || collected.first().content.startsWith("https://www.duelingbook.com/deck")) {
-            return getDeckTypeTournament(client, message, member, collected.first().content, resubmission)
+        if (collected.first().content.startsWith("https://i.imgur")) {
+            return getDeckTypeTournament(client, message, member, collected.first().content)
         } else if (collected.first().content.startsWith("https://imgur")) {
             const str = collected.first().content
             const newStr = str.substring(8, str.length)
             const url = "https://i." + newStr + ".png";
-            return getDeckTypeTournament(client, message, member, url, resubmission)          
+            return getDeckTypeTournament(client, message, member, url)          
+        } else {
+            return member.user.send("Sorry, I only accept imgur.com links.")
         }
     }).catch(err => {
         console.log(err)

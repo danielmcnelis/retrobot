@@ -422,21 +422,21 @@ client.on('message', async (message) => {
                         return checkResubmission(client, message, member)
                     }
             
-                    const msg = await member.user.send("Please provide an Imgur screenshot or a DuelingBook download link for your tournament deck.");
+                    const msg = await member.user.send("Please provide an Imgur screenshot for your tournament deck.");
                     const filter = collected => collected.author.id === maid;
                     const collected = await msg.channel.awaitMessages(filter, {
                         max: 1,
-                        time: 60000
+                        time: 180000
                     }).then(collected => {
-                        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 50) {		
-                            return member.user.send("Sorry, I only accept (1) Imgur.com or DuelingBook.com link.")
-                        } else if (collected.first().content.startsWith("https://i.imgur") || collected.first().content.startsWith("https://www.duelingbook.com/deck")) {
+                        if (collected.first().content.startsWith("https://i.imgur")) {
                             return getDeckTypeTournament(client, message, member, collected.first().content)
                         } else if (collected.first().content.startsWith("https://imgur")) {
                             const str = collected.first().content
                             const newStr = str.substring(8, str.length)
                             const url = "https://i." + newStr + ".png";
                             return getDeckTypeTournament(client, message, member, url)          
+                        } else {
+                            return member.user.send("Sorry, I only accept imgur.com links.")
                         }
                     }).catch(err => {
                         console.log(err)
@@ -638,41 +638,101 @@ ${deck.url}`)
     if (cmd === `!cats`) {
     const deckEmbed = new Discord.MessageEmbed()
     .addField('Control', `Chaos Control
-Chaos Return
 Chaos Turbo
-Dark Master Zorc
-Goat Control
+Coin Toss
+Ectoplasmer Control
+Doriado
 Flip Control
-Soul Control
-P.A.C.M.A.N.
-Relinquished
-Strike Ninja
-Zombie`, true)
-        .addField('Aggro', `Anti-Meta Warrior
-Aggro Monarch
+Goat Control
+Manticore Control
+Monarch
+Pixie Control
+Relinquished Control
+Spell Counter Control`, true)
+        .addField('Aggro', `Aggro Bomb
+Amazon
+Archfiend
+Armed Dragon
 Bazoo Return
+Beastdown
+Beatdown
+Blue-Eyes White Dragon
+Chaos Aggro
 Chaos Recruiter
-Dark Scorpion
-Drain Beat
-Gearfried
+Chaos Return
+Dark Aggro
+Drain Aggro
+Earth Aggro
+Element Dragon
+Elemental Aggro
+Elemental HERO
+Emissary Aggro
+Fairy Aggro
+Fiend Aggro
+Fire Aggro
+Flute Dragon
 Gravekeeper
-Tiger Stun
-Water`, true)
-        .addField('Combo', `Ben-Kei OTK
+Gren Maju
+Hand Assault
+Harpie
+Horus
+Light Aggro
+Machine Aggro
+Manticore Aggro
+Ninja Aggro
+Paladin of White Dragon
+Ratbox
+Red-Eyes Black Dragon
+Silent Swordsman
+Spell Canceller Aggro
+Spirit
+Strike Ninja Return
+Toon
+Ultimate Insect
+Vanilla Aggro
+Warrior
+Water Aggro
+Wind Aggro
+Zombie`, true)
+        .addField('Combo', `Asura OTK
+Ben Kei OTK
+Blasting the Ruins
+Bugroth OTK
+Chaos Greed
+Cyber-Stein OTK
+Destiny Board
 Dimension Fusion Turbo
-Economics FTK
 Empty Jar
 Exodia
+Fusion Gate Turbo
+Heavy Slump
+Hino-Kagu-Tsuchi
+Huge Revolution
 Last Turn
 Library FTK
-Machine
+Maha Vailo
+Mokey Mokey Smackdown
+Mazera DeVille
+Necromancer OTK
+Neo-Daedalus
+Ojama
+Pyramid of Light
 Reasoning Gate Turbo
-Rescue Cat OTK
-Stein OTK`, true)
-    .addField('Burn', `Aggro Burn
-Dark Burn
-Drain Burn
-Speed Burn`, true)
+Rescue Cat
+Reversal Quiz OTK
+Shinato
+Speed Burn
+Spell Economics FTK
+Zorc`, true)
+    .addField('Lockdown', `Clown Control
+Direct Attack
+Final Countdown
+Last Warrior Lockdown
+Lockdown Burn
+Mill
+P.A.C.M.A.N.
+Spatial Collapse
+Wall Stall`, true)
         return message.channel.send(deckEmbed)
     }
 
