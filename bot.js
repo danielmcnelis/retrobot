@@ -5,23 +5,22 @@
 const Discord = require('discord.js')
 const fs = require('fs')
 const { Op } = require('sequelize')
-const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, goat, upvote, downvote, tweet, star } = require('./static/emojis.json')
+const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, logo, approve } = require('./static/emojis.json')
 const { pfpcom, botcom, rolecom, statscom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
-const { botRole, goatRole, tourRole } = require('./static/roles.json')
-const { welcomeChannel, registrationChannel } = require('./static/channels.json')
+const { botRole, modRole, tourRole } = require('./static/roles.json')
+const { welcomeChannel, registrationChannel, politicsChannel } = require('./static/channels.json')
 const types = require('./static/types.json')
 const status = require('./static/status.json')
-const { Player, Match, Matchup, Replay, Deck, Tournament }  = require('./db/index.js')
+const formats = require('./static/formats.json')
+const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Nova, Rebirth  } = require('./db/index.js')
 const { capitalize, createPlayer, isNewUser, isMod } = require('./functions/utility.js')
-const { getReplayInfo1 } = require('./functions/replay.js')
-const { checkForNewRatings, getDeckType } = require('./functions/deck.js')
 const { getDeckTypeTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
 const { client, challongeClient } = require('./static/clients.js')
 
 //READY
 client.on('ready', () => {
-  console.log('GoatBot is online!')
+  console.log('RetroBot is online!')
 })
 
 
@@ -39,9 +38,9 @@ client.on('guildMemberAdd', async (member) => {
     if (!channel) return
     if (await isNewUser(member.user.id)) {
         createPlayer(member) 
-        channel.send(`Welcome to the GoatFormat.com discord server, ${member}. Please read the rules and ask about the tutorial. ${goat}`)
+        channel.send(`${member} Welcome to the FormatLibrary.com ${fl} Discord server! Use the command **!bot** to learn how to play rated games and join tournaments on this server. ${lgnd}`)
     } else {
-        channel.send(`Welcome back to GoatFormat.com, ${member}! We missed you. ${goat}`)
+        channel.send(`${member} Welcome back to the FormatLibrary.com ${fl} Discord server! We missed you. ${approve}`)
     }
 })
 
@@ -50,7 +49,7 @@ client.on('guildMemberAdd', async (member) => {
 client.on('guildMemberRemove', member => {
     const channel = client.channels.cache.get(welcomeChannel)
     if (!channel) return
-    channel.send(`Today is a sad day. ${member.user.username} has left the server. ${sad}`)
+    channel.send(`Oh dear. ${member.user.username} has left the server. ${sad}`)
 })
 
 
@@ -60,43 +59,173 @@ client.on('message', async (message) => {
     const cmd = messageArray[0]
     const args = messageArray.slice(1)
     const maid = message.author.id
-    let tweetFilterPassed = false  
-
-    if ( (message.content.includes('https://i.imgur.com') || message.content.includes('https://www.duelingbook.com/deck') || message.content.includes('https://www.duelingbook.com/replay') ) && message.author.bot) {
-        let player = await Player.findOne({ where: { tag: message.content.substring(0, message.content.indexOf(`'s `)) }})
-        let deckName = message.content.substring((message.content.indexOf(`'s `)+3), message.content.indexOf(` deck`))
-        let deckType 
-        let keys = Object.keys(types)
-        keys.forEach(function(elem) {
-            if (types[elem].includes(deckName)) { 
-                deckType = elem
-            }
-        })
-
-        return checkForNewRatings(message, player, deckType, deckName)
-    }
 
     if (!message.guild || message.author.bot) {
         return
     }
 
-    const tweetFilter = (reaction) => {
-        if (reaction.emoji.name === 'tweet') {
-            tweetFilterPassed = true
-            return true
-        }
+
+    //REPLAY-LINKS MODERATION
+    if((message.channel.id === "730462779345207306") && maid !== rb && (!message.content.includes('duelingbook.com') || !message.content.includes('replay') || message.content.length > 200)) {
+        message.delete(2000);
+        message.channel.send("Please do not use this channel for discussion. Only post short messages with a DuelingBook.com replay link.").then(sentMessage => {
+        sentMessage.delete(10000); });
+
+    }
+
+
+    //DECK-LISTS MODERATION
+    if((message.channel.id === "730462733698334730") && maid !== rb && (!message.content.includes('imgur') || message.content.length > 200)) {
+        message.delete(2000);
+        return message.channel.send("Please do not use this channel for discussion. Only post short messages with an Imgur.com deck link.").then(sentMessage => {
+        sentMessage.delete(10000); });
     }
     
-    message.awaitReactions(tweetFilter, {
-        max: 1,
-        time: 86400000
-    }).then(collected => {
-        if (tweetFilterPassed) {
-            return message.channel.send('Tweet this message.')
+
+    //AVATAR
+    if (pfpcom.includes(cmd)) {
+        let person = message.mentions.users.first()
+        let reply = person ? person.displayAvatarURL() : message.author.displayAvatarURL()
+        return message.channel.send(reply)
+    }
+
+
+    //NAME
+    if (cmd === `!name`) {
+        const playerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
+        const member = message.guild.members.cache.get(playerId)
+        const player = await Player.findOne({ where: { id: playerId } })
+        return message.channel.send(`The database name of ${member.user.username} is: ${player.name}.`)
+    }
+
+
+    //RENAME
+    if (cmd === `!rename`) {
+        if (!isMod(message.member)) {
+            return message.channel.send("You do not have permission to do that.")
         }
-    }).catch(err => {
-        console.log(err)
-    })
+
+        const playerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
+        const member = message.guild.members.cache.get(playerId)
+        const player = await Player.findOne({ where: { id: playerId } })
+	    player.name = messageArray.slice(2, messageArray.length).join(' ')
+	    player.tag = member.user.tag
+        await player.save()
+           
+        return message.channel.send(`The database name of ${member.user.username} is now: ${player.name}.`)
+    }
+
+
+    //DUELINGBOOK NAME
+    if (cmd === `!db` || cmd === `!dbname`) {
+        const member = message.guild.members.cache.get(maid)
+        const player = await Player.findOne({ where: { id: playerId } })
+	    player.duelingBook = messageArray.slice(1, messageArray.length).join(' ')
+        await player.save()
+           
+        return message.channel.send(`The DuelingBook username of ${member.user.username} has been set to: ${player.duelingBook}.`)
+    }
+
+
+    //CLEAR
+    if (cmd === `!clear`) {
+        if(maid !== "194147938786738176") {
+            return message.channel.send("You do not have permission to do that.")
+        }
+        
+        message.channel.fetchMessages()
+            .then(function(list){
+                    message.channel.bulkDelete(list)
+                }, function(err){ message.channel.send("ERROR: ERROR CLEARING CHANNEL.")})            
+    }
+
+    //POLITICS
+    if(cmd === `!politics`) {
+        if(!message.member.roles.cache.some(role => role.id === politicsRole)) {
+        message.member.roles.add(politicsRole)
+        return message.channel.send(`I have added you to the Politics role. You can now learn about ~~communism~~ neoliberalism from Noelle in ${politicsChannel}.`) }
+        
+        else {
+        message.member.roles.remove(politicsRole)
+        return message.channel.send(`I have removed you from the Politics role. You no longer have to read MMF’s rants in ${politicsChannel}.`) }
+    }
+    
+    
+    //ROLE
+    if (rolecom.includes(cmd)) {
+        const keys = Object.keys(formats)
+        keys.forEach(function(key) {
+            if(message.channel.id === formats[key].channel) {
+                if (!message.member.roles.cache.some(role => role.id === formats[key].role)) {
+                    message.member.roles.add(formats[key].role)
+                    return message.channel.send(`You now have the ${formats[key].name} role.`)
+                } else {
+                    message.member.roles.remove(formats[key].role);
+                    return message.channel.send(`You no longer have the ${formats[key].name} role.`)
+                }
+            }
+        })
+    }
+
+
+    //BOT USER GUIDE
+    if (botcom.includes(cmd)) {
+        console.log
+        const botEmbed = new Discord.MessageEmbed()
+	        .setColor('#38C368')
+        	.setTitle('RetroBot')
+	        .setDescription('A Rankings and Tournament Bot for FormatLibrary.com.\n' )
+	        .setURL('https://formatlibrary.com/')
+	        .setAuthor('Jazz#2704', 'https://i.imgur.com/93IC0Ua.png', 'https://formatlibrary.com/')
+        	.setThumbnail('https://i.imgur.com/ul7nKjk.png')
+        	.addField('Ranked Play Commands', '\n!loss - (@user) - Report a loss to another player. \n!stats - (blank or @user) - Post a player’s stats. \n!top - (number) - Post the server’s top players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove the Ranked Goats role. \n!undo - Undo the last loss if you reported it. \n')
+        	.addField('Tournament Commands', '\n!join - Register for the next tournament. \n!drop - Drop from the current tournament. \n!show - Show the current tournament.')
+        	.addField('Server Commands', '\n!db - Set your DuelingBook.com username. \n!bot - View the GoatBot User Guide. \n!mod - View the Mod-Only User Guide.');
+
+        message.author.send(botEmbed);
+        return message.channel.send("I messaged you the RetroBot User Guide.")
+    }
+
+    //MOD USER GUIDE
+    if (cmd === `!mod`) {
+        if (!isMod(message.member)) {
+            return message.channel.send("You do not have permission to do that.")
+        } 
+
+        const botEmbed = new Discord.MessageEmbed()
+	        .setColor('#38C368')
+        	.setTitle('RetroBot')
+	        .setDescription('A Rankings and Tournament Bot for FormatLibrary.com.\n' )
+	        .setURL('https://formatlibrary.com/')
+	        .setAuthor('Jazz#2704', 'https://i.imgur.com/93IC0Ua.png', 'https://formatlibrary.com/')
+        	.setThumbnail('https://i.imgur.com/ul7nKjk.png')
+        	.addField('Mod-Only Ranked Play Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
+            .addField('Mod-Only Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Add a player to the bracket. \n!remove - (@user) - Remove a player from the bracket. \n!start - Start the next tournament. \n!end - End the current tournament.')
+            .addField('Mod-Only Server Commands', '\n!rename - (@user + new name) - Rename a user in the database.\n!census - Add missing players and update all names in the database.\n!recalc - Recaluate all player stats if needed.');
+
+        message.author.send(botEmbed);
+        return message.channel.send("I messaged you the Mod-Only Guide.")
+    }
+
+
+    //FORMATS
+    if(cmd === `!formats`) {
+        const formatsEmbed = new Discord.RichEmbed()
+            .setColor('#38C368')
+            .setURL('https://formatlibrary.com/')
+            .setThumbnail('https://i.imgur.com/ul7nKjk.png')
+            .addField('DM Formats', 'Yugi-Kaiba - May 2002 \nCritter - July 2002 \nAndroid - May 2003 \nYata - August 2003 \nVampire - Dec 2003 \nTrad Chaos - June 2004 \nChaos Warrior - February 2005 \nGoat - August 2005')
+            .addField('GX Formats', 'CRV Goat - September 2005 \nReaper - February 2006 \nChaos Return - August 2006 \nStein - December 2006 \nTroop Dup - August 2007 \nPerfect Circle - January 2008 \nDAD Return - April 2008 \nGlad Beast - July 2008')
+            .addField('5D’s Formats', 'TeleDAD - January 2009 \nDark Strike - July 2009 \nLightsworn - February 2010 \nEdison - April 2010 \nFrog - August 2010 \nSix Samurai - February 2011')
+            .addField('Zexal Formats', 'Providence - June 2011 \n Tengu Plant - October 2011 \nMeadowlands - March 2012 \nDino Rabbit - June 2012 \nWind-Up - February 2013 \nMeadowlands - May 2013 \nBaby Ruler - July 2013 \nRavine Ruler - October 2013 \nFire-Water - March 2014 \nHAT - July 2014')
+            .addField('ARC-V Formats', 'Shaddoll - September 2014 \n London - October 2014 \nBurning Abyss - December 2014  \nCharleston - February 2015 \nNekroz - June 2015 \nClown Nekroz - October 2015 \nPePe - January 2016 \nDracoPal - April 2016 \nMonarch - July 2016 \nABC - January 2017 \nGrass Zoo - April 2017 \nDraco Zoo - July 2017')
+            .addField('VRAINS Formats', 'Link Zoo - August 2017 \nQuick-Fix - November 2017 \nTough - January 2018 \nMagician - April 2018 \nGouki - June 2018 \nDanger - November 2018 \nSky Striker - March 2019 \nThunder Dragon - June 2019 \nLunalight Orcust - October 2019 \nStriker Orcust - January 2020')
+            .addField('Current Formats', 'Current \nTraditional \nNova - by Jazz \nRebirth - by MMF')
+        
+        message.author.send(formatsEmbed);
+        return message.channel.send("I messaged you the list of suppported Yu-Gi-Oh! Formats.")
+        
+        }
 
 
     //CHALLONGE - CREATE
@@ -111,7 +240,7 @@ client.on('message', async (message) => {
         const str = getRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz');
         const name = (args[0] ? args[0] : 'New Tournament')
         const url = (args[0] ? args[0] : str)
-        challongeClient.tournaments.create({
+        await challongeClient.tournaments.create({
             tournament: {
             name: name,
             url: url,
@@ -137,7 +266,7 @@ client.on('message', async (message) => {
     if (cmd === `!destroy`) {
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
         const name = (args[0] ? args[0] : status['tournament'])
-        challongeClient.tournaments.destroy({
+        await challongeClient.tournaments.destroy({
             id: name,
             callback: (err) => {
                 if (err) {
@@ -153,74 +282,6 @@ client.on('message', async (message) => {
                 }
             }
           });  
-    }
-
-    if (cmd === `!test`) {
-        const allMatchups = await Matchup.findAll({ where: { tournamentName: status['tournament'] }})
-        const deckRecords = {}
-        const deckCrossTabs = {}
-
-        allMatchups.forEach(function (matchup) {
-            // if (!deckRecords[matchup.winningType]) deckRecords[matchup.winningType] = { wins: 0, losses: 0 }
-            // if (!deckRecords[matchup.losingType]) deckRecords[matchup.losingType] = { wins: 0, losses: 0 }
-            // deckRecords[matchup.winningType].wins++
-            // deckRecords[matchup.losingType].losses++
-
-            // console.log('matchup', matchup)
-            
-            if (!deckCrossTabs[matchup.winningType]) deckCrossTabs[matchup.winningType] = { [matchup.losingType]: { wins: 0, losses: 0 }}
-            if (!deckCrossTabs[matchup.losingType]) deckCrossTabs[matchup.losingType] = { [matchup.winningType]: { wins: 0, losses: 0 }}
-
-            if (deckCrossTabs[matchup.winningType]) {
-                if(!deckCrossTabs[matchup.winningType][matchup.losingType]) {
-                    deckCrossTabs[matchup.winningType][matchup.losingType] = { wins: 0, losses: 0 }
-                }
-            } 
-
-            if (deckCrossTabs[matchup.losingType]) {
-                if(!deckCrossTabs[matchup.losingType][matchup.winningType]) {
-                    deckCrossTabs[matchup.losingType][matchup.winningType] = {wins: 0, losses: 0 }
-                }
-            }
-
-            // if (!deckCrossTabs[matchup.winningType][matchup.losingType]) deckCrossTabs[matchup.winningType][matchup.losingType] = { wins: 0, losses: 0 }
-            // if (!deckCrossTabs[matchup.losingType][matchup.winningType]) deckCrossTabs[matchup.losingType][matchup.winningType] = { wins: 0, losses: 0 }
-            deckCrossTabs[matchup.winningType][matchup.losingType] ? deckCrossTabs[matchup.winningType][matchup.losingType].wins++ : deckCrossTabs[matchup.winningType][matchup.losingType].wins = 1
-            deckCrossTabs[matchup.losingType][matchup.winningType] ? deckCrossTabs[matchup.losingType][matchup.winningType].losses++ : deckCrossTabs[matchup.losingType][matchup.winningType].losses = 1
-        })
-
-        // let deckRecordsArr = Object.entries(deckRecords).sort((b, a) => b[0].localeCompare(a[0]))
-        // let arr = deckRecordsArr.map(function(deck) {
-        //     return(
-        //         `${types[deck[0]][0]}: ${deckRecords[deck[0]].wins}W, ${deckRecords[deck[0]].losses}L`
-        //     )
-        // })
-
-        let deckCrosstabsArr = Object.entries(deckCrossTabs).sort((b, a) => b[0].localeCompare(a[0]))
-        // let arr2 = deckCrosstabsArr.map(function(deck) {
-        //     return(
-        //         `${types[deck[0]][0]}: ${deckRecords[deck[0]].wins}W, ${deckRecords[deck[0]].losses}L`
-        //     )
-        // })
-
-        console.log('deckCrosstabsArr', deckCrosstabsArr)
-        deckCrosstabsArr.forEach(function(elem) {
-            console.log('elem:', elem)
-        })
-
-        // allMatchups.forEach(function (matchup) {
-        //     deckCrossTabs[matchup.winningType][matchup.losingType].wins ? deckCrossTabs[matchup.winningType][matchup.losingType].wins++ : deckCrossTabs[matchup.winningType][matchup.losingType].wins = 1
-        //     deckCrossTabs[matchup.losingType][matchup.winningType].losses ? deckCrossTabs[matchup.losingType][matchup.winningType].losses++ : deckCrossTabs[matchup.losingType][matchup.winningType].losses = 1
-        // })
-
-        // let deckRecordsArr = Object.entries(deckRecords).sort((b, a) => b[0].localeCompare(a[0]))
-        // let arr = deckRecordsArr.map(function(deck) {
-        //     return(
-        //         `${types[deck[0]][0]}: ${deckRecords[deck[0]].wins}W, ${deckRecords[deck[0]].losses}L`
-        //     )
-        // })
-
-        // message.channel.send(arr)
     }
 
     //CHALLONGE - END
@@ -239,28 +300,12 @@ client.on('message', async (message) => {
             deckRecords[matchup.losingType].losses++
         })
 
-        // allMatchups.forEach(function (matchup) {
-        //     if (!deckCrossTabs[matchup.winningType][matchup.losingType]) deckCrossTabs[matchup.winningType][matchup.losingType] = { wins: 0, losses: 0 }
-        //     if (!deckCrossTabs[matchup.losingType][matchup.winningType]) deckCrossTabs[matchup.losingType][matchup.winningType] = { wins: 0, losses: 0 }
-        //     deckCrossTabs[matchup.winningType][matchup.losingType].wins ? deckCrossTabs[matchup.winningType][matchup.losingType].wins++ : deckCrossTabs[matchup.winningType][matchup.losingType].wins = 1
-        //     deckCrossTabs[matchup.losingType][matchup.winningType].losses ? deckCrossTabs[matchup.losingType][matchup.winningType].losses++ : deckCrossTabs[matchup.losingType][matchup.winningType].losses = 1
-        // })
-
         let deckRecordsArr = Object.entries(deckRecords).sort((b, a) => b[0].localeCompare(a[0]))
         let arr = deckRecordsArr.map(function(deck) {
             return(
                 `${types[deck[0]][0]}: ${deckRecords[deck[0]].wins}W, ${deckRecords[deck[0]].losses}L`
             )
         })
-
-        // let deckCrosstabsArr = Object.entries(deckCrossTabs).sort((b, a) => b[0].localeCompare(a[0]))
-        // let arr2 = deckCrosstabsArr.map(function(deck) {
-        //     return(
-        //         `${types[deck[0]][0]}: ${deckRecords[deck[0]].wins}W, ${deckRecords[deck[0]].losses}L`
-        //     )
-        // })
-
-        // console.log('deckCrosstabsArr', deckCrosstabsArr)
 
         challongeClient.tournaments.finalize({
             id: name,
@@ -269,16 +314,14 @@ client.on('message', async (message) => {
                     return message.channel.send(`Error: the tournament you provided, "${name}", could not be finalized.`)
                 } else {
                     delete status['tournament']
-                    fs.writeFile("./static/status.json", JSON.stringify(status), (err) => { 
+                    fs.writeFile("./statis/status.json", JSON.stringify(status), (err) => { 
                         if (err) console.log(err)
                     })
 
                     await Tournament.destroy({ where: {}, truncate: true })
-
-                    // client.channels.cache.get(registrationChannel).send(typeDataArr2)
                     client.channels.cache.get(registrationChannel).send(arr)
 
-                    return message.channel.send(`Congratulations, your tournament results have been finalized: https://challonge.com/${name}.`)
+                    return message.channel.send(`Congratulations, your tournament results have been finalized: https://challonge.com/${name}. ${goat}`)
                 }
             }
         })
@@ -297,7 +340,7 @@ client.on('message', async (message) => {
                 if (err) {
                     return message.channel.send(`Error: the tournament you provided, "${name}", could not be found.`)
                 } else {
-                    return message.channel.send(`Here is the link to the tournament you requested: https://challonge.com/${name}.`)
+                    return message.channel.send(`Here is the link to the tournament you requested: https://challonge.com/${name}. ${goat}`)
                 }
             }
         })  
@@ -312,14 +355,14 @@ client.on('message', async (message) => {
         const allDecks = await Tournament.findAll()
         const typeData = {}
         const catData = {}
-        const sheet1Data = [['Player', 'Deck', 'Link']]
+        const sheet1Data = [['Player', 'Deck', 'Type', 'Link']]
         const sheet2DataA = [['Deck', 'Entries', 'Percent']]
         const sheet2DataB = [[], ['Category', 'Entries', 'Percent']]
 
         allDecks.forEach(function (deck) {
             typeData[deck.type] ? typeData[deck.type]++ : typeData[deck.type] = 1
             catData[deck.category] ? catData[deck.category]++ : catData[deck.category] = 1
-            const row = [deck.pilot, types[deck.type][0], deck.url]
+            const row = [deck.pilot, deck.name, types[deck.type][0], deck.url]
             sheet1Data.push(row)
         })
 
@@ -336,7 +379,7 @@ client.on('message', async (message) => {
 
         const sheet2Data = [...sheet2DataA, ...typeDataArr2, ...sheet2DataB, ...catDataArr2]
         const name = (args[0] ? args[0] : status['tournament'])
-        challongeClient.tournaments.start({
+        await challongeClient.tournaments.start({
             id: name,
             callback: async (err) => {
                 if (err) {
@@ -347,14 +390,14 @@ client.on('message', async (message) => {
                     await addSheet(spreadsheetId, 'Summary')
                     await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
                     client.channels.cache.get(registrationChannel).send(`Deck list spreadsheet: ${link}`)
-                    return message.channel.send(`Let's go! Your tournament is starting now: https://challonge.com/${name}.`)
+                    return message.channel.send(`Let's go! Your tournament is starting now: https://challonge.com/${name}. ${goat}`)
                 }
             }
         })
     }
 
 
-    //CHALLONGE - START
+    //CHALLONGE - DECK SHEET
     if (cmd === `!decksheet`) {
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
         const unregistered = await Tournament.findAll({ where: { participantId: null } })
@@ -406,10 +449,10 @@ client.on('message', async (message) => {
         
         if (await isNewUser(maid)) {
             createPlayer(message.member)
-            return message.channel.send("I added you to the Goat Format database. Please try again.")
+            return message.channel.send("I added you to the Tournament database. Please try again.")
         }
 
-        challongeClient.tournaments.show({
+        await challongeClient.tournaments.show({
             id: name,
             callback: async (err, data) => {
                 if (err) {
@@ -422,21 +465,21 @@ client.on('message', async (message) => {
                         return checkResubmission(client, message, member)
                     }
             
-                    const msg = await member.user.send("Please provide an Imgur screenshot for your tournament deck.");
+                    const msg = await member.user.send("Please provide an Imgur screenshot or a DuelingBook download link for your tournament deck.");
                     const filter = collected => collected.author.id === maid;
                     const collected = await msg.channel.awaitMessages(filter, {
                         max: 1,
-                        time: 180000
+                        time: 60000
                     }).then(collected => {
-                        if (collected.first().content.startsWith("https://i.imgur")) {
+                        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 50) {		
+                            return member.user.send("Sorry, I only accept (1) Imgur.com or DuelingBook.com link.")
+                        } else if (collected.first().content.startsWith("https://i.imgur") || collected.first().content.startsWith("https://www.duelingbook.com/deck")) {
                             return getDeckTypeTournament(client, message, member, collected.first().content)
                         } else if (collected.first().content.startsWith("https://imgur")) {
                             const str = collected.first().content
                             const newStr = str.substring(8, str.length)
                             const url = "https://i." + newStr + ".png";
                             return getDeckTypeTournament(client, message, member, url)          
-                        } else {
-                            return member.user.send("Sorry, I only accept imgur.com links.")
                         }
                     }).catch(err => {
                         console.log(err)
@@ -504,7 +547,7 @@ client.on('message', async (message) => {
         if (!person) return message.channel.send('Please provide an @ mention of the player you wish to sign-up for the tournament.')
         if (!member) return message.channel.send('I could not find that user in the server.')
 
-        challongeClient.participants.index({
+        await challongeClient.participants.index({
             id: name,
             callback: (err, data) => {
                 if (err) {
@@ -584,324 +627,100 @@ client.on('message', async (message) => {
         }
     }
 
-    //DECK-LISTS AUTO MODERATION
-    if (deckscom.includes(cmd)) {  
-        const person = message.mentions.users.first()
-        const playerId = (person ? person.id : message.author.id)
-        const decks = await Deck.findAll({ where: { playerId }, order: [['rating', 'DESC']] })
-        const player = await Player.findOne( { where: {id: playerId } })
-
-        if (!decks && playerId !== maid) return message.channel.send("That player has no decks in the database.")
-        if (!decks && playerId === maid) {
-            if (await isNewUser(playerId)) {
-                createPlayer(message.member)
-                return message.channel.send("I added you to the Goat Format database. Please try again.")
-            } else {
-                return message.channel.send("You don't have any decks in the database.")
-            }
-        } 
-
-        decks.forEach(function (deck) {
-            message.channel.send(`${player.tag}'s ${types[deck.type][0]} deck (${deck.rating}${star}):
-${deck.url}`)
-        })
-    }
-
-
-    //REPLAY-LINKS AUTO MODERATION
-    if (replayscom.includes(cmd)) {    
-        const person = message.mentions.users.first()
-        const playerId = (person ? person.id : message.author.id)
-        const replays = await Replay.findAll({ where: { [Op.or]: [{ p1: playerId }, { p2: playerId }] }, order: [['rating', 'DESC']] })
-        
-        if (!replays && playerId !== maid) return message.channel.send("That player has no replays in the database.")
-        if (!replays && playerId === maid) {
-            if (await isNewUser(playerId)) {
-                createPlayer(message.member)
-                return message.channel.send("I added you to the Goat Format database. Please try again.")
-            } else {
-                return message.channel.send("You don't have any replays in the database.")
-            }
-        } 
-
-        let result = []
-        replays.forEach(function (replay, index) {
-            result.push(`${(index + 1)}. ${replay.p1Name} (${types[replay.deck1]}) vs ${replay.p2Name} (${types[replay.deck2]}) - ${replay.rating}${star}`)
-        })
-
-        message.channel.send(result.slice(0,30))
-        message.channel.send(result.slice(30,60))
-        message.channel.send(result.slice(60,90))
-        message.channel.send(result.slice(90,99))
-    }
-
-    if (cmd === `!cats`) {
-    const deckEmbed = new Discord.MessageEmbed()
-    .addField('Control', `Chaos Control
-Chaos Turbo
-Coin Toss
-Ectoplasmer Control
-Doriado
-Flip Control
-Goat Control
-Manticore Control
-Monarch
-Pixie Control
-Relinquished Control
-Spell Counter Control`, true)
-        .addField('Aggro', `Aggro Bomb
-Amazon
-Archfiend
-Armed Dragon
-Bazoo Return
-Beastdown
-Beatdown
-Blue-Eyes White Dragon
-Chaos Aggro
-Chaos Recruiter
-Chaos Return
-Dark Aggro
-Drain Aggro
-Earth Aggro
-Element Dragon
-Elemental Aggro
-Elemental HERO
-Emissary Aggro
-Fairy Aggro
-Fiend Aggro
-Fire Aggro
-Flute Dragon
-Gravekeeper
-Gren Maju
-Hand Assault
-Harpie
-Horus
-Light Aggro
-Machine Aggro
-Manticore Aggro
-Ninja Aggro
-Paladin of White Dragon
-Ratbox
-Red-Eyes Black Dragon
-Silent Swordsman
-Spell Canceller Aggro
-Spirit
-Strike Ninja Return
-Toon
-Ultimate Insect
-Vanilla Aggro
-Warrior
-Water Aggro
-Wind Aggro
-Zombie`, true)
-        .addField('Combo', `Asura OTK
-Ben Kei OTK
-Blasting the Ruins
-Bugroth OTK
-Chaos Greed
-Cyber-Stein OTK
-Destiny Board
-Dimension Fusion Turbo
-Empty Jar
-Exodia
-Fusion Gate Turbo
-Heavy Slump
-Hino-Kagu-Tsuchi
-Huge Revolution
-Last Turn
-Library FTK
-Maha Vailo
-Mokey Mokey Smackdown
-Mazera DeVille
-Necromancer OTK
-Neo-Daedalus
-Ojama
-Pyramid of Light
-Reasoning Gate Turbo
-Rescue Cat
-Reversal Quiz OTK
-Shinato
-Speed Burn
-Spell Economics FTK
-Zorc`, true)
-    .addField('Lockdown', `Clown Control
-Direct Attack
-Final Countdown
-Last Warrior Lockdown
-Lockdown Burn
-Mill
-P.A.C.M.A.N.
-Spatial Collapse
-Wall Stall`, true)
-        return message.channel.send(deckEmbed)
-    }
-
-    //DECK-LISTS AUTO MODERATION
-    if (cmd === `!save`) {
-        if (await isNewUser(maid)) {
-            createPlayer(message.member)
-            return message.channel.send("I added you to the Goat Format database. Please try again.")
-        }
-
-        if (message.content.startsWith("!save https://i.imgur")) {
-            return getDeckType(message, message.member, args[0])
-        } else if (message.content.startsWith("!save https://imgur")) {
-            let url = `https://i.${args.join(" ").substring(8, args.join(" ").length)}.png`;
-            return getDeckType(message, message.member, url)          
-        } else if (message.content.startsWith("!save https://www.duelingbook.com/replay?")) {
-            return getReplayInfo1(message, message.member, args[0])          
-        } else {
-            return message.channel.send(`If you wish to save a deck, please provide (1) Imgur.com link. If you wish to save a replay, please provide (1) DuelingBook.com/replay link. Please try again.`)
-        }
-    }
-
-
-    //AVATAR
-    if (pfpcom.includes(cmd)) {
-        let person = message.mentions.users.first()
-        let reply = person ? person.displayAvatarURL() : message.author.displayAvatarURL()
-        return message.channel.send(reply)
-    }
-
-
-    //NAME
-    if (cmd === `!name`) {
-        const playerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
-        const member = message.guild.members.cache.get(playerId)
-        const player = await Player.findOne({ where: { id: playerId } })
-        return message.channel.send(`The database name of ${member.user.username} is: ${player.name}.`)
-    }
-
-
-    //RENAME
-    if (cmd === `!rename`) {
-        if (!isMod(message.member)) {
-            return message.channel.send("You do not have permission to do that.")
-        }
-
-        const playerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
-        const member = message.guild.members.cache.get(playerId)
-        const player = await Player.findOne({ where: { id: playerId } })
-	    player.name = messageArray.slice(2, messageArray.length).join(' ')
-	    player.tag = member.user.tag
-        await player.save()
-           
-        return message.channel.send(`The database name of ${member.user.username} is now: ${player.name}.`)
-    }
-
-
-    //ROLE
-    if (rolecom.includes(cmd)) {
-        if (!message.member.roles.cache.some(role => role.id === goatRole)) {
-			message.member.roles.add(goatRole)
-            return message.channel.send("You now have the Ranked Goats role.")
-        } else {
-            message.member.roles.remove(goatRole);
-            return message.channel.send("You no longer have the Ranked Goats role.")
-        }
-    }
-
-
-    //BOT USER GUIDE
-    if (botcom.includes(cmd)) {
-        console.log
-        const botEmbed = new Discord.MessageEmbed()
-	        .setColor('#38C368')
-        	.setTitle('GoatBot')
-	        .setDescription('A Rankings Bot for GoatFormat.com.\n' )
-	        .setURL('https://goatformat.com/')
-	        .setAuthor('Jazz#2704', 'https://i.imgur.com/93IC0Ua.png', 'https://formatlibrary.com/')
-        	.setThumbnail('https://i.imgur.com/9lMCJJH.png')
-        	.addField('Ranked Play Commands', '\n!loss - (@user) - Report a loss to another player. \n!stats - (blank or @user) - Post a player’s stats. \n!top - (number) - Post the server’s top players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove the Ranked Goats role. \n!undo - Undo the last loss if you reported it. \n')
-        	.addField('Tournament Commands', '\n!join - Register for the next tournament. \n!drop - Drop from the current tournament. \n!show - Show the current tournament.')
-        	.addField('Server Commands', '\n!save - (imgur.com link) - Save a deck. \n!decks - (blank or @user) - Post a player’s deck(s). \n!bot - View the GoatBot User Guide. \n!mod - View the Mod-Only User Guide.');
-
-        message.author.send(botEmbed);
-        return message.channel.send("I messaged you the GoatBot User Guide.")
-    }
-
-    //MOD USER GUIDE
-    if (cmd === `!mod`) {
-        if (!isMod(message.member)) {
-            return message.channel.send("You do not have permission to do that.")
-        } 
-
-        const botEmbed = new Discord.MessageEmbed()
-	        .setColor('#38C368')
-        	.setTitle('GoatBot')
-	        .setDescription('A Rankings Bot for GoatFormat.com.\n' )
-	        .setURL('https://goatformat.com/')
-	        .setAuthor('Jazz#2704', 'https://i.imgur.com/93IC0Ua.png', 'https://formatlibrary.com/')
-        	.setThumbnail('https://i.imgur.com/9lMCJJH.png')
-        	.addField('Mod-Only Ranked Play Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
-            .addField('Mod-Only Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Add a player to the bracket. \n!remove - (@user) - Remove a player from the bracket. \n!start - Start the next tournament. \n!end - End the current tournament.')
-            .addField('Mod-Only Server Commands', '\n!rename - (@user + new name) - Rename a user in the database.\n!census - Add missing players and update all names in the database.\n!recalc - Recaluate all player stats if needed.');
-
-        message.author.send(botEmbed);
-        return message.channel.send("I messaged you the Mod-Only Guide.")
-    }
-
 
     //STATS
     if (statscom.includes(cmd)) {
-        const playerId = (messageArray.length === 1 ?  maid : messageArray[1].replace(/[\\<>@#&!]/g, ""))
+        const playerId = (messageArray.length === 1 ? maid : messageArray[1].replace(/[\\<>@#&!]/g, ""))
         const player = await Player.findOne({ where: { id: playerId } })
 
         if (!player && maid === playerId) {
             createPlayer(message.member);
-            return message.channel.send("I added you to the Goat Format database. Please try again.")
+            return message.channel.send("I added you to the Format Library database. Please try again.")
         } else if (!player && maid !== playerId) {
-            return message.channel.send("That user is not in the Goat Format database.")
+            return message.channel.send("That user is not in the Format Library database.")
         }
 
-        const allPlayers = await Player.findAll({ 
+        const keys = Object.keys(formats)
+        let formatDatabase
+        let formatName
+        let formatEmoji
+            
+        keys.forEach(function(key) {
+            if(message.channel.id === formats[key].channel) {
+                formatDatabase = key.database
+                formatName = key.name
+                formatEmoji = key.emoji
+            }
+        })
+
+        const allRecords = await [formatDatabase].findAll({ 
             where: {
                 [Op.or]: [ { wins: { [Op.gt]: 0 } }, { losses: { [Op.gt]: 0 } } ]
             },
             order: [['stats', 'DESC']]
         })
-        
-        const index = allPlayers.findIndex(player => player.dataValues.id === playerId)
-        const rank = (index === -1 ? `N/A` : `#${index + 1} out of ${allPlayers.length}`)
-        const medal = (player.stats <= 290 ? `Chump ${sad}`
-        : (player.stats > 290 && player.stats <= 350) ? `Rock ${rock}`
-        : (player.stats > 350 && player.stats <= 410) ? `Bronze ${bron}`
-        : (player.stats > 410 && player.stats <= 470) ? `Silver ${silv}`
-        : (player.stats > 470 && player.stats <= 530) ? `Gold ${gold}`
-        : (player.stats > 530 && player.stats <= 590) ? `Platinum ${plat}`
-        : (player.stats > 590 && player.stats <= 650) ? `Diamond ${dia}`
-        : (player.stats > 650 && player.stats <= 710) ? `Master ${mast}`
+
+        const index = allRecords.findIndex(record => record.dataValues.playerId === playerId)
+        const record = allRecords.findOne({
+            where: {
+                playerId: playerId
+            }
+        })
+
+        const rank = (index === -1 ? `N/A` : `#${index + 1} out of ${allRecords.length}`)
+        const medal = (record.stats <= 290 ? `Chump ${sad}`
+        : (record.stats > 290 && record.stats <= 350) ? `Rock ${rock}`
+        : (record.stats > 350 && record.stats <= 410) ? `Bronze ${bron}`
+        : (record.stats > 410 && record.stats <= 470) ? `Silver ${silv}`
+        : (record.stats > 470 && record.stats <= 530) ? `Gold ${gold}`
+        : (record.stats > 530 && record.stats <= 590) ? `Platinum ${plat}`
+        : (record.stats > 590 && record.stats <= 650) ? `Diamond ${dia}`
+        : (record.stats > 650 && record.stats <= 710) ? `Master ${mast}`
         : `Legend ${lgnd}`)
 
-        return message.channel.send(`${goat} --- Goat Format Stats --- ${goat}
+        return message.channel.send(`${formatEmoji} --- ${formatName} Format Stats --- ${formatEmoji}
 Name: ${player.name}
 Medal: ${medal}
 Ranking: ${rank}
-Wins: ${player.wins}, Losses: ${player.losses}
-Elo Rating: ${player.stats.toFixed(2)}`)
+Wins: ${record.wins}, Losses: ${record.losses}
+Elo Rating: ${record.stats.toFixed(2)}`)
     }
 
 
     //RANK
     if (rankcom.includes(cmd)) {
+        const keys = Object.keys(formats)
+        let formatDatabase
+        let formatName
+        let formatEmoji
+            
+        keys.forEach(function(key) {
+            if(message.channel.id === formats[key].channel) {
+                formatDatabase = key.database
+                formatName = key.name
+                formatEmoji = key.emoji
+            }
+        })
+
         const x = parseInt(args[0])
         let result = []
-        x === 1 ? result[0] = `${goat} --- The Best Goat Player --- ${goat}`
-        : result[0] = `${goat} --- Top ${x} Goat Players --- ${goat}`
+        x === 1 ? result[0] = `${formatEmoji} --- The Best ${formatName} Player --- ${formatEmoji}`
+        : result[0] = `${formatEmoji} --- Top ${x} Goat Players --- ${formatEmoji}`
 
         if (x < 1) return message.channel.send("Please provide a number greater than 0.")
         if (x > 100 || isNaN(x)) return message.channel.send("Please provide a number less than or equal to 100.")
         
-        const allPlayers = await Player.findAll({ 
+        const allPlayers = await Player.findAll()
+        const allRecords = await [formatDatabase].findAll({ 
             where: {
                 [Op.or]: [ { wins: { [Op.gt]: 0 } }, { losses: { [Op.gt]: 0 } } ]
             },
             order: [['stats', 'DESC']]
         })
                 
-        if (x > allPlayers.length) return message.channel.send(`I need a smaller number. We only have ${allPlayers.length} Goat Format players.`)
+        if (x > allRecords.length) return message.channel.send(`I need a smaller number. We only have ${allRecords.length} ${formatName} Format players.`)
     
-        const topPlayers = allPlayers.slice(0, x)
+        const topPlayers = allRecords.slice(0, x)
         const getMedal = (stats) => {
             return stats <= 290 ? sad
             : (stats > 290 && stats <= 350) ? rock
@@ -915,7 +734,7 @@ Elo Rating: ${player.stats.toFixed(2)}`)
         }
     
         for (let i = 0; i < x; i++) { 
-            result[i+1] = `${(i+1)}. ${getMedal(topPlayers[i].stats)} ${topPlayers[i].name}`
+            result[i+1] = `${(i+1)}. ${getMedal(topPlayers[i].stats)} ${allPlayers[topPlayers[i]].name}`
         }
     
         message.channel.send(result.slice(0,30))
@@ -931,21 +750,33 @@ Elo Rating: ${player.stats.toFixed(2)}`)
         const oppo = messageArray[1].replace(/[\\<>@#&!]/g, "")
         const winner = message.guild.members.cache.get(oppo)
         const loser = message.guild.members.cache.get(maid)
-        const winningPlayer = await Player.findOne({ where: { id: oppo } })
-        const losingPlayer = await Player.findOne({ where: { id: maid } })
+
+        const keys = Object.keys(formats)
+        let formatDatabase
+        let formatName
+            
+        keys.forEach(function(key) {
+            if(message.channel.id === formats[key].channel) {
+                formatDatabase = key[database]
+                formatName = key[name]
+            }
+        })
+
+        const winningPlayer = await [formatDatabase].findOne({ where: { playerId: oppo } })
+        const losingPlayer = await [formatDatabase].findOne({ where: { playerId: maid } })
 
         if (!oppo || oppo == '@') return message.channel.send("No player specified.")
         if (oppo == maid) return message.channel.send("You cannot lose a match to yourself.")
-        if (winner.roles.cache.some(role => role.id === botRole)) return message.channel.send("Sorry, Bots do not play Goat Format... *yet*.")
+        if (winner.roles.cache.some(role => role.id === botRole)) return message.channel.send(`Sorry, Bots do not play ${formatName} Format... *yet*.`)
         if (oppo.length < 17 || oppo.length > 18) return message.channel.send("To report a loss, please type the command **!loss** followed by an @ mention of your opponent.")
-        if (!losingPlayer) {
+        if (!winningPlayer) {
 	        createPlayer(loser)
-            return message.channel.send("Sorry, you were not in the Goat Format database. Please try again.")
+            return message.channel.send("Sorry, you were not in the Format Library database. Please try again.")
         }
 
-        if (!winningPlayer) { 
+        if (!losingPlayer) { 
             createPlayer(winner)
-            return message.channel.send("Sorry, that user was not in the Goat Format database. Please try again.")
+            return message.channel.send("Sorry, that user was not in the Format Library database. Please try again.")
         }
         
         if (loser.roles.cache.some(role => role.id === tourRole) || winner.roles.cache.some(role => role.id === tourRole)) {
@@ -972,8 +803,8 @@ Elo Rating: ${player.stats.toFixed(2)}`)
         losingPlayer.losses++
         await winningPlayer.save()
         await losingPlayer.save()
-        await Match.create({ winner: winner.user.id, loser: loser.user.id, delta })
-        return message.reply(`Your Goat Format loss to ${winner.user.username} has been recorded.`)
+        await Match.create({ format: formatDatabase, winner: winner.user.id, loser: loser.user.id, delta })
+        return message.reply(`Your ${formatName} Format loss to ${winner.user.username} has been recorded.`)
     }
 
 
@@ -983,21 +814,33 @@ Elo Rating: ${player.stats.toFixed(2)}`)
         const loserId = messageArray[2].replace(/[\\<>@#&!]/g, "")
         const winner = message.guild.members.cache.get(winnerId)
         const loser = message.guild.members.cache.get(loserId)
-        const winningPlayer = await Player.findOne({ where: { id: winnerId } })
-        const losingPlayer = await Player.findOne({ where: { id: loserId } })
+
+        const keys = Object.keys(formats)
+        let formatDatabase
+        let formatName
+            
+        keys.forEach(function(key) {
+            if(message.channel.id === formats[key].channel) {
+                formatDatabase = key[database]
+                formatName = key[name]
+            }
+        })
+
+        const winningPlayer = await [formatDatabase].findOne({ where: { playerId: winnerId } })
+        const losingPlayer = await [formatDatabase].findOne({ where: { playerId: loserId } })
 
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
         if (!winner || !loser) return message.channel.send("Please specify 2 players.")
         if (winner === loser) return message.channel.send("Please specify 2 different players.")
-        if (winner.roles.cache.some(role => role.id === botRole) || loser.roles.cache.some(role => role.id === botRole)) return message.channel.send("Sorry, Bots do not play Goat Format... *yet*.")
+        if (winner.roles.cache.some(role => role.id === botRole) || loser.roles.cache.some(role => role.id === botRole)) return message.channel.send(`Sorry, Bots do not play ${formatName} Format... *yet*.`)
         if (!losingPlayer) {
 	        createPlayer(loser)
-            return message.channel.send(`Sorry, ${loser.user.username} was not in the Goat Format database. Please try again.`)
+            return message.channel.send(`Sorry, ${loser.user.username} was not in the Format Library database. Please try again.`)
         }
 
         if (!winningPlayer) {
 	        createPlayer(winner)
-            return message.channel.send(`Sorry, ${winner.user.username} was not in the Goat Format database. Please try again.`)
+            return message.channel.send(`Sorry, ${winner.user.username} was not in the Format Library database. Please try again.`)
         }
 
         if (winner.roles.cache.some(role => role.id === tourRole) || loser.roles.cache.some(role => role.id === tourRole)) {
@@ -1024,7 +867,7 @@ Elo Rating: ${player.stats.toFixed(2)}`)
         losingPlayer.losses++
         await winningPlayer.save()
         await losingPlayer.save()
-        await Match.create({ winner: winner.user.id, loser: loser.user.id, delta })
+        await Match.create({ format: formatDatabase, winner: winner.user.id, loser: loser.user.id, delta })
         return message.channel.send(`A manual Goat Format loss by ${loser.user.username} to ${winner.user.username} has been recorded.`)
     }
 
@@ -1035,19 +878,33 @@ Elo Rating: ${player.stats.toFixed(2)}`)
         if (messageArray.length > 3) return message.channel.send("You may only compare 2 players at a time.")
         const player1Id = messageArray[1].replace(/[\\<>@#&!]/g, "")
         const player2Id = (messageArray.length === 2 ? maid : messageArray[2].replace(/[\\<>@#&!]/g, ""))
-        const player1 = await Player.findOne({ where: { id: player1Id } })
-        const player2 = await Player.findOne({ where: { id: player2Id } })
+
+        const keys = Object.keys(formats)
+        let formatDatabase
+        let formatName
+        let formatEmoji
+            
+        keys.forEach(function(key) {
+            if(message.channel.id === formats[key].channel) {
+                formatDatabase = key.database
+                formatName = key.name
+                formatEmoji = key.emoji
+            }
+        })
+
+        const player1 = await Player.findOne({ where: { playerId: player1Id } })
+        const player2 = await Player.findOne({ where: { playerId: player2Id } })
         
         if (player1Id === player2Id) return message.channel.send("Please specify 2 different players.")
-        if (!player1 && player2Id === maid) return message.channel.send("That user is not in the Goat Format database.")
-        if (!player1 && player2Id !== maid) return message.channel.send("The first user is not in the Goat Format database.")
-        if (!player2 && player2Id === maid) return message.channel.send("You are not in the Goat Format database.")
-        if (!player2 && player2Id !== maid) return message.channel.send("The second user is not in the Goat Format database.")
+        if (!player1 && player2Id === maid) return message.channel.send("That user is not in the Format Library database.")
+        if (!player1 && player2Id !== maid) return message.channel.send("The first user is not in the Format Library database.")
+        if (!player2 && player2Id === maid) return message.channel.send("You are not in the Format Library database.")
+        if (!player2 && player2Id !== maid) return message.channel.send("The second user is not in the Format Library database.")
     
-        const p1Wins = await Match.count({ where: { winner: player1Id, loser: player2Id } })
-        const p2Wins = await Match.count({ where: { winner: player2Id, loser: player1Id } })
+        const p1Wins = await Match.count({ where: { format: formatDatabase, winner: player1Id, loser: player2Id } })
+        const p2Wins = await Match.count({ where: { format: formatDatabase, winner: player2Id, loser: player1Id } })
 
-        return message.channel.send(`${goat} --- H2H Goat Results --- ${goat}
+        return message.channel.send(`${formatEmoji} --- H2H ${formatName} Results --- ${formatEmoji}
 ${player1.name} has won ${p1Wins}x
 ${player2.name} has won ${p2Wins}x`)
     }
@@ -1055,19 +912,37 @@ ${player2.name} has won ${p2Wins}x`)
 
     //UNDO
     if (undocom.includes(cmd)) {
-        const allMatches = await Match.findAll({})
+        const keys = Object.keys(formats)
+        let formatDatabase
+        let formatName
+            
+        keys.forEach(function(key) {
+            if(message.channel.id === formats[key].channel) {
+                formatDatabase = key.database
+                formatName = key.name
+            }
+        })
+
+        const allMatches = await Match.findAll({
+            where: {
+                format: formatDatabase
+            }
+        })
+
         const lastMatch = allMatches.slice(-1)[0]
         const loserId = lastMatch.loser
         const winnerId = lastMatch.winner
-        const losingPlayer = await Player.findOne({ where: { id: loserId } })
-        const winningPlayer = await Player.findOne({ where: { id: winnerId } })
+        const winner = message.guild.members.cache.get(winnerId)
+        const loser = message.guild.members.cache.get(loserId)
+        const losingPlayer = await [formatDatabase].findOne({ where: { id: loserId } })
+        const winningPlayer = await [formatDatabase].findOne({ where: { id: winnerId } })
         const prompt = (isMod(message.member) ? '' : ' Please get a Moderator to help you.')
 
-        if (maid !== loserId && !isMod(message.member)) return message.channel.send(`The last recorded match was ${losingPlayer.name}'s loss to ${winningPlayer.name}.${prompt}`)
-        if (winningPlayer.backup === null && maid !== loserId) return message.channel.send(`${winningPlayer.name} has no backup stats.${prompt}`)
-        if (winningPlayer.backup === null && maid === loserId) return message.channel.send(`Your last opponent, ${winningPlayer.name}, has no backup stats.${prompt}`)
-        if (losingPlayer.backup === null  && maid !== loserId) return message.channel.send(`${losingPlayer.name} has no backup stats.${prompt}`)
-        if (losingPlayer.backup === null && maid === loserId) return message.channel.send(`You have no backup stats.${prompt}`)
+        if (maid !== loserId && !isMod(message.member)) return message.channel.send(`The last recorded ${formatName} Format match was ${loser.name}'s loss to ${winner.name}.${prompt}`)
+        if (winningPlayer.backup === null && maid !== loserId) return message.channel.send(`${winner.name} has no backup ${formatName} Format stats.${prompt}`)
+        if (winningPlayer.backup === null && maid === loserId) return message.channel.send(`Your last opponent, ${winner.name}, has no backup ${formatName} Format stats.${prompt}`)
+        if (losingPlayer.backup === null  && maid !== loserId) return message.channel.send(`${loser.name} has no ${formatName} Format backup stats.${prompt}`)
+        if (losingPlayer.backup === null && maid === loserId) return message.channel.send(`You have no ${formatName} Format backup stats.${prompt}`)
 
         winningPlayer.stats = winningPlayer.backup
         losingPlayer.stats = losingPlayer.backup
@@ -1078,7 +953,7 @@ ${player2.name} has won ${p2Wins}x`)
         await winningPlayer.save()
         await losingPlayer.save()
         await lastMatch.destroy()
-        return message.channel.send(`The last Goat Format match in which ${winningPlayer.name} defeated ${losingPlayer.name} has been erased.`)
+        return message.channel.send(`The last ${formatName} Format match in which ${winner.name} defeated ${loser.name} has been erased.`)
     }
 
 
@@ -1120,11 +995,23 @@ ${player2.name} has won ${p2Wins}x`)
     //RECALCULATE
     if (cmd === `!recalculate` || cmd === `!recalc`) { 
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
-        const allPlayers = await Player.findAll()
-        const allMatches = await Match.findAll()
 
-        console.log('allPlayers.length is', allPlayers.length)
-        console.log('allMatches.length is', allMatches.length)
+        let formatDatabase
+        let formatName
+            
+        keys.forEach(function(key) {
+            if(message.channel.id === formats[key].channel) {
+                formatDatabase = key.database
+                formatName = key.name
+            }
+        })
+
+        const allPlayers = await [formatDatabase].findAll()
+        const allMatches = await Match.findAll({
+            where: {
+                format: formatDatabase
+            }
+        })
 
         allPlayers.forEach(async function (player) {
             await player.update({
@@ -1154,6 +1041,5 @@ ${player2.name} has won ${p2Wins}x`)
 
         message.channel.send(`The recalculation of ${allPlayers.length} players' stats is complete!`)
     }
-
 
 })

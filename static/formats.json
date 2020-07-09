@@ -1,0 +1,427 @@
+{
+    "yugiKaiba": {
+        "database": "YugiKaiba",
+        "name": "Yugi-Kaiba",
+        "channel": "629462543408168970",
+        "role": "459486656840335360",
+        "emoji": "<:lajinn:647205810983796776>"
+    },
+    "critter": {
+        "database": "Critter",
+        "name": "Critter",
+        "channel": "629462567445725204",
+        "role": "459486908192653313",
+        "emoji": "<:sangan:647150335911264269>"
+    },
+    "android": {
+        "database": "Android",
+        "name": "Android",
+        "channel": "629515249875419146",
+        "role": "546392465037459458",
+        "emoji": "<:jinzo:647204024529059856>"
+    },
+    "yata": {
+        "database": "Yata",
+        "name": "Yata",
+        "channel": "629462597745246248",
+        "role": "459480807224901632",
+        "emoji": "<:yata:647217845494874139>"
+    },
+    "vampire": {
+        "database": "Vampire",
+        "name": "Vampire",
+        "channel": "729138341639094344",
+        "role": "546394139256946699",
+        "emoji": "<:vlord:729186203328315483>"
+    },
+    "tradChaos": {
+        "database": "TradChaos",
+        "name": "Trad Chaos",
+        "channel": "640040657129570304",
+        "role": "546392568754077742",
+        "emoji": "<:ced:647251220360069132>"
+    },
+    "chaosWarrior": {
+        "database": "ChaosWarrior",
+        "name": "Chaos Warrior",
+        "channel": "629462693274845194",
+        "role": "546392781590102027",
+        "emoji": "<:ddwl:647204024189321228>"
+    },
+    "goat": {
+        "database": "Goat",
+        "name": "Goat",
+        "channel": "414575168174948372",
+        "role": "578392585542828052",
+        "emoji": "<:bluesheep:646866933605466131>"
+    },
+    "crvGoat": {
+        "database": "CRVGoat",
+        "name": "CRV Goat",
+        "channel": "629462875521679380",
+        "role": "729144394665427054",
+        "emoji": "<:cydra:647211611232141342>"
+    },
+    "reaper": {
+        "database": "Reaper",
+        "name": "Reaper",
+        "channel": "629462875521679380",
+        "role": "546392530611077130",
+        "emoji": "<:reaper:729186203324252180>"
+    },
+    "chaosReturn": {
+        "database": "ChaosReturn",
+        "name": "Chaos Return",
+        "channel": "629463004211052544",
+        "role": "546392530611077130",
+        "emoji": "<:sorc:655188462487470081>"
+    },
+    "stein": {
+        "database": "Stein",
+        "name": "Stein",
+        "channel": "629463196859629570",
+        "role": "546392915715555340",
+        "emoji": "<:stein:655190146081095709>"
+    },
+    "troopDup": {
+        "database": "TroopDup",
+        "name": "Troop Dup",
+        "channel": "629463221165752330",
+        "role": "459486956762431489",
+        "emoji": "<:trooper:647204024411619358>"
+    },
+    "perfectCircle": {
+        "database": "PerfectCircle",
+        "name": "Perfect Circle",
+        "channel": "629463245887111178",
+        "role": "459487028011073546",
+        "emoji": "<:ladd:647204025606996014>"
+    },
+    "dadReturn": {
+        "database": "DADReturn",
+        "name": "DAD Return",
+        "channel": "629463911183286272",
+        "role": "546392700950282240",
+        "emoji": "<:dad:727613015947739166>"
+    },
+    "gladBeast": {
+        "database": "GladBeast",
+        "name": "Glad Beast",
+        "channel": "629463929617121280",
+        "role": "546393012301987840",
+        "emoji": "<:laq:647205850615775242>"
+    },
+    "teleDAD": {
+        "database": "TeleDAD",
+        "name": "TeleDAD",
+        "channel": "629472339473596436",
+        "role": "473338288271261696",
+        "emoji": "<:mali:647189278404902933>"
+    },
+    "darkStrike": {
+        "database": "DarkStrike",
+        "name": "Dark Strike",
+        "channel": "629463991931895818",
+        "role": "546393049991872552",
+        "emoji": "<:kitty:647205849109889026>"
+    },
+    "lightsworn": {
+        "database": "Lightsworn",
+        "name": "Lightsworn",
+        "channel": "629464023301226516",
+        "role": "546393086545231873",
+        "emoji": "<:ryko:647224970392502282>"
+    },
+    "edison": {
+        "database": "Edison",
+        "name": "Edison",
+        "channel": "629464112749084673",
+        "role": "459486993492213770",
+        "emoji": "<:dandy:647150339388211201>"
+    },
+    "frog": {
+        "database": "Frog",
+        "name": "Frog",
+        "channel": "629464092159246375",
+        "role": "546393125367840817",
+        "emoji": "<:subs:647205848397119491>"
+    },
+    "sixSamurai": {
+        "database": "SixSamurai",
+        "name": "Six Samurai",
+        "channel": "629464307624837121",
+        "role": "546396034973171763",
+        "emoji": "<:shien:655206752765083668>"
+    },
+    "providence": {
+        "database": "Providence",
+        "name": "Providence",
+        "channel": "726307422385340436",
+        "role": "728999430379798618",
+        "emoji": "<:trish:727614360528093365>"
+    },
+    "tenguPlant": {
+        "database": "TenguPlant",
+        "name": "Tengu Plant",
+        "channel": "629465761601028096",
+        "role": "546393230166589471",
+        "emoji": "<:spore:647198947185524746>"
+    },
+    "longBeach": {
+        "database": "LongBeach",
+        "name": "Long Beach",
+        "channel": "729141453057425429",
+        "role": "729150552474255430",
+        "emoji": "<:leviair:729188647353712670>"
+    },
+    "dinoRabbit": {
+        "database": "DinoRabbit",
+        "name": "Dino Rabbit",
+        "channel": "629464317166616576",
+        "role": "546393168023650304",
+        "emoji": "<:bunny:647205849424723968>"
+    },
+    "windUp": {
+        "database": "WindUp",
+        "name": "Wind-Up",
+        "channel": "629464341577596958",
+        "role": "459487065839632395",
+        "emoji": "<:wur:647211611098054681>"
+    },
+    "meadowlands": {
+        "database": "Meadowlands",
+        "name": "Meadowlands",
+        "channel": "629464492975325221",
+        "role": "546393195928485898",
+        "emoji": "<:linde:647211422526341133>"
+    },
+    "babyRuler": {
+        "database": "BabyRuler",
+        "name": "Baby Ruler",
+        "channel": "629464410930282516",
+        "role": "459480892943892500",
+        "emoji": "<:tidal:647204025238028329>"
+    },
+    "ravineRuler": {
+        "database": "RavineRuler",
+        "name": "Ravine Ruler",
+        "channel": "629464539695677470",
+        "role": "546393268892598272",
+        "emoji": "<:blaster:647204024373870592>"
+    },
+    "fireWater": {
+        "database": "FireWater",
+        "name": "Fire Water",
+        "channel": "629464862669406209",
+        "role": "546393298919489537",
+        "emoji": "<:tking:727614495697928192>"
+    },
+    "hat": {
+        "database": "HAT",
+        "name": "HAT",
+        "channel": "459474235165900800",
+        "role": "459487095082319914",
+        "emoji": "<:morall:647222244992614421>"
+    },
+    "shaddoll": {
+        "database": "Shaddoll",
+        "name": "Shaddoll",
+        "channel": "729134070843441243",
+        "role": "729144984804261939",
+        "emoji": "<:construct:655198384629481496>"
+    },
+    "london": {
+        "database": "London",
+        "name": "London",
+        "channel": "629465109399339028",
+        "role": "584220041713680385",
+        "emoji": "<:altair:729190482390810695>"
+    },
+    "burningAbyss": {
+        "database": "BurningAbyss",
+        "name": "Burning Abyss",
+        "channel": "629465138277122071",
+        "role": "546393389826834434",
+        "emoji": "<:graff:716110099206373457>"
+    },
+    "charleston": {
+        "database": "Charleston",
+        "name": "Charleston",
+        "channel": "729137398872801342",
+        "role": "729146837562294273",
+        "emoji": "<:tgu:729192950499639347>"
+    },
+    "nekroz": {
+        "database": "Nekroz",
+        "name": "Nekroz",
+        "channel": "629465331752108061",
+        "role": "459480764057124864",
+        "emoji": "<:nekroz:727611682569977906>"
+    },
+    "clown": {
+        "database": "Clown",
+        "name": "Clown",
+        "channel": "629465354120331304",
+        "role": "546393458898632716",
+        "emoji": "<:trickclown:729518369182580736>"
+    },
+    "pePe": {
+        "database": "PePe",
+        "name": "PePe",
+        "channel": "629465393127358464",
+        "role": "546393519170912257",
+        "emoji": "<:monkeyboard:729518369010614302>"
+    },
+    "dracoPal": {
+        "database": "DracoPal",
+        "name": "DracoPal",
+        "channel": "629465368326307840",
+        "role": "729147370855596094",
+        "emoji": "<:luster:729517834115481661>"
+    },
+    "monarch": {
+        "database": "Monarch",
+        "name": "Monarch",
+        "channel": "629465404011446312",
+        "role": "459480687809003540",
+        "emoji": "<:kuraz:729199125568159776>"
+    },
+    "abc": {
+        "database": "ABC",
+        "name": "ABC",
+        "channel": "629465450941644810",
+        "role": "584219675588558897",
+        "emoji": "<:drake:655197261617168400>"
+    },
+    "grassZoo": {
+        "database": "GrassZoo",
+        "name": "Grass Zoo",
+        "channel": "629465490720555022",
+        "role": "546393583624781825",
+        "emoji": "<:ratpier:729200193307803708>"
+    },
+    "dracoZoo": {
+        "database": "DracoZoo",
+        "name": "Draco Zoo",
+        "channel": "629465509275893760",
+        "role": "584220925080240138",
+        "emoji": "<:drident:729200193991606342>"
+    },
+    "linkZoo": {
+        "database": "LinkZoo",
+        "name": "Link Zoo",
+        "channel": "629465523482132481",
+        "role": "584220882440814636",
+        "emoji": "<:missus:729532894808375326>"
+    },
+    "quickFix": {
+        "database": "QuickFix",
+        "name": "Quick-Fix",
+        "channel": "629465574124290058",
+        "role": "546393667204677643",
+        "emoji": "<:mplan:729201803761025045>"
+    },
+    "tough": {
+        "database": "Tough",
+        "name": "Tough",
+        "channel": "726174932735754242",
+        "role": "729145288492711956",
+        "emoji": "<:tough:655197261147668507>"
+    },
+    "magician": {
+        "database": "Magician",
+        "name": "Magician",
+        "channel": "629465563936325652",
+        "role": "546393643422842900",
+        "emoji": "<:tuning:729202132670218251>"
+    },
+    "gouki": {
+        "database": "Gouki",
+        "name": "Gouki",
+        "channel": "726186319352430703",
+        "role": "546393720409423882",
+        "emoji": "<:scorpio:729202508131598386>"
+    },
+    "danger": {
+        "database": "Danger",
+        "name": "Danger",
+        "channel": "629465630227169290",
+        "role": "584223398973145089",
+        "emoji": "<:jackalope:729527849601466368>"
+    },
+    "prankKids": {
+        "database": "PrankKids",
+        "name": "Prank Kids",
+        "channel": "729142537981394954",
+        "role": "729145787887517696",
+        "emoji": "<:prank:729524157989257277>"
+    },
+    "skyStriker": {
+        "database": "SkyStriker",
+        "name": "Sky Striker",
+        "channel": "629465586065211403",
+        "role": "546393777699291137",
+        "emoji": "<:rei:655197261566836746>"
+    },
+    "thunderDragon": {
+        "database": "ThunderDragon",
+        "name": "Thunder Dragon",
+        "channel": "629465676452593714",
+        "role": "729145830136610938",
+        "emoji": "<:tdrag:729204900407541781>"
+    },
+    "lunalightOrcust": {
+        "database": "LunalightOrcust",
+        "name": "Lunalight Orcust",
+        "channel": "726186104478236682",
+        "role": "729145671214563339",
+        "emoji": "<:lunatiger:729537169877893202>"
+    },
+    "strikerOrcust": {
+        "database": "StrikerOrcust",
+        "name": "Striker Orcust",
+        "channel": "726186069191557160",
+        "role": "729145721046958243",
+        "emoji": "<:galatea:729539096770248786>"
+    },
+    "current": {
+        "database": "Current",
+        "name": "Current",
+        "channel": "629500476743745536",
+        "role": "581496147412254771",
+        "emoji": "<:upstart:729540368437215292>"
+    },
+    "traditional": {
+        "database": "Traditional",
+        "name": "Traditional",
+        "channel": "640040657129570304",
+        "role": "632456500761067520",
+        "emoji": "<:dmoc:729521575128334346>"
+    },
+    "rush": {
+        "database": "Rush",
+        "name": "Rush",
+        "channel": "730559061493284949",
+        "role": "426745506853552138",
+        "emoji": "<:rush:730591910397214860>"
+    },
+    "nova": {
+        "database": "Nova",
+        "name": "Nova",
+        "channel": "538498087245709322",
+        "role": "426745506853552138",
+        "emoji": "<:nova:729519481935888386>"
+    },
+    "rebirth": {
+        "database": "Rebirth",
+        "name": "Rebirth",
+        "channel": "629497713532338186",
+        "role": "572905478481248256",
+        "emoji": "<:celtic:647204025636487188>"
+    },
+    "voice": {
+        "name": "Voice",
+        "channel": "414842878490050582",
+        "role": "630250254465237002"
+    }
+}

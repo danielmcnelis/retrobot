@@ -16,20 +16,8 @@ const Player = db.define('player', {
         type: Sequelize.STRING,        
         allowNull: false
     },
-    stats: {
-        type: Sequelize.FLOAT,        
-        allowNull: false
-    },
-    backup: {
-        type: Sequelize.FLOAT,        
-        allowNull: true
-    },
-    wins: {
-        type: Sequelize.INTEGER,        
-        allowNull: false
-    },
-    losses: {
-        type: Sequelize.INTEGER,        
+    duelingBook: {
+        type: Sequelize.STRING,
         allowNull: false
     }
 })

@@ -1,17 +1,17 @@
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
-const {credentials} = require('./credentials.json');
+const credentials = require('../credentials.json');
 
 // // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 // // The file token.json stores the user's access and refresh tokens, and is
 // // created automatically when the authorization flow completes for the first
 // // time.
-const TOKEN_PATH = 'secrets.json';
+const TOKEN_PATH = '../secrets.json';
 
 // Load client secrets from a local file.
-fs.readFile('credentials.json', (err, content) => {
+fs.readFile('../credentials.json', (err, content) => {
   if (err) return console.log('Error loading client secret file:', err);
   // Authorize a client with credentials, then call the Google Sheets API.
   authorize(JSON.parse(content), listMajors);

@@ -1,8 +1,7 @@
 
-
 const {google} = require('googleapis')
-const token = require('./secrets.json')
-const credentials = require('./credentials.json')
+const token = require('../secrets.json')
+const credentials = require('../credentials.json')
 
 const {client_secret, client_id, redirect_uris} = credentials.installed
 const {access_token, refresh_token} = token

@@ -3,6 +3,10 @@ const Sequelize = require('sequelize');
 const db = require('./db');
 
 const Matchup = db.define('matchup', {
+    format: {
+        type: Sequelize.STRING,   
+        allowNull: false
+    },
     winningType: {
         type: Sequelize.STRING,   
         defaultValue: 'other',   

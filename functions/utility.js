@@ -2,7 +2,7 @@
 //FUNCTIONS FOR GOATBOT
 
 const { modRole } = require('../static/roles.json')
-const { Player, Deck }  = require('../db/index.js')
+const { Player }  = require('../db/index.js')
 const categories = require('../static/categories.json')
 
 //CREATE PLAYER
@@ -35,12 +35,6 @@ const isMod = (member) => {
     return member.roles.cache.some(role => role.id === modRole)
 }
 
-
-//HAS DECK?
-const hasDeck = async (member, type) => {
-    const count = await Deck.count({ where: { playerId: member.user.id, type } })
-    return count
-}
 
 //GET CAT
 const getCat = (type) => {
