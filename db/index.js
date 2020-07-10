@@ -66,6 +66,9 @@ const Rush = require('./rush')
 const Nova = require('./nova')
 const Rebirth = require('./rebirth')
 
+Tournament.belongsTo(Player)
+Player.hasOne(Tournament)
+
 YugiKaiba.belongsTo(Player)
 Player.hasOne(YugiKaiba)
 

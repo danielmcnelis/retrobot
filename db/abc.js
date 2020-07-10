@@ -4,19 +4,23 @@ const db = require('./db');
 
 const ABC = db.define('abcStats', {
     stats: {
-        type: Sequelize.FLOAT,        
+        type: Sequelize.FLOAT,   
+        defaultValue: 500.00,             
         allowNull: false
     },
     backup: {
-        type: Sequelize.FLOAT,        
-        allowNull: true
+        type: Sequelize.FLOAT,
+        defaultValue: 0.00,        
+        allowNull: false
     },
     wins: {
-        type: Sequelize.INTEGER,        
+        type: Sequelize.INTEGER,  
+        defaultValue: 0,     
         allowNull: false
     },
     losses: {
-        type: Sequelize.INTEGER,        
+        type: Sequelize.INTEGER,  
+        defaultValue: 0,           
         allowNull: false
     }
 })

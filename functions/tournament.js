@@ -2,10 +2,11 @@
 const { registrationChannel } = require('../static/channels.json')
 const { tourRole } = require('../static/roles.json')
 const status = require('../static/status.json')
-const { Player, Match, Matchup, Tournament  }  = require('../db/index.js')
+const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Nova, Rebirth  } = require('../db/index.js')
 const { getCat } = require('./utility.js')
 const { yescom, nocom } = require('../static/commands.json')
 const { client, challongeClient } = require('../static/clients.js')
+const formats = require('../static/formats.json')
 const types = require('../static/types.json')
 
 //GET DECK TYPE TOURNAMENT
@@ -160,22 +161,22 @@ const removeParticipant = async (message, participants, name, person, drop = fal
 
 
 //TOURNAMENT CHECK
-const getParticipants = async (message, matches, loser, winner) => {
+const getParticipants = async (message, matches, loser, winner, formatName, formatDatabase) => {
     challongeClient.participants.index({
         id: status['tournament'],
         callback: (err, data) => {
             if (err) {
                 return message.channel.send(`Error: the current tournament, "${status['tournament']}", could not be accessed.`)
             } else {
-                return addMatchResult(message, matches, data, loser, winner)
+                return addMatchResult(message, matches, data, loser, winner, formatName, formatDatabase)
             }
         }
     })
 }
 
 
-//CHECK MATCHES
-const addMatchResult = async (message, matches, participants, loser, winner) => {
+//ADD MATCH RESULT
+const addMatchResult = async (message, matches, participants, loser, winner, formatName, formatDatabase) => {
     let loserID
     let winnerID
     let matchID
@@ -255,27 +256,30 @@ const addMatchResult = async (message, matches, participants, loser, winner) => 
                 if (err) {
                     return message.channel.send(`Error: The match between ${winner.user.username} and ${loser.user.username} could not be updated.`)
                 } else {
+                    console.log(formatDatabase)
+                    const winningPlayersRecord = await eval(formatDatabase).findOne({ where: { playerId: winner.user.id } })
+                    const losingPlayersRecord = await eval(formatDatabase).findOne({ where: { playerId: loser.user.id } })
                     const winningPlayer = await Player.findOne({ where: { id: winner.user.id }, include: [ { model: Tournament, attribute: 'type' } ] })
                     const losingPlayer = await Player.findOne({ where: { id: loser.user.id }, include: [ { model: Tournament, attribute: 'type' } ] })
-                    const statsLoser = losingPlayer.stats
-                    const statsWinner = winningPlayer.stats
-                    winningPlayer.backup = statsWinner
-                    losingPlayer.backup = statsLoser
+                    const statsLoser = losingPlayersRecord.stats
+                    const statsWinner = winningPlayersRecord.stats
+                    winningPlayersRecord.backup = statsWinner
+                    losingPlayersRecord.backup = statsLoser
                     const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
-                    winningPlayer.stats += delta
-                    losingPlayer.stats -= delta
-                    winningPlayer.wins++
-                    losingPlayer.losses++
-                    await winningPlayer.save()
-                    await losingPlayer.save()
-                    await Match.create({ winner: winner.user.id, loser: loser.user.id, delta })
-                    await Matchup.create({ winningType: winningPlayer.tournament.type, losingType: losingPlayer.tournament.type, wasTournament: true, tournamentName: status['tournament'] })
+                    winningPlayersRecord.stats += delta
+                    losingPlayersRecord.stats -= delta
+                    winningPlayersRecord.wins++
+                    losingPlayersRecord.losses++
+                    await winningPlayersRecord.save()
+                    await losingPlayersRecord.save()
+                    await Match.create({ format: formatDatabase, winner: winner.user.id, loser: loser.user.id, delta })
+                    await Matchup.create({ format: formatDatabase, winningType: winningPlayer.tournament.type, losingType: losingPlayer.tournament.type, wasTournament: true, tournamentName: status['tournament'] })
 
                     const entry = await Tournament.findOne({ where: { playerId: loser.user.id } })
                     entry.losses++
                     await entry.save()
                          
-                    message.channel.send(`<@${loser.user.id}>, Your tournament loss to ${winner.user.username} has been recorded.`)
+                    message.channel.send(`<@${loser.user.id}>, Your ${formatName} tournament loss to ${winner.user.username} has been recorded.`)
                     return setTimeout(function() {
                         console.log('timeout')
                         getUpdatedMatchesObject(message, participants, matchID, loserID, winnerID, loser, winner)

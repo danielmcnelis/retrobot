@@ -6,7 +6,7 @@ const seed = async () => {
   db.close()
   console.log(`
     Seeding successful!
-    GB is now ready to rock!
+    RB is now ready to rock!
   `)
 }
 

@@ -37,7 +37,7 @@
     "tradChaos": {
         "database": "TradChaos",
         "name": "Trad Chaos",
-        "channel": "640040657129570304",
+        "channel": "629462634470703144",
         "role": "546392568754077742",
         "emoji": "<:ced:647251220360069132>"
     },
@@ -58,7 +58,7 @@
     "crvGoat": {
         "database": "CRVGoat",
         "name": "CRV Goat",
-        "channel": "629462875521679380",
+        "channel": "730948321367162950",
         "role": "729144394665427054",
         "emoji": "<:cydra:647211611232141342>"
     },
@@ -73,7 +73,7 @@
         "database": "ChaosReturn",
         "name": "Chaos Return",
         "channel": "629463004211052544",
-        "role": "546392530611077130",
+        "role": "546392530296635419",
         "emoji": "<:sorc:655188462487470081>"
     },
     "stein": {
@@ -234,7 +234,7 @@
         "database": "London",
         "name": "London",
         "channel": "629465109399339028",
-        "role": "584220041713680385",
+        "role": "546393357237223454",
         "emoji": "<:altair:729190482390810695>"
     },
     "burningAbyss": {
@@ -402,7 +402,7 @@
         "database": "Rush",
         "name": "Rush",
         "channel": "730559061493284949",
-        "role": "426745506853552138",
+        "role": "730560270082244639",
         "emoji": "<:rush:730591910397214860>"
     },
     "nova": {
