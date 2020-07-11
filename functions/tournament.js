@@ -9,16 +9,64 @@ const { client, challongeClient } = require('../static/clients.js')
 const formats = require('../static/formats.json')
 const types = require('../static/types.json')
 
+
+//ASK FOR DB USERNAME
+const askForDBUsername = async (client, message, member) => {
+    const filter = m => m.author.id === member.user.id
+	const msg = await member.user.send(`Hi! This appears to be your first tournament in our new system. Can you please provide your DuelingBook username?`)
+    const collected = await msg.channel.awaitMessages(filter, {
+		max: 1,
+        time: 60000
+    }).then(async collected => {
+        const player = await Player.findOne({ where: { id: member.user.id }})
+        player.duelingBook = collected.first().content
+        await player.save()
+        member.user.send(`Thanks! I've saved your DuelingBook username as: ${collected.first().content}. If that's not correct, you can update it on the Discord server by using the command **!db** followed by your username.`)
+        return setTimeout(function() {
+            getDeckListTournament(client, message, member)
+        }, 2000)	
+    }).catch(err => {
+        console.log(err)
+        return member.user.send(`Sorry, time's up. You can also provide your DuelingBook username on the Discord server by using the **!db** command, followed by your username.`)
+    })
+}
+
+
+//GET DECK LIST TOURNAMENT
+const getDeckListTournament = async (client, message, member) => {            
+    const filter = m => m.author.id === member.user.id
+    const msg = await member.user.send("Please provide an Imgur screenshot or a DuelingBook download link for your tournament deck.");
+    const collected = await msg.channel.awaitMessages(filter, {
+        max: 1,
+        time: 180000
+    }).then(collected => {
+        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 50) {		
+            return member.user.send("Sorry, I only accept (1) Imgur.com or DuelingBook.com link.")
+        } else if (collected.first().content.startsWith("https://i.imgur") || collected.first().content.startsWith("https://www.duelingbook.com/deck")) {
+            return getDeckTypeTournament(client, message, member, collected.first().content)
+        } else if (collected.first().content.startsWith("https://imgur")) {
+            const str = collected.first().content
+            const newStr = str.substring(8, str.length)
+            const url = "https://i." + newStr + ".png";
+            return getDeckTypeTournament(client, message, member, url)          
+        }
+    }).catch(err => {
+        console.log(err)
+        return message.author.send(`Sorry, time's up. If you wish to try again, go back to the Discord server and use the **!join** command.`)
+    })
+}
+
 //GET DECK TYPE TOURNAMENT
 const getDeckTypeTournament = async (client, message, member, url, resubmission = false) => {
     const keys = Object.keys(types)
+    const player = Player.findOne({ where: { id: member.user.id }})
     let success = false
 
 	const filter = m => m.author.id === member.user.id
 	const msg = await member.user.send(`Okay, ${member.user.username}, what kind of deck is this?`)
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
-        time: 180000
+        time: 60000
     }).then(async collected => {
         keys.forEach(async function (elem) {
             if (types[elem].includes(collected.first().content.toLowerCase())) {
@@ -64,7 +112,7 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
         }
     }).catch(err => {    
     console.log(err)
-    return member.user.send(`Perhaps another time would be better.`)
+    return member.user.send(`Sorry, time's up. If you wish to try again, go back to the Discord server and use the **!join** command.`)
 })
 
 }
@@ -83,7 +131,7 @@ const checkResubmission = async (client, message, member) => {
 	const msg = await member.user.send(`You already signed up for the tournament, do you want to resubmit your deck list?`)
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
-        time: 15000
+        time: 18000
     }).then(collected => {
         if (yescom.includes(collected.first().content.toLowerCase())) {
             return getUpdatedDeckURL(client, message, member, true)
@@ -92,7 +140,7 @@ const checkResubmission = async (client, message, member) => {
         }
     }).catch(err => {
         console.log(err)
-        return member.user.send(`Perhaps another time would be better.`)
+        return member.user.send(`Sorry, time's up. If you wish to try again, go back to the Discord server and use the **!join** command.`)
     })
 }
 
@@ -118,7 +166,7 @@ const getUpdatedDeckURL = async (client, message, member, resubmission = false) 
         }
     }).catch(err => {
         console.log(err)
-        return member.user.send('Perhaps another time would be better.')
+        return member.user.send(`Sorry, time's up. If you wish to try again, go back to the Discord server and use the **!join** command.`)
     })
 }
 
@@ -373,13 +421,37 @@ const checkMatches = async (message, matches, participants, matchID, loserID, wi
             message.channel.send(`${loser.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`) 
         }
     } else if (newOppoLoser) {
-        const opponent = await Tournament.findOne({ where: { participantId: newOppoLoser } })
-        message.channel.send(`New Match: <@${loser.user.id}> vs <@${opponent.playerId}>. Good luck to both duelists.`)
+        console.log('newOppoLoser', newOppoLoser)
+        console.log('loser.user.id', loser.user.id)
+        const opponent = await Tournament.findOne({ 
+            where: { 
+                participantId: newOppoLoser 
+            }, 
+            include: Player 
+        })
+        const losingPlayer = await Player.findOne({ where: { id: loser.user.id } })
+        const opponentDB = opponent.player.duelingBook ? ` (DB: ${opponent.player.duelingBook})` : ``
+        const loserDB = losingPlayer.duelingBook ? ` (DB: ${losingPlayer.duelingBook})` : ``
+        console.log('opponent', opponent)
+        console.log('losingPlayer', losingPlayer)
+        console.log('opponentDB', opponentDB)
+        console.log('loserDB', loserDB)
+        message.channel.send(`New Match: <@${loser.user.id}>${loserDB} vs <@${opponent.playerId}>${opponentDB}. Good luck to both duelists.`)
     } else if (matchWaitingOnLoser) {
         message.channel.send(`${loser.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
     } else {
+        console.log('winner.user.id', winner.user.id)
+        console.log('loser.user.id', loser.user.id)
         const entry = await Tournament.findOne({ where: { playerId: loser.user.id } })
-        if (entry.losses === 1) return message.channel.send(`New Match: <@${loser.user.id}> vs <@${winner.user.id}>. Good luck to both duelists.`)
+        const winningPlayer = await Player.findOne({ where: { id: winner.user.id } })
+        const losingPlayer = await Player.findOne({ where: { id: loser.user.id } })
+        const winnerDB = winningPlayer.duelingBook ? ` (DB: ${winningPlayer.duelingBook})` : ``
+        const loserDB = losingPlayer.duelingBook ? ` (DB: ${losingPlayer.duelingBook})` : ``
+        console.log('losingPlayer', losingPlayer)
+        console.log('winningPlayer', winningPlayer)
+        console.log('loserDB', loserDB)
+        console.log('winnerDB', winnerDB)
+        if (entry.losses === 1) return message.channel.send(`New Match: <@${loser.user.id}>${loserDB} vs <@${winner.user.id}>${winnerDB}. Good luck to both duelists.`)
         loser.roles.remove(tourRole)
         message.channel.send(`${loser.user.username}, You are eliminated from the tournament. Better luck next time!`)
     }
@@ -391,8 +463,22 @@ const checkMatches = async (message, matches, participants, matchID, loserID, wi
             message.channel.send(`${winner.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`) 
         }
     } else if (newOppoWinner) {
-        const opponent = await Tournament.findOne({ where: { participantId: newOppoWinner } })
-        message.channel.send(`New Match: <@${winner.user.id}> vs <@${opponent.playerId}>. Good luck to both duelists.`)
+        console.log('newOppoWinner', newOppoWinner)
+        console.log('loser.user.id', loser.user.id)
+        const opponent = await Tournament.findOne({ 
+            where: { 
+                participantId: newOppoWinner
+            }, 
+            include: Player 
+        })
+        const winningPlayer = await Player.findOne({ where: { id: winner.user.id } })
+        const opponentDB = opponent.player.duelingBook ? ` (DB: ${opponent.player.duelingBook})` : ``
+        const winnerDB = winningPlayer.duelingBook ? ` (DB: ${winningPlayer.duelingBook})` : ``
+        console.log('opponent', opponent)
+        console.log('winningPlayer', winningPlayer)
+        console.log('opponentDB', opponentDB)
+        console.log('winnerDB', winnerDB)
+        message.channel.send(`New Match: <@${winner.user.id}>${winnerDB} vs <@${opponent.playerId}>${opponentDB}. Good luck to both duelists.`)
     } else if (matchWaitingOnWinner) {
         message.channel.send(`${winner.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
     } else {
@@ -404,6 +490,8 @@ const checkMatches = async (message, matches, participants, matchID, loserID, wi
 }
 
 module.exports = {
+    askForDBUsername,
+    getDeckListTournament,
     getDeckTypeTournament,
     sendToTournamentChannel,
     checkResubmission,

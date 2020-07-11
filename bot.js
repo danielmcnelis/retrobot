@@ -14,7 +14,7 @@ const status = require('./static/status.json')
 const formats = require('./static/formats.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Nova, Rebirth  } = require('./db/index.js')
 const { capitalize, createPlayer, isNewUser, isAdmin, isMod } = require('./functions/utility.js')
-const { getDeckTypeTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
+const { askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
 const { client, challongeClient } = require('./static/clients.js')
 
@@ -484,6 +484,8 @@ client.on('message', async (message) => {
             return message.channel.send("I added you to the Tournament database. Please try again.")
         }
 
+        const player = await Player.findOne({ where: { id: maid }})
+
         await challongeClient.tournaments.show({
             id: name,
             callback: async (err, data) => {
@@ -495,28 +497,11 @@ client.on('message', async (message) => {
                     const tourDeck = await Tournament.findOne({ where: { playerId: maid } })
                     if (tourDeck) {
                         return checkResubmission(client, message, member)
+                    } else if (player.duelingBook) {
+                        return getDeckListTournament(client, message, member)
+                    } else {
+                        return askForDBUsername(client, message, member)
                     }
-            
-                    const msg = await member.user.send("Please provide an Imgur screenshot or a DuelingBook download link for your tournament deck.");
-                    const filter = collected => collected.author.id === maid;
-                    const collected = await msg.channel.awaitMessages(filter, {
-                        max: 1,
-                        time: 60000
-                    }).then(collected => {
-                        if ( (!collected.first().content.startsWith("https://i") && !collected.first().content.startsWith("https://www.duelingbook.com/deck")) || collected.first().content.length > 50) {		
-                            return member.user.send("Sorry, I only accept (1) Imgur.com or DuelingBook.com link.")
-                        } else if (collected.first().content.startsWith("https://i.imgur") || collected.first().content.startsWith("https://www.duelingbook.com/deck")) {
-                            return getDeckTypeTournament(client, message, member, collected.first().content)
-                        } else if (collected.first().content.startsWith("https://imgur")) {
-                            const str = collected.first().content
-                            const newStr = str.substring(8, str.length)
-                            const url = "https://i." + newStr + ".png";
-                            return getDeckTypeTournament(client, message, member, url)          
-                        }
-                    }).catch(err => {
-                        console.log(err)
-                        return message.author.send('Perhaps another time would be better.')
-                    })
                 }
             }
         })
