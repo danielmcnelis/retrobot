@@ -5,6 +5,7 @@
 const Discord = require('discord.js')
 const fs = require('fs')
 const { Op } = require('sequelize')
+const OldData = require('./static/oldData.json')
 const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, FL, approve } = require('./static/emojis.json')
 const { pfpcom, botcom, rolecom, statscom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
 const { botRole, tourRole, politicsRole } = require('./static/roles.json')
@@ -37,7 +38,7 @@ client.on('guildMemberAdd', async (member) => {
     const channel = client.channels.cache.get(welcomeChannel)
     if (!channel) return
     if (await isNewUser(member.user.id)) {
-        createPlayer(member) 
+        createPlayer(member.user.id, member.user.username, member.user.tag) 
         channel.send(`${member} Welcome to the FormatLibrary.com ${FL} Discord server! Use the command **!bot** to learn how to play rated games and join tournaments on this server. ${lgnd}`)
     } else {
         channel.send(`${member} Welcome back to the FormatLibrary.com ${FL} Discord server! We missed you. ${approve}`)
@@ -480,7 +481,7 @@ client.on('message', async (message) => {
         if (!member) return message.channel.send('I could not find you in the server. Please be sure you are not invisible.')
         
         if (await isNewUser(maid)) {
-            createPlayer(message.member)
+            createPlayer(member.user.id, member.user.username, member.user.tag)
             return message.channel.send("I added you to the Tournament database. Please try again.")
         }
 
@@ -651,7 +652,7 @@ client.on('message', async (message) => {
         const player = await Player.findOne({ where: { id: playerId } })
 
         if (!player && maid === playerId) {
-            createPlayer(message.member);
+            createPlayer(member.user.id, member.user.username, member.user.tag);
             return message.channel.send("I added you to the Format Library database. Please try again.")
         } else if (!player && maid !== playerId) {
             return message.channel.send("That user is not in the Format Library database.")
@@ -757,12 +758,12 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         if (winner.roles.cache.some(role => role.id === botRole)) return message.channel.send(`Sorry, Bots do not play ${formatName} Format... *yet*.`)
         if (oppo.length < 17 || oppo.length > 18) return message.channel.send("To report a loss, please type the command **!loss** followed by an @ mention of your opponent.")
         if (!winningPlayer) {
-	        createPlayer(loser)
+	        createPlayer(loser.user.id, loser.user.username, loser.user.tag)
             return message.channel.send("Sorry, you were not in the Format Library database. Please try again.")
         }
 
         if (!losingPlayer) { 
-            createPlayer(winner)
+            createPlayer(winner.user.id, winner.user.username, winner.user.tag)
             return message.channel.send("Sorry, that user was not in the Format Library database. Please try again.")
         }
         
@@ -814,12 +815,12 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         if (winner === loser) return message.channel.send("Please specify 2 different players.")
         if (winner.roles.cache.some(role => role.id === botRole) || loser.roles.cache.some(role => role.id === botRole)) return message.channel.send(`Sorry, Bots do not play ${formatName} Format... *yet*.`)
         if (!losingPlayer) {
-	        createPlayer(loser)
+	        createPlayer(loser.user.id, loser.user.username, loser.user.tag)
             return message.channel.send(`Sorry, ${loser.user.username} was not in the Format Library database. Please try again.`)
         }
 
         if (!winningPlayer) {
-	        createPlayer(winner)
+	        createPlayer(winner.user.id, winner.user.username, winner.user.tag)
             return message.channel.send(`Sorry, ${winner.user.username} was not in the Format Library database. Please try again.`)
         }
 
@@ -936,7 +937,7 @@ ${player2.name} has won ${p2Wins}x`)
                     })
                 } else if (!player && !member.user.bot) {
                     createCount++
-                    createPlayer(member)
+                    createPlayer(member.user.id, member.user.username, member.user.tag)
                 }
             })
         } catch (err) {
@@ -990,6 +991,76 @@ ${player2.name} has won ${p2Wins}x`)
         })
 
         message.channel.send(`The recalculation of ${allPlayers.length} players' stats is complete!`)
+    }
+
+
+    //IMPORT
+    if (cmd === `!import`) { 
+        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
+
+        const labels = Object.keys(OldData)
+        let winner
+        let loser
+        let i = 0
+        let j = 0
+
+
+        labels.forEach(async function(label){
+            console.log('label len', OldData[label].length)
+            for (i = 0; i < OldData[label].length; i++) {
+                const record = OldData[label][i].Result
+                console.log(label, 'format record', record)
+                if(record.length === 35) {
+                    winner = record.substring(0, 17);
+                    loser = record.substring(18, 35); }
+
+                if(record.length === 36) {
+                    if(record[17] === ">") {
+                        winner = record.substring(0, 17);
+                        loser = record.substring(18, 36); }
+                    else {
+                        winner = record.substring(0, 18);
+                        loser = record.substring(19, 36); }}
+
+                if(record.length === 37) {
+                    winner = record.substring(0, 18);
+                    loser = record.substring(19, 37); }
+                    
+                console.log('winner', winner)
+                console.log('loser', loser)
+
+                const winningPlayer = await Player.findOne({ where: { id: winner }})
+                const losingPlayer = await Player.findOne({ where: { id: winner }})
+
+                if (!winningPlayer) {
+                    console.log(`adding ${winner} to the database`)
+                    await createPlayer(winner)
+                }
+                if (!losingPlayer) {
+                    console.log(`adding ${loser} to the database`)
+                    await createPlayer(loser)
+                }
+
+                const winnersRow = await eval(label).findOne({ where: { playerId: winner }})
+                const losersRow = await eval(label).findOne({ where: { playerId: loser }})
+
+                const statsLoser = losersRow.stats
+                const statsWinner = winnersRow.stats
+                winnersRow.backup = statsWinner
+                losersRow.backup = statsLoser
+                const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
+                winnersRow.stats += delta
+                losersRow.stats -= delta
+                winnersRow.wins++
+                losersRow.losses++
+                await winnersRow.save()
+                await losersRow.save()
+                await Match.create({ format: label, winner: winner, loser: loser, delta })
+                console.log(`A ${label} format loss by ${loser} to ${winner} has been added to the database.`)
+            }
+        })
+
+        message.channel.send(`The data import is complete!`)
     }
 
 })

@@ -10,11 +10,11 @@ const Player = db.define('player', {
     },
     name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
     },
     tag: {
         type: Sequelize.STRING,        
-        allowNull: false
+        allowNull: true
     },
     duelingBook: {
         type: Sequelize.STRING,
