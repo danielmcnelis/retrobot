@@ -304,7 +304,6 @@ const addMatchResult = async (message, matches, participants, loser, winner, for
                 if (err) {
                     return message.channel.send(`Error: The match between ${winner.user.username} and ${loser.user.username} could not be updated.`)
                 } else {
-                    console.log(formatDatabase)
                     const winningPlayersRecord = await eval(formatDatabase).findOne({ where: { playerId: winner.user.id } })
                     const losingPlayersRecord = await eval(formatDatabase).findOne({ where: { playerId: loser.user.id } })
                     const winningPlayer = await Player.findOne({ where: { id: winner.user.id }, include: [ { model: Tournament, attribute: 'type' } ] })
@@ -329,7 +328,6 @@ const addMatchResult = async (message, matches, participants, loser, winner, for
                          
                     message.channel.send(`<@${loser.user.id}>, Your ${formatName} tournament loss to ${winner.user.username} has been recorded.`)
                     return setTimeout(function() {
-                        console.log('timeout')
                         getUpdatedMatchesObject(message, participants, matchID, loserID, winnerID, loser, winner)
                     }, 3000)	
                 }
@@ -421,8 +419,6 @@ const checkMatches = async (message, matches, participants, matchID, loserID, wi
             message.channel.send(`${loser.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`) 
         }
     } else if (newOppoLoser) {
-        console.log('newOppoLoser', newOppoLoser)
-        console.log('loser.user.id', loser.user.id)
         const opponent = await Tournament.findOne({ 
             where: { 
                 participantId: newOppoLoser 
@@ -432,25 +428,15 @@ const checkMatches = async (message, matches, participants, matchID, loserID, wi
         const losingPlayer = await Player.findOne({ where: { id: loser.user.id } })
         const opponentDB = opponent.player.duelingBook ? ` (DB: ${opponent.player.duelingBook})` : ``
         const loserDB = losingPlayer.duelingBook ? ` (DB: ${losingPlayer.duelingBook})` : ``
-        console.log('opponent', opponent)
-        console.log('losingPlayer', losingPlayer)
-        console.log('opponentDB', opponentDB)
-        console.log('loserDB', loserDB)
         message.channel.send(`New Match: <@${loser.user.id}>${loserDB} vs <@${opponent.playerId}>${opponentDB}. Good luck to both duelists.`)
     } else if (matchWaitingOnLoser) {
         message.channel.send(`${loser.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
     } else {
-        console.log('winner.user.id', winner.user.id)
-        console.log('loser.user.id', loser.user.id)
         const entry = await Tournament.findOne({ where: { playerId: loser.user.id } })
         const winningPlayer = await Player.findOne({ where: { id: winner.user.id } })
         const losingPlayer = await Player.findOne({ where: { id: loser.user.id } })
         const winnerDB = winningPlayer.duelingBook ? ` (DB: ${winningPlayer.duelingBook})` : ``
         const loserDB = losingPlayer.duelingBook ? ` (DB: ${losingPlayer.duelingBook})` : ``
-        console.log('losingPlayer', losingPlayer)
-        console.log('winningPlayer', winningPlayer)
-        console.log('loserDB', loserDB)
-        console.log('winnerDB', winnerDB)
         if (entry.losses === 1) return message.channel.send(`New Match: <@${loser.user.id}>${loserDB} vs <@${winner.user.id}>${winnerDB}. Good luck to both duelists.`)
         loser.roles.remove(tourRole)
         message.channel.send(`${loser.user.username}, You are eliminated from the tournament. Better luck next time!`)
@@ -463,8 +449,6 @@ const checkMatches = async (message, matches, participants, matchID, loserID, wi
             message.channel.send(`${winner.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`) 
         }
     } else if (newOppoWinner) {
-        console.log('newOppoWinner', newOppoWinner)
-        console.log('loser.user.id', loser.user.id)
         const opponent = await Tournament.findOne({ 
             where: { 
                 participantId: newOppoWinner
@@ -474,10 +458,6 @@ const checkMatches = async (message, matches, participants, matchID, loserID, wi
         const winningPlayer = await Player.findOne({ where: { id: winner.user.id } })
         const opponentDB = opponent.player.duelingBook ? ` (DB: ${opponent.player.duelingBook})` : ``
         const winnerDB = winningPlayer.duelingBook ? ` (DB: ${winningPlayer.duelingBook})` : ``
-        console.log('opponent', opponent)
-        console.log('winningPlayer', winningPlayer)
-        console.log('opponentDB', opponentDB)
-        console.log('winnerDB', winnerDB)
         message.channel.send(`New Match: <@${winner.user.id}>${winnerDB} vs <@${opponent.playerId}>${opponentDB}. Good luck to both duelists.`)
     } else if (matchWaitingOnWinner) {
         message.channel.send(`${winner.user.username}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)

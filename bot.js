@@ -242,7 +242,6 @@ client.on('message', async (message) => {
 
         keys.forEach(function(key) {
             const newKey = key.replace(/[\. ,:-]+/g, "").toLowerCase()
-            console.log('newKey', newKey)
             keyPairs[newKey] = key
         })
     
@@ -676,8 +675,6 @@ client.on('message', async (message) => {
             losses: 0
         }
 
-        console.log(record)
-
         const rank = (index === -1 ? `N/A` : `#${index + 1} out of ${allRecords.length}`)
         const medal = (record.stats <= 290 ? `Chump ${sad}`
         : (record.stats > 290 && record.stats <= 350) ? `Rock ${rock}`
@@ -730,8 +727,6 @@ Elo Rating: ${record.stats.toFixed(2)}`)
             : (stats > 650 && stats <= 710) ? mast
             : lgnd
         }
-
-        console.log('topPlayers', topPlayers)
     
         for (let i = 0; i < x; i++) { 
             result[i+1] = `${(i+1)}. ${getMedal(topPlayers[i].stats)} ${topPlayers[i].player.name}`
@@ -991,123 +986,5 @@ ${player2.name} has won ${p2Wins}x`)
         })
 
         message.channel.send(`The recalculation of ${allPlayers.length} players' stats is complete!`)
-    }
-
-
-    //WINNERS
-    if (cmd === `!winners`) { 
-        console.log('winners...')
-        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
-
-        const labels = Object.keys(OldData)
-        let winner
-        let z = 0
-
-        for (let i = 0; i < labels.length; i++) {
-            const format = OldData[labels[i]]
-
-            for (let j = 0; j < format.length; j++) {
-                const record = format[j].Result
-
-                if(record.length === 35) {
-                    winner = record.substring(0, 17)
-                }
-
-                if(record.length === 36) {
-                    if(record[17] === ">") {
-                        winner = record.substring(0, 17)
-                    }
-                    else {
-                        winner = record.substring(0, 18)
-                    }
-                }
-
-                if(record.length === 37) {
-                    winner = record.substring(0, 18)
-                }
-
-                z++
-
-                revive(winner, z)
-            }
-        }
-    }
-
-    //LOSERS
-    if (cmd === `!losers`) { 
-        console.log('losers...')
-        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
-
-        const labels = Object.keys(OldData)
-        let loser
-        let z = 0
-
-        for (let i = 0; i < labels.length; i++) {
-            const format = OldData[labels[i]]
-
-            for (let j = 0; j < format.length; j++) {
-                const record = format[j].Result
-
-                if(record.length === 35) {
-                    loser = record.substring(18, 35)
-                }
-
-                if(record.length === 36) {
-                    if(record[17] === ">") {
-                        loser = record.substring(18, 36)
-                    }
-                    else {
-                        loser = record.substring(19, 36)
-                    }
-                }
-
-                if(record.length === 37) {
-                    loser = record.substring(19, 37)
-                }
-
-                z++
-
-                revive(loser, z)
-            }
-        }
-    }
-
-
-
-    //IMPORT
-    if (cmd === `!import`) { 
-        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
-
-        const labels = Object.keys(OldData)
-        let winner
-        let loser
-        let z = 0
-
-        for (let i = 0; i < labels.length; i++) {
-            const format = labels[i]
-            console.log('format', format)
-            for (let j = 0; j < OldData[format].length; j++) {
-                const record = OldData[format][j].Result
-                if(record.length === 35) {
-                    winner = record.substring(0, 17)
-                    loser = record.substring(18, 35) }
-
-                if(record.length === 36) {
-                    if(record[17] === ">") {
-                        winner = record.substring(0, 17)
-                        loser = record.substring(18, 36) }
-                    else {
-                        winner = record.substring(0, 18)
-                        loser = record.substring(19, 36) }}
-
-                if(record.length === 37) {
-                    winner = record.substring(0, 18)
-                    loser = record.substring(19, 37) }
-
-                z++
-
-                restore(winner, loser, format, z)
-            }
-        }
     }
 })
