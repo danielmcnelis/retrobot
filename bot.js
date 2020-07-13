@@ -14,7 +14,7 @@ const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Nova, Rebirth  } = require('./db/index.js')
-const { capitalize, createPlayer, isNewUser, isAdmin, isMod } = require('./functions/utility.js')
+const { capitalize, restore, revive, createPlayer, isNewUser, isAdmin, isMod } = require('./functions/utility.js')
 const { askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
 const { client, challongeClient } = require('./static/clients.js')
@@ -937,7 +937,7 @@ ${player2.name} has won ${p2Wins}x`)
                     })
                 } else if (!player && !member.user.bot) {
                     createCount++
-                    createPlayer(member.user.id, member.user.username, member.user.tag)
+                    createPlayer(member.user.id, member.user.username, member.user.tag, createCount)
                 }
             })
         } catch (err) {
@@ -994,6 +994,86 @@ ${player2.name} has won ${p2Wins}x`)
     }
 
 
+    //WINNERS
+    if (cmd === `!winners`) { 
+        console.log('winners...')
+        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
+
+        const labels = Object.keys(OldData)
+        let winner
+        let z = 0
+
+        for (let i = 0; i < labels.length; i++) {
+            const format = OldData[labels[i]]
+
+            for (let j = 0; j < format.length; j++) {
+                const record = format[j].Result
+
+                if(record.length === 35) {
+                    winner = record.substring(0, 17)
+                }
+
+                if(record.length === 36) {
+                    if(record[17] === ">") {
+                        winner = record.substring(0, 17)
+                    }
+                    else {
+                        winner = record.substring(0, 18)
+                    }
+                }
+
+                if(record.length === 37) {
+                    winner = record.substring(0, 18)
+                }
+
+                z++
+
+                revive(winner, z)
+            }
+        }
+    }
+
+    //LOSERS
+    if (cmd === `!losers`) { 
+        console.log('losers...')
+        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
+
+        const labels = Object.keys(OldData)
+        let loser
+        let z = 0
+
+        for (let i = 0; i < labels.length; i++) {
+            const format = OldData[labels[i]]
+
+            for (let j = 0; j < format.length; j++) {
+                const record = format[j].Result
+
+                if(record.length === 35) {
+                    loser = record.substring(18, 35)
+                }
+
+                if(record.length === 36) {
+                    if(record[17] === ">") {
+                        loser = record.substring(18, 36)
+                    }
+                    else {
+                        loser = record.substring(19, 36)
+                    }
+                }
+
+                if(record.length === 37) {
+                    loser = record.substring(19, 37)
+                }
+
+                z++
+
+                revive(loser, z)
+            }
+        }
+    }
+
+
+
     //IMPORT
     if (cmd === `!import`) { 
         if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
@@ -1001,66 +1081,33 @@ ${player2.name} has won ${p2Wins}x`)
         const labels = Object.keys(OldData)
         let winner
         let loser
-        let i = 0
-        let j = 0
+        let z = 0
 
-
-        labels.forEach(async function(label){
-            console.log('label len', OldData[label].length)
-            for (i = 0; i < OldData[label].length; i++) {
-                const record = OldData[label][i].Result
-                console.log(label, 'format record', record)
+        for (let i = 0; i < labels.length; i++) {
+            const format = labels[i]
+            console.log('format', format)
+            for (let j = 0; j < OldData[format].length; j++) {
+                const record = OldData[format][j].Result
                 if(record.length === 35) {
-                    winner = record.substring(0, 17);
-                    loser = record.substring(18, 35); }
+                    winner = record.substring(0, 17)
+                    loser = record.substring(18, 35) }
 
                 if(record.length === 36) {
                     if(record[17] === ">") {
-                        winner = record.substring(0, 17);
-                        loser = record.substring(18, 36); }
+                        winner = record.substring(0, 17)
+                        loser = record.substring(18, 36) }
                     else {
-                        winner = record.substring(0, 18);
-                        loser = record.substring(19, 36); }}
+                        winner = record.substring(0, 18)
+                        loser = record.substring(19, 36) }}
 
                 if(record.length === 37) {
-                    winner = record.substring(0, 18);
-                    loser = record.substring(19, 37); }
-                    
-                console.log('winner', winner)
-                console.log('loser', loser)
+                    winner = record.substring(0, 18)
+                    loser = record.substring(19, 37) }
 
-                const winningPlayer = await Player.findOne({ where: { id: winner }})
-                const losingPlayer = await Player.findOne({ where: { id: winner }})
+                z++
 
-                if (!winningPlayer) {
-                    console.log(`adding ${winner} to the database`)
-                    await createPlayer(winner)
-                }
-                if (!losingPlayer) {
-                    console.log(`adding ${loser} to the database`)
-                    await createPlayer(loser)
-                }
-
-                const winnersRow = await eval(label).findOne({ where: { playerId: winner }})
-                const losersRow = await eval(label).findOne({ where: { playerId: loser }})
-
-                const statsLoser = losersRow.stats
-                const statsWinner = winnersRow.stats
-                winnersRow.backup = statsWinner
-                losersRow.backup = statsLoser
-                const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
-                winnersRow.stats += delta
-                losersRow.stats -= delta
-                winnersRow.wins++
-                losersRow.losses++
-                await winnersRow.save()
-                await losersRow.save()
-                await Match.create({ format: label, winner: winner, loser: loser, delta })
-                console.log(`A ${label} format loss by ${loser} to ${winner} has been added to the database.`)
+                restore(winner, loser, format, z)
             }
-        })
-
-        message.channel.send(`The data import is complete!`)
+        }
     }
-
 })
