@@ -859,8 +859,9 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         if (messageArray.length > 3) return message.channel.send("You may only compare 2 players at a time.")
         const player1Id = messageArray[1].replace(/[\\<>@#&!]/g, "")
         const player2Id = (messageArray.length === 2 ? maid : messageArray[2].replace(/[\\<>@#&!]/g, ""))
-        const player1 = await Player.findOne({ where: { playerId: player1Id } })
-        const player2 = await Player.findOne({ where: { playerId: player2Id } })
+
+        const player1 = await Player.findOne({ where: { id: player1Id } })
+        const player2 = await Player.findOne({ where: { id: player2Id } })
         
         if (player1Id === player2Id) return message.channel.send("Please specify 2 different players.")
         if (!player1 && player2Id === maid) return message.channel.send("That user is not in the Format Library database.")
