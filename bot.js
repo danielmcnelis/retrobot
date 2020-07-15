@@ -18,6 +18,7 @@ const { capitalize, restore, revive, createPlayer, isNewUser, isAdmin, isMod } =
 const { askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
 const { client, challongeClient } = require('./static/clients.js')
+const rb = "730922003296419850"
 
 //READY
 client.on('ready', () => {
@@ -130,7 +131,7 @@ client.on('message', async (message) => {
     //CLEAR
     if (cmd === `!clear`) {
         if(!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
-        
+
         message.channel.fetchMessages()
             .then(function(list){
                     message.channel.bulkDelete(list)
