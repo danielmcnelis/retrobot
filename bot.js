@@ -9,7 +9,7 @@ const OldData = require('./static/oldData.json')
 const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, FL, approve } = require('./static/emojis.json')
 const { pfpcom, botcom, rolecom, statscom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
 const { botRole, tourRole, politicsRole } = require('./static/roles.json')
-const { welcomeChannel, registrationChannel, politicsChannel } = require('./static/channels.json')
+const { welcomeChannel, registrationChannel, deckListsChannel, replayLinksChannel, politicsChannel } = require('./static/channels.json')
 const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
@@ -84,7 +84,7 @@ client.on('message', async (message) => {
 
 
     //REPLAY-LINKS MODERATION
-    if((message.channel.id === "730462779345207306") && maid !== rb && (!message.content.includes('duelingbook.com') || !message.content.includes('replay') || message.content.length > 200)) {
+    if((message.channel.id === replayLinksChannel) && maid !== rb && (!message.content.includes('duelingbook.com') || !message.content.includes('replay') || message.content.length > 200)) {
         message.delete(2000);
         message.channel.send("Please do not use this channel for discussion. Only post short messages with a DuelingBook.com replay link.").then(sentMessage => {
         sentMessage.delete(10000); });
@@ -93,7 +93,7 @@ client.on('message', async (message) => {
 
 
     //DECK-LISTS MODERATION
-    if((message.channel.id === "730462733698334730") && maid !== rb && (!message.content.includes('imgur') || message.content.length > 200)) {
+    if((message.channel.id === deckListsChannel) && maid !== rb && (!message.content.includes('imgur') || message.content.length > 200)) {
         message.delete(2000);
         return message.channel.send("Please do not use this channel for discussion. Only post short messages with an Imgur.com deck link.").then(sentMessage => {
         sentMessage.delete(10000); });
@@ -129,9 +129,7 @@ client.on('message', async (message) => {
 
     //CLEAR
     if (cmd === `!clear`) {
-        if(maid !== "194147938786738176") {
-            return message.channel.send("You do not have permission to do that.")
-        }
+        if(!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
         
         message.channel.fetchMessages()
             .then(function(list){
