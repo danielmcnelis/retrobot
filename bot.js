@@ -121,11 +121,11 @@ client.on('message', async (message) => {
     //DUELINGBOOK NAME
     if (cmd === `!db` || cmd === `!dbname`) {
         const person = message.mentions.users.first()
-        const playerId = person ? person.user.id : maid
+        const playerId = person ? person.id : maid
         const player = await Player.findOne({ where: { id: playerId } })
 
         if (person && player.duelingBook) return message.channel.send(`${player.name}'s DuelingBook name is: ${player.duelingBook}.`)
-        if (person && !player.duelingBook) return message.channel.send(`${player.name} does not have a DuelingBook name our the database.`)
+        if (person && !player.duelingBook) return message.channel.send(`${player.name} does not have a DuelingBook name in our the database.`)
 
         if (messageArray.length > 1) {
             player.duelingBook = messageArray.slice(1, messageArray.length).join(' ')
