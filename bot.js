@@ -127,7 +127,7 @@ client.on('message', async (message) => {
         if (person && player.duelingBook) return message.channel.send(`${player.name}'s DuelingBook name is: ${player.duelingBook}.`)
         if (person && !player.duelingBook) return message.channel.send(`${player.name} does not have a DuelingBook name our the database.`)
 
-        if (messageArray.length) {
+        if (messageArray.length > 1) {
             player.duelingBook = messageArray.slice(1, messageArray.length).join(' ')
             await player.save()
             return message.channel.send(`Your DuelingBook username has been set to: ${player.duelingBook}.`)
