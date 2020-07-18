@@ -120,11 +120,22 @@ client.on('message', async (message) => {
 
     //DUELINGBOOK NAME
     if (cmd === `!db` || cmd === `!dbname`) {
-        const player = await Player.findOne({ where: { id: maid } })
-	    player.duelingBook = messageArray.slice(1, messageArray.length).join(' ')
-        await player.save()
-           
-        return message.channel.send(`Your DuelingBook username has been set to: ${player.duelingBook}.`)
+        const person = message.mentions.users.first()
+        const playerId = person ? person.user.id : maid
+        const player = await Player.findOne({ where: { id: playerId } })
+
+        if (person && player.duelingBook) return message.channel.send(`${player.name}'s DuelingBook name is: ${player.duelingBook}.`)
+        if (person && !player.duelingBook) return message.channel.send(`${player.name} does not have a DuelingBook name our the database.`)
+
+        if (messageArray.length) {
+            player.duelingBook = messageArray.slice(1, messageArray.length).join(' ')
+            await player.save()
+            return message.channel.send(`Your DuelingBook username has been set to: ${player.duelingBook}.`)
+        } else if ( player.duelingBook) {
+            return message.channel.send(`Your DuelingBook username is: ${player.duelingBook}.`)
+        } else {
+            return message.channel.send(`You do not have a DuelingBook username registered to our database. Please use the command **!db** followed by your DuelingBook username to register it.`)
+        }
     }
 
 
