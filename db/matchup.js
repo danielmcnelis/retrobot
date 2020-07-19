@@ -5,17 +5,15 @@ const db = require('./db');
 const Matchup = db.define('matchup', {
     format: {
         type: Sequelize.STRING,   
-        allowNull: false
+        allowNull: true
     },
     winningType: {
         type: Sequelize.STRING,   
-        defaultValue: 'other',   
-        allowNull: false
+        allowNull: true
     },
     losingType: {
         type: Sequelize.STRING,     
-        defaultValue: 'other',
-        allowNull: false
+        allowNull: true
     },
     wasTournament: {     
         type: Sequelize.BOOLEAN,  
