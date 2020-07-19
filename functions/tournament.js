@@ -317,14 +317,43 @@ const addMatchResult = async (message, matches, participants, loser, winner, for
                     losingPlayersRecord.stats -= delta
                     winningPlayersRecord.wins++
                     losingPlayersRecord.losses++
-                    await winningPlayersRecord.save()
-                    await losingPlayersRecord.save()
-                    await Match.create({ format: formatDatabase, winner: winner.user.id, loser: loser.user.id, delta })
-                    await Matchup.create({ format: formatDatabase, winningType: winningPlayer.tournament.type, losingType: losingPlayer.tournament.type, wasTournament: true, tournamentName: status['tournament'] })
+                    try {
+                        await winningPlayersRecord.save()
+                        await losingPlayersRecord.save()
+                    } catch (err) {
+                        console.log('error saving player records')
+                    }
+
+                    console.log(`formatDatabase`, formatDatabase)
+                    console.log(`winner.user.id`, winner.user.id)
+                    console.log(`loser.user.id`, loser.user.id)
+                    console.log(`delta`, delta)
+                    console.log(`winningPlayer.tournament.type`, winningPlayer.tournament.type)
+                    console.log(`losingPlayer.tournament.type`, losingPlayer.tournament.type)
+                    console.log(`status['tournament']`, status['tournament'])
+                    
+                    try {
+                        await Match.create({ format: formatDatabase, winner: winner.user.id, loser: loser.user.id, delta })
+                    } catch (err) {
+                        console.log('error creating Match')
+                    }
+
+                    try {
+                        await Matchup.create({ format: formatDatabase, winningType: winningPlayer.tournament.type, losingType: losingPlayer.tournament.type, wasTournament: true, tournamentName: status['tournament'] })
+                    } catch (err) {
+                        console.log('error creating Match')
+                    }
 
                     const entry = await Tournament.findOne({ where: { playerId: loser.user.id } })
+                    
+                    console.log(`entry`, entry)
                     entry.losses++
-                    await entry.save()
+
+                    try {
+                        await entry.save()
+                    } catch (err) {
+                        console.log('error saving entry')
+                    }
                          
                     message.channel.send(`<@${loser.user.id}>, Your ${formatName} tournament loss to ${winner.user.username} has been recorded.`)
                     return setTimeout(function() {
