@@ -17,7 +17,6 @@ const Matchup = db.define('matchup', {
     },
     wasTournament: {     
         type: Sequelize.BOOLEAN,  
-        defaultValue: false,
         allowNull: false
     },
     tournamentName: {     
