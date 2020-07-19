@@ -348,6 +348,7 @@ const addMatchResult = async (message, matches, participants, loser, winner, for
                         })
                     } catch (err) {
                         console.log('error creating Matchup')
+                        console.log(err)
                     }
 
                     const entry = await Tournament.findOne({ where: { playerId: loser.user.id } })
