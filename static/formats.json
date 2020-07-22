@@ -25,7 +25,7 @@
         "name": "Yata",
         "channel": "629462597745246248",
         "role": "459480807224901632",
-        "emoji": "<:yata:647217845494874139>"
+        "emoji": "<:yata:735547725520699402>"
     },
     "vampire": {
         "database": "Vampire",
@@ -46,7 +46,7 @@
         "name": "Chaos Warrior",
         "channel": "629462693274845194",
         "role": "546392781590102027",
-        "emoji": "<:ddwl:647204024189321228>"
+        "emoji": "<:ddwl:735528629307572246>"
     },
     "goat": {
         "database": "Goat",
@@ -67,7 +67,7 @@
         "name": "Reaper",
         "channel": "629462875521679380",
         "role": "546392530611077130",
-        "emoji": "<:reaper:729186203324252180>"
+        "emoji": "<:reaper:735544999072235580>"
     },
     "chaosReturn": {
         "database": "ChaosReturn",
@@ -200,7 +200,7 @@
         "name": "Baby Ruler",
         "channel": "629464410930282516",
         "role": "459480892943892500",
-        "emoji": "<:tidal:647204025238028329>"
+        "emoji": "<:tidal:735538991780069406>"
     },
     "ravineRuler": {
         "database": "RavineRuler",
@@ -249,7 +249,7 @@
         "name": "Charleston",
         "channel": "729137398872801342",
         "role": "729146837562294273",
-        "emoji": "<:tgu:729192950499639347>"
+        "emoji": "<:tgu:735539310656225281>"
     },
     "nekroz": {
         "database": "Nekroz",
@@ -312,7 +312,7 @@
         "name": "Link Zoo",
         "channel": "629465523482132481",
         "role": "584220882440814636",
-        "emoji": "<:missus:729532894808375326>"
+        "emoji": "<:missus:735526114495037581>"
     },
     "quickFix": {
         "database": "QuickFix",
@@ -333,7 +333,7 @@
         "name": "Magician",
         "channel": "629465563936325652",
         "role": "546393643422842900",
-        "emoji": "<:tuning:729202132670218251>"
+        "emoji": "<:tuning:735527789045874699>"
     },
     "gouki": {
         "database": "Gouki",
@@ -347,7 +347,7 @@
         "name": "Danger",
         "channel": "629465630227169290",
         "role": "584223398973145089",
-        "emoji": "<:jackalope:729527849601466368>"
+        "emoji": "<:jackalope:735527788760531016>"
     },
     "prankKids": {
         "database": "PrankKids",
@@ -375,7 +375,7 @@
         "name": "Lunalight Orcust",
         "channel": "726186104478236682",
         "role": "729145671214563339",
-        "emoji": "<:lunatiger:729537169877893202>"
+        "emoji": "<:lunatiger:735526554008027180>"
     },
     "strikerOrcust": {
         "database": "StrikerOrcust",
