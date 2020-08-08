@@ -998,4 +998,95 @@ ${player2.name} has won ${p2Wins}x`)
 
         message.channel.send(`The recalculation of ${allPlayers.length} players' stats is complete!`)
     }
+
+
+    //WINNERS	
+    if (cmd === `!winners`) { 	
+        console.log('winners...')	
+        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")	
+
+        const labels = Object.keys(OldData)	
+        let winner	
+        let z = 0	
+
+        for (let i = 0; i < labels.length; i++) {	
+            const format = OldData[labels[i]]	
+
+            for (let j = 0; j < format.length; j++) {	
+                const record = format[j].Result	
+
+                if (record.includes(">")) {
+                    winner = record.substring(0, record.indexOf(">"))
+                } else {
+                    winner = record.substring(record.indexOf("<") + 1)
+                }
+
+                z++	
+
+                revive(winner, z)	
+            }	
+        }	
+    }	
+
+    //LOSERS	
+    if (cmd === `!losers`) { 	
+        console.log('losers...')	
+        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")	
+
+        const labels = Object.keys(OldData)	
+        let loser	
+        let z = 0	
+
+        for (let i = 0; i < labels.length; i++) {	
+            const format = OldData[labels[i]]	
+
+            for (let j = 0; j < format.length; j++) {	
+                const record = format[j].Result	
+
+                if (record.includes(">")) {
+                    loser = record.substring(record.indexOf(">") + 1)
+                } else {
+                    loser = record.substring(0, record.indexOf("<"))
+                }
+
+                z++	
+
+                revive(loser, z)	
+            }	
+        }	
+    }	
+
+
+
+    //IMPORT	
+    if (cmd === `!import`) { 	
+        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")	
+
+        const labels = Object.keys(OldData)	
+        let winner	
+        let loser	
+        let z = 0	
+
+        for (let i = 0; i < labels.length; i++) {	
+            const format = labels[i]	
+            console.log('format', format)	
+            for (let j = 0; j < OldData[format].length; j++) {	
+                const record = OldData[format][j].Result	
+                
+
+                if (record.includes(">")) {
+                    winner = record.substring(0, record.indexOf(">"))
+                    loser = record.substring(record.indexOf(">") + 1)
+                } else {
+                    winner = record.substring(record.indexOf("<") + 1)
+                    loser = record.substring(0, record.indexOf("<"))
+                }
+
+                z++	
+
+                restore(winner, loser, format, z)	
+            }	
+        }	
+    }
+
 })
