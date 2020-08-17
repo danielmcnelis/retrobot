@@ -970,6 +970,8 @@ ${player2.name} has won ${p2Wins}x`)
             }
         })
 
+        console.log('allMatches', allMatches)
+
         allPlayers.forEach(async function (player) {
             await player.update({
                 stats: 500,
@@ -979,21 +981,34 @@ ${player2.name} has won ${p2Wins}x`)
             })
         })
 
+        let count = 1;
+
         allMatches.forEach(async function (match) {
-            const winner = await allPlayers.find(player => player.id === match.winner)
-            const loser = await allPlayers.find(player => player.id === match.loser)
-            const statsLoser = loser.stats
-            const statsWinner = winner.stats
-            winner.backup = statsWinner
-            loser.backup = statsLoser
-            const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
-            winner.stats += delta
-            loser.stats -= delta
-            winner.wins++
-            loser.losses++
-            await winner.save()
-            await loser.save()
-            await match.update(delta)
+            try {
+                console.log('count', count)
+                count++
+                console.log('match', match)
+                const winner = await allPlayers.find(player => player.id === match.winner)
+                const loser = await allPlayers.find(player => player.id === match.loser)
+    
+                console.log('winner', winner)
+                console.log('loser', loser)
+    
+                const statsLoser = loser.stats
+                const statsWinner = winner.stats
+                winner.backup = statsWinner
+                loser.backup = statsLoser
+                const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
+                winner.stats += delta
+                loser.stats -= delta
+                winner.wins++
+                loser.losses++
+                await winner.save()
+                await loser.save()
+                await match.update(delta)
+            } catch (err) {
+                console.log(err)
+            }
         })
 
         message.channel.send(`The recalculation of ${allPlayers.length} players' stats is complete!`)
