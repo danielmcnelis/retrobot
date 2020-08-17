@@ -970,8 +970,6 @@ ${player2.name} has won ${p2Wins}x`)
             }
         })
 
-        console.log('allMatches', allMatches)
-
         allPlayers.forEach(async function (player) {
             await player.update({
                 stats: 500,
@@ -983,20 +981,12 @@ ${player2.name} has won ${p2Wins}x`)
 
         let z = 0;
 
-        allMatches.forEach(async function (match) {
-            try {
-                console.log('winner', winner)
-                console.log('loser', loser)
-
-                z++
-
-                restore(match.winner, match.loser, formatDatabase, z)	
-            } catch (err) {
-                console.log(err)
-            }
+        allMatches.forEach(function (match) {
+            z++
+            restore(match.winner, match.loser, formatDatabase, z)	
         })
 
-        message.channel.send(`The recalculation of ${allPlayers.length} players' stats is complete!`)
+        message.channel.send(`Recalculating data. Please wait...`)
     }
 
 
