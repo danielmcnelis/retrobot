@@ -981,31 +981,16 @@ ${player2.name} has won ${p2Wins}x`)
             })
         })
 
-        let count = 1;
+        let z = 0;
 
         allMatches.forEach(async function (match) {
             try {
-                console.log('count', count)
-                count++
-                console.log('match', match)
-                const winner = await allPlayers.find(player => player.id === match.winner)
-                const loser = await allPlayers.find(player => player.id === match.loser)
-    
                 console.log('winner', winner)
                 console.log('loser', loser)
-    
-                const statsLoser = loser.stats
-                const statsWinner = winner.stats
-                winner.backup = statsWinner
-                loser.backup = statsLoser
-                const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
-                winner.stats += delta
-                loser.stats -= delta
-                winner.wins++
-                loser.losses++
-                await winner.save()
-                await loser.save()
-                await match.update(delta)
+
+                z++
+
+                restore(match.winner, match.loser, formatDatabase, z)	
             } catch (err) {
                 console.log(err)
             }

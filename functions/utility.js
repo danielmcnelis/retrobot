@@ -119,7 +119,7 @@ const restore = async (winner, loser, format, z) => {
         await winnersRow.save()
         await losersRow.save()
         await Match.create({ format: format, winner: winner, loser: loser, delta })
-        console.log(`Mactch ${z}: a ${format} format loss by ${loser} to ${winner} has been added to the database.`)
+        console.log(`Match ${z}: a ${format} format loss by ${loser} to ${winner} has been added to the database.`)
     }, z*100)
 }
 
