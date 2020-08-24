@@ -72,16 +72,20 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
             if (types[elem].includes(collected.first().content.toLowerCase())) {
                 success = true
                 if (resubmission) {
-                    const tourDeck = await Tournament.findOne({
-                        where: { playerId: member.user.id }
-                    })
-                    await tourDeck.update({
-                        url,
-                        name: collected.first().content.toLowerCase(),
-                        playerId: member.user.id,
-                        type: elem,
-                        category: getCat(elem)
-                    })
+                    try {
+                        const tourDeck = await Tournament.findOne({
+                            where: { playerId: member.user.id }
+                        })
+    
+                        await tourDeck.update({
+                            url,
+                            name: collected.first().content.toLowerCase(),
+                            type: elem,
+                            category: getCat(elem)
+                        })
+                    } catch (err) {
+                        console.log(err)
+                    }
                 } else {
                     await Tournament.create({
                         url,
@@ -94,11 +98,11 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
                 }
 
                 sendToTournamentChannel(client, member, url, types[elem][0])
-                return member.user.send(`Thanks! I have your ${types[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+                return member.user.send(`Thanks! I have your ${types[elem][0]} deck list for the tournament.`)
             }
         })
 
-        if (!success) {
+        if (!success && !resubmission) {
             await Tournament.create({
                 url,
                 pilot: member.user.username,
@@ -109,6 +113,24 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
             })
             sendToTournamentChannel(client, member, url, 'Other')
             return member.user.send(`Thanks! I have your ${collected.first().content} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+        } else if (!success && resubmission) {
+                    try {
+                        const tourDeck = await Tournament.findOne({
+                            where: { playerId: member.user.id }
+                        })
+    
+                        await tourDeck.update({
+                            url,
+                            name: collected.first().content.toLowerCase(),
+                            type: 'other',
+                            category: 'other'
+                        })
+
+                        sendToTournamentChannel(client, member, url, 'Other')
+                        return member.user.send(`Thanks! I have your ${collected.first().content} deck list for the tournament.`)
+                    } catch (err) {
+                        console.log(err)
+                    }
         }
     }).catch(err => {    
     console.log(err)
@@ -120,7 +142,7 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
 
 //SEND TO TOURNAMENT CHANNEL
 const sendToTournamentChannel = async (client, member, deckUrl, deckType) => {
-    return client.channels.cache.get(registrationChannel).send(`<@${member.user.id}> submitted their ${deckType} deck list for the tournament. Please confirm this deck is legal and accurately labeled, then add ${member.user.name} to the bracket using the **!signup** command:
+    return client.channels.cache.get(registrationChannel).send(`<@${member.user.id}> submitted their ${deckType} deck list for the tournament. Please confirm this deck is legal and accurately labeled, then add ${member.user.username} to the bracket using the **!signup** command:
 ${deckUrl}`)
 }
 
@@ -155,12 +177,12 @@ const getUpdatedDeckURL = async (client, message, member, resubmission = false) 
         time: 180000
     }).then(collected => {
         if (collected.first().content.startsWith("https://i.imgur")) {
-            return getDeckTypeTournament(client, message, member, collected.first().content)
+            return getDeckTypeTournament(client, message, member, collected.first().content, true)
         } else if (collected.first().content.startsWith("https://imgur")) {
             const str = collected.first().content
             const newStr = str.substring(8, str.length)
             const url = "https://i." + newStr + ".png";
-            return getDeckTypeTournament(client, message, member, url)          
+            return getDeckTypeTournament(client, message, member, url, true)          
         } else {
             return member.user.send("Sorry, I only accept imgur.com links.")
         }
