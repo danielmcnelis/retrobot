@@ -14,6 +14,7 @@ const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
 const { mutedPeople } = require('./static/muted.json')
+const muted = require('./static/muted.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Nova, Rebirth  } = require('./db/index.js')
 const { capitalize, restore, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
 const { askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
@@ -173,7 +174,32 @@ client.on('message', async (message) => {
         const playerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
 
         if (!message.member.roles.cache.some(role => role.id === muteRole)) {
-            message.member.roles.add(formats[key].role)
+            message.member.roles.add(mutedRole)
+
+            muted['mutedPeople'] = muted['mutedPeople'].push(playerId)
+            fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
+                if (err) console.log(err)
+            })
+            return message.channel.send(`${message.member.username} now has the Mute role.`)
+        } else {
+            return message.channel.send(`That user is already muted.`)
+        }
+    }
+    
+    //UNMUTE
+    if(cmd.toLowerCase() === `!unmute`) {
+        if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
+        if (!messageArray.length) return message.channel.send(`Please tag the User you wish to unmute.`)
+        const playerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
+
+        if (message.member.roles.cache.some(role => role.id === muteRole)) {
+            message.member.roles.remove(mutedRole)
+            
+            const filteredMutes = mutedPeople.filter(people => people !== playerId)
+            muted['mutedPeople'] = filteredMutes
+            fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
+                if (err) console.log(err)
+            })
             return message.channel.send(`${message.member.username} now has the Mute role.`)
         } else {
             return message.channel.send(`That user is already muted.`)
