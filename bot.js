@@ -7,14 +7,14 @@ const fs = require('fs')
 const { Op } = require('sequelize')
 const OldData = require('./static/oldData.json')
 const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, FL, approve } = require('./static/emojis.json')
-const { pfpcom, botcom, rolecom, statscom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
+const { pfpcom, botcom, rolecom, statscom, profcom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
 const { botRole, tourRole, politicsRole } = require('./static/roles.json')
 const { welcomeChannel, registrationChannel, deckListsChannel, replayLinksChannel, politicsChannel } = require('./static/channels.json')
 const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Nova, Rebirth  } = require('./db/index.js')
-const { capitalize, restore, revive, createPlayer, isNewUser, isAdmin, isMod } = require('./functions/utility.js')
+const { capitalize, restore, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
 const { askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
 const { client, challongeClient } = require('./static/clients.js')
@@ -102,7 +102,7 @@ client.on('message', async (message) => {
     
 
     //AVATAR
-    if (pfpcom.includes(cmd)) {
+    if (pfpcom.includes(cmd.toLowerCase())) {
         let person = message.mentions.users.first()
         let reply = person ? person.displayAvatarURL() : message.author.displayAvatarURL()
         return message.channel.send(reply)
@@ -110,7 +110,7 @@ client.on('message', async (message) => {
 
 
     //NAME
-    if (cmd === `!name`) {
+    if (cmd.toLowerCase() === `!name`) {
         const playerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
         const member = message.guild.members.cache.get(playerId)
         const player = await Player.findOne({ where: { id: playerId } })
@@ -119,7 +119,7 @@ client.on('message', async (message) => {
 
 
     //DUELINGBOOK NAME
-    if (cmd === `!db` || cmd === `!dbname`) {
+    if (cmd.toLowerCase() === `!db` || cmd.toLowerCase() === `!dbname`) {
         const person = message.mentions.users.first()
         const playerId = person ? person.id : maid
         const player = await Player.findOne({ where: { id: playerId } })
@@ -140,7 +140,7 @@ client.on('message', async (message) => {
 
 
     //CLEAR
-    if (cmd === `!clear`) {
+    if (cmd.toLowerCase() === `!clear`) {
         if(!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
 
         message.channel.fetchMessages()
@@ -150,19 +150,19 @@ client.on('message', async (message) => {
     }
 
     //POLITICS
-    if(cmd === `!politics`) {
+    if(cmd.toLowerCase() === `!politics`) {
         if(!message.member.roles.cache.some(role => role.id === politicsRole)) {
         message.member.roles.add(politicsRole)
-        return message.channel.send(`I have added you to the Politics role. You can now learn about ~~communism~~ neoliberalism from Noelle in ${politicsChannel}.`) }
+        return message.channel.send(`I have added you to the Politics role. You can now learn about ~~communism~~ neoliberalism from Noelle in <#${politicsChannel}>.`) }
         
         else {
         message.member.roles.remove(politicsRole)
-        return message.channel.send(`I have removed you from the Politics role. You no longer have to read MMF’s rants in ${politicsChannel}.`) }
+        return message.channel.send(`I have removed you from the Politics role. You no longer have to read MMF’s rants in <#${politicsChannel}>.`) }
     }
     
     
     //ROLE
-    if (rolecom.includes(cmd)) {
+    if (rolecom.includes(cmd.toLowerCase())) {
         keys.forEach(function(key) {
             if(message.channel.id === formats[key].channel) {
                 if (!message.member.roles.cache.some(role => role.id === formats[key].role)) {
@@ -178,7 +178,7 @@ client.on('message', async (message) => {
 
 
     //BOT USER GUIDE
-    if (botcom.includes(cmd)) {
+    if (botcom.includes(cmd.toLowerCase())) {
         console.log
         const botEmbed = new Discord.MessageEmbed()
 	        .setColor('#38C368')
@@ -197,7 +197,7 @@ client.on('message', async (message) => {
     }
 
     //MOD USER GUIDE
-    if (cmd === `!mod`) {
+    if (cmd.toLowerCase() === `!mod`) {
         if (!isMod(message.member)) {
             return message.channel.send("You do not have permission to do that.")
         } 
@@ -219,7 +219,7 @@ client.on('message', async (message) => {
 
 
     //FORMATS
-    if(cmd === `!formats`) {
+    if(cmd.toLowerCase() === `!formats`) {
         const formatsEmbed = new Discord.RichEmbed()
             .setColor('#38C368')
             .setURL('https://formatlibrary.com/')
@@ -239,7 +239,7 @@ client.on('message', async (message) => {
 
 
     //CHALLONGE - CREATE
-    if (cmd === `!create`) {
+    if (cmd.toLowerCase() === `!create`) {
         const member = message.guild.members.cache.get(maid)
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
         function getRandomString(length, chars) {
@@ -300,7 +300,7 @@ client.on('message', async (message) => {
 
 
     //CHALLONGE - DESTROY
-    if (cmd === `!destroy`) {
+    if (cmd.toLowerCase() === `!destroy`) {
         if (!isAdmin(message.member)) return message.channel.send('You do not have permission to do that.')
         const name = (args[0] ? args[0] : status['tournament'])
         await challongeClient.tournaments.destroy({
@@ -323,7 +323,7 @@ client.on('message', async (message) => {
     }
 
     //CHALLONGE - END
-    if (cmd === `!end`) {
+    if (cmd.toLowerCase() === `!end`) {
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
         const name = (args[0] ? args[0] : status['tournament'])
 
@@ -369,7 +369,7 @@ client.on('message', async (message) => {
 
 
     //CHALLONGE - SHOW
-    if (cmd === `!show`) {
+    if (cmd.toLowerCase() === `!show`) {
         const name = (args[0] ? args[0] : status['tournament'])
         if (!name) {
             return message.channel.send('There is no active tournament.')
@@ -388,7 +388,7 @@ client.on('message', async (message) => {
     }
 
     //CHALLONGE - START
-    if (cmd === `!start`) {
+    if (cmd.toLowerCase() === `!start`) {
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
         const unregistered = await Tournament.findAll({ where: { participantId: null } })
         if (unregistered.length) return message.channel.send('One of more players has not been signed up. Please check the Database.')
@@ -440,7 +440,7 @@ client.on('message', async (message) => {
 
 
     //CHALLONGE - DECK SHEET
-    if (cmd === `!decksheet`) {
+    if (cmd.toLowerCase() === `!decksheet`) {
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
         const unregistered = await Tournament.findAll({ where: { participantId: null } })
         if (unregistered.length) return message.channel.send('One of more players has not been signed up. Please check the Database.')
@@ -483,7 +483,7 @@ client.on('message', async (message) => {
 
 
     //CHALLONGE - JOIN
-    if (cmd === `!join`) {
+    if (cmd.toLowerCase() === `!join`) {
         const name = status['tournament']
         const member = message.guild.members.cache.get(maid)
         if (!name) return message.channel.send('There is no active tournament.')
@@ -518,7 +518,7 @@ client.on('message', async (message) => {
     }
 
     //CHALLONGE - SIGN UP
-    if (cmd === `!signup`) {
+    if (cmd.toLowerCase() === `!signup`) {
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that. Please use the command **!join** instead.')
         
         const name = status['tournament']
@@ -565,7 +565,7 @@ client.on('message', async (message) => {
 
 
     //CHALLONGE - REMOVE
-    if (cmd === `!remove`) {
+    if (cmd.toLowerCase() === `!remove`) {
         const name = status['tournament']
         const person = message.mentions.users.first()
         const member = message.guild.members.cache.get(person.id)
@@ -588,7 +588,7 @@ client.on('message', async (message) => {
 
 
     //CHALLONGE - DROP
-    if (cmd === `!drop`) {
+    if (cmd.toLowerCase() === `!drop`) {
         const name = status['tournament']
         const person = message.author
         if (!name) return message.channel.send('There is no active tournament.')
@@ -608,7 +608,7 @@ client.on('message', async (message) => {
 
 
     //CHALLONGE - INSPECT
-    if (cmd === `!inspect`) {
+    if (cmd.toLowerCase() === `!inspect`) {
         if (!isAdmin(message.member)) return message.channel.send('You do not have permission to do that.')
         let elem = (args[0] ? args[0] : 'tournament')
         let name = (args[1] ? args[1] : status['tournament'])
@@ -656,7 +656,7 @@ client.on('message', async (message) => {
 
 
     //STATS
-    if (statscom.includes(cmd)) {
+    if (statscom.includes(cmd.toLowerCase())) {
         const playerId = (messageArray.length === 1 ? maid : messageArray[1].replace(/[\\<>@#&!]/g, ""))
         const player = await Player.findOne({ where: { id: playerId } })
 
@@ -705,8 +705,53 @@ Elo Rating: ${record.stats.toFixed(2)}`)
     }
 
 
+
+    //PROFILE
+    if (profcom.includes(cmd.toLowerCase())) {
+        const playerId = (messageArray.length === 1 ? maid : messageArray[1].replace(/[\\<>@#&!]/g, ""))
+        const player = await Player.findOne({ where: { id: playerId } })
+
+        if (!player && maid === playerId) {
+            createPlayer(member.user.id, member.user.username, member.user.tag);
+            return message.channel.send("I added you to the Format Library database. Please try again.")
+        } else if (!player && maid !== playerId) {
+            return message.channel.send("That user is not in the Format Library database.")
+        }
+
+        let legends = '';
+        let masters = '';
+        let diamonds = '';
+        let platinums = '';
+
+        let vault = {}
+
+        keys.forEach(async function(key) {
+            if(message.channel.id === formats[key].channel) {
+                const record = await eval(formatDatabase).findOne({ 
+                    where: {
+                        [Op.or]: [ { wins: { [Op.gt]: 0 } }, { losses: { [Op.gt]: 0 } } ]
+                    }
+                })
+
+                console.log(`record.stats for ${formats[key].name} format = ${record.stats}`)
+
+                const medal = getMedal(record.stats)
+                vault[formats[key].emoji] = medal
+                if (medal === lgnd) legends += ` ${lgnd}`
+                if (medal === mast) masters += ` ${mast}`
+                if (medal === dia) diamonds += ` ${dia}`
+                if (medal === plat) platniums += ` ${plat}`
+            }
+        })
+
+        console.log('vault', vault)
+
+        return `You have the following medals:\n ${legends + masters + diamonds + platinums}`
+    }
+
+
     //RANK
-    if (rankcom.includes(cmd)) {
+    if (rankcom.includes(cmd.toLowerCase())) {
         const x = parseInt(args[0])
         let result = []
         x === 1 ? result[0] = `${formatEmoji} --- The Best ${formatName} Player --- ${formatEmoji}`
@@ -726,17 +771,6 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         if (x > allPlayers.length) return message.channel.send(`I need a smaller number. We only have ${allPlayers.length} ${formatName} Format players.`)
     
         const topPlayers = allPlayers.slice(0, x)
-        const getMedal = (stats) => {
-            return stats <= 290 ? sad
-            : (stats > 290 && stats <= 350) ? rock
-            : (stats > 350 && stats <= 410) ? bron
-            : (stats > 410 && stats <= 470) ? silv
-            : (stats > 470 && stats <= 530) ? gold
-            : (stats > 530 && stats <= 590) ? plat
-            : (stats > 590 && stats <= 650) ? dia
-            : (stats > 650 && stats <= 710) ? mast
-            : lgnd
-        }
     
         for (let i = 0; i < x; i++) { 
             result[i+1] = `${(i+1)}. ${getMedal(topPlayers[i].stats)} ${topPlayers[i].player.name}`
@@ -751,7 +785,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
 
 
     //LOSS
-    if (losscom.includes(cmd)) {
+    if (losscom.includes(cmd.toLowerCase())) {
         const oppo = messageArray[1].replace(/[\\<>@#&!]/g, "")
         const winner = message.guild.members.cache.get(oppo)
         const loser = message.guild.members.cache.get(maid)
@@ -807,7 +841,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
 
 
     //MANUAL
-    if (cmd === `!manual`) {
+    if (cmd.toLowerCase() === `!manual`) {
         const winnerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
         const loserId = messageArray[2].replace(/[\\<>@#&!]/g, "")
         const winner = message.guild.members.cache.get(winnerId)
@@ -864,7 +898,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
 
 
     //H2H
-    if (h2hcom.includes(cmd)) {
+    if (h2hcom.includes(cmd.toLowerCase())) {
         if (messageArray.length === 1) return message.channel.send("Please specify at least 1 other player.")
         if (messageArray.length > 3) return message.channel.send("You may only compare 2 players at a time.")
         const player1Id = messageArray[1].replace(/[\\<>@#&!]/g, "")
@@ -889,7 +923,7 @@ ${player2.name} has won ${p2Wins}x`)
 
 
     //UNDO
-    if (undocom.includes(cmd)) {
+    if (undocom.includes(cmd.toLowerCase())) {
         const allMatches = await Match.findAll({
             where: {
                 format: formatDatabase
@@ -926,7 +960,7 @@ ${player2.name} has won ${p2Wins}x`)
 
 
     //CENSUS
-    if (cmd === `!census`) { 
+    if (cmd.toLowerCase() === `!census`) { 
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
         message.channel.send(`One moment please.`)
         const allMembers = await message.guild.members.fetch()
@@ -961,7 +995,7 @@ ${player2.name} has won ${p2Wins}x`)
 
 
     //RECALCULATE
-    if (cmd === `!recalculate` || cmd === `!recalc`) { 
+    if (cmd.toLowerCase() === `!recalculate` || cmd.toLowerCase() === `!recalc`) { 
         if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
         const allPlayers = await eval(formatDatabase).findAll()
         const allMatches = await Match.findAll({
@@ -991,7 +1025,7 @@ ${player2.name} has won ${p2Wins}x`)
 
 
     //WINNERS	
-    if (cmd === `!winners`) { 	
+    if (cmd.toLowerCase() === `!winners`) { 	
         console.log('winners...')	
         if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")	
 
@@ -1019,7 +1053,7 @@ ${player2.name} has won ${p2Wins}x`)
     }	
 
     //LOSERS	
-    if (cmd === `!losers`) { 	
+    if (cmd.toLowerCase() === `!losers`) { 	
         console.log('losers...')	
         if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")	
 
@@ -1049,7 +1083,7 @@ ${player2.name} has won ${p2Wins}x`)
 
 
     //IMPORT	
-    if (cmd === `!import`) { 	
+    if (cmd.toLowerCase() === `!import`) { 	
         if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")	
 
         const labels = Object.keys(OldData)	

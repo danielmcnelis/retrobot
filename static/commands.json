@@ -1,9 +1,10 @@
 {
-    "pfpcom": ["!pfp", "!profile", "!avatar"],
+    "pfpcom": ["!pfp", "!pic", "!avatar"],
     "botcom": ["!bot", "!help", "!info"],
     "rolecom": ["!role", "!rankedgoats"],
     "statscom": ["!stats", "!mystats", "!goatstats"],
-    "losscom": ["!lossvs","!loss","!lose","!goatloss","!goatlossvs","!goatlose"],
+    "profcom": ["!profile", "!prof"],
+    "losscom": ["!lossvs","!loss","!losevs","!lose","!lostvs","!lost","!goatloss","!goatlossvs"],
     "h2hcom": ["!h2h", "!head2head", "!headtohead"],
     "undocom": ["!undolast", "!undo", "!undoloss"],
     "rankcom": ["!rank", "!top", "!ladder"],

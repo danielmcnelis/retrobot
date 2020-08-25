@@ -2,6 +2,7 @@
 //FUNCTIONS FOR GOATBOT
 
 const { adminRole, modRole } = require('../static/roles.json')
+const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd } = require('../static/emojis.json')
 const Names = require('../static/names.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Nova, Rebirth  } = require('../db/index.js')
 const categories = require('../static/categories.json')
@@ -156,6 +157,19 @@ const getCat = (type) => {
     return category
 }
 
+//GET MEDAL
+const getMedal = (stats) => {
+    return stats <= 290 ? sad
+    : (stats > 290 && stats <= 350) ? rock
+    : (stats > 350 && stats <= 410) ? bron
+    : (stats > 410 && stats <= 470) ? silv
+    : (stats > 470 && stats <= 530) ? gold
+    : (stats > 530 && stats <= 590) ? plat
+    : (stats > 590 && stats <= 650) ? dia
+    : (stats > 650 && stats <= 710) ? mast
+    : lgnd
+}
+
 //CAPITALIZE
 const capitalize = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1)
@@ -168,6 +182,7 @@ module.exports = {
     isAdmin,
     isMod,
     getCat,
+    getMedal,
     restore,
     revive
 }
