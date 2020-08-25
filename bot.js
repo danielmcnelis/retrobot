@@ -726,20 +726,22 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         let vault = {}
 
         keys.forEach(async function(key) {
-                const record = await eval(formats[key].database).findOne({ 
-                    where: {
-                        [Op.or]: [ { wins: { [Op.gt]: 0 } }, { losses: { [Op.gt]: 0 } } ]
-                    }
-                })
+            console.log('formats[key]', formats[key])
+            console.log('formats[key].database', formats[key].database)
+            const record = await eval(formats[key].database).findOne({ 
+                where: {
+                    [Op.or]: [ { wins: { [Op.gt]: 0 } }, { losses: { [Op.gt]: 0 } } ]
+                }
+            })
 
-                console.log(`record.stats for ${formats[key].name} format = ${record.stats}`)
+            console.log(`record.stats for ${formats[key].name} format = ${record.stats}`)
 
-                const medal = getMedal(record.stats)
-                vault[formats[key].emoji] = medal
-                if (medal === lgnd) legends += ` ${lgnd}`
-                if (medal === mast) masters += ` ${mast}`
-                if (medal === dia) diamonds += ` ${dia}`
-                if (medal === plat) platniums += ` ${plat}`  
+            const medal = getMedal(record.stats)
+            vault[formats[key].emoji] = medal
+            if (medal === lgnd) legends += ` ${lgnd}`
+            if (medal === mast) masters += ` ${mast}`
+            if (medal === dia) diamonds += ` ${dia}`
+            if (medal === plat) platniums += ` ${plat}`  
         })
 
         console.log('vault', vault)
