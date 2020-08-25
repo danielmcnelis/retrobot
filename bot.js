@@ -752,7 +752,10 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         return setTimeout(function () {
             console.log('vault', vault)
             message.channel.send(`You have the following medals:\n ${legends + masters + diamonds + platinums}.`)
-            return message.channel.send(`Here is your vault:\n ${Object.entries(vault)}.`)
+            const medalEmbed = new Discord.RichEmbed()
+            .setThumbnail('https://i.imgur.com/deUr5ts.jpg')
+            .addField(vault)
+            return message.channel.send(medalEmbed)
         }, 1000)
     }
 
