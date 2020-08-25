@@ -726,11 +726,12 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         let vault = {}
 
         keys.forEach(async function(key) {
+            if (formats[key].name === 'Voice') return
             const formatDatabase = formats[key].database
             console.log('formatDatabase', formatDatabase)
             const record = await eval(formatDatabase).findOne({ 
                 where: {
-                    [Op.or]: [ { wins: { [Op.gt]: 0 } }, { losses: { [Op.gt]: 0 } } ]
+                    playerId: playerId
                 }
             })
 
