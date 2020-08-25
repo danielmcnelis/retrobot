@@ -166,6 +166,20 @@ client.on('message', async (message) => {
         return message.channel.send(`I have removed you from the Politics role. You no longer have to read MMF’s rants in <#${politicsChannel}>.`) }
     }
     
+    //MUTE
+    if(cmd.toLowerCase() === `!mute`) {
+        if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
+        if (!messageArray.length) return message.channel.send(`Please tag the User you wish to mute.`)
+        const playerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
+
+        if (!message.member.roles.cache.some(role => role.id === muteRole)) {
+            message.member.roles.add(formats[key].role)
+            return message.channel.send(`${message.member.username} now has the Mute role.`)
+        } else {
+            return message.channel.send(`That user is already muted.`)
+        }
+    }
+    
     
     //ROLE
     if (rolecom.includes(cmd.toLowerCase())) {
