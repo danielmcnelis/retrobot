@@ -726,8 +726,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         let vault = {}
 
         keys.forEach(async function(key) {
-            if(message.channel.id === formats[key].channel) {
-                const record = await eval(formatDatabase).findOne({ 
+                const record = await eval(formats[key].database).findOne({ 
                     where: {
                         [Op.or]: [ { wins: { [Op.gt]: 0 } }, { losses: { [Op.gt]: 0 } } ]
                     }
@@ -740,8 +739,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
                 if (medal === lgnd) legends += ` ${lgnd}`
                 if (medal === mast) masters += ` ${mast}`
                 if (medal === dia) diamonds += ` ${dia}`
-                if (medal === plat) platniums += ` ${plat}`
-            }
+                if (medal === plat) platniums += ` ${plat}`  
         })
 
         console.log('vault', vault)
