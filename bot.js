@@ -718,14 +718,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
             return message.channel.send("That user is not in the Format Library database.")
         }
 
-        let legends = '';
-        let masters = '';
-        let diamonds = '';
-        let platinums = '';
-
         let vault = {}
-        let vault2 = []
-
         try {
             keys.forEach(async function(key) {
                 if (formats[key].name === 'Voice') return
@@ -737,16 +730,10 @@ Elo Rating: ${record.stats.toFixed(2)}`)
                     }
                 })
     
-                console.log(`record.stats for ${formats[key].name} format = ${record.stats}`)
-
                 if (record.stats < 530) return
     
                 const medal = getMedal(record.stats)
                 vault[`${formats[key].emoji} ${formats[key].name}`] = medal
-                if (medal === lgnd) legends += ` ${lgnd}`
-                if (medal === mast) masters += ` ${mast}`
-                if (medal === dia) diamonds += ` ${dia}`
-                if (medal === plat) platinums += ` ${plat}`  
             })
         } catch (err) {
             console.log(err)
@@ -757,8 +744,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
                 return `${elem[0]}: ${elem[1]}`
             })
             console.log('vault2', vault2)
-            message.channel.send(`You have the following medals:\n ${legends + masters + diamonds + platinums}.`)
-            message.channel.send(`Here is your vault:`)
+            vault2.unshift(`${FL} --- ${player.name}'s Player Profile --- ${FL}`)
             message.channel.send(vault2.slice(0, 20))
             return message.channel.send(vault2.slice(20))
         }, 1000)
