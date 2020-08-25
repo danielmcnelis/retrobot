@@ -754,7 +754,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
             message.channel.send(`You have the following medals:\n ${legends + masters + diamonds + platinums}.`)
             const medalEmbed = new Discord.MessageEmbed()
             .setThumbnail('https://i.imgur.com/ul7nKjk.png')
-            .addField(Object.entries(vault))
+            .addField('Medals', Object.entries(vault))
             return message.channel.send(medalEmbed)
         }, 1000)
     }
