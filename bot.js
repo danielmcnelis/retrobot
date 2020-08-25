@@ -739,7 +739,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
                 console.log(`record.stats for ${formats[key].name} format = ${record.stats}`)
     
                 const medal = getMedal(record.stats)
-                vault[formats[key].emoji] = medal
+                vault[formats[key].name] = medal
                 if (medal === lgnd) legends += ` ${lgnd}`
                 if (medal === mast) masters += ` ${mast}`
                 if (medal === dia) diamonds += ` ${dia}`
