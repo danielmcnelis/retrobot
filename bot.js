@@ -725,29 +725,34 @@ Elo Rating: ${record.stats.toFixed(2)}`)
 
         let vault = {}
 
-        keys.forEach(async function(key) {
-            if (formats[key].name === 'Voice') return
-            const formatDatabase = formats[key].database
-            console.log('formatDatabase', formatDatabase)
-            const record = await eval(formatDatabase).findOne({ 
-                where: {
-                    playerId: playerId
-                }
+        try {
+            keys.forEach(async function(key) {
+                if (formats[key].name === 'Voice') return
+                const formatDatabase = formats[key].database
+                console.log('formatDatabase', formatDatabase)
+                const record = await eval(formatDatabase).findOne({ 
+                    where: {
+                        playerId: playerId
+                    }
+                })
+    
+                console.log(`record.stats for ${formats[key].name} format = ${record.stats}`)
+    
+                const medal = getMedal(record.stats)
+                vault[formats[key].emoji] = medal
+                if (medal === lgnd) legends += ` ${lgnd}`
+                if (medal === mast) masters += ` ${mast}`
+                if (medal === dia) diamonds += ` ${dia}`
+                if (medal === plat) platinums += ` ${plat}`  
             })
+        } catch (err) {
+            console.log(err)
+        }
 
-            console.log(`record.stats for ${formats[key].name} format = ${record.stats}`)
-
-            const medal = getMedal(record.stats)
-            vault[formats[key].emoji] = medal
-            if (medal === lgnd) legends += ` ${lgnd}`
-            if (medal === mast) masters += ` ${mast}`
-            if (medal === dia) diamonds += ` ${dia}`
-            if (medal === plat) platinums += ` ${plat}`  
-        })
-
-        console.log('vault', vault)
-
-        return `You have the following medals:\n ${legends + masters + diamonds + platinums}`
+        return setTimeout(function () {
+            console.log('vault', vault)
+            return message.channel.send(`You have the following medals:\n ${legends + masters + diamonds + platinums}`)
+        }, 1000)
     }
 
 
