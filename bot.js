@@ -724,6 +724,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         let platinums = '';
 
         let vault = {}
+        let vault2 = []
 
         try {
             keys.forEach(async function(key) {
@@ -752,11 +753,14 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         }
 
         return setTimeout(function () {
-            console.log('vault', Object.entries(vault))
+            let vault2 = Object.entries(vault).map(function(elem) {
+                return `${elem[0]}: ${elem[1]}`
+            })
+            console.log('vault2', vault2)
             message.channel.send(`You have the following medals:\n ${legends + masters + diamonds + platinums}.`)
             message.channel.send(`Here is your vault:`)
-            message.channel.send(Object.entries(vault).slice(0, 20))
-            return message.channel.send(Object.entries(vault).slice(20))
+            message.channel.send(vault2.slice(0, 20))
+            return message.channel.send(vault2.slice(20))
         }, 1000)
     }
 
