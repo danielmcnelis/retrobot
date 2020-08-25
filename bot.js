@@ -192,6 +192,9 @@ client.on('message', async (message) => {
         if (!messageArray.length) return message.channel.send(`Please tag the User you wish to unmute.`)
         const playerId = args[0].replace(/[\\<>@#&!]/g, "")
 
+        console.log('messageArray', messageArray)
+        console.log('args', args)
+
         if (message.member.roles.cache.some(role => role.id === muteRole)) {
             message.member.roles.remove(muteRole)
             
