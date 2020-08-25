@@ -6,13 +6,14 @@ const Discord = require('discord.js')
 const fs = require('fs')
 const { Op } = require('sequelize')
 const OldData = require('./static/oldData.json')
-const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, FL, approve } = require('./static/emojis.json')
+const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, FL, approve, lmfao } = require('./static/emojis.json')
 const { pfpcom, botcom, rolecom, statscom, profcom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
-const { botRole, tourRole, politicsRole } = require('./static/roles.json')
+const { muteRole, botRole, tourRole, politicsRole } = require('./static/roles.json')
 const { welcomeChannel, registrationChannel, deckListsChannel, replayLinksChannel, politicsChannel } = require('./static/channels.json')
 const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
+const { mutedPeople } = require('./static/muted.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Nova, Rebirth  } = require('./db/index.js')
 const { capitalize, restore, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
 const { askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
@@ -38,6 +39,11 @@ client.on('message', message => {
 client.on('guildMemberAdd', async (member) => {
     const channel = client.channels.cache.get(welcomeChannel)
     if (!channel) return
+    if (mutedPeople.includes(member.user.id)) {
+            message.member.roles.add(muteRole)
+            return message.channel.send(`${member} Nice mute evade idiot LOL! ${lmfao}`)
+        }
+
     if (await isNewUser(member.user.id)) {
         createPlayer(member.user.id, member.user.username, member.user.tag) 
         channel.send(`${member} Welcome to the FormatLibrary.com ${FL} Discord server! Use the command **!bot** to learn how to play rated games and join tournaments on this server. ${lgnd}`)
