@@ -730,7 +730,9 @@ Elo Rating: ${record.stats.toFixed(2)}`)
                     }
                 })
     
-                if (record.stats < 530) return
+                // if (record.stats < 530) return
+
+                if (!record.wins && !record.losses) return
     
                 const medal = getMedal(record.stats)
                 vault[`${formats[key].emoji} ${formats[key].name}`] = medal
