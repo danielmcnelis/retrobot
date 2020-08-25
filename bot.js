@@ -752,7 +752,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         return setTimeout(function () {
             console.log('vault', vault)
             message.channel.send(`You have the following medals:\n ${legends + masters + diamonds + platinums}.`)
-            return message.channel.send(`Here is your vault:\n ${vault}.`)
+            return message.channel.send(`Here is your vault:\n ${Object.entries(vault)}.`)
         }, 1000)
     }
 
