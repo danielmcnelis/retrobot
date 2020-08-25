@@ -742,7 +742,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
             if (medal === lgnd) legends += ` ${lgnd}`
             if (medal === mast) masters += ` ${mast}`
             if (medal === dia) diamonds += ` ${dia}`
-            if (medal === plat) platniums += ` ${plat}`  
+            if (medal === plat) platinums += ` ${plat}`  
         })
 
         console.log('vault', vault)
