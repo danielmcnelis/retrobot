@@ -737,9 +737,11 @@ Elo Rating: ${record.stats.toFixed(2)}`)
                 })
     
                 console.log(`record.stats for ${formats[key].name} format = ${record.stats}`)
+
+                if (record.stats < 530) return
     
                 const medal = getMedal(record.stats)
-                vault[formats[key].name] = medal
+                vault[`${formats[key].emoji} ${formats[key].name}`] = medal
                 if (medal === lgnd) legends += ` ${lgnd}`
                 if (medal === mast) masters += ` ${mast}`
                 if (medal === dia) diamonds += ` ${dia}`
@@ -752,8 +754,9 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         return setTimeout(function () {
             console.log('vault', vault)
             message.channel.send(`You have the following medals:\n ${legends + masters + diamonds + platinums}.`)
-            message.channel.send(`Here is your vault:\n ${Object.entries(vault).slice(0, 20)}`)
-            return message.channel.send(`${Object.entries(vault).slice(20)}`)
+            message.channel.send(`Here is your vault:`)
+            message.channel.send(Object.entries(vault).slice(0, 20))
+            return message.channel.send(Object.entries(vault).slice(20))
         }, 1000)
     }
 
