@@ -190,7 +190,7 @@ client.on('message', async (message) => {
     if(cmd.toLowerCase() === `!unmute`) {
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
         if (!messageArray.length) return message.channel.send(`Please tag the User you wish to unmute.`)
-        const playerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
+        const playerId = args[0].replace(/[\\<>@#&!]/g, "")
 
         if (message.member.roles.cache.some(role => role.id === muteRole)) {
             message.member.roles.remove(muteRole)
