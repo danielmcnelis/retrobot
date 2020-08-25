@@ -174,7 +174,7 @@ client.on('message', async (message) => {
         const playerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
 
         if (!message.member.roles.cache.some(role => role.id === muteRole)) {
-            message.member.roles.add(mutedRole)
+            message.member.roles.add(muteRole)
 
             muted['mutedPeople'] = muted['mutedPeople'].push(playerId)
             fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
@@ -193,7 +193,7 @@ client.on('message', async (message) => {
         const playerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
 
         if (message.member.roles.cache.some(role => role.id === muteRole)) {
-            message.member.roles.remove(mutedRole)
+            message.member.roles.remove(muteRole)
             
             const filteredMutes = mutedPeople.filter(people => people !== playerId)
             muted['mutedPeople'] = filteredMutes
