@@ -726,9 +726,9 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         let vault = {}
 
         keys.forEach(async function(key) {
-            console.log('formats[key]', formats[key])
-            console.log('formats[key].database', formats[key].database)
-            const record = await eval(formats[key].database).findOne({ 
+            const formatDatabase = formats[key].database
+            console.log('formatDatabase', formatDatabase)
+            const record = await eval(formatDatabase).findOne({ 
                 where: {
                     [Op.or]: [ { wins: { [Op.gt]: 0 } }, { losses: { [Op.gt]: 0 } } ]
                 }
