@@ -177,8 +177,12 @@ client.on('message', async (message) => {
             member.roles.add(muteRole)
 
             console.log('member.user.id', member.user.id)
+            console.log('mutedPeople', mutedPeople)
             
             const newMutes = mutedPeople.push(member.user.id)
+
+            console.log ('newMutes', newMutes)
+
             muted['mutedPeople'] = newMutes
             fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
                 if (err) console.log(err)
@@ -199,8 +203,12 @@ client.on('message', async (message) => {
             member.roles.remove(muteRole)
             
             console.log('member.user.id', member.user.id)
+            console.log('mutedPeople', mutedPeople)
 
             const filteredMutes = mutedPeople.filter(people => people !== member.user.id)
+
+            console.log('filteredMutes', filteredMutes)
+
             muted['mutedPeople'] = filteredMutes
             fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
                 if (err) console.log(err)
