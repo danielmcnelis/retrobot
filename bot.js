@@ -42,7 +42,7 @@ client.on('guildMemberAdd', async (member) => {
     if (!channel) return
     if (mutedPeople.includes(member.user.id)) {
             message.member.roles.add(muteRole)
-            return message.channel.send(`${member} Nice mute evade idiot LOL! ${lmfao}`)
+            return message.channel.send(`${member} Nice mute evasion, idiot. LOL! ${lmfao}`)
         }
 
     if (await isNewUser(member.user.id)) {
@@ -176,13 +176,13 @@ client.on('message', async (message) => {
         if (!member.roles.cache.some(role => role.id === muteRole)) {
             member.roles.add(muteRole)
 
-            console.log('person.user.id', person.user.id)
+            console.log('member.user.id', member.user.id)
             
             muted['mutedPeople'] = muted['mutedPeople'].push(person.user.id)
             fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
                 if (err) console.log(err)
             })
-            return message.channel.send(`${person.user.username} now has the Mute role.`)
+            return message.channel.send(`${member.user.username} now has the Mute role.`)
         } else {
             return message.channel.send(`That user is already muted.`)
         }
