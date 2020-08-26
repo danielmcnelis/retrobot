@@ -38,6 +38,10 @@ client.on('message', message => {
 //WELCOME
 client.on('guildMemberAdd', async (member) => {
     const channel = client.channels.cache.get(welcomeChannel)
+    let rawdata = fs.readFileSync('./static/muted.json')
+    let rawobj = JSON.parse(rawdata)
+    let mutedPeople = rawobj['mutedPeople']
+
     if (!channel) return
     if (mutedPeople.includes(member.user.id)) {
             message.member.roles.add(muteRole)
