@@ -170,7 +170,7 @@ client.on('message', async (message) => {
     //MUTE
     if(cmd.toLowerCase() === `!mute`) {
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
-        const person = message.mentions.users.first()
+        const person = message.mentions.members.first()
         if (!person) return message.channel.send(`Please tag the User you wish to mute.`)
 
         if (!person.roles.cache.some(role => role.id === muteRole)) {
@@ -189,7 +189,7 @@ client.on('message', async (message) => {
     //UNMUTE
     if(cmd.toLowerCase() === `!unmute`) {
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
-        const person = message.mentions.users.first()
+        const person = message.mentions.members.first()
         if (!person) return message.channel.send(`Please tag the User you wish to unmute.`)
 
         if (person.roles.cache.some(role => role.id === muteRole)) {
