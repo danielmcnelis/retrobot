@@ -205,7 +205,7 @@ client.on('message', async (message) => {
         if (!member) return message.channel.send(`Please tag the user you wish to unmute.`)
         let rawdata = fs.readFileSync('./static/muted.json')
         let rawobj = JSON.parse(rawdata)
-        let mutedPeople = rawdata['mutedPeople']
+        let mutedPeople = rawobj['mutedPeople']
 
         console.log('rawdata', rawdata)
         console.log('mutedPeople', mutedPeople)
