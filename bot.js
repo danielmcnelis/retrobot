@@ -170,24 +170,17 @@ client.on('message', async (message) => {
     //MUTE
     if(cmd.toLowerCase() === `!mute`) {
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
-        if (!messageArray.length) return message.channel.send(`Please tag the User you wish to mute.`)
-        const playerId = args[0].replace(/[\\<>@#&!]/g, "")
+        const person = message.mentions.users.first()
+        if (!person) return message.channel.send(`Please tag the User you wish to mute.`)
 
-        console.log('messageArray', messageArray)
-        console.log('args', args)
-        console.log('muteRole', muteRole)
-        console.log('mutedPeople', mutedPeople)
-        console.log('playerId', playerId)
-
-
-        if (!message.member.roles.cache.some(role => role.id === muteRole)) {
-            message.member.roles.add(muteRole)
-
-            muted['mutedPeople'] = muted['mutedPeople'].push(playerId)
+        if (!person.roles.cache.some(role => role.id === muteRole)) {
+            person.roles.add(muteRole)
+            
+            muted['mutedPeople'] = muted['mutedPeople'].push(person.user.id)
             fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
                 if (err) console.log(err)
             })
-            return message.channel.send(`${message.member.username} now has the Mute role.`)
+            return message.channel.send(`${person.username} now has the Mute role.`)
         } else {
             return message.channel.send(`That user is already muted.`)
         }
@@ -196,26 +189,20 @@ client.on('message', async (message) => {
     //UNMUTE
     if(cmd.toLowerCase() === `!unmute`) {
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
-        if (!messageArray.length) return message.channel.send(`Please tag the User you wish to unmute.`)
-        const playerId = args[0].replace(/[\\<>@#&!]/g, "")
+        const person = message.mentions.users.first()
+        if (!person) return message.channel.send(`Please tag the User you wish to unmute.`)
 
-        console.log('messageArray', messageArray)
-        console.log('args', args)
-        console.log('muteRole', muteRole)
-        console.log('mutedPeople', mutedPeople)
-        console.log('playerId', playerId)
-
-        if (message.member.roles.cache.some(role => role.id === muteRole)) {
-            message.member.roles.remove(muteRole)
+        if (person.roles.cache.some(role => role.id === muteRole)) {
+            person.roles.remove(muteRole)
             
             const filteredMutes = mutedPeople.filter(people => people !== playerId)
             muted['mutedPeople'] = filteredMutes
             fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
                 if (err) console.log(err)
             })
-            return message.channel.send(`${message.member.username} now has the Mute role.`)
+            return message.channel.send(`${person.username} now has the Mute role.`)
         } else {
-            return message.channel.send(`That user is already muted.`)
+            return message.channel.send(`That user is already unmuted.`)
         }
     }
     
