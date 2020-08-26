@@ -206,8 +206,7 @@ client.on('message', async (message) => {
             console.log('member.user.id', member.user.id)
             console.log('mutedPeople', mutedPeople)
 
-            const filteredMutes = mutedPeople
-            filteredMutes.filter(people => people !== member.user.id)
+            const filteredMutes = mutedPeople.filter(id => id !== member.user.id)
 
             console.log('filteredMutes', filteredMutes)
 
@@ -215,7 +214,7 @@ client.on('message', async (message) => {
             fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
                 if (err) console.log(err)
             })
-            return message.channel.send(`${member.user.username} now has the Mute role.`)
+            return message.channel.send(`${member.user.username} no longer has the Mute role.`)
         } else {
             return message.channel.send(`That user was not muted.`)
         }
