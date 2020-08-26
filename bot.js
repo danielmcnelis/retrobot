@@ -8,7 +8,7 @@ const { Op } = require('sequelize')
 const OldData = require('./static/oldData.json')
 const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, FL, approve, lmfao } = require('./static/emojis.json')
 const { pfpcom, botcom, rolecom, statscom, profcom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
-const { muteRole, botRole, tourRole, politicsRole } = require('./static/roles.json')
+const { bfpRole, muteRole, botRole, tourRole, politicsRole } = require('./static/roles.json')
 const { welcomeChannel, registrationChannel, deckListsChannel, replayLinksChannel, politicsChannel } = require('./static/channels.json')
 const types = require('./static/types.json')
 const status = require('./static/status.json')
@@ -161,6 +161,10 @@ client.on('message', async (message) => {
 
     //POLITICS
     if(cmd.toLowerCase() === `!politics`) {
+        if(message.member.roles.cache.some(role => role.id === bfpRole)) {
+            return message.channel.send(`You do not have permission to do that.`)
+        }
+
         if(!message.member.roles.cache.some(role => role.id === politicsRole)) {
         message.member.roles.add(politicsRole)
         return message.channel.send(`I have added you to the Politics role. You can now learn about ~~communism~~ neoliberalism from Noelle in <#${politicsChannel}>.`) }
@@ -179,18 +183,12 @@ client.on('message', async (message) => {
         let rawobj = JSON.parse(rawdata)
         let mutedPeople = rawobj['mutedPeople']
 
-        console.log('rawdata', rawdata)
-        console.log('mutedPeople', mutedPeople)
-
         if (!member.roles.cache.some(role => role.id === muteRole)) {
             member.roles.add(muteRole)
+            member.roles.remove(politicsRole)            
 
-            console.log('member.user.id', member.user.id)
-            
             const newMutes = mutedPeople
             newMutes.push(member.user.id)
-
-            console.log ('newMutes', newMutes)
 
             muted['mutedPeople'] = newMutes
             fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
@@ -211,17 +209,10 @@ client.on('message', async (message) => {
         let rawobj = JSON.parse(rawdata)
         let mutedPeople = rawobj['mutedPeople']
 
-        console.log('rawdata', rawdata)
-        console.log('mutedPeople', mutedPeople)
-
         if (member.roles.cache.some(role => role.id === muteRole)) {
             member.roles.remove(muteRole)
-            
-            console.log('member.user.id', member.user.id)
 
             const filteredMutes = mutedPeople.filter(id => id !== member.user.id)
-
-            console.log('filteredMutes', filteredMutes)
 
             muted['mutedPeople'] = filteredMutes
             fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
