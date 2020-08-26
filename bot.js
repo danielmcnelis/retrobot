@@ -179,7 +179,8 @@ client.on('message', async (message) => {
             console.log('member.user.id', member.user.id)
             console.log('mutedPeople', mutedPeople)
             
-            const newMutes = mutedPeople.push(member.user.id)
+            const newMutes = mutedPeople
+            newMutes.push(member.user.id)
 
             console.log ('newMutes', newMutes)
 
@@ -205,7 +206,8 @@ client.on('message', async (message) => {
             console.log('member.user.id', member.user.id)
             console.log('mutedPeople', mutedPeople)
 
-            const filteredMutes = mutedPeople.filter(people => people !== member.user.id)
+            const filteredMutes = mutedPeople
+            filteredMutes.filter(people => people !== member.user.id)
 
             console.log('filteredMutes', filteredMutes)
 
