@@ -170,8 +170,8 @@ client.on('message', async (message) => {
     //MUTE
     if(cmd.toLowerCase() === `!mute`) {
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
-        const person = message.mentions.members.first()
-        if (!person) return message.channel.send(`Please tag the user you wish to mute.`)
+        const member = message.mentions.members.first()
+        if (!member) return message.channel.send(`Please tag the user you wish to mute.`)
 
         if (!member.roles.cache.some(role => role.id === muteRole)) {
             member.roles.add(muteRole)
