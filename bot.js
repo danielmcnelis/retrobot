@@ -45,7 +45,7 @@ client.on('guildMemberAdd', async (member) => {
     if (!channel) return
     if (mutedPeople.includes(member.user.id)) {
             member.roles.add(muteRole)
-            return message.channel.send(`${member} Nice mute evasion, idiot. LOL! ${lmfao}`)
+            return channel.send(`${member} Nice mute evasion, idiot. LOL! ${lmfao}`)
         }
 
     if (await isNewUser(member.user.id)) {
