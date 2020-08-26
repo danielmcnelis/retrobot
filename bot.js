@@ -178,7 +178,8 @@ client.on('message', async (message) => {
 
             console.log('member.user.id', member.user.id)
             
-            muted['mutedPeople'] = muted['mutedPeople'].push(member.user.id)
+            const newMutes = mutedPeople.push(member.user.id)
+            muted['mutedPeople'] = newMutes
             fs.writeFile("./static/muted.json", JSON.stringify(muted), (err) => { 
                 if (err) console.log(err)
             })
