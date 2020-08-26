@@ -13,7 +13,6 @@ const { welcomeChannel, registrationChannel, deckListsChannel, replayLinksChanne
 const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
-const muted = require('./static/muted.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Nova, Rebirth  } = require('./db/index.js')
 const { capitalize, restore, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
 const { askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
@@ -171,7 +170,8 @@ client.on('message', async (message) => {
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
         const member = message.mentions.members.first()
         if (!member) return message.channel.send(`Please tag the user you wish to mute.`)
-        let mutedPeople = fs.readFileSync('./static/muted.json')
+        let muted = fs.readFileSync('./static/muted.json')
+        let mutedPeople = muted['mutedPeople']
 
         if (!member.roles.cache.some(role => role.id === muteRole)) {
             member.roles.add(muteRole)
@@ -199,7 +199,8 @@ client.on('message', async (message) => {
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
         const member = message.mentions.members.first()
         if (!member) return message.channel.send(`Please tag the user you wish to unmute.`)
-        let mutedPeople = fs.readFileSync('./static/muted.json')
+        let muted = fs.readFileSync('./static/muted.json')
+        let mutedPeople = muted['mutedPeople']
 
         if (member.roles.cache.some(role => role.id === muteRole)) {
             member.roles.remove(muteRole)
