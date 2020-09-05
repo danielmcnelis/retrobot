@@ -275,6 +275,7 @@ client.on('message', async (message) => {
         	.setThumbnail('https://i.imgur.com/ul7nKjk.png')
         	.addField('Mod-Only Ranked Play Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
             .addField('Mod-Only Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Add a player to the bracket. \n!remove - (@user) - Remove a player from the bracket. \n!start - Start the next tournament. \n!end - End the current tournament.')
+            .addField('Mod-Only Discipline Commands', '\n!mute - (@user) - Mute a user.\n!unmute - (@user) - Unmute a user.')
             .addField('Mod-Only Server Commands', '\n!census - Update the information of all players in the database.\n!recalc - Recaluate all player stats for a specific format if needed.');
 
         message.author.send(botEmbed);
@@ -449,6 +450,67 @@ client.on('message', async (message) => {
                 }
             }
         })  
+    }
+
+    //CHALLONGE - SEED
+    if (cmd.toLowerCase() === `!seed`) {
+        if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
+        const unregistered = await Tournament.findAll({ where: { participantId: null } })
+        if (unregistered.length) return message.channel.send('One of more players has not been signed up. Please check the Database.')
+
+        const allRankedPlayers = await eval(status['format']).findAll({ 
+            where: {
+                [Op.or]: [ { wins: { [Op.gt]: 0 } }, { losses: { [Op.gt]: 0 } } ]
+            },
+            order: [['stats', 'DESC']]
+        })
+
+        const rankings = allRankedPlayers.map(function(player) {
+            return player.playerId
+        })
+
+        console.log('rankings', rankings)
+            
+        const allParticipants =  Tournament.findAll()
+        const participants = allParticipants.map(function(participant) {
+            return participant.playerId
+        })
+
+        console.log('participants', participants)
+
+        const leftovers = []
+        const seeded = []
+
+        for (let i = 0; i < rankings.length; i++) { 
+            if(participants.includes(rankings[i])) seeded.push(allRankedPlayers[i].playerId)
+        }
+
+        console.log('seeded', seeded)
+
+        for (let j = 0; j < participants.length; j++) { 
+            if(!rankings.includes(participants[i])) leftovers.push(allRankedPlayers[i].playerId)
+        }
+
+        console.log('leftovers', leftovers)
+
+        const shuffle = (arr) => {
+            for (let a = arr.length - 1; a > 0; a--) {
+                let b = Math.floor(Math.random() * (a + 1))
+                [arr[a], arr[b]] = [arr[b], arr[a]]
+            }
+
+            return arr
+        }
+
+        const shuffledLeftovers = shuffle(leftovers)
+
+        console.log('shuffledLeftovers', shuffledLeftovers)
+
+        const fullOrder = [...seeded, ...shuffledLeftovers]
+
+        console.log('fullOrder', fullOrder)
+
+        return message.channel.send('Seeding complete!')
     }
 
     //CHALLONGE - START
