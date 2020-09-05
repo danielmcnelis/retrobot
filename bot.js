@@ -469,17 +469,17 @@ client.on('message', async (message) => {
             return player.playerId
         })
 
-        console.log('rankings', rankings)
+        // console.log('rankings', rankings)
             
         const allParticipants = await Tournament.findAll()
 
-        console.log('allParticipants', allParticipants)
+        // console.log('allParticipants', allParticipants)
 
         const participants = allParticipants.map(function(participant) {
             return participant.playerId
         })
 
-        console.log('participants', participants)
+        // console.log('participants', participants)
 
         const leftovers = []
         const seeded = []
@@ -488,13 +488,13 @@ client.on('message', async (message) => {
             if(participants.includes(rankings[i])) seeded.push(allRankedPlayers[i].playerId)
         }
 
-        console.log('seeded', seeded)
+        // console.log('seeded', seeded)
 
         for (let j = 0; j < participants.length; j++) { 
             if(!rankings.includes(participants[j])) leftovers.push(participants[j])
         }
 
-        console.log('leftovers', leftovers)
+        // console.log('leftovers', leftovers)
 
         const shuffle = (arr) => {
             let j, x, i
@@ -510,11 +510,11 @@ client.on('message', async (message) => {
 
         const shuffledLeftovers = shuffle(leftovers)
 
-        console.log('shuffledLeftovers', shuffledLeftovers)
+        // console.log('shuffledLeftovers', shuffledLeftovers)
 
         const fullOrder = [...seeded, ...shuffledLeftovers]
 
-        console.log('fullOrder', fullOrder)
+        // console.log('fullOrder', fullOrder)
 
         let orderedNames = []
 
@@ -532,7 +532,7 @@ client.on('message', async (message) => {
             return name
         })
 
-        console.log('orderedNames', orderedNames)
+        // console.log('orderedNames', orderedNames)
         
         // const name = (args[0] ? args[0] : status['tournament'])
         // await challongeClient.tournaments.show({
@@ -559,7 +559,12 @@ client.on('message', async (message) => {
         //     }
         // })
 
-        return message.channel.send('Seeding complete!')
+        message.channel.send('Seeding complete!')
+        message.channel.send(orderedNames.slice(0,30))
+        if (orderedNames.length > 30) message.channel.send(orderedNames.slice(30,60))
+        if (orderedNames.length > 60) message.channel.send(orderedNames.slice(60,90))
+        if (orderedNames.length > 90) message.channel.send(orderedNames.slice(90,99))
+        return
     }
 
     //CHALLONGE - START
