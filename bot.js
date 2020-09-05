@@ -495,18 +495,17 @@ client.on('message', async (message) => {
 
         const shuffle = (arr) => {
             for (let a = arr.length - 1; a > 0; a--) {
-                let b = Math.floor(Math.random() * (a + 1))
-                [arr[a], arr[b]] = [arr[b], arr[a]]
+                let b = Math.random() * (a + 1)
+                let c = Math.floor(b)
+                [arr[a], arr[c]] = [arr[c], arr[a]]
             }
-
-            return arr
         }
 
-        const shuffledLeftovers = shuffle(leftovers)
+        shuffle(leftovers)
 
-        console.log('shuffledLeftovers', shuffledLeftovers)
+        console.log('shuffled: leftovers', leftovers)
 
-        const fullOrder = [...seeded, ...shuffledLeftovers]
+        const fullOrder = [...seeded, ...leftovers]
 
         console.log('fullOrder', fullOrder)
 
