@@ -471,7 +471,7 @@ client.on('message', async (message) => {
 
         console.log('rankings', rankings)
             
-        const allParticipants =  Tournament.findAll()
+        const allParticipants =  await Tournament.findAll()
         const participants = allParticipants.map(function(participant) {
             return participant.playerId
         })
