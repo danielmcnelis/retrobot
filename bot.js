@@ -488,7 +488,7 @@ client.on('message', async (message) => {
         console.log('seeded', seeded)
 
         for (let j = 0; j < participants.length; j++) { 
-            if(!rankings.includes(participants[i])) leftovers.push(allRankedPlayers[i].playerId)
+            if(!rankings.includes(participants[j])) leftovers.push(allRankedPlayers[j].playerId)
         }
 
         console.log('leftovers', leftovers)
