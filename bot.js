@@ -458,7 +458,7 @@ client.on('message', async (message) => {
         const unregistered = await Tournament.findAll({ where: { participantId: null } })
         if (unregistered.length) return message.channel.send('One of more players has not been signed up. Please check the Database.')
 
-        const allRankedPlayers = await eval(status['format']).findAll({ 
+        const allRankedPlayers = await eval(capitalize(status['format'])).findAll({ 
             where: {
                 [Op.or]: [ { wins: { [Op.gt]: 0 } }, { losses: { [Op.gt]: 0 } } ]
             },
