@@ -522,7 +522,7 @@ client.on('message', async (message) => {
             console.log('index', index)
             console.log('id', id)
             let name
-            for (let z = z; i < allParticipants.length; z++) {
+            for (let z = 0; z < allParticipants.length; z++) {
                 if (id === allParticipants[z].playerId) {
                     name = allParticipants[z].pilot
                     break
