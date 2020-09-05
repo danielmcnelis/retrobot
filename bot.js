@@ -529,7 +529,7 @@ client.on('message', async (message) => {
                 }
             }
 
-            return name
+            return `${index+1}. ${name}`
         })
 
         // console.log('orderedNames', orderedNames)
