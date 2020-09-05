@@ -513,6 +513,47 @@ client.on('message', async (message) => {
 
         console.log('fullOrder', fullOrder)
 
+        let orderedNames = []
+
+        orderedNames = fullOrder.map(function(playerId) {
+            let name
+            for (let i = 0; i < allParticipants.length; i++) {
+                if (playerId === allParticipants[i].playerId) {
+                    name = allParticipants[i].pilot
+                    break
+                }
+            }
+
+            return name
+        })
+
+        console.log('orderedNames', orderedNames)
+        
+        // const name = (args[0] ? args[0] : status['tournament'])
+        // await challongeClient.tournaments.show({
+        //     id: name,
+        //     callback: async (err, data) => {
+        //         if (err) {
+        //             return message.channel.send(`Error: the tournament you provided, "${name}", could not be found.`)
+        //         } else {
+        //             if (data.tournament.state !== 'pending') return message.channel.send("Sorry, the tournament already started.")
+        //             await challongeClient.participants.update({
+        //                 id: name,
+        //                 participantId: participantId,
+        //                 participant: {
+        //                 seed: x,
+        //                 },
+        //                 callback: async (err, data) => {
+        //                     if (err) {
+        //                         console.log(err)
+        //                         return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+        //                     }
+        //                 }
+        //             })
+        //         }
+        //     }
+        // })
+
         return message.channel.send('Seeding complete!')
     }
 
