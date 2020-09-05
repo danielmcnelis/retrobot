@@ -471,7 +471,10 @@ client.on('message', async (message) => {
 
         console.log('rankings', rankings)
             
-        const allParticipants =  await Tournament.findAll()
+        const allParticipants = await Tournament.findAll()
+
+        console.log('allParticipants', allParticipants)
+
         const participants = allParticipants.map(function(participant) {
             return participant.playerId
         })
@@ -515,11 +518,13 @@ client.on('message', async (message) => {
 
         let orderedNames = []
 
-        orderedNames = fullOrder.map(function(playerId) {
+        orderedNames = fullOrder.map(function(id, index) {
+            console.log('index', index)
+            console.log('id', id)
             let name
-            for (let i = 0; i < allParticipants.length; i++) {
-                if (playerId === allParticipants[i].playerId) {
-                    name = allParticipants[i].pilot
+            for (let z = z; i < allParticipants.length; z++) {
+                if (id === allParticipants[z].playerId) {
+                    name = allParticipants[z].pilot
                     break
                 }
             }
