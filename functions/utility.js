@@ -126,7 +126,7 @@ const restore = async (winner, loser, format, z) => {
 
 
 //RECALCULATE
-const recalculate = async (winner, loser, format, z) => {
+const recalculate = async (match, winner, loser, format, z) => {
     return setTimeout(async function() {
         const winnersRow = await eval(format).findOne({ where: { playerId: winner }})
         const losersRow = await eval(format).findOne({ where: { playerId: loser }})
@@ -143,6 +143,8 @@ const recalculate = async (winner, loser, format, z) => {
 
         await winnersRow.save()
         await losersRow.save()
+        await match.update({ delta })
+
         console.log(`Match ${z}: a ${format} format loss by ${loser} to ${winner} has been incorporated in the recalculation.`)
     }, z*100)
 }

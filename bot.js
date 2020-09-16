@@ -1167,7 +1167,7 @@ ${player2.name} has won ${p2Wins}x`)
 
         allMatches.forEach(function (match) {
             z++
-            restore(match.winner, match.loser, formatDatabase, z)	
+            recalculate(match, match.winner, match.loser, formatDatabase, z)	
         })
 
         message.channel.send(`Recalculating data. Please wait...`)
