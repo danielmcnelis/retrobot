@@ -1171,6 +1171,9 @@ ${player2.name} has won ${p2Wins}x`)
         })
 
         message.channel.send(`Recalculating data. Please wait...`)
+        return setTimeout(function() {
+            return message.channel.send(`Recalculation complete!`)
+        }, (allMatches.length + 1) * 100) 
     }
 
 
