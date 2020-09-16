@@ -125,6 +125,29 @@ const restore = async (winner, loser, format, z) => {
 }
 
 
+//RECALCULATE
+const recalculate = async (winner, loser, format, z) => {
+    return setTimeout(async function() {
+        const winnersRow = await eval(format).findOne({ where: { playerId: winner }})
+        const losersRow = await eval(format).findOne({ where: { playerId: loser }})
+
+        const statsLoser = losersRow.stats
+        const statsWinner = winnersRow.stats
+        winnersRow.backup = statsWinner
+        losersRow.backup = statsLoser
+        const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
+        winnersRow.stats += delta
+        losersRow.stats -= delta
+        winnersRow.wins++
+        losersRow.losses++
+
+        await winnersRow.save()
+        await losersRow.save()
+        console.log(`Match ${z}: a ${format} format loss by ${loser} to ${winner} has been incorporated in the recalculation.`)
+    }, z*100)
+}
+
+
 //IS NEW USER?
 const isNewUser = async (playerId) => {
     const count = await Player.count({ where: { id: playerId } })
@@ -184,5 +207,6 @@ module.exports = {
     getCat,
     getMedal,
     restore,
+    recalculate,
     revive
 }
