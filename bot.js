@@ -1154,7 +1154,7 @@ ${player2.name} has won ${p2Wins}x`)
             }, order: [['id', 'ASC']]
         })
 
-        console.log('allMatches', allMatches)
+        console.log(`I found ${allMatches.length} ${formatDatabase} format matches.`)
 
         allPlayers.forEach(async function (player) {
             await player.update({
