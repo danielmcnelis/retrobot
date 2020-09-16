@@ -146,7 +146,7 @@ const recalculate = async (match, winner, loser, format, z) => {
         await match.update({ delta })
 
         console.log(`Match ${z}: a ${format} format loss by ${loser} to ${winner} has been incorporated in the recalculation.`)
-    }, z*100)
+    }, (z*100 + 10000))
 }
 
 
