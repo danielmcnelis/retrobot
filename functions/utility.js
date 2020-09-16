@@ -74,6 +74,7 @@ const createPlayer = async (id, username = null, tag = null, z = 0) => {
             await Current.create({ playerId: id })
             await Traditional.create({ playerId: id })
             await Rush.create({ playerId: id })
+            await Speed.create({ playerId: id })
             await Nova.create({ playerId: id })
             await Rebirth.create({ playerId: id })
         } catch (err) {

@@ -946,12 +946,12 @@ Elo Rating: ${record.stats.toFixed(2)}`)
         if (oppo == maid) return message.channel.send("You cannot lose a match to yourself.")
         if (winner.roles.cache.some(role => role.id === botRole)) return message.channel.send(`Sorry, Bots do not play ${formatName} Format... *yet*.`)
         if (oppo.length < 17 || oppo.length > 18) return message.channel.send("To report a loss, please type the command **!loss** followed by an @ mention of your opponent.")
-        if (!winningPlayer) {
+        if (!losingPlayer) {
 	        createPlayer(loser.user.id, loser.user.username, loser.user.tag)
             return message.channel.send("Sorry, you were not in the Format Library database. Please try again.")
         }
 
-        if (!losingPlayer) { 
+        if (!winningPlayer) { 
             createPlayer(winner.user.id, winner.user.username, winner.user.tag)
             return message.channel.send("Sorry, that user was not in the Format Library database. Please try again.")
         }
