@@ -11,7 +11,7 @@ const ABC = db.define('abcStats', {
     backup: {
         type: Sequelize.FLOAT,
         defaultValue: 0.00,        
-        allowNull: false
+        allowNull: true
     },
     wins: {
         type: Sequelize.INTEGER,  
