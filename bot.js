@@ -1170,13 +1170,13 @@ ${player2.name} has won ${p2Wins}x`)
         allMatches.forEach(function (match) {
             z++
             console.log(`match ${z}`, match)
-            recalculate(match, match.winner, match.loser, formatDatabase, z)	
+            recalculate(match, match.winner, match.loser, formatDatabase, (z + 10000))	
         })
 
         message.channel.send(`Recalculating data. Please wait...`)
         return setTimeout(function() {
             return message.channel.send(`Recalculation complete!`)
-        }, (allMatches.length + 1) * 100) 
+        }, (10000 + ((allMatches.length + 1) * 100))) 
     }
 
 
