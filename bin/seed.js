@@ -1,5 +1,5 @@
 
-const { db, Player, Match, Matchup, Replay, Deck, Tournament } = require('../db/index.js')
+const { db } = require('../db/index.js')
 
 const seed = async () => {
   await db.sync({force: true})

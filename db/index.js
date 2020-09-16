@@ -63,6 +63,7 @@ const StrikerOrcust = require('./striker-orcust')
 const Current = require('./current')
 const Traditional = require('./traditional')
 const Rush = require('./rush')
+const Speed = require('./speed')
 const Nova = require('./nova')
 const Rebirth = require('./rebirth')
 
@@ -243,6 +244,9 @@ Player.hasOne(Traditional)
 Rush.belongsTo(Player)
 Player.hasOne(Rush)
 
+Speed.belongsTo(Player)
+Player.hasOne(Speed)
+
 Nova.belongsTo(Player)
 Player.hasOne(Nova)
 
@@ -314,6 +318,7 @@ module.exports = {
   Current,
   Traditional,
   Rush,
+  Speed,
   Nova,
   Rebirth
 }

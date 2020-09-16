@@ -405,6 +405,13 @@
         "role": "730560270082244639",
         "emoji": "<:rush:730591910397214860>"
     },
+    "speed": {
+        "database": "Speed",
+        "name": "Speed",
+        "channel": "748713443783213227",
+        "role": "755915301756993669",
+        "emoji": "<:moth:755916082652512256>"
+    },
     "nova": {
         "database": "Nova",
         "name": "Nova",

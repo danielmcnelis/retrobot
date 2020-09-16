@@ -14,9 +14,9 @@ const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
 const muted = require('./static/muted.json')
-const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Nova, Rebirth  } = require('./db/index.js')
+const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('./db/index.js')
 const { capitalize, restore, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
-const { askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
+const { seed, askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
 const { client, challongeClient } = require('./static/clients.js')
 const rb = "730922003296419850"
@@ -420,6 +420,7 @@ client.on('message', async (message) => {
                 } else {
                     delete status['tournament']
                     delete status['format']
+                    delete status['seeded']
                     fs.writeFile("./statis/status.json", JSON.stringify(status), (err) => { 
                         if (err) console.log(err)
                     })
@@ -455,46 +456,38 @@ client.on('message', async (message) => {
     //CHALLONGE - SEED
     if (cmd.toLowerCase() === `!seed`) {
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
+        const name = (args[0] ? args[0] : status['tournament'])
+        if (!name) return message.channel.send('There is no active tournament.')
         const unregistered = await Tournament.findAll({ where: { participantId: null } })
-        if (unregistered.length) return message.channel.send('One of more players has not been signed up. Please check the Database.')
+        if (unregistered.length) return message.channel.send('One of more players has not been added to the bracket.')
 
-        const allRankedPlayers = await eval(capitalize(status['format'])).findAll({ 
+        const rankedPlayers = await eval(capitalize(status['format'])).findAll({ 
             where: {
                 [Op.or]: [ { wins: { [Op.gt]: 0 } }, { losses: { [Op.gt]: 0 } } ]
             },
             order: [['stats', 'DESC']]
         })
 
-        const rankings = allRankedPlayers.map(function(player) {
+        const rankings = rankedPlayers.map(function(player) {
             return player.playerId
         })
-
-        // console.log('rankings', rankings)
             
-        const allParticipants = await Tournament.findAll()
+        const participants = await Tournament.findAll()
 
-        // console.log('allParticipants', allParticipants)
-
-        const participants = allParticipants.map(function(participant) {
-            return participant.playerId
+        const players = participants.map(function(participant) {
+            return  participant.playerId
         })
-
-        // console.log('participants', participants)
 
         const leftovers = []
         const seeded = []
 
         for (let i = 0; i < rankings.length; i++) { 
-            if(participants.includes(rankings[i])) seeded.push(allRankedPlayers[i].playerId)
+            if(players.includes(rankings[i])) seeded.push(rankings[i])
         }
 
-        // console.log('seeded', seeded)
-
-        for (let j = 0; j < participants.length; j++) { 
-            if(!rankings.includes(participants[j])) leftovers.push(participants[j])
+        for (let j = 0; j < players.length; j++) { 
+            if(!rankings.includes(players[j])) leftovers.push(players[j])
         }
-
-        // console.log('leftovers', leftovers)
 
         const shuffle = (arr) => {
             let j, x, i
@@ -509,62 +502,36 @@ client.on('message', async (message) => {
         }
 
         const shuffledLeftovers = shuffle(leftovers)
+        const orderedPlayerIds = [...seeded, ...shuffledLeftovers]
 
-        // console.log('shuffledLeftovers', shuffledLeftovers)
+        const orderedParticipantIds = []
 
-        const fullOrder = [...seeded, ...shuffledLeftovers]
-
-        // console.log('fullOrder', fullOrder)
-
-        let orderedNames = []
-
-        orderedNames = fullOrder.map(function(id, index) {
-            console.log('index', index)
-            console.log('id', id)
-            let name
-            for (let z = 0; z < allParticipants.length; z++) {
-                if (id === allParticipants[z].playerId) {
-                    name = allParticipants[z].pilot
-                    break
-                }
+        orderedPlayerIds.forEach(function(id) {
+            for (let k = 0; k < participants.length; k++) {
+                if (participants[k].playerId === id) orderedParticipantIds.push(participants[k].participantId.toString())
             }
-
-            return `${index+1}. ${name}`
+        })
+        
+        status['seeded'] = true
+        fs.writeFile("./static/status.json", JSON.stringify(status), (err) => { 
+            if (err) console.log(err)
         })
 
-        // console.log('orderedNames', orderedNames)
-        
-        // const name = (args[0] ? args[0] : status['tournament'])
-        // await challongeClient.tournaments.show({
-        //     id: name,
-        //     callback: async (err, data) => {
-        //         if (err) {
-        //             return message.channel.send(`Error: the tournament you provided, "${name}", could not be found.`)
-        //         } else {
-        //             if (data.tournament.state !== 'pending') return message.channel.send("Sorry, the tournament already started.")
-        //             await challongeClient.participants.update({
-        //                 id: name,
-        //                 participantId: participantId,
-        //                 participant: {
-        //                 seed: x,
-        //                 },
-        //                 callback: async (err, data) => {
-        //                     if (err) {
-        //                         console.log(err)
-        //                         return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
-        //                     }
-        //                 }
-        //             })
-        //         }
-        //     }
-        // })
+        orderedParticipantIds.forEach(async function(participantId, index) {
+            return setTimeout(function() {
+                seed(message, challongeClient, name, participantId, index)
+            }, index * 500)
+        })
 
-        message.channel.send('Seeding complete!')
-        message.channel.send(orderedNames.slice(0,30))
-        if (orderedNames.length > 30) message.channel.send(orderedNames.slice(30,60))
-        if (orderedNames.length > 60) message.channel.send(orderedNames.slice(60,90))
-        if (orderedNames.length > 90) message.channel.send(orderedNames.slice(90,99))
-        return
+        message.channel.send('Seeding in progress...')
+
+        return setTimeout(function() {
+            if (status['seeded']) {
+                return message.channel.send("Seeding complete! Make sure the bracket looks correct, then hit **!start**.")
+            } else {
+                return message.channel.send("Something went wrong. Please try again or seed the tournament manually.")
+            }
+        }, (orderedParticipantIds.length + 1) * 500)
     }
 
     //CHALLONGE - START

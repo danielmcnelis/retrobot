@@ -2,7 +2,7 @@
 const { registrationChannel } = require('../static/channels.json')
 const { tourRole } = require('../static/roles.json')
 const status = require('../static/status.json')
-const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Nova, Rebirth  } = require('../db/index.js')
+const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('../db/index.js')
 const { getCat } = require('./utility.js')
 const { yescom, nocom } = require('../static/commands.json')
 const { client, challongeClient } = require('../static/clients.js')
@@ -164,6 +164,34 @@ const checkResubmission = async (client, message, member) => {
         console.log(err)
         return member.user.send(`Sorry, time's up. If you wish to try again, go back to the Discord server and use the **!join** command.`)
     })
+}
+
+
+//SEED
+const seed = async (message, challongeClient, name, participantId, index) => {
+    try {
+        await challongeClient.participants.update({
+            id: name,
+            participantId: participantId,
+            participant: {
+            seed: index + 1,
+            },
+            callback: async (err, data) => {
+                if (err) {
+                    console.log(err)
+                    status['seeded'] = false
+                    fs.writeFile("./static/status.json", JSON.stringify(status), (err) => { 
+                        if (err) console.log(err)
+                    })
+                    return message.channel.send(`Something went wrong. ${data.participant.name} should be the ${index+1} seed but there was an error with challonge.com.`)
+                } else {
+                    return message.channel.send(`${data.participant.name} is now the ${index+1} seed.`)
+                }
+            }
+        })
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 
@@ -535,6 +563,7 @@ module.exports = {
     checkResubmission,
     getUpdatedDeckURL,
     removeParticipant,
+    seed,
     getParticipants,
     getUpdatedMatchesObject,
     addMatchResult
