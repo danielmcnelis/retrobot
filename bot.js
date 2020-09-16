@@ -1169,7 +1169,6 @@ ${player2.name} has won ${p2Wins}x`)
 
         allMatches.forEach(function (match) {
             z++
-            console.log(`match ${z}`, match)
             recalculate(match, match.winner, match.loser, formatDatabase, z)	
         })
 
