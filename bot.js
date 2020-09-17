@@ -243,7 +243,6 @@ client.on('message', async (message) => {
 
     //BOT USER GUIDE
     if (botcom.includes(cmd.toLowerCase())) {
-        console.log
         const botEmbed = new Discord.MessageEmbed()
 	        .setColor('#38C368')
         	.setTitle('RetroBot')
@@ -254,7 +253,7 @@ client.on('message', async (message) => {
             .addField('How to User This Guide', '\nThe following commands can be used for any format in the appropriate channels (i.e. <#414575168174948372>, <#629472339473596436>, <#459474235165900800>, <#538498087245709322>). Commands require arguments as follows: (blank) no argument, (@user) mention a user, (n) a number, (link) a URL.')
         	.addField('Ranked Play Commands', '\n!loss - (@user) - Report a loss to another player. \n!stats - (blank or @user) - Post a player’s stats. \n!top - (number) - Post the server’s top players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a format role. \n!undo - Undo the last loss if you reported it. \n')
         	.addField('Tournament Commands', '\n!join - Register for the next tournament. \n!drop - Drop from the current tournament. \n!show - Show the current tournament.')
-        	.addField('Server Commands', '\n!db - Set your DuelingBook.com username. \n!bot - View the RetroBot User Guide. \n!mod - View the Mod-Only User Guide.');
+        	.addField('Server Commands', '\n!db - Set your DuelingBook.com username. \n!prof - (blank or @user) - Post a player’s profile. \n!medals - (blank or @user) - Post a player’s best medals. \n!bot - View the RetroBot User Guide. \n!mod - View the Mod-Only User Guide.');
 
         message.author.send(botEmbed);
         return message.channel.send("I messaged you the RetroBot User Guide.")
@@ -870,7 +869,49 @@ Elo Rating: ${record.stats.toFixed(2)}`)
             keys.forEach(async function(key) {
                 if (formats[key].name === 'Voice') return
                 const formatDatabase = formats[key].database
-                console.log('formatDatabase', formatDatabase)
+                const record = await eval(formatDatabase).findOne({ 
+                    where: {
+                        playerId: playerId
+                    }
+                })
+    
+                if (!record.wins && !record.losses) return
+    
+                const medal = getMedal(record.stats)
+                vault[`${formats[key].emoji} ${formats[key].name}`] = medal
+            })
+        } catch (err) {
+            console.log(err)
+        }
+
+        return setTimeout(function () {
+            let vault2 = Object.entries(vault).map(function(elem) {
+                return `${elem[0]}: ${elem[1]}`
+            })
+            vault2.unshift(`${FL} --- ${player.name}'s Player Profile --- ${FL}`)
+            message.channel.send(vault2.slice(0, 20))
+            return message.channel.send(vault2.slice(20))
+        }, 1000)
+    }
+
+
+    //MEDALS
+    if (cmd === `!medals`) {
+        const playerId = (messageArray.length === 1 ? maid : messageArray[1].replace(/[\\<>@#&!]/g, ""))
+        const player = await Player.findOne({ where: { id: playerId } })
+
+        if (!player && maid === playerId) {
+            createPlayer(member.user.id, member.user.username, member.user.tag);
+            return message.channel.send("I added you to the Format Library database. Please try again.")
+        } else if (!player && maid !== playerId) {
+            return message.channel.send("That user is not in the Format Library database.")
+        }
+
+        let vault = {}
+        try {
+            keys.forEach(async function(key) {
+                if (formats[key].name === 'Voice') return
+                const formatDatabase = formats[key].database
                 const record = await eval(formatDatabase).findOne({ 
                     where: {
                         playerId: playerId
@@ -892,8 +933,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
             let vault2 = Object.entries(vault).map(function(elem) {
                 return `${elem[0]}: ${elem[1]}`
             })
-            console.log('vault2', vault2)
-            vault2.unshift(`${FL} --- ${player.name}'s Player Profile --- ${FL}`)
+            vault2.unshift(`${FL} --- ${player.name}'s Best Medals --- ${FL}`)
             message.channel.send(vault2.slice(0, 20))
             return message.channel.send(vault2.slice(20))
         }, 1000)
