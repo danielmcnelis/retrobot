@@ -274,7 +274,7 @@ client.on('message', async (message) => {
 	        .setAuthor('Jazz#2704', 'https://i.imgur.com/wz5TqmR.png', 'https://formatlibrary.com/')
         	.setThumbnail('https://i.imgur.com/ul7nKjk.png')
         	.addField('Mod-Only Ranked Play Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
-            .addField('Mod-Only Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Add a player to the bracket. \n!remove - (@user) - Remove a player from the bracket. \n!start - Start the next tournament. \n!end - End the current tournament.')
+            .addField('Mod-Only Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Add a player to the bracket. \n!remove - (@user) - Remove a player from the bracket. \n!seed - Assign seeds to participants based on rankings. \n!start - Start the next tournament. \n!end - End the current tournament.')
             .addField('Mod-Only Discipline Commands', '\n!mute - (@user) - Mute a user.\n!unmute - (@user) - Unmute a user.')
             .addField('Mod-Only Server Commands', '\n!census - Update the information of all players in the database.\n!recalc - Recaluate all player stats for a specific format if needed.');
 
@@ -1181,7 +1181,6 @@ ${player2.name} has won ${p2Wins}x`)
 
     //WINNERS	
     if (cmd.toLowerCase() === `!winners`) { 	
-        console.log('winners...')	
         if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")	
 
         const labels = Object.keys(OldData)	
@@ -1209,7 +1208,6 @@ ${player2.name} has won ${p2Wins}x`)
 
     //LOSERS	
     if (cmd.toLowerCase() === `!losers`) { 	
-        console.log('losers...')	
         if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")	
 
         const labels = Object.keys(OldData)	
@@ -1248,7 +1246,6 @@ ${player2.name} has won ${p2Wins}x`)
 
         for (let i = 0; i < labels.length; i++) {	
             const format = labels[i]	
-            console.log('format', format)	
             for (let j = 0; j < OldData[format].length; j++) {	
                 const record = OldData[format][j].Result	
                 
