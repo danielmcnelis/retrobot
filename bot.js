@@ -15,7 +15,7 @@ const status = require('./static/status.json')
 const formats = require('./static/formats.json')
 const muted = require('./static/muted.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('./db/index.js')
-const { capitalize, restore, recalculate, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
+const { capitalize, restore, recalculate, revive, createPlayer, createSpeedster, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
 const { seed, askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
 const { client, challongeClient } = require('./static/clients.js')
@@ -629,12 +629,19 @@ client.on('message', async (message) => {
     }
 
 
+    if (cmd === `!add`) {
+        const dude = messageArray[1].replace(/[\\<>@#&!]/g, "")
+        const member = message.guild.members.cache.get(dude)
+        if (!member) return message.channel.send('Sorry, I could not find that person in the server')
+        createSpeedster(member.user.id, member.user.username, member.user.tag)
+    }
+
     //CHALLONGE - JOIN
     if (cmd.toLowerCase() === `!join`) {
         const name = status['tournament']
         const member = message.guild.members.cache.get(maid)
         if (!name) return message.channel.send('There is no active tournament.')
-        if (!member) return message.channel.send('I could not find you in the server. Please be sure you are not invisible.')
+        if (!member) return message.channel.send('Sorry, I could not find you in the server. Please be sure you are not invisible.')
         
         if (await isNewUser(maid)) {
             createPlayer(member.user.id, member.user.username, member.user.tag)
@@ -719,7 +726,7 @@ client.on('message', async (message) => {
 
         if (!name) return message.channel.send('There is no active tournament.')
         if (!person) return message.channel.send('Please provide an @ mention of the player you wish to sign-up for the tournament.')
-        if (!member) return message.channel.send('I could not find that user in the server.')
+        if (!member) return message.channel.send('Sorry, I could not find that user in the server.')
 
         await challongeClient.participants.index({
             id: name,

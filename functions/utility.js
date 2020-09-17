@@ -7,6 +7,17 @@ const Names = require('../static/names.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('../db/index.js')
 const categories = require('../static/categories.json')
 
+//CREATE SPEEDSTER
+const createSpeedster = async (id, username = null, tag = null, z = 0) => {
+    try {
+        await Speed.create({ playerId: id })
+        console.log(`added ${username} to the database`)
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+
 //CREATE PLAYER
 const createPlayer = async (id, username = null, tag = null, z = 0) => {
     setTimeout(async function() {
@@ -203,6 +214,7 @@ const capitalize = (str) => {
 
 module.exports = {
     capitalize,
+    createSpeedster,
     createPlayer,
     isNewUser,
     isAdmin,
