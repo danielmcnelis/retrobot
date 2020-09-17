@@ -15,7 +15,7 @@ const status = require('./static/status.json')
 const formats = require('./static/formats.json')
 const muted = require('./static/muted.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('./db/index.js')
-const { capitalize, restore, recalculate, revive, createPlayer, createSpeedster, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
+const { capitalize, restore, recalculate, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
 const { seed, askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
 const { client, challongeClient } = require('./static/clients.js')
@@ -626,14 +626,6 @@ client.on('message', async (message) => {
         await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
         client.channels.cache.get(registrationChannel).send(`Deck list spreadsheet: ${link}`)
         return message.channel.send(`Success! You can find the deck list spreadsheet in the Tournament Registration channel.`)
-    }
-
-
-    if (cmd === `!add`) {
-        const dude = messageArray[1].replace(/[\\<>@#&!]/g, "")
-        const member = message.guild.members.cache.get(dude)
-        if (!member) return message.channel.send('Sorry, I could not find that person in the server')
-        createSpeedster(member.user.id, member.user.username, member.user.tag)
     }
 
     //CHALLONGE - JOIN
