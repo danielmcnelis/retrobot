@@ -376,6 +376,7 @@ client.on('message', async (message) => {
                 } else {
                     if (status['tournament'] === name) {
                         delete status['tournament']
+                        delete status['seeded']
                         delete status['format']
                         fs.writeFile("./static/status.json", JSON.stringify(status), (err) => { 
                             if (err) console.log(err)
