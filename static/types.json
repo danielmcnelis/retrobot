@@ -148,7 +148,7 @@
     "shinato": ["Shinato", "shinato", "shinato king of a higher plane", "shinato otk", "shinato combo"],
     "spellEconomicsFTK": ["Spell Economics FTK", "spell economics ftk", "economics ftk", "economics", "mass driver ftk", "mass driver"],
     "zorc": ["Zorc", "zorc", "dark master - zorc", "dark master zorc", "dmz", "zorc ritual", "dark master - zorc ritual", "dark master zorc ritual", "dmz ritual"],
-    "undefinedAggro": ["Undefined Aggro", "undefined Aggro", "control"],
+    "undefinedAggro": ["Undefined Aggro", "undefined Aggro", "aggro"],
     "undefinedControl": ["Undefined Control", "undefined control", "control"],
     "other": ["Other", "other" ]
 }

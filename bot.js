@@ -16,7 +16,7 @@ const formats = require('./static/formats.json')
 const muted = require('./static/muted.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('./db/index.js')
 const { capitalize, restore, recalculate, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
-const { seed, askForDBUsername, getDeckListTournament, checkResubmission, removeParticipant, getParticipants } = require('./functions/tournament.js')
+const { seed, askForDBUsername, getDeckListTournament, getUpdatedDeckURL, changeDeckTypeTournament, removeParticipant, getParticipants, findOpponent } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
 const { client, challongeClient } = require('./static/clients.js')
 const rb = "730922003296419850"
@@ -252,7 +252,7 @@ client.on('message', async (message) => {
             .setThumbnail('https://i.imgur.com/ul7nKjk.png')
             .addField('How to User This Guide', '\nThe following commands can be used for any format in the appropriate channels (i.e. <#414575168174948372>, <#629472339473596436>, <#459474235165900800>, <#538498087245709322>). Commands require arguments as follows: (blank) no argument, (@user) mention a user, (n) a number, (link) a URL.')
         	.addField('Ranked Play Commands', '\n!loss - (@user) - Report a loss to another player. \n!stats - (blank or @user) - Post a player’s stats. \n!top - (number) - Post the server’s top players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a format role. \n!undo - Undo the last loss if you reported it. \n')
-        	.addField('Tournament Commands', '\n!join - Register for the next tournament. \n!drop - Drop from the current tournament. \n!show - Show the current tournament.')
+        	.addField('Tournament Commands', '\n!join - Register for the next tournament.\n!resubmit - Change your deck list for the tournament. \n!drop - Drop from the current tournament. \n!show - Show the current tournament.')
         	.addField('Server Commands', '\n!db - Set your DuelingBook.com username. \n!prof - (blank or @user) - Post a player’s profile. \n!medals - (blank or @user) - Post a player’s best medals. \n!bot - View the RetroBot User Guide. \n!mod - View the Mod-Only User Guide.');
 
         message.author.send(botEmbed);
@@ -273,7 +273,7 @@ client.on('message', async (message) => {
 	        .setAuthor('Jazz#2704', 'https://i.imgur.com/wz5TqmR.png', 'https://formatlibrary.com/')
         	.setThumbnail('https://i.imgur.com/ul7nKjk.png')
         	.addField('Mod-Only Ranked Play Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
-            .addField('Mod-Only Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Add a player to the bracket. \n!remove - (@user) - Remove a player from the bracket. \n!seed - Assign seeds to participants based on rankings. \n!start - Start the next tournament. \n!end - End the current tournament.')
+            .addField('Mod-Only Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Add a player to the bracket. \n!edit - (@user) - Reclassify a player\'s deck list. \n!noshow - (@user) - Report a no-show. \n!remove - (@user) - Remove a player from the bracket. \n!seed - Assign seeds to participants based on rankings. \n!start - Start the next tournament. \n!end - End the current tournament.')
             .addField('Mod-Only Discipline Commands', '\n!mute - (@user) - Mute a user.\n!unmute - (@user) - Unmute a user.')
             .addField('Mod-Only Server Commands', '\n!census - Update the information of all players in the database.\n!recalc - Recaluate all player stats for a specific format if needed.');
 
@@ -421,7 +421,7 @@ client.on('message', async (message) => {
                     delete status['tournament']
                     delete status['format']
                     delete status['seeded']
-                    fs.writeFile("./statis/status.json", JSON.stringify(status), (err) => { 
+                    fs.writeFile("./status/status.json", JSON.stringify(status), (err) => { 
                         if (err) console.log(err)
                     })
 
@@ -516,6 +516,8 @@ client.on('message', async (message) => {
         fs.writeFile("./static/status.json", JSON.stringify(status), (err) => { 
             if (err) console.log(err)
         })
+
+        console.log('orderedParticipantIds', orderedParticipantIds)
 
         orderedParticipantIds.forEach(async function(participantId, index) {
             return setTimeout(function() {
@@ -652,11 +654,43 @@ client.on('message', async (message) => {
                     message.channel.send("Please check your DMs.")
                     const tourDeck = await Tournament.findOne({ where: { playerId: maid } })
                     if (tourDeck) {
-                        return checkResubmission(client, message, member)
+                        return getUpdatedDeckURL(client, message, member)
                     } else if (player.duelingBook) {
                         return getDeckListTournament(client, message, member)
                     } else {
                         return askForDBUsername(client, message, member)
+                    }
+                }
+            }
+        })
+    }
+
+
+    //CHALLONGE - RESUBMIT
+    if (cmd.toLowerCase() === `!resubmit`) {
+        const name = status['tournament']
+        const member = message.guild.members.cache.get(maid)
+        if (!name) return message.channel.send('There is no active tournament.')
+        if (!member) return message.channel.send('Sorry, I could not find you in the server. Please be sure you are not invisible.')
+        
+        if (await isNewUser(maid)) {
+            createPlayer(member.user.id, member.user.username, member.user.tag)
+            return message.channel.send("I added you to the Tournament database. Please try again.")
+        }
+
+        await challongeClient.tournaments.show({
+            id: name,
+            callback: async (err, data) => {
+                if (err) {
+                    return message.channel.send(`Error: the tournament you provided, "${name}", could not be found.`)
+                } else {
+                    if (data.tournament.state !== 'pending') return message.channel.send("Sorry, the tournament already started.")
+                    const tourDeck = await Tournament.findOne({ where: { playerId: maid } })
+                    if (tourDeck) {
+                        message.channel.send("Please check your DMs.")
+                        return getUpdatedDeckURL(client, message, member)
+                    } else {
+                        return message.channel.send(`Sorry, I could not find you in the Tournament. Please use the command **!join** instead.`)
                     }
                 }
             }
@@ -704,9 +738,23 @@ client.on('message', async (message) => {
                 }
             }
         })
+    }
 
 
+    //CHALLONGE - EDIT
+    if (cmd.toLowerCase() === `!edit`) {
+        if (!isMod(message.member)) return message.channel.send('You do not have permission to do that. Please use the command **!join** instead.')
         
+        const name = status['tournament']
+        const person = message.mentions.users.first()
+        const member = message.guild.members.cache.get(person.id)
+        const entry = await Tournament.findOne({ where: { playerId: person.id }})
+
+        if (!name) return message.channel.send(`There is no active tournament.`)
+        if (!person) return message.channel.send(`Please provide an @ mention of the player you wish to sign-up for the tournament.`)
+        if (!member) return message.channel.send(`I couldn't find that user in the server.`)
+        if (!entry) return message.channel.send(`That person has not registered for the tournament.`)
+        return changeDeckTypeTournament(client, message, member, entry)
     }
 
 
@@ -1087,6 +1135,34 @@ Elo Rating: ${record.stats.toFixed(2)}`)
     }
 
 
+    //NO SHOW
+    if (cmd.toLowerCase() === `!noshow`) {
+        const noShowId = messageArray[1].replace(/[\\<>@#&!]/g, "")
+        const noShow = message.guild.members.cache.get(noShowId)
+        const noShowPlayer = await Tournament.findOne({ where: { playerId: noShowId } })
+        const noShowEntry = await Tournament.findOne({ where: { playerId: noShowId } })
+
+        if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
+        if (!noShow) return message.channel.send("Please specify a player. Be sure they are not invisible.")
+        if (!noShowEntry || !noShow.roles.cache.some(role => role.id === tourRole)) return message.channel.send(`Sorry, ${noShow.user.username} was is not in the tournament.`)
+
+        return challongeClient.matches.index({
+            id: status['tournament'],
+            callback: (err, data) => {
+                if (err) {
+                    return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
+                } else {
+                    const tournamentChannel = formats[status['format']] ? formats[status['format']].channel : null
+                    if (formatChannel !== tournamentChannel) {
+                        return message.channel.send(`Please report this no show in the appropriate channel: <#${tournamentChannel}>.`)
+                    } else {
+                        return findOpponent(message, data, noShow, noShowPlayer, formatName, formatDatabase)
+                    }
+                }
+            }
+        }) 
+    }
+
     //H2H
     if (h2hcom.includes(cmd.toLowerCase())) {
         if (messageArray.length === 1) return message.channel.send("Please specify at least 1 other player.")
@@ -1181,6 +1257,81 @@ ${player2.name} has won ${p2Wins}x`)
             updateCount === 1 ? word2 =  'other' : word2 = 'others'
             return message.channel.send(`Census complete! You added ${createCount} ${word1} to the database and updated ${updateCount} ${word2}.`)
         }, 3000)	
+    }
+
+    //COMBINE
+    if (cmd.toLowerCase() === `!combine`) { 
+        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
+
+        const oldId = messageArray[1].replace(/[\\<>@#&!]/g, "")
+        const newId = messageArray[2].replace(/[\\<>@#&!]/g, "")
+        const oldPlayer = await Player.findOne({ where: { id: oldId } })
+        const newPlayer = await Player.findOne({ where: { id: newId } })
+
+        if (!oldId || !newId) return message.channel.send("Please specify 2 players.")
+        if (oldId === newId) return message.channel.send("Please specify 2 different players.")
+        if (!oldPlayer) {
+            return message.channel.send(`Invalid request. <@${oldId}> is not in the Format Library database.`)
+        }
+
+        if (!newPlayer) {
+            return message.channel.send(`Invalid request. <@${newId}> is not in the Format Library database.`)
+        }
+
+        const filter = m => m.author.id === message.author.id
+        const msg = await message.channel.send(`Are you sure you want to combine ${oldPlayer.name}'s stats with ${newPlayer.name}'s stats? <!> WARNING <!>: This cannot be undone. ${oldPlayer.name}'s stats will be forever lost.`)
+        const collected = await msg.channel.awaitMessages(filter, {
+            max: 1,
+            time: 60000
+        }).then(async collected => {
+            if (yescom.includes(collected.first().content.toLowerCase())) {
+                const allMatches = await Match.findAll({
+                    where: {
+                        [Op.or]: [
+                            { winner: oldId },
+                            { loser: oldId }
+                          ]
+                    }, order: [['id', 'ASC']]
+                })
+        
+                console.log(`I found ${allMatches.length} matches involving ${oldPlayer.name}.`)
+        
+                const formatsPlayed = []
+        
+                allMatches.forEach(async function(match, index) {
+                    if (match.winner === oldId) {     
+                        await match.update({
+                            winner: newId
+                        })
+                    } else if (match.loser === oldId) {
+                        await match.update({
+                            loser: newId
+                        })
+                    }
+        
+                    if (!formatsPlayed.includes(match.format)) {
+                        console.log(`I found another format involving ${oldPlayer.name}: ${match.format}.`)
+                        formatsPlayed.push(match.format)
+                    } 
+
+                    if (index === allMatches.length - 1) {
+                        console.log(`I found ${formatsPlayed.length} formats involving ${oldPlayer.name}.`)  
+                        
+                        message.channel.send(`You will need to use the **!recalc** command on the following formats:`)
+                        message.channel.send(formatsPlayed.slice(0,30))
+                        if (formatsPlayed.length > 30) message.channel.send(formatsPlayed.slice(30,60))
+                        if (formatsPlayed.length > 60) message.channel.send(formatsPlayed.slice(60,90))
+                        if (formatsPlayed.length > 90) message.channel.send(formatsPlayed.slice(90,99))      
+                        return
+                    }
+                })        
+            } else {
+                return message.channel.send(`Ok then. ${oldPlayer.name}'s stats were not combined with ${newPlayer.name}'s stats.`)
+            }
+        }).catch(err => {
+            console.log(err)
+            return message.channel.send(`Sorry, time's up. ${oldPlayer.name}'s stats were not combined with ${newPlayer.name}'s stats.`)
+        })
     }
 
 
