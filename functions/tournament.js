@@ -55,6 +55,7 @@ const getDeckListTournament = async (client, message, member) => {
     })
 }
 
+
 //GET DECK TYPE TOURNAMENT
 const getDeckTypeTournament = async (client, message, member, url, resubmission = false) => {
     const keys = Object.keys(types)
@@ -137,7 +138,6 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
 })
 
 }
-
 
 
 //CHANGE DECK TYPE TOURNAMENT
@@ -320,7 +320,7 @@ const getParticipants = async (message, matches, loser, winner, formatName, form
 const addMatchResult = async (message, matches, participants, loser, winner, formatName, formatDatabase, noshow = false) => {
     let loserId
     let winnerId
-    let matchID
+    let matchId
     let matchComplete = false
     let score
     let players = Object.keys(participants)
@@ -371,7 +371,7 @@ const addMatchResult = async (message, matches, participants, loser, winner, for
             if (matches[elem].match.state === 'complete') {
                 matchComplete = true
             } else if (matches[elem].match.state === 'open') {
-                matchID = matches[elem].match.id
+                matchId = matches[elem].match.id
                 if (noshow) {
                     score = '0-0'
                 } else if (matches[elem].match.player1Id === loserId) {
@@ -387,14 +387,14 @@ const addMatchResult = async (message, matches, participants, loser, winner, for
         return message.channel.send(`${winner.user.username} is not in the tournament.`)
     } else if (!loserId) {
         return message.channel.send(`${loser.user.username} is not in the tournament.`)
-    } else if (matchComplete && !matchID) {
+    } else if (matchComplete && !matchId) {
         return message.channel.send(`The match result between ${winner.user.username} and ${loser.user.username} was already recorded.`)
-    } else if (!matchComplete && !matchID) {
+    } else if (!matchComplete && !matchId) {
         return message.channel.send(`${winner.user.username} and ${loser.user.username} were not supposed to play a match.`)
-    } else if (matchID) {
+    } else if (matchId) {
         challongeClient.matches.update({
             id: status['tournament'],
-            matchId: matchID,
+            matchId: matchId,
             match: {
               scoresCsv: score,
               winnerId: winnerId
@@ -452,7 +452,7 @@ const addMatchResult = async (message, matches, participants, loser, winner, for
                          
                     message.channel.send(`<@${loser.user.id}>, Your ${formatName} tournament loss to ${winner.user.username} has been recorded.`)
                     return setTimeout(function() {
-                        getUpdatedMatchesObject(message, participants, matchID, loserId, winnerId, loser, winner)
+                        getUpdatedMatchesObject(message, participants, matchId, loserId, winnerId, loser, winner)
                     }, 3000)	
                 } else {
                     try {
@@ -465,7 +465,7 @@ const addMatchResult = async (message, matches, participants, loser, winner, for
                          
                     message.channel.send(`<@${loser.user.id}>, Your ${formatName} tournament match against ${winner.user.username} has been recorded as a no-show.`)
                     return setTimeout(function() {
-                        getUpdatedMatchesObject(message, participants, matchID, loserId, winnerId, loser, winner)
+                        getUpdatedMatchesObject(message, participants, matchId, loserId, winnerId, loser, winner)
                     }, 3000)
                 }
             }
@@ -475,14 +475,14 @@ const addMatchResult = async (message, matches, participants, loser, winner, for
 
 
 //GET UPDATED MATCHES OBJECT
-const getUpdatedMatchesObject = async (message, participants, matchID, loserId, winnerId, loser, winner) => {
+const getUpdatedMatchesObject = async (message, participants, matchId, loserId, winnerId, loser, winner) => {
     return challongeClient.matches.index({
         id: status['tournament'],
         callback: (err, data) => {
             if (err) {
                 return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
             } else {
-                return checkMatches(message, data, participants, matchID, loserId, winnerId, loser, winner)
+                return checkMatches(message, data, participants, matchId, loserId, winnerId, loser, winner)
             }
         }
     }) 
@@ -492,9 +492,7 @@ const getUpdatedMatchesObject = async (message, participants, matchID, loserId, 
 
 
 //CHECK MATCHES
-const checkMatches = async (message, matches, participants, matchID, loserId, winnerId, loser, winner) => {
-    console.log('loser.user.username', loser.user.username)
-    console.log('winner.user.username', winner.user.username)
+const checkMatches = async (message, matches, participants, matchId, loserId, winnerId, loser, winner) => {
     let winnerNextMatchId
     let winnerWaitingOnMatchId
     let winnerNextOppoPartId
@@ -590,7 +588,6 @@ const checkMatches = async (message, matches, participants, matchID, loserId, wi
         if (entry.losses === 1) {
             return message.channel.send(`New Match: <@${loser.user.id}>${loserDB} vs <@${winner.user.id}>${winnerDB}. Good luck to both duelists.`)
         } else {
-            console.log(`removing ${loser.user.username}'s tournament role`)
             loser.roles.remove(tourRole)
             message.channel.send(`${loser.user.username}, You are eliminated from the tournament. Better luck next time!`)
         }
@@ -614,7 +611,6 @@ const checkMatches = async (message, matches, participants, matchID, loserId, wi
         const winnerDB = winningPlayer.duelingBook ? ` (DB: ${winningPlayer.duelingBook})` : ``
         message.channel.send(`New Match: <@${winner.user.id}>${winnerDB} vs <@${opponent.playerId}>${opponentDB}. Good luck to both duelists.`)
     } else if (!winnerNextOppoPartId && !winnerWaitingOnMatchId) {
-        console.log(`removing ${winner.user.username}'s tournament role`)
         winner.roles.remove(tourRole)
         message.channel.send(`<@${winner.user.id}>, You won the tournament! Congratulations on your stellar performance!`)
     }
