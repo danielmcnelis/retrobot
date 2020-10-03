@@ -536,6 +536,28 @@ client.on('message', async (message) => {
         }, (orderedParticipantIds.length + 1) * 500)
     }
 
+
+    //CHALLONGE - GENERATE
+    if (cmd.toLowerCase() === `!generate`) {
+        if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
+        const name = (args[0] ? args[0] : status['tournament'])
+        if (!name) return message.channel.send('There is no active tournament.')
+        const unregistered = await Tournament.findAll({ where: { participantId: null } })
+        if (unregistered.length) return message.channel.send('One of more players has not been added to the bracket.')
+
+        const allDecks = await Tournament.findAll({include: Player})
+        let inputArray = ['TO;Format;TournamentName;DiscordUsername;DuelingBookUsername;UserGivenDeckLabel;DeckURL']
+
+        allDecks.forEach(function(row) {
+            console.log('row', row)
+            let data = `FL;05Aug;${name};${row.pilot};${row.player.duelingBook};${row.name};${row.url}`
+            inputArray.push(data)
+        })
+
+        console.log('inputArray', inputArray)
+    }
+
+
     //CHALLONGE - START
     if (cmd.toLowerCase() === `!start`) {
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
