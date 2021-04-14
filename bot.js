@@ -9,7 +9,7 @@ const OldData = require('./static/oldData.json')
 const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, FL, approve, lmfao } = require('./static/emojis.json')
 const { pfpcom, botcom, rolecom, statscom, profcom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
 const { bfpRole, bfsRole, muteRole, botRole, tourRole, politicsRole, shitposterRole } = require('./static/roles.json')
-const { welcomeChannel, registrationChannel, deckListsChannel, replayLinksChannel, politicsChannel, shitpostingChannel } = require('./static/channels.json')
+const { welcomeChannel, registrationChannel, deckListsChannel, replayLinksChannel, politicsChannel, shitPostingChannel } = require('./static/channels.json')
 const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
@@ -182,11 +182,11 @@ client.on('message', async (message) => {
 
         if(!message.member.roles.cache.some(role => role.id === shitposterRole)) {
         message.member.roles.add(shitposterRole)
-        return message.channel.send(`You now have the Shit Poster role. You can now keep up with WGM's ~~shit posts~~ woke takes in <#${shitpostingChannel}>.`) }
+        return message.channel.send(`You now have the Shit Poster role. You can now keep up with WGM's ~~shit posts~~ woke takes in <#${shitPostingChannel}>.`) }
         
         else {
         message.member.roles.remove(shitposterRole)
-        return message.channel.send(`You no longer have the Shit Poster role. You no longer have to see james arc’s cringey memes in <#${shitpostingChannel}>.`) }
+        return message.channel.send(`You no longer have the Shit Poster role. You no longer have to see james arc’s cringey memes in <#${shitPostingChannel}>.`) }
     }
     
     //MUTE
