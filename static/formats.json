@@ -426,6 +426,20 @@
         "role": "572905478481248256",
         "emoji": "<:celtic:647204025636487188>"
     },
+    "adamancipator": {
+        "database":"Adamancipator",
+        "name": "Adamancipator",
+        "channel":"805496253881253931",
+        "role":"829474409432875028",
+        "emoji":"<:block:830271176391262249>"
+    },
+    "infernoble": {
+        "database":"Infernoble",
+        "name": "Infernoble",
+        "channel":"805496363311693836",
+        "role":"829474204411625513",
+        "emoji":"<:charles:830279134613733386>"
+    },
     "voice": {
         "name": "Voice",
         "channel": "414842878490050582",

@@ -8,13 +8,13 @@ const { Op } = require('sequelize')
 const OldData = require('./static/oldData.json')
 const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, FL, approve, lmfao } = require('./static/emojis.json')
 const { pfpcom, botcom, rolecom, statscom, profcom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
-const { bfpRole, muteRole, botRole, tourRole, politicsRole } = require('./static/roles.json')
+const { bfpRole, bfsRole, muteRole, botRole, tourRole, politicsRole, shitposterRole } = require('./static/roles.json')
 const { welcomeChannel, registrationChannel, deckListsChannel, replayLinksChannel, politicsChannel } = require('./static/channels.json')
 const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
 const muted = require('./static/muted.json')
-const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('./db/index.js')
+const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Adamancipator, Infernoble, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('./db/index.js')
 const { capitalize, restore, recalculate, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
 const { seed, askForDBUsername, getDeckListTournament, getUpdatedDeckURL, changeDeckTypeTournament, removeParticipant, getParticipants, findOpponent } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
@@ -171,7 +171,22 @@ client.on('message', async (message) => {
         
         else {
         message.member.roles.remove(politicsRole)
-        return message.channel.send(`I have removed you from the Politics role. You no longer have to read MMF’s rants in <#${politicsChannel}>.`) }
+        return message.channel.send(`You no longer have the Politics role. You no longer have to read MMF’s epic rants in <#${politicsChannel}>.`) }
+    }
+
+    //SHITPOST
+    if(cmd.toLowerCase() === `!shitpost`) {
+        if(message.member.roles.cache.some(role => role.id === bfsRole)) {
+            return message.channel.send(`You do not have permission to do that.`)
+        }
+
+        if(!message.member.roles.cache.some(role => role.id === shitposterRole)) {
+        message.member.roles.add(shitposterRole)
+        return message.channel.send(`You now have the Shit Poster role. You can now keep up with WGM's ~~shit posts~~ woke takes in <#${shitpostingChannel}>.`) }
+        
+        else {
+        message.member.roles.remove(shitposterRole)
+        return message.channel.send(`You no longer have the Shit Poster role. You no longer have to see james arc’s cringey memes in <#${shitpostingChannel}>.`) }
     }
     
     //MUTE
@@ -877,7 +892,7 @@ client.on('message', async (message) => {
         const player = await Player.findOne({ where: { id: playerId } })
 
         if (!player && maid === playerId) {
-            createPlayer(member.user.id, member.user.username, member.user.tag);
+            createPlayer(message.author.user.id, message.author.user.username, message.author.user.tag);
             return message.channel.send("I added you to the Format Library database. Please try again.")
         } else if (!player && maid !== playerId) {
             return message.channel.send("That user is not in the Format Library database.")
@@ -1354,6 +1369,19 @@ ${player2.name} has won ${p2Wins}x`)
             console.log(err)
             return message.channel.send(`Sorry, time's up. ${oldPlayer.name}'s stats were not combined with ${newPlayer.name}'s stats.`)
         })
+    }
+
+    //INITIATE
+    if (cmd.toLowerCase() === `!initiate` || cmd.toLowerCase() === `!init`) { 
+        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
+        const allFormatLibraryPlayers = await YugiKaiba.findAll()
+
+        allFormatLibraryPlayers.forEach(async function (player) {
+            console.log('playerId', player.playerId)
+            await eval(formatDatabase).create({ playerId: player.playerId })
+        })
+
+        return message.channel.send(`The ${formatName} database is ready to go! ${formatEmoji}`)
     }
 
 

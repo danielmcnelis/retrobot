@@ -2,7 +2,7 @@
 const { db } = require('../db/index.js')
 
 const seed = async () => {
-  await db.sync({force: true})
+  await db.sync()
   db.close()
   console.log(`
     Seeding successful!

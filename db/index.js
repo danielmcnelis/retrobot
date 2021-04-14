@@ -60,6 +60,9 @@ const SkyStriker = require('./sky-striker')
 const ThunderDragon = require('./thunder-dragon')
 const LunalightOrcust = require('./lunalight-orcust')
 const StrikerOrcust = require('./striker-orcust')
+const Adamancipator = require('./adamancipator')
+const Infernoble = require('./infernoble')
+
 const Current = require('./current')
 const Traditional = require('./traditional')
 const Rush = require('./rush')
@@ -235,6 +238,13 @@ Player.hasOne(LunalightOrcust)
 StrikerOrcust.belongsTo(Player)
 Player.hasOne(StrikerOrcust)
 
+Adamancipator.belongsTo(Player)
+Player.hasOne(Adamancipator)
+
+Infernoble.belongsTo(Player)
+Player.hasOne(Infernoble)
+
+
 Current.belongsTo(Player)
 Player.hasOne(Current)
 
@@ -315,6 +325,8 @@ module.exports = {
   ThunderDragon,
   LunalightOrcust,
   StrikerOrcust,
+  Adamancipator,
+  Infernoble,
   Current,
   Traditional,
   Rush,
