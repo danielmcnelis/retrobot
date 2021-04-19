@@ -8,8 +8,8 @@ const { Op } = require('sequelize')
 const OldData = require('./static/oldData.json')
 const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, FL, approve, lmfao } = require('./static/emojis.json')
 const { pfpcom, botcom, rolecom, statscom, profcom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
-const { bfpRole, bfsRole, muteRole, botRole, tourRole, politicsRole, shitposterRole } = require('./static/roles.json')
-const { welcomeChannel, registrationChannel, deckListsChannel, replayLinksChannel, politicsChannel, shitPostingChannel } = require('./static/channels.json')
+const { bfpRole, bfsRole, muteRole, botRole, tourRole, politicsRole } = require('./static/roles.json')
+const { welcomeChannel, registrationChannel, deckListsChannel, replayLinksChannel, politicsChannel } = require('./static/channels.json')
 const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
@@ -172,21 +172,6 @@ client.on('message', async (message) => {
         else {
         message.member.roles.remove(politicsRole)
         return message.channel.send(`You no longer have the Politics role. You no longer have to read MMF’s epic rants in <#${politicsChannel}>.`) }
-    }
-
-    //SHITPOST
-    if(cmd.toLowerCase() === `!shitpost`) {
-        if(message.member.roles.cache.some(role => role.id === bfsRole)) {
-            return message.channel.send(`You do not have permission to do that.`)
-        }
-
-        if(!message.member.roles.cache.some(role => role.id === shitposterRole)) {
-        message.member.roles.add(shitposterRole)
-        return message.channel.send(`You now have the Shit Poster role. You can now keep up with WGM's ~~shit posts~~ woke takes in <#${shitPostingChannel}>.`) }
-        
-        else {
-        message.member.roles.remove(shitposterRole)
-        return message.channel.send(`You no longer have the Shit Poster role. You no longer have to see james arc’s cringey memes in <#${shitPostingChannel}>.`) }
     }
     
     //MUTE
