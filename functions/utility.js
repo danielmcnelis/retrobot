@@ -186,18 +186,32 @@ const getCat = (type) => {
 }
 
 //GET MEDAL
-const getMedal = (stats) => {
-    return stats <= 230 ? mad
-    : (stats > 230 && stats <= 290) ? sad
-    : (stats > 290 && stats <= 350) ? rock
-    : (stats > 350 && stats <= 410) ? bron
-    : (stats > 410 && stats <= 470) ? silv
-    : (stats > 470 && stats <= 530) ? gold
-    : (stats > 530 && stats <= 590) ? plat
-    : (stats > 590 && stats <= 650) ? dia
-    : (stats > 650 && stats <= 710) ? mast
-    : (stats > 710 && stats <= 770) ? lgnd
-    : god
+const getMedal = (stats, title = false) => {
+    if (title) {
+        return stats <= 230 ? `Tilted ${mad}`
+        : (stats > 230 && stats <= 290) ?  `Chump ${sad}`
+        : (stats > 290 && stats <= 350) ?  `Rock ${ROCK}`
+        : (stats > 350 && stats <= 410) ?  `Bronze ${bron}`
+        : (stats > 410 && stats <= 470) ?  `Silver ${silv}`
+        : (stats > 470 && stats <= 530) ?  `Gold ${gold}`
+        : (stats > 530 && stats <= 590) ?  `Platinum ${plat}`
+        : (stats > 590 && stats <= 650) ?  `Diamond ${dia}`
+        : (stats > 650 && stats <= 710) ?  `Master ${mast}`
+        : (stats > 710 && stats <= 770) ?  `Legend ${lgnd}`
+        : `Deity ${god}`
+    } else {
+        return stats <= 230 ? mad
+        : (stats > 230 && stats <= 290) ? sad
+        : (stats > 290 && stats <= 350) ? rock
+        : (stats > 350 && stats <= 410) ? bron
+        : (stats > 410 && stats <= 470) ? silv
+        : (stats > 470 && stats <= 530) ? gold
+        : (stats > 530 && stats <= 590) ? plat
+        : (stats > 590 && stats <= 650) ? dia
+        : (stats > 650 && stats <= 710) ? mast
+        : (stats > 710 && stats <= 770) ? lgnd
+        : god
+    }
 }
 
 //CAPITALIZE

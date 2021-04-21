@@ -848,7 +848,7 @@ client.on('message', async (message) => {
         }
 
         const rank = (index === -1 ? `N/A` : `#${index + 1} out of ${allRecords.length}`)
-        const medal = getMedal(record.stats)
+        const medal = getMedal(record.stats, true)
 
         return message.channel.send(`${formatEmoji} --- ${formatName} Format Stats --- ${formatEmoji}
 Name: ${player.name}
