@@ -5,10 +5,10 @@
 const Discord = require('discord.js')
 const fs = require('fs')
 const { Op } = require('sequelize')
-const { sad, rock, bron, silv, gold, plat, dia, mast, lgnd, FL, approve, lmfao } = require('./static/emojis.json')
+const { sad, lgnd, FL, approve, lmfao } = require('./static/emojis.json')
 const { pfpcom, botcom, rolecom, statscom, profcom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
-const { bfpRole, bfsRole, muteRole, botRole, tourRole, politicsRole } = require('./static/roles.json')
-const { welcomeChannel, registrationChannel, deckListsChannel, replayLinksChannel, politicsChannel } = require('./static/channels.json')
+const { bfpRole, muteRole, botRole, tourRole, politicsRole } = require('./static/roles.json')
+const { welcomeChannel, registrationChannel, politicsChannel } = require('./static/channels.json')
 const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
@@ -848,15 +848,7 @@ client.on('message', async (message) => {
         }
 
         const rank = (index === -1 ? `N/A` : `#${index + 1} out of ${allRecords.length}`)
-        const medal = (record.stats <= 290 ? `Chump ${sad}`
-        : (record.stats > 290 && record.stats <= 350) ? `Rock ${rock}`
-        : (record.stats > 350 && record.stats <= 410) ? `Bronze ${bron}`
-        : (record.stats > 410 && record.stats <= 470) ? `Silver ${silv}`
-        : (record.stats > 470 && record.stats <= 530) ? `Gold ${gold}`
-        : (record.stats > 530 && record.stats <= 590) ? `Platinum ${plat}`
-        : (record.stats > 590 && record.stats <= 650) ? `Diamond ${dia}`
-        : (record.stats > 650 && record.stats <= 710) ? `Master ${mast}`
-        : `Legend ${lgnd}`)
+        const medal = getMedal(record.stats)
 
         return message.channel.send(`${formatEmoji} --- ${formatName} Format Stats --- ${formatEmoji}
 Name: ${player.name}
