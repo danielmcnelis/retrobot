@@ -217,7 +217,11 @@ const saveYDK = async (member, url) => {
                     }
                 })
 
-                illegalCards.push(illegalCard.name)
+                if (illegalCard) {
+                    illegalCards.push(illegalCard.name)
+                } else {
+                    console.log(`ERROR: card ${id} not found.`)
+                }
             }
         }
 
