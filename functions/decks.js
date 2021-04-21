@@ -118,10 +118,36 @@ const saveYDK = async (member, url) => {
             }
         })
 
-        // const allStatusesFromDB = await Status.findAll()
+        const allforbiddenGoatCardsFromDB = await Status.findAll({ 
+            where: {
+                apr05: 'forbidden'
+            },
+            include: Card 
+        })
+
+        const allLimitedGoatCardsFromDB = await Status.findAll({ 
+            where: {
+                apr05: 'limited'
+            },
+            include: Card 
+        })
+
+        const allSemiLimitedGoatCardsFromDB = await Status.findAll({ 
+            where: {
+                apr05: 'semi-limited'
+            },
+            include: Card 
+        })
 
         let goatCardIds = []
+        let forbiddenCardIds = []
+        let limitedCardIds = []
+        let semiLimitedCardIds = []
+
         let illegalCards = []
+        let forbiddenCards = []
+        let limitedCards = []
+        let semiLimitedCards = []
 
         allGoatCardsFromDB.forEach(card => {
             let id = card.image.slice(0,-4)
@@ -129,25 +155,68 @@ const saveYDK = async (member, url) => {
             goatCardIds.push(id)
         })
 
+        allforbiddenGoatCardsFromDB.forEach(row => {
+            let id = row.card.image.slice(0,-4)
+            while (id.length < 8) id = '0' + id
+            forbiddenCardIds.push(id)
+        })
+
+        allLimitedGoatCardsFromDB.forEach(row => {
+            let id = row.card.image.slice(0,-4)
+            while (id.length < 8) id = '0' + id
+            limitedCardIds.push(id)
+        })
+
+        allSemiLimitedGoatCardsFromDB.forEach(row => {
+            let id = row.card.image.slice(0,-4)
+            while (id.length < 8) id = '0' + id
+            semiLimitedCardIds.push(id)
+        })
+
+        console.log('forbiddenCardIds', forbiddenCardIds)
+        console.log('limitedCardIds', limitedCardIds)
+        console.log('semiLimitedCardIds', semiLimitedCardIds)
+
         const keys = Object.keys(cards_obj)
 
         for (const key of keys) {
-            if (goatCardIds.includes(key)) console.log(`${key} is Goat legal.`) 
-            else {
-                console.log(`<!> ${key} is NOT Goat legal <!>`)
-                let id = key
-                while (id.charAt(0) === '0') id = id.slice(1)
-                
-                const imageFile = `${id}.jpg`
-                console.log('imageFile', imageFile)
+            let id = key
+            while (id.charAt(0) === '0') id = id.slice(1)                
+            const imageFile = `${id}.jpg`
 
+            if (goatCardIds.includes(key)) {
+                if (forbiddenCardIds.includes(key)) {
+                    const forbiddenCard = await Card.findOne({
+                        where: {
+                            image: imageFile
+                        }
+                    })
+    
+                    forbiddenCards.push(forbiddenCard.name)
+                } else if (limitedCardIds.includes(key) && cards_obj[key] > 1) {
+                    const limitedCard = await Card.findOne({
+                        where: {
+                            image: imageFile
+                        }
+                    })
+    
+                    limitedCards.push(limitedCard.name)
+                } else if (semiLimitedCardIds.includes(key) && cards_obj[key] > 2) {
+                    const semiLimitedCard = await Card.findOne({
+                        where: {
+                            image: imageFile
+                        }
+                    })
+    
+                    semiLimitedCards.push(semiLimitedCard.name)
+                }
+            } else {
                 const illegalCard = await Card.findOne({
                     where: {
                         image: imageFile
                     }
                 })
 
-                console.log('illegalCard.name', illegalCard.name)
                 illegalCards.push(illegalCard.name)
             }
         }
@@ -158,8 +227,27 @@ const saveYDK = async (member, url) => {
 			}
 			console.log(`${username}'s deck was saved!`);
 		})
+        
+        illegalCards.sort()
+        forbiddenCards.sort()
+        limitedCards.sort()
+        semiLimitedCards.sort()
 
-        return illegalCards.sort()
+        const issues = {
+            illegalCards,
+            forbiddenCards,
+            limitedCards,
+            semiLimitedCards
+        }
+
+        console.log('issues', issues)
+
+        console.log(`issues['illegalCards']`, issues['illegalCards'])
+        console.log(`issues['forbiddenCards']`, issues['forbiddenCards'])
+        console.log(`issues['limitedCards']`, issues['limitedCards'])
+        console.log(`issues['semiLimitedCards']`, issues['semiLimitedCards'])
+
+        return issues
 	} catch (err) {
 		console.log(err)
 	} finally {

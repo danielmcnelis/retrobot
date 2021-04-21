@@ -100,10 +100,16 @@ client.on('message', async (message) => {
         const url = args[0]
         console.log('url', url)
         console.log('message.author', message.author)
-        const illegalCards = await saveYDK(message.author, url)
+        const issues = await saveYDK(message.author, url)
 
-        if (illegalCards.length) {
-            return message.channel.send(`I'm sorry, ${message.author.username}, your deck is not legal for Goat Format. The following cards are not allowed:\n${illegalCards.join('\n')}`)
+        if (issues['illegalCards'].length || issues['forbiddenCards'].length || issues['limitedCards'].length || issues['semiLimitedCards'].length) {
+            let response = `I'm sorry, ${message.author.username}, your deck is not legal for Goat Format.`
+            if (issues['illegalCards'].length) response += `\n\nThe following cards are not included in this format:\n${issues['illegalCards'].join('\n')}`
+            if (issues['forbiddenCards'].length) response += `\n\nThe following cards are forbidden:\n${issues['forbiddenCards'].join('\n')}`
+            if (issues['limitedCards'].length) response += `\n\nThe following cards are limited:\n${issues['limitedCards'].join('\n')}`
+            if (issues['semiLimitedCards'].length) response += `\n\nThe following cards are semi-limited:\n${issues['semiLimitedCards'].join('\n')}`
+
+            return message.channel.send(response)
         } else {
             return message.channel.send(`Your deck is good to go! ${approve}`)
         }
