@@ -1,9 +1,13 @@
 
-const db = require('./db')
+const { db, db2 } = require('./db')
+
 const Match = require('./match')
 const Matchup = require('./matchup')
 const Player = require('./player')
 const Tournament = require('./tournament')
+
+const Card = require('./card')
+const Status = require('./status')
 
 const YugiKaiba = require('./yugi-kaiba')
 const Critter = require('./critter')
@@ -69,6 +73,9 @@ const Rush = require('./rush')
 const Speed = require('./speed')
 const Nova = require('./nova')
 const Rebirth = require('./rebirth')
+
+Status.belongsTo(Card)
+Card.hasOne(Status)
 
 Tournament.belongsTo(Player)
 Player.hasOne(Tournament)
@@ -266,6 +273,9 @@ Player.hasOne(Rebirth)
 
 module.exports = {
   db,
+  db2,
+  Card,
+  Status,
   Match,
   Matchup,
   Player,

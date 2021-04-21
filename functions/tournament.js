@@ -5,6 +5,7 @@ const status = require('../static/status.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('../db/index.js')
 const { getCat } = require('./utility.js')
 const { client, challongeClient } = require('../static/clients.js')
+const { saveYDK, saveAllYDK } = require('./decks.js')
 const formats = require('../static/formats.json')
 const types = require('../static/types.json')
 
@@ -617,6 +618,7 @@ const checkMatches = async (message, matches, participants, matchId, loserId, wi
     
     return
 }
+
 
 module.exports = {
     askForDBUsername,

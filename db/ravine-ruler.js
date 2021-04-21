@@ -1,6 +1,6 @@
 
 const Sequelize = require('sequelize');
-const db = require('./db');
+const {db} = require('./db');
 
 const RavineRuler = db.define('ravineRulerStats', {
     stats: {

@@ -1,6 +1,6 @@
 
 const Sequelize = require('sequelize');
-const db = require('./db');
+const {db} = require('./db');
 
 const GladBeast = db.define('gladBeastStats', {
     stats: {
