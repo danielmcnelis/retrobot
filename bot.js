@@ -12,6 +12,7 @@ const { welcomeChannel, registrationChannel, politicsChannel } = require('./stat
 const types = require('./static/types.json')
 const status = require('./static/status.json')
 const formats = require('./static/formats.json')
+const errors = require('./static/errors.json')
 const muted = require('./static/muted.json')
 const { Card, Status, Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Adamancipator, Infernoble, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('./db')
 const { capitalize, restore, recalculate, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
@@ -91,19 +92,19 @@ client.on('message', async (message) => {
             formatEmoji = formats[key].emoji
             formatRole = formats[key].role
             formatChannel = formats[key].channel
+            formatDate = formats[key].date
+            formatList = formats[key].list
         }
     })
     
 
-    //TEST
-    if (cmd.toLowerCase() === `!test` || cmd.toLowerCase() === `!check`) {
+    //CHECK
+    if (cmd.toLowerCase() === `!check`) {
         const url = args[0]
-        console.log('url', url)
-        console.log('message.author', message.author)
-        const issues = await saveYDK(message.author, url)
+        const issues = await saveYDK(message.author, url, formatDate, formatList)
 
         if (issues['illegalCards'].length || issues['forbiddenCards'].length || issues['limitedCards'].length || issues['semiLimitedCards'].length) {
-            let response = `I'm sorry, ${message.author.username}, your deck is not legal for Goat Format.`
+            let response = `I'm sorry, ${message.author.username}, your deck is not legal for ${formatName} Format. ${formatEmoji}`
             if (issues['illegalCards'].length) response += `\n\nThe following cards are not included in this format:\n${issues['illegalCards'].join('\n')}`
             if (issues['forbiddenCards'].length) response += `\n\nThe following cards are forbidden:\n${issues['forbiddenCards'].join('\n')}`
             if (issues['limitedCards'].length) response += `\n\nThe following cards are limited:\n${issues['limitedCards'].join('\n')}`
@@ -113,6 +114,12 @@ client.on('message', async (message) => {
         } else {
             return message.channel.send(`Your deck is good to go! ${approve}`)
         }
+    }
+
+    //ERRORS
+    if (cmd.toLowerCase() === `!errors`) {
+        if(!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
+        message.channel.send(`The following Card IDs appear to be incorrect in the database:\n${errors["badCardIds"].join('\n')}`)
     }
 
 

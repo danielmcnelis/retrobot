@@ -2,8 +2,6 @@
 const Sequelize = require('sequelize')
 const {db2} = require('./db')
 
-console.log('test3', !!db2)
-
 const Card = db2.define('card', {
   image: {
     type: Sequelize.TEXT,

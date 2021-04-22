@@ -4,6 +4,7 @@ const {Builder, By, until} = require('selenium-webdriver')
 const firefox = require('selenium-webdriver/firefox')
 const fs = require('fs')
 const { Tournament, Card, Status } = require('../db/index.js')
+const errors = require('../static/errors.json')
 const { Op } = require('sequelize')
 
 const convertSortedArrayToObject = (arr) => {
@@ -50,16 +51,13 @@ const saveAllYDK = async () => {
 
 
 //SAVE YDK
-const saveYDK = async (member, url) => {
+const saveYDK = async (member, url, formatDate, formatList) => {
     console.log('~~~SAVING YDK~~~')
     const options = new firefox.Options()
     options.addArguments("-headless")
-    const username = member.user ? member.user.username : member.username
-
-    console.log('username', username)
-    
+    const username = member.user ? member.user.username : member.username    
     const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build()
-    console.log('driver is READY')
+    // console.log('driver is READY')
     
     try {
         console.log(`Loading ${username}'s deck at ${url}...`)
@@ -113,28 +111,28 @@ const saveYDK = async (member, url) => {
         const allGoatCardsFromDB = await Card.findAll({
             where: {
                 date: {
-                    [Op.lte]: '2005-08-17',
+                    [Op.lte]: formatDate,
                 }
             }
         })
 
         const allforbiddenGoatCardsFromDB = await Status.findAll({ 
             where: {
-                apr05: 'forbidden'
+                [formatList]: 'forbidden'
             },
             include: Card 
         })
 
         const allLimitedGoatCardsFromDB = await Status.findAll({ 
             where: {
-                apr05: 'limited'
+                [formatList]: 'limited'
             },
             include: Card 
         })
 
         const allSemiLimitedGoatCardsFromDB = await Status.findAll({ 
             where: {
-                apr05: 'semi-limited'
+                [formatList]: 'semi-limited'
             },
             include: Card 
         })
@@ -152,36 +150,48 @@ const saveYDK = async (member, url) => {
         allGoatCardsFromDB.forEach(card => {
             let id = card.image.slice(0,-4)
             while (id.length < 8) id = '0' + id
+            // console.log('All cards, id:', id)
+            if (card.name === 'Summoner Monk') {
+                console.log('MONKS ID', id)
+            }
             goatCardIds.push(id)
         })
+
+        // console.log('goatCardIds', goatCardIds)
 
         allforbiddenGoatCardsFromDB.forEach(row => {
             let id = row.card.image.slice(0,-4)
             while (id.length < 8) id = '0' + id
+            console.log('Forbidden cards, id:', id)
             forbiddenCardIds.push(id)
         })
 
         allLimitedGoatCardsFromDB.forEach(row => {
             let id = row.card.image.slice(0,-4)
             while (id.length < 8) id = '0' + id
+            console.log('Limited cards, id:', id)
             limitedCardIds.push(id)
         })
 
         allSemiLimitedGoatCardsFromDB.forEach(row => {
             let id = row.card.image.slice(0,-4)
             while (id.length < 8) id = '0' + id
+            console.log('Semi-Limited cards, id:', id)
             semiLimitedCardIds.push(id)
         })
 
-        console.log('forbiddenCardIds', forbiddenCardIds)
-        console.log('limitedCardIds', limitedCardIds)
-        console.log('semiLimitedCardIds', semiLimitedCardIds)
+        // console.log('forbiddenCardIds', forbiddenCardIds)
+        // console.log('limitedCardIds', limitedCardIds)
+        // console.log('semiLimitedCardIds', semiLimitedCardIds)
 
         const keys = Object.keys(cards_obj)
 
-        for (const key of keys) {
+        for (let key of keys) {
+            console.log('key', key)
             let id = key
-            while (id.charAt(0) === '0') id = id.slice(1)                
+            while (key.length < 8) key = '0' + key
+            while (id.charAt(0) === '0') id = id.slice(1)
+            console.log('id', id)                
             const imageFile = `${id}.jpg`
 
             if (goatCardIds.includes(key)) {
@@ -220,6 +230,18 @@ const saveYDK = async (member, url) => {
                 if (illegalCard) {
                     illegalCards.push(illegalCard.name)
                 } else {
+                    let rawdata = fs.readFileSync('./static/errors.json')
+                    let rawobj = JSON.parse(rawdata)
+                    let badCardIds = rawobj["badCardIds"]
+
+                    if(!badCardIds.includes(id)) badCardIds.push(id)
+                    const newBadCardIds = badCardIds
+            
+                    errors['badCardIds'] = newBadCardIds
+                    fs.writeFile('./static/errors.json', JSON.stringify(errors), (err) => { 
+                        if (err) console.log(err)
+                    })
+
                     console.log(`ERROR: card ${id} not found.`)
                 }
             }
@@ -229,7 +251,7 @@ const saveYDK = async (member, url) => {
 			if(err) {
 				return console.log(err)
 			}
-			console.log(`${username}'s deck was saved!`);
+			console.log(`${username}'s deck was saved!`)
 		})
         
         illegalCards.sort()
@@ -244,12 +266,12 @@ const saveYDK = async (member, url) => {
             semiLimitedCards
         }
 
-        console.log('issues', issues)
+        // console.log('issues', issues)
 
-        console.log(`issues['illegalCards']`, issues['illegalCards'])
-        console.log(`issues['forbiddenCards']`, issues['forbiddenCards'])
-        console.log(`issues['limitedCards']`, issues['limitedCards'])
-        console.log(`issues['semiLimitedCards']`, issues['semiLimitedCards'])
+        // console.log(`issues['illegalCards']`, issues['illegalCards'])
+        // console.log(`issues['forbiddenCards']`, issues['forbiddenCards'])
+        // console.log(`issues['limitedCards']`, issues['limitedCards'])
+        // console.log(`issues['semiLimitedCards']`, issues['semiLimitedCards'])
 
         return issues
 	} catch (err) {
