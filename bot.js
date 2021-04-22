@@ -163,7 +163,7 @@ client.on('message', async (message) => {
         limitedCards.sort()
         semiLimitedCards.sort()
        
-        const response = `~ ${formatName} ${formatEmoji} Format Forbidden and Limited List ~`
+        let response = `~ ${formatName} ${formatEmoji} Format Forbidden and Limited List ~`
         if (forbiddenCards.length) response += `\n\nThe following cards are forbidden:\n${forbiddenCards.join('\n')}`
         if (limitedCards.length) response += `\n\nThe following cards are limited:\n${limitedCards.join('\n')}`
         if (semiLimitedCards.length) response += `\n\nThe following cards are semi-limited:\n${semiLimitedCards.join('\n')}`
