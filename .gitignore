@@ -2,7 +2,7 @@
 node_modules
 secrets.json
 credentials.json
-static/muted.json
-static/names.json
+/static/muted.json
+/static/names.json
 decks
 geckodriver
