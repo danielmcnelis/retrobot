@@ -123,6 +123,55 @@ client.on('message', async (message) => {
     }
 
 
+    //BANLIST
+    if (cmd.toLowerCase() === `!banlist`) {
+        const forbiddenCards = []
+        const limitedCards = []
+        const semiLimitedCards = []
+
+        const forbiddenCardData = await Status.findAll({ 
+            where: {
+                [formatList]: 'forbidden'
+            }
+        })
+
+        const limitedCardData = await Status.findAll({ 
+            where: {
+                [formatList]: 'limited'
+            }
+        })
+
+        const semiLimitedCardData = await Status.findAll({ 
+            where: {
+                [formatList]: 'semi-limited'
+            }
+        })
+
+        forbiddenCardData.forEach(card => {
+            forbiddenCards.push(card.name)
+        })
+
+        limitedCardData.forEach(card => {
+            limitedCards.push(card.name)
+        })
+
+        semiLimitedCardData.forEach(card => {
+            semiLimitedCards.push(card.name)
+        })
+
+        forbiddenCards.sort()
+        limitedCards.sort()
+        semiLimitedCards.sort()
+       
+        const response = `~ ${formatName} ${formatEmoji} Format Forbidden and Limited List ~`
+        if (forbiddenCards.length) response += `\n\nThe following cards are forbidden:\n${issues['forbiddenCards'].join('\n')}`
+        if (limitedCards.length) response += `\n\nThe following cards are limited:\n${issues['limitedCards'].join('\n')}`
+        if (semiLimitedCards.length) response += `\n\nThe following cards are semi-limited:\n${issues['semiLimitedCards'].join('\n')}`
+        
+        return message.channel.send(response)
+    }
+
+
     //AVATAR
     if (pfpcom.includes(cmd.toLowerCase())) {
         let person = message.mentions.users.first()
