@@ -2,8 +2,9 @@
 //FUNCTIONS FOR GOATBOT
 
 const { adminRole, modRole } = require('../static/roles.json')
-const { mad, sad, rock, bron, silv, gold, plat, dia, mast, lgnd, god } = require('../static/emojis.json')
+const { mad, sad, rock, bron, silv, gold, plat, dia, mast, lgnd, god, approve } = require('../static/emojis.json')
 const Names = require('../static/names.json')
+const {saveYDK} = require('./decks.js')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Adamancipator, Infernoble, Current, Traditional, Rush, Speed, Nova, Rebirth } = require('../db/index.js')
 const categories = require('../static/categories.json')
 
@@ -148,7 +149,7 @@ const recalculate = async (match, winner, loser, format, z) => {
         await losersRow.save()
         await match.update({ delta })
 
-        console.log(`Match ${z}: a ${format} format loss by ${loser} to ${winner} has been incorporated in the recalculation.`)
+        console.log(`Match ${z}: a Goat format loss by ${loser} to ${winner} has been incorporated in the recalculation.`)
     }, (z*100 + 10000))
 }
 
@@ -185,6 +186,7 @@ const getCat = (type) => {
     return category
 }
 
+
 //GET MEDAL
 const getMedal = (stats, title = false) => {
     if (title) {
@@ -214,13 +216,51 @@ const getMedal = (stats, title = false) => {
     }
 }
 
+
 //CAPITALIZE
 const capitalize = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
+
+//CHECK DECK LIST
+const checkDeckList = async (client, message, member,  formatName, formatEmoji, formatDate, formatList) => {  
+    const filter = m => m.author.id === member.user.id
+    const msg = await member.user.send(`Please provide a duelingbook.com/deck link for the ${formatName} Format ${formatEmoji} deck you would like to check for legality.`);
+    const collected = await msg.channel.awaitMessages(filter, {
+        max: 1,
+        time: 180000
+    }).then(async collected => {
+        if (collected.first().content.startsWith("https://www.duelingbook.com/deck") || collected.first().content.startsWith("www.duelingbook.com/deck") || collected.first().content.startsWith("duelingbook.com/deck")) {		
+            message.author.send('Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.')
+
+            const url = collected.first().content
+            const issues = await saveYDK(message.author, url, formatDate, formatList)
+            
+            if (issues['illegalCards'].length || issues['forbiddenCards'].length || issues['limitedCards'].length || issues['semiLimitedCards'].length) {
+                let response = `I'm sorry, ${message.author.username}, your deck is not legal for ${formatName} Format. ${formatEmoji}`
+                if (issues['illegalCards'].length) response += `\n\nThe following cards are not included in this format:\n${issues['illegalCards'].join('\n')}`
+                if (issues['forbiddenCards'].length) response += `\n\nThe following cards are forbidden:\n${issues['forbiddenCards'].join('\n')}`
+                if (issues['limitedCards'].length) response += `\n\nThe following cards are limited:\n${issues['limitedCards'].join('\n')}`
+                if (issues['semiLimitedCards'].length) response += `\n\nThe following cards are semi-limited:\n${issues['semiLimitedCards'].join('\n')}`
+            
+                return message.author.send(response)
+            } else {
+                return message.author.send(`Your ${formatName} Format ${formatEmoji} deck is perfectly legal. You are good to go! ${approve}`)
+            }
+        } else {
+            return message.author.send("Sorry, I only accept duelingbook.com/deck links.")      
+        }
+    }).catch(err => {
+        console.log(err)
+        return message.author.send(`Sorry, time's up. If you wish to try again, go back to the Discord server and use the **!check** command.`)
+    })
+}
+
+
 module.exports = {
     capitalize,
+    checkDeckList,
     createPlayer,
     isNewUser,
     isAdmin,

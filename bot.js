@@ -15,7 +15,7 @@ const formats = require('./static/formats.json')
 const errors = require('./static/errors.json')
 const muted = require('./static/muted.json')
 const { Card, Status, Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Adamancipator, Infernoble, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('./db')
-const { capitalize, restore, recalculate, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal } = require('./functions/utility.js')
+const { capitalize, restore, recalculate, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal, checkDeckList } = require('./functions/utility.js')
 const { saveYDK, saveAllYDK } = require('./functions/decks.js')
 const { seed, askForDBUsername, getDeckListTournament, getUpdatedDeckURL, changeDeckTypeTournament, removeParticipant, getParticipants, findOpponent } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
@@ -100,31 +100,26 @@ client.on('message', async (message) => {
 
     //CHECK
     if (cmd.toLowerCase() === `!check`) {
-        const url = args[0]
-        const issues = await saveYDK(message.author, url, formatDate, formatList)
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
+        const member = message.guild.members.cache.get(maid)
+        if (!member) return message.channel.send('Sorry, I could not find you in the server. Please be sure you are not invisible.')
 
-        if (issues['illegalCards'].length || issues['forbiddenCards'].length || issues['limitedCards'].length || issues['semiLimitedCards'].length) {
-            let response = `I'm sorry, ${message.author.username}, your deck is not legal for ${formatName} Format. ${formatEmoji}`
-            if (issues['illegalCards'].length) response += `\n\nThe following cards are not included in this format:\n${issues['illegalCards'].join('\n')}`
-            if (issues['forbiddenCards'].length) response += `\n\nThe following cards are forbidden:\n${issues['forbiddenCards'].join('\n')}`
-            if (issues['limitedCards'].length) response += `\n\nThe following cards are limited:\n${issues['limitedCards'].join('\n')}`
-            if (issues['semiLimitedCards'].length) response += `\n\nThe following cards are semi-limited:\n${issues['semiLimitedCards'].join('\n')}`
-
-            return message.channel.send(response)
-        } else {
-            return message.channel.send(`Your deck is good to go! ${approve}`)
-        }
+        message.channel.send("Please check your DMs.")
+        return checkDeckList(client, message, member, formatName, formatEmoji, formatDate, formatList)
     }
+
 
     //ERRORS
     if (cmd.toLowerCase() === `!errors`) {
         if(!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
         message.channel.send(`The following Card IDs appear to be incorrect in the database:\n${errors["badCardIds"].join('\n')}`)
     }
 
 
     //BANLIST
     if (cmd.toLowerCase() === `!banlist`) {
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
         const forbiddenCards = []
         const limitedCards = []
         const semiLimitedCards = []
@@ -290,6 +285,7 @@ client.on('message', async (message) => {
     
     //ROLE
     if (rolecom.includes(cmd.toLowerCase())) {
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
         keys.forEach(function(key) {
             if(message.channel.id === formats[key].channel) {
                 if (!message.member.roles.cache.some(role => role.id === formats[key].role)) {
@@ -874,6 +870,7 @@ client.on('message', async (message) => {
 
     //STATS
     if (statscom.includes(cmd.toLowerCase())) {
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
         const playerId = (messageArray.length === 1 ? maid : messageArray[1].replace(/[\\<>@#&!]/g, ""))
         const player = await Player.findOne({ where: { id: playerId } })
 
@@ -1004,6 +1001,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
 
     //RANK
     if (rankcom.includes(cmd.toLowerCase())) {
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
         const x = parseInt(args[0]) || 10
         let result = []
         x === 1 ? result[0] = `${formatEmoji} --- The Best ${formatName} Player --- ${formatEmoji}`
@@ -1038,6 +1036,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
 
     //H2H
     if (h2hcom.includes(cmd.toLowerCase())) {
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
         if (messageArray.length === 1) return message.channel.send("Please specify at least 1 other player.")
         if (messageArray.length > 3) return message.channel.send("You may only compare 2 players at a time.")
         const player1Id = messageArray[1].replace(/[\\<>@#&!]/g, "")
@@ -1063,6 +1062,7 @@ ${player2.name} has won ${p2Wins}x`)
 
     //LOSS
     if (losscom.includes(cmd.toLowerCase())) {
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
         const oppo = messageArray[1].replace(/[\\<>@#&!]/g, "")
         const winner = message.guild.members.cache.get(oppo)
         const loser = message.guild.members.cache.get(maid)
@@ -1119,6 +1119,7 @@ ${player2.name} has won ${p2Wins}x`)
 
     //MANUAL
     if (cmd.toLowerCase() === `!manual`) {
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
         const winnerId = messageArray[1].replace(/[\\<>@#&!]/g, "")
         const loserId = messageArray[2].replace(/[\\<>@#&!]/g, "")
         const winner = message.guild.members.cache.get(winnerId)
@@ -1205,6 +1206,7 @@ ${player2.name} has won ${p2Wins}x`)
 
     //UNDO
     if (undocom.includes(cmd.toLowerCase())) {
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
         const allMatches = await Match.findAll({
             where: {
                 format: formatDatabase
@@ -1361,6 +1363,7 @@ ${player2.name} has won ${p2Wins}x`)
     // 6. Use this command in the format channel to add the datatable for the new format to the postgreSQL database. 
     if (cmd.toLowerCase() === `!initiate` || cmd.toLowerCase() === `!init`) { 
         if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
         const allFormatLibraryPlayers = await YugiKaiba.findAll()
 
         allFormatLibraryPlayers.forEach(async function (player) {
@@ -1378,6 +1381,7 @@ ${player2.name} has won ${p2Wins}x`)
     // It's also required after using the !combine command, but the bot will remind you to do it.
     if (cmd.toLowerCase() === `!recalculate` || cmd.toLowerCase() === `!recalc`) { 
         if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
+        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
         const allPlayers = await eval(formatDatabase).findAll()
         const allMatches = await Match.findAll({
             where: {
