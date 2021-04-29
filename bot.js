@@ -104,12 +104,12 @@ client.on('message', async (message) => {
             formatList = formats[key].list
         }
 
-        if(capitalize(status['format']) === formats[key].name) {
-            tournamentFormatName = formats[key].name
-            tournamentFormatEmoji = formats[key].emoji
-            tournamentFormatChannel = formats[key].channel
-            tournamentFormatDate = formats[key].date
-            tournamentFormatList = formats[key].list
+        if (status['format'] && (capitalize(status['format']) === formats[key].name)) {
+                tournamentFormatName = formats[key].name
+                tournamentFormatEmoji = formats[key].emoji
+                tournamentFormatChannel = formats[key].channel
+                tournamentFormatDate = formats[key].date
+                tournamentFormatList = formats[key].list
         }
     })
     
