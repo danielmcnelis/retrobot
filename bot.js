@@ -173,8 +173,10 @@ client.on('message', async (message) => {
         forbiddenCards.sort()
         limitedCards.sort()
         semiLimitedCards.sort()
+
+        message.channel.send(`I messaged you the Forbidden and Limited list for ${formatName} Format. ${formatEmoji}`)
        
-        message.channel.send(`~ ${formatName} ${formatEmoji} Format Forbidden and Limited List ~`)
+        message.author.send(`~ ${formatName} ${formatEmoji} Format Forbidden and Limited List ~`)
         if (forbiddenCards.length)  message.channel.send(`\n\nThe following cards are forbidden:\n${forbiddenCards.join('\n')}`)
         if (limitedCards.length)  message.channel.send(`\n\nThe following cards are limited:\n${limitedCards.join('\n')}`)
         if (semiLimitedCards.length)  message.channel.send(`\n\nThe following cards are semi-limited:\n${semiLimitedCards.join('\n')}`)
@@ -326,10 +328,10 @@ client.on('message', async (message) => {
 	        .setAuthor('Jazz#2704', 'https://i.imgur.com/wz5TqmR.png', 'https://formatlibrary.com/')
             .setThumbnail('https://i.imgur.com/ul7nKjk.png')
             .addField('How to Use This Guide', '\nThe following commands can be used for any format in the appropriate channels (i.e. <#414575168174948372>, <#629464112749084673>, etc.). Commands require arguments as follows: (blank) no argument, (@user) mention a user, (n) a number, (link) a URL.')
-        	.addField('Ranked Play Commands', '\n!loss - (@user) - Report a loss to another player. \n!stats - (blank or @user) - Post a player’s stats. \n!top - (number) - Post the server’s top players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a format role. \n!undo - Undo the last loss if you reported it. \n')
+        	.addField('Ranked Play Commands', '\n!loss - (@user) - Report a loss to another player. \n!stats - (blank or @user) - Post a player’s stats. \n!top - (n) - Post the channel’s top rated players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a format role. \n!undo - Undo the last loss if you reported it. \n')
         	.addField('Format Info Commands', '\n!legal - Privately check if your deck is legal. \n!list - View the Forbidden and Limited list. \n')
-        	.addField('Tournament Commands', '\n!join - Register for the upcoming tournament.\n!resubmit - Resubmit your deck list for the upcoming tournament. \n!drop - Drop from the current tournament. \n!show - Show the current tournament.')
-        	.addField('Server Commands', '\n!db - Set your DuelingBook.com username. \n!prof - (blank or @user) - Post a player’s profile. \n!medals - (blank or @user) - Post a player’s best medals. \n!formats - View a list of supported Retro Formats. \n!bot - View the RetroBot User Guide. \n!mod - View the Mod-Only User Guide.');
+        	.addField('Tournament Commands', '\n!join - Register for the upcoming tournament.\n!resubmit - Resubmit your deck list for the tournament. \n!drop - Drop from the current tournament. \n!show - Post the Challonge link for the current tournament.')
+        	.addField('Server Commands', '\n!db - Set your DuelingBook username. \n!prof - (blank or @user) - Post a player’s profile. \n!medals - (blank or @user) - Post a player’s best medals. \n!formats - View a list of supported Retro Formats. \n!bot - View the RetroBot User Guide. \n!mod - View the Moderator Guide.');
 
         message.author.send(botEmbed);
         return message.channel.send("I messaged you the RetroBot User Guide.")
@@ -349,10 +351,10 @@ client.on('message', async (message) => {
 	        .setURL('https://formatlibrary.com/')
 	        .setAuthor('Jazz#2704', 'https://i.imgur.com/wz5TqmR.png', 'https://formatlibrary.com/')
         	.setThumbnail('https://i.imgur.com/ul7nKjk.png')
-        	.addField('Mod-Only Ranked Play Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
-            .addField('Mod-Only Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Directly add a player to the bracket. \n!noshow - (@user) - Report a no-show. \n!remove - (@user) - Remove a player from the bracket. \n!seed - Assign seeds to participants based on rankings. \n!start - Start the next tournament. \n!end - End the current tournament.')
-            .addField('Mod-Only Discipline Commands', '\n!mute - (@user) - Mute a user.\n!unmute - (@user) - Unmute a user.')
-            .addField('Mod-Only Server Commands', '\n!census - Update the information of all players in the database.\n!recalc - Recaluate all player stats for a specific format if needed.');
+        	.addField('Mod Ranked Play Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
+            .addField('Mod Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Directly add a player to the bracket. \n!noshow - (@user) - Report a no-show. \n!remove - (@user) - Remove a player from the bracket. \n!seed - Assign seeds to participants based on rankings. \n!start - Start the next tournament. \n!end - End the current tournament.')
+            .addField('Mod Discipline Commands', '\n!mute - (@user) - Mute a user.\n!unmute - (@user) - Unmute a user.')
+            .addField('Mod Server Commands', '\n!census - Update the information of all players in the database.\n!recalc - Recaluate all player stats for a specific format if needed.');
 
         message.author.send(botEmbed);
         return message.channel.send("I messaged you the Mod-Only Guide.")
@@ -361,7 +363,7 @@ client.on('message', async (message) => {
 
     //FORMATS
     if(cmd.toLowerCase() === `!formats`) {
-        const formatsEmbed = new Discord.RichEmbed()
+        const formatsEmbed = new Discord.MessageEmbed()
             .setColor('#38C368')
             .setURL('https://formatlibrary.com/')
             .setThumbnail('https://i.imgur.com/ul7nKjk.png')
