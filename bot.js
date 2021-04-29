@@ -325,7 +325,7 @@ client.on('message', async (message) => {
 	        .setURL('https://formatlibrary.com/')
 	        .setAuthor('Jazz#2704', 'https://i.imgur.com/wz5TqmR.png', 'https://formatlibrary.com/')
             .setThumbnail('https://i.imgur.com/ul7nKjk.png')
-            .addField('How to Use This Guide', '\nThe following commands can be used for any format in the appropriate channels (i.e. <#414575168174948372>, <#629472339473596436>, etc.). Commands require arguments as follows: (blank) no argument, (@user) mention a user, (n) a number, (link) a URL.')
+            .addField('How to Use This Guide', '\nThe following commands can be used for any format in the appropriate channels (i.e. <#414575168174948372>, <#629464112749084673>, etc.). Commands require arguments as follows: (blank) no argument, (@user) mention a user, (n) a number, (link) a URL.')
         	.addField('Ranked Play Commands', '\n!loss - (@user) - Report a loss to another player. \n!stats - (blank or @user) - Post a player’s stats. \n!top - (number) - Post the server’s top players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a format role. \n!undo - Undo the last loss if you reported it. \n')
         	.addField('Format Info Commands', '\n!legal - Privately check if your deck is legal. \n!list - View the Forbidden and Limited list. \n')
         	.addField('Tournament Commands', '\n!join - Register for the upcoming tournament.\n!resubmit - Resubmit your deck list for the upcoming tournament. \n!drop - Drop from the current tournament. \n!show - Show the current tournament.')
