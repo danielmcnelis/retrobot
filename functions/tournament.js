@@ -113,7 +113,7 @@ const getDeckTypeTournament = async (client, message, member, formatChannel, url
         filter = m => m.author.id === member.user.id
     }
 
-	const msg = await message.author.send(`For our tournament coverage, please provide the commonly used name for your deck (i.e. Goat Control, Chaos Turbo, Quickdraw Plant, Blackwing, etc.).`)
+	const msg = await message.author.send(`For our tournament coverage, please provide the common name for your deck (i.e. Chaos Control, Quickdraw Plant, Mermail, etc.).`)
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
         time: 60000

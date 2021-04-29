@@ -1,15 +1,15 @@
 {
+    "legalcom": ["!legal", "!check", "!checklegal", "!legalcheck", "!deckcheck", "!checkdeck", "!legaldeck", "!decklegal"],
+    "listcom": ["!list", "!banlist", "!bannedlist", "!bans"],
     "pfpcom": ["!pfp", "!pic", "!avatar"],
-    "botcom": ["!bot", "!help", "!info"],
+    "botcom": ["!bot", "!help", "!info", "!guide"],
     "rolecom": ["!role", "!rankedgoats"],
-    "statscom": ["!stats", "!mystats", "!goatstats"],
+    "statscom": ["!stats", "!statistics", "!mystats", "!goatstats", "!record"],
     "profcom": ["!profile", "!prof"],
-    "losscom": ["!lossvs","!loss","!losevs","!lose","!lostvs","!lost","!goatloss","!goatlossvs"],
+    "losscom": ["!lossvs", "!loss", "!losevs", "!lose", "!lostvs", "!lost", "!loseto", "!lossto", "!lostto", "!goatloss","!goatlossvs"],
     "h2hcom": ["!h2h", "!head2head", "!headtohead"],
     "undocom": ["!undolast", "!undo", "!undoloss"],
-    "rankcom": ["!rank", "!top", "!ladder"],
-    "deckscom": ["!deck", "!decks", "!mydeck", "!mydecks"],
-    "replayscom": ["!replay", "!replays", "!myreplay", "!myreplays"],
+    "rankcom": ["!rank", "!rankings", "!top", "!ladder", "!leaderboard", "!leaders"],
     "yescom": ["yes", "yeah", "yea", "ye", "ya", "yah", "yh", "y", "sure", "ok", "okay", "k", "sure"],
     "nocom": ["no", "nah", "nope", "naw", "n", "na"]
 }
