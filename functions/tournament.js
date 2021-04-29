@@ -1,6 +1,7 @@
 
 const { registrationChannel } = require('../static/channels.json')
 const { tourRole } = require('../static/roles.json')
+const { approve } = require('../static/emojis.json')
 const status = require('../static/status.json')
 const { Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('../db/index.js')
 const { getCat } = require('./utility.js')
@@ -28,7 +29,7 @@ const askForDBUsername = async (client, message, member, error = false, attempt 
         })
         member.user.send(`Thanks! I've saved your DuelingBook username as: ${collected.first().content}. If that's not correct, you can update it on the Discord server by using the command **!db** followed by your username.`)
         return setTimeout(function() {
-            getDeckListTournament(client, message, member)
+            getDeckListTournament(client, message, member, false)
         }, 2000)	
     }).catch(err => {
         console.log(err)
@@ -38,15 +39,33 @@ const askForDBUsername = async (client, message, member, error = false, attempt 
 
 
 //GET DECK LIST TOURNAMENT
-const getDeckListTournament = async (client, message, member) => {            
+const getDeckListTournament = async (client, message, member, resubmission = false, formatName, formatEmoji, formatChannel, formatDate, formatList) => {            
     const filter = m => m.author.id === member.user.id
-    const msg = await member.user.send("Please provide a DuelingBook download link for your tournament deck.");
+    const msg = await member.user.send("Please provide a duelingbook.com/deck link for your tournament deck.");
     const collected = await msg.channel.awaitMessages(filter, {
         max: 1,
         time: 180000
-    }).then(collected => {
+    }).then(async collected => {
         if (collected.first().content.startsWith("https://www.duelingbook.com/deck") || collected.first().content.startsWith("www.duelingbook.com/deck") || collected.first().content.startsWith("duelingbook.com/deck")) {		
-            return getDeckTypeTournament(client, message, member, collected.first().content)
+            message.author.send('Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.')
+
+            const url = collected.first().content
+            const issues = await saveYDK(message.author, url, formatDate, formatList)
+            
+            if (issues['illegalCards'].length || issues['forbiddenCards'].length || issues['limitedCards'].length || issues['semiLimitedCards'].length) {
+                let response = `I'm sorry, ${message.author.username}, your deck is not legal for ${formatName} Format. ${formatEmoji}`
+                if (issues['illegalCards'].length) response += `\n\nThe following cards are not included in this format:\n${issues['illegalCards'].join('\n')}`
+                if (issues['forbiddenCards'].length) response += `\n\nThe following cards are forbidden:\n${issues['forbiddenCards'].join('\n')}`
+                if (issues['limitedCards'].length) response += `\n\nThe following cards are limited:\n${issues['limitedCards'].join('\n')}`
+                if (issues['semiLimitedCards'].length) response += `\n\nThe following cards are semi-limited:\n${issues['semiLimitedCards'].join('\n')}`
+                response += `\n\nPlease edit your deck and try again once it's legal. If you believe this message is in error, contact the Tournament Organizer.`
+            
+                sendToTournamentChannel(client, member, url, null, false)
+                return message.author.send(response)
+            } else {
+                message.author.send(`Thanks, ${member.user.username}, your ${formatName} Format ${formatEmoji} deck is perfectly legal. ${approve}`)
+                return getDeckTypeTournament(client, message, member, formatChannel, url, resubmission)
+            }
         } else {
             return message.author.send("Sorry, I only accept duelingbook.com/deck links.")      
         }
@@ -57,14 +76,44 @@ const getDeckListTournament = async (client, message, member) => {
 }
 
 
+//DIRECT SIGN UP
+const directSignUp = async (client, message, member, formatChannel, resubmission = false) => {            
+    const filter = m => m.author.id === message.author.id
+    const msg = await message.author.send(`Please provide a duelingbook.com/deck link for ${member.user.username}'s tournament deck.`);
+    const collected = await msg.channel.awaitMessages(filter, {
+        max: 1,
+        time: 60000
+    }).then(async collected => {
+        if (collected.first().content.startsWith("https://www.duelingbook.com/deck") || collected.first().content.startsWith("www.duelingbook.com/deck") || collected.first().content.startsWith("duelingbook.com/deck")) {		
+            const url = collected.first().content
+
+            message.author.send(`Thanks, ${message.author.username}, I now have the link to ${member.user.username}'s tournament deck. ${approve}`)
+            return getDeckTypeTournament(client, message, member, formatChannel, url, resubmission, true)
+        } else {
+            return message.author.send("Sorry, I only accept duelingbook.com/deck links.")      
+        }
+    }).catch(err => {
+        console.log(err)
+        return message.author.send(`Sorry, time's up. If you wish to try again, go back to the Discord server and use the **!join** command.`)
+    })
+}
+
+
+
 //GET DECK TYPE TOURNAMENT
-const getDeckTypeTournament = async (client, message, member, url, resubmission = false) => {
+const getDeckTypeTournament = async (client, message, member, formatChannel, url, resubmission = false, override = false) => {
     const keys = Object.keys(types)
     const player = Player.findOne({ where: { id: member.user.id }})
     let success = false
+    let filter
 
-	const filter = m => m.author.id === member.user.id
-	const msg = await member.user.send(`Okay, ${member.user.username}, what kind of deck is this?`)
+	if (override) {
+        filter = m => m.author.id === message.member.user.id
+    } else {
+        filter = m => m.author.id === member.user.id
+    }
+
+	const msg = await message.author.send(`For our tournament coverage, please provide the commonly used name for your deck (i.e. Goat Control, Chaos Turbo, Quickdraw Plant, Blackwing, etc.).`)
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
         time: 60000
@@ -99,7 +148,44 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
                 }
 
                 sendToTournamentChannel(client, member, url, types[elem][0])
-                return member.user.send(`Thanks! I have your ${types[elem][0]} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+
+                const name = status['tournament']
+                const entry = await Tournament.findOne({ where: { playerId: member.user.id }})
+
+                if (!name || !entry) return message.channel.send(`Something went wrong. Please get the Tournament Organizer to help you sign-up.`)
+
+                if (!resubmission) {
+                    await challongeClient.tournaments.show({
+                        id: name,
+                        callback: async (err, data) => {
+                            if (err) {
+                                return message.channel.send(`Error: the tournament you provided, "${name}", could not be found.`)
+                            } else {
+                                if (data.tournament.state !== 'pending') return message.channel.send("Sorry, the tournament already started.")
+                                await challongeClient.participants.create({
+                                    id: name,
+                                    participant: {
+                                    name: member.user.username,
+                                    },
+                                    callback: async (err, data) => {
+                                        if (err) {
+                                            console.log(err)
+                                            return message.channel.send(`Error: the upcoming tournament, "${name}", could not be accessed.`)
+                                        } else {
+                                            member.roles.add(tourRole)
+                                            entry.update({ participantId: data.participant.id })
+                                            console.log('formatChannel', formatChannel)
+                                            client.channels.cache.get(formatChannel).send(`<@${member.user.id}> is now registered for the tournament!`)
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+                
+            const response = override ? `Thanks! ${member.user.username} should now be registered.` : `Thanks! I have all the information we need from you. Good luck in the tournament!`
+            return message.author.send(response)
             }
         })
 
@@ -112,8 +198,42 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
                 type: 'other',
                 category: 'other'
             })
+
+            const name = status['tournament']
+            const entry = await Tournament.findOne({ where: { playerId: member.user.id }})
+
+            if (!name || !entry) return message.channel.send(`Something went wrong. Please get the Tournament Organizer to help you sign-up.`)
+
+            await challongeClient.tournaments.show({
+                id: name,
+                callback: async (err, data) => {
+                    if (err) {
+                        return message.channel.send(`Error: the tournament you provided, "${name}", could not be found.`)
+                    } else {
+                        if (data.tournament.state !== 'pending') return message.channel.send("Sorry, the tournament already started.")
+                        await challongeClient.participants.create({
+                            id: name,
+                            participant: {
+                            name: member.user.username,
+                            },
+                            callback: async (err, data) => {
+                                if (err) {
+                                    console.log(err)
+                                    return message.channel.send(`Error: the upcoming tournament, "${name}", could not be accessed.`)
+                                } else {
+                                    member.roles.add(tourRole)
+                                    entry.update({ participantId: data.participant.id })
+                                    console.log('formatChannel', formatChannel)
+                                    client.channels.cache.get(formatChannel).send(`<@${member.user.id}> is now registered for the tournament!`)                                }
+                            }
+                        })
+                    }
+                }
+            })
+
             sendToTournamentChannel(client, member, url, 'Other')
-            return member.user.send(`Thanks! I have your ${collected.first().content} deck list for the tournament. Please wait for the Tournament Organizer to add you to the bracket.`)
+            const response = override ? `Thanks! ${member.user.username} should now be registered.` : `Thanks! I have all the information we need from you. Good luck in the tournament!`
+            return message.author.send(response)
         } else if (!success && resubmission) {
                     try {
                         const tourDeck = await Tournament.findOne({
@@ -128,7 +248,8 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
                         })
 
                         sendToTournamentChannel(client, member, url, 'Other')
-                        return member.user.send(`Thanks! I have your updated ${collected.first().content} deck list for the tournament.`)
+                        const response = override ? `Thanks! ${member.user.username} should now be registered.` : `Thanks! I have all the information we need from you. Good luck in the tournament!`
+                        return message.author.send(response)
                     } catch (err) {
                         console.log(err)
                     }
@@ -141,55 +262,17 @@ const getDeckTypeTournament = async (client, message, member, url, resubmission 
 }
 
 
-//CHANGE DECK TYPE TOURNAMENT
-const changeDeckTypeTournament = async (client, message, member, entry) => {
-    const keys = Object.keys(types)
-    let success = false
-
-	const filter = m => m.author.id === message.author.id
-	const msg = await message.author.send(`Okay, what kind of deck did ${member.user.username} submit?\n${entry.url}`)
-    const collected = await msg.channel.awaitMessages(filter, {
-		max: 1,
-        time: 30000
-    }).then(async collected => {
-        keys.forEach(async function (elem) {
-            if (types[elem].includes(collected.first().content.toLowerCase())) {
-                success = true
-                await entry.update({
-                    type: elem,
-                    category: getCat(elem)
-                })
-
-                message.author.send(`Thanks! I reclassified ${member.user.username}'s deck as "${types[elem][0]}".`)
-                return client.channels.cache.get(registrationChannel).send(`<@${member.user.id}>'s deck has been reclassified as "${types[elem][0]}" by ${message.author.username}:
-${entry.url}`)
-            }
-        })
-
-        if (!success) {
-            await entry.update({
-                type: 'other',
-                category: 'other'
-            })
-
-            message.author.send(`Thanks! I reclassified ${member.user.username}'s deck as "Other".`)
-            return client.channels.cache.get(registrationChannel).send(`<@${member.user.id}>'s deck has been reclassified as "Other" by ${message.author.username}:
-${entry.url}`)
-        }
-    }).catch(err => {    
-    console.log(err)
-    message.author.send(`Sorry, time's up.`)
-    return client.channels.cache.get(registrationChannel).send(`<@${member.user.id}>'s deck was not reclassified.`)
-})
-
-}
-
-
 //SEND TO TOURNAMENT CHANNEL
-const sendToTournamentChannel = async (client, member, deckUrl, deckType) => {
-    return client.channels.cache.get(registrationChannel).send(`<@${member.user.id}> submitted their ${deckType} deck list for the tournament. Please confirm this deck is legal and accurately labeled, then add ${member.user.username} to the bracket using the **!signup** command:
-${deckUrl}`)
+const sendToTournamentChannel = async (client, member, deckUrl, deckType, legal = true) => {
+    if (!legal) {
+        return client.channels.cache.get(registrationChannel).send(`<@${member.user.id}> attempted to submit an **illegal** deck for the tournament:
+<${deckUrl}>`)
+    } else {
+        return client.channels.cache.get(registrationChannel).send(`<@${member.user.id}> submitted their ${deckType} deck for the tournament:
+<${deckUrl}>`)
+    }
 }
+
 
 //SEED
 const seed = async (message, challongeClient, name, participantId, index) => {
@@ -216,27 +299,6 @@ const seed = async (message, challongeClient, name, participantId, index) => {
     } catch (err) {
         console.log(err)
     }
-}
-
-
-
-//GET UPDATED DECK URL
-const getUpdatedDeckURL = async (client, message, member) => {
-    const msg = await member.user.send("Okay, please provide a DuelingBook download link for your tournament deck.");
-    const filter = collected => collected.author.id === member.user.id;
-    const collected = await msg.channel.awaitMessages(filter, {
-		max: 1,
-        time: 180000
-    }).then(collected => {
-        if (collected.first().content.startsWith("https://www.duelingbook.com/deck") || collected.first().content.startsWith("www.duelingbook.com/deck") || collected.first().content.startsWith("duelingbook.com/deck")) {
-            return getDeckTypeTournament(client, message, member, collected.first().content, true)
-        } else {
-            return member.user.send("Sorry, I only accept duelingbook.com/deck links.")
-        }
-    }).catch(err => {
-        console.log(err)
-        return member.user.send(`Sorry, time's up. If you wish to try again, go back to the server and use the **!join** command.`)
-    })
 }
 
 
@@ -303,6 +365,7 @@ const findOpponent = async (message, matches, noShow, noShowPlayer, formatName, 
     return getParticipants(message, matches, noShow, winner, formatName, formatDatabase, true)
 }
 
+
 //GET PARTICIPANTS
 const getParticipants = async (message, matches, loser, winner, formatName, formatDatabase, noshow = false) => {
     challongeClient.participants.index({
@@ -316,6 +379,7 @@ const getParticipants = async (message, matches, loser, winner, formatName, form
         }
     })
 }
+
 
 //ADD MATCH RESULT
 const addMatchResult = async (message, matches, participants, loser, winner, formatName, formatDatabase, noshow = false) => {
@@ -624,10 +688,9 @@ module.exports = {
     askForDBUsername,
     getDeckListTournament,
     getDeckTypeTournament,
-    changeDeckTypeTournament,
     sendToTournamentChannel,
-    getUpdatedDeckURL,
     removeParticipant,
+    directSignUp,
     seed,
     getParticipants,
     findOpponent,

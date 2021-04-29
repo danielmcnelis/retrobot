@@ -17,7 +17,7 @@ const muted = require('./static/muted.json')
 const { Card, Status, Match, Matchup, Player, Tournament, YugiKaiba, Critter, Android, Yata, Vampire, TradChaos, ChaosWarrior, Goat, CRVGoat, Reaper, ChaosReturn, Stein, TroopDup, PerfectCircle, DADReturn, GladBeast, TeleDAD, DarkStrike, Lightsworn, Edison, Frog, SixSamurai, Providence, TenguPlant, LongBeach, DinoRabbit, WindUp, Meadowlands, BabyRuler, RavineRuler, FireWater, HAT, Shaddoll, London, BurningAbyss, Charleston, Nekroz, Clown, PePe, DracoPal, Monarch, ABC, GrassZoo, DracoZoo, LinkZoo, QuickFix, Tough, Magician, Gouki, Danger, PrankKids, SkyStriker, ThunderDragon, LunalightOrcust, StrikerOrcust, Adamancipator, Infernoble, Current, Traditional, Rush, Speed, Nova, Rebirth  } = require('./db')
 const { capitalize, restore, recalculate, revive, createPlayer, isNewUser, isAdmin, isMod, getMedal, checkDeckList } = require('./functions/utility.js')
 const { saveYDK, saveAllYDK } = require('./functions/decks.js')
-const { seed, askForDBUsername, getDeckListTournament, getUpdatedDeckURL, changeDeckTypeTournament, removeParticipant, getParticipants, findOpponent } = require('./functions/tournament.js')
+const { seed, askForDBUsername, getDeckListTournament, directSignUp, removeParticipant, getParticipants, findOpponent } = require('./functions/tournament.js')
 const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
 const { uploadDeckFolder } = require('./functions/drive.js')
 const { client, challongeClient } = require('./static/clients.js')
@@ -78,14 +78,22 @@ client.on('message', async (message) => {
         return
     }
 
-    const keys = Object.keys(formats)
+    const formatKeys = Object.keys(formats)
     let formatDatabase = ''
     let formatName = ''
     let formatEmoji = ''
     let formatRole = ''
     let formatChannel = ''
+    let formatDate = ''
+    let formatList = ''
         
-    keys.forEach(function(key) {
+    let tournamentFormatName = ''
+    let tournamentFormatEmoji = ''
+    let tournamentFormatChannel = ''
+    let tournamentFormatDate = ''
+    let tournamentFormatList = ''
+        
+    formatKeys.forEach(function(key) {
         if(message.channel.id === formats[key].channel) {
             formatDatabase = formats[key].database
             formatName = formats[key].name
@@ -94,6 +102,14 @@ client.on('message', async (message) => {
             formatChannel = formats[key].channel
             formatDate = formats[key].date
             formatList = formats[key].list
+        }
+
+        if(capitalize(status['format']) === formats[key].name) {
+            tournamentFormatName = formats[key].name
+            tournamentFormatEmoji = formats[key].emoji
+            tournamentFormatChannel = formats[key].channel
+            tournamentFormatDate = formats[key].date
+            tournamentFormatList = formats[key].list
         }
     })
     
@@ -190,7 +206,7 @@ client.on('message', async (message) => {
         const player = await Player.findOne({ where: { id: playerId } })
 
         if (person && player.duelingBook) return message.channel.send(`${player.name}'s DuelingBook name is: ${player.duelingBook}.`)
-        if (person && !player.duelingBook) return message.channel.send(`${player.name} does not have a DuelingBook name in our the database.`)
+        if (person && !player.duelingBook) return message.channel.send(`${player.name} does not have a DuelingBook name in our database.`)
 
         if (messageArray.length > 1) {
             player.duelingBook = messageArray.slice(1, messageArray.length).join(' ')
@@ -286,7 +302,7 @@ client.on('message', async (message) => {
     //ROLE
     if (rolecom.includes(cmd.toLowerCase())) {
         if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
-        keys.forEach(function(key) {
+        formatKeys.forEach(function(key) {
             if(message.channel.id === formats[key].channel) {
                 if (!message.member.roles.cache.some(role => role.id === formats[key].role)) {
                     message.member.roles.add(formats[key].role)
@@ -311,12 +327,14 @@ client.on('message', async (message) => {
             .setThumbnail('https://i.imgur.com/ul7nKjk.png')
             .addField('How to Use This Guide', '\nThe following commands can be used for any format in the appropriate channels (i.e. <#414575168174948372>, <#629472339473596436>, <#459474235165900800>, <#538498087245709322>). Commands require arguments as follows: (blank) no argument, (@user) mention a user, (n) a number, (link) a URL.')
         	.addField('Ranked Play Commands', '\n!loss - (@user) - Report a loss to another player. \n!stats - (blank or @user) - Post a player’s stats. \n!top - (number) - Post the server’s top players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a format role. \n!undo - Undo the last loss if you reported it. \n')
-        	.addField('Tournament Commands', '\n!join - Register for the next tournament.\n!resubmit - Change your deck list for the tournament. \n!drop - Drop from the current tournament. \n!show - Show the current tournament.')
-        	.addField('Server Commands', '\n!db - Set your DuelingBook.com username. \n!prof - (blank or @user) - Post a player’s profile. \n!medals - (blank or @user) - Post a player’s best medals. \n!bot - View the RetroBot User Guide. \n!mod - View the Mod-Only User Guide.');
+        	.addField('Format Info Commands', '\n!check - Privately check if your deck is legal. \n!list - View the Forbidden and Limited list. \n')
+        	.addField('Tournament Commands', '\n!join - Register for the upcoming tournament.\n!resubmit - Resubmit your deck list for the upcoming tournament. \n!drop - Drop from the current tournament. \n!show - Show the current tournament.')
+        	.addField('Server Commands', '\n!db - Set your DuelingBook.com username. \n!prof - (blank or @user) - Post a player’s profile. \n!medals - (blank or @user) - Post a player’s best medals. \n!formats - View a list of supported Retro Formats. \n!bot - View the RetroBot User Guide. \n!mod - View the Mod-Only User Guide.');
 
         message.author.send(botEmbed);
         return message.channel.send("I messaged you the RetroBot User Guide.")
     }
+
 
     //MOD USER GUIDE
     if (cmd.toLowerCase() === `!mod`) {
@@ -332,7 +350,7 @@ client.on('message', async (message) => {
 	        .setAuthor('Jazz#2704', 'https://i.imgur.com/wz5TqmR.png', 'https://formatlibrary.com/')
         	.setThumbnail('https://i.imgur.com/ul7nKjk.png')
         	.addField('Mod-Only Ranked Play Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
-            .addField('Mod-Only Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Add a player to the bracket. \n!edit - (@user) - Reclassify a player\'s deck list. \n!noshow - (@user) - Report a no-show. \n!remove - (@user) - Remove a player from the bracket. \n!seed - Assign seeds to participants based on rankings. \n!start - Start the next tournament. \n!end - End the current tournament.')
+            .addField('Mod-Only Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Directly add a player to the bracket. \n!noshow - (@user) - Report a no-show. \n!remove - (@user) - Remove a player from the bracket. \n!seed - Assign seeds to participants based on rankings. \n!start - Start the next tournament. \n!end - End the current tournament.')
             .addField('Mod-Only Discipline Commands', '\n!mute - (@user) - Mute a user.\n!unmute - (@user) - Unmute a user.')
             .addField('Mod-Only Server Commands', '\n!census - Update the information of all players in the database.\n!recalc - Recaluate all player stats for a specific format if needed.');
 
@@ -372,7 +390,7 @@ client.on('message', async (message) => {
 
         const keyPairs = {}
 
-        keys.forEach(function(key) {
+        formatKeys.forEach(function(key) {
             const newKey = key.replace(/[\. ,:-]+/g, "").toLowerCase()
             keyPairs[newKey] = key
         })
@@ -653,6 +671,7 @@ client.on('message', async (message) => {
     if (cmd.toLowerCase() === `!join`) {
         const name = status['tournament']
         const member = message.guild.members.cache.get(maid)
+
         if (!name) return message.channel.send('There is no active tournament.')
         if (!member) return message.channel.send('Sorry, I could not find you in the server. Please be sure you are not invisible.')
         
@@ -673,9 +692,9 @@ client.on('message', async (message) => {
                     message.channel.send("Please check your DMs.")
                     const tourDeck = await Tournament.findOne({ where: { playerId: maid } })
                     if (tourDeck) {
-                        return getUpdatedDeckURL(client, message, member)
+                        return getDeckListTournament(client, message, member, true, tournamentFormatName, tournamentFormatEmoji, tournamentFormatChannel, tournamentFormatDate, tournamentFormatList)
                     } else if (player.duelingBook) {
-                        return getDeckListTournament(client, message, member)
+                        return getDeckListTournament(client, message, member, false, tournamentFormatName, tournamentFormatEmoji, tournamentFormatChannel, tournamentFormatDate, tournamentFormatList)
                     } else {
                         return askForDBUsername(client, message, member)
                     }
@@ -707,9 +726,9 @@ client.on('message', async (message) => {
                     const tourDeck = await Tournament.findOne({ where: { playerId: maid } })
                     if (tourDeck) {
                         message.channel.send("Please check your DMs.")
-                        return getUpdatedDeckURL(client, message, member)
+                        return getDeckListTournament(client, message, member, true, tournamentFormatName, tournamentFormatEmoji, tournamentFormatChannel, tournamentFormatDate, tournamentFormatList)
                     } else {
-                        return message.channel.send(`Sorry, I could not find you in the Tournament. Please use the command **!join** instead.`)
+                        return getDeckListTournament(client, message, member, false, tournamentFormatName, tournamentFormatEmoji, tournamentFormatChannel, tournamentFormatDate, tournamentFormatList)
                     }
                 }
             }
@@ -729,52 +748,9 @@ client.on('message', async (message) => {
         if (!name) return message.channel.send(`There is no active tournament.`)
         if (!person) return message.channel.send(`Please provide an @ mention of the player you wish to sign-up for the tournament.`)
         if (!member) return message.channel.send(`I couldn't find that user in the server.`)
-        if (!entry) return message.channel.send(`That person has not registered for the tournament.`)
-
-        await challongeClient.tournaments.show({
-            id: name,
-            callback: async (err, data) => {
-                if (err) {
-                    return message.channel.send(`Error: the tournament you provided, "${name}", could not be found.`)
-                } else {
-                    if (data.tournament.state !== 'pending') return message.channel.send("Sorry, the tournament already started.")
-                    await challongeClient.participants.create({
-                        id: name,
-                        participant: {
-                        name: person.username,
-                        },
-                        callback: async (err, data) => {
-                            if (err) {
-                                console.log(err)
-                                return message.channel.send(`Error: the current tournament, "${name}", could not be accessed.`)
-                            } else {
-                                member.roles.add(tourRole)
-                                const entry = await Tournament.findOne({ where: { playerId: member.user.id }})
-                                entry.update({ participantId: data.participant.id })
-                                return message.channel.send(`${person.username} is now registered for the tournament.`)
-                            }
-                        }
-                    })
-                }
-            }
-        })
-    }
-
-
-    //CHALLONGE - EDIT
-    if (cmd.toLowerCase() === `!edit`) {
-        if (!isMod(message.member)) return message.channel.send('You do not have permission to do that. Please use the command **!join** instead.')
         
-        const name = status['tournament']
-        const person = message.mentions.users.first()
-        const member = message.guild.members.cache.get(person.id)
-        const entry = await Tournament.findOne({ where: { playerId: person.id }})
-
-        if (!name) return message.channel.send(`There is no active tournament.`)
-        if (!person) return message.channel.send(`Please provide an @ mention of the player you wish to sign-up for the tournament.`)
-        if (!member) return message.channel.send(`I couldn't find that user in the server.`)
-        if (!entry) return message.channel.send(`That person has not registered for the tournament.`)
-        return changeDeckTypeTournament(client, message, member, entry)
+        message.channel.send(`Please check your DMs.`)
+        return directSignUp(client, message, member, tournamentFormatChannel, !!entry)
     }
 
 
@@ -925,7 +901,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
 
         let vault = {}
         try {
-            keys.forEach(async function(key) {
+            formatKeys.forEach(async function(key) {
                 if (formats[key].name === 'Voice') return
                 const formatDatabase = formats[key].database
                 const record = await eval(formatDatabase).findOne({ 
@@ -968,7 +944,7 @@ Elo Rating: ${record.stats.toFixed(2)}`)
 
         let vault = {}
         try {
-            keys.forEach(async function(key) {
+            formatKeys.forEach(async function(key) {
                 if (formats[key].name === 'Voice') return
                 const formatDatabase = formats[key].database
                 const record = await eval(formatDatabase).findOne({ 

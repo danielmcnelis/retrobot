@@ -224,7 +224,7 @@ const capitalize = (str) => {
 
 
 //CHECK DECK LIST
-const checkDeckList = async (client, message, member,  formatName, formatEmoji, formatDate, formatList) => {  
+const checkDeckList = async (client, message, member, formatName, formatEmoji, formatDate, formatList) => {  
     const filter = m => m.author.id === member.user.id
     const msg = await member.user.send(`Please provide a duelingbook.com/deck link for the ${formatName} Format ${formatEmoji} deck you would like to check for legality.`);
     const collected = await msg.channel.awaitMessages(filter, {

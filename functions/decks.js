@@ -53,6 +53,8 @@ const saveAllYDK = async () => {
 //SAVE YDK
 const saveYDK = async (member, url, formatDate, formatList) => {
     console.log('~~~SAVING YDK~~~')
+    console.log('formatDate', formatDate)
+    console.log('formatList', formatList)
     const options = new firefox.Options()
     options.addArguments("-headless")
     const username = member.user ? member.user.username : member.username    
