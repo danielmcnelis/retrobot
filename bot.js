@@ -1380,7 +1380,7 @@ ${player2.name} has won ${p2Wins}x`)
         const allMatches = await Match.findAll({
             where: {
                 format: formatDatabase
-            }, order: [['id', 'ASC']]
+            }, order: [['createdAt', 'ASC']]
         })
 
         console.log(`I found ${allMatches.length} ${formatDatabase} format matches.`)
