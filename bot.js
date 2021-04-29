@@ -177,9 +177,9 @@ client.on('message', async (message) => {
         message.channel.send(`I messaged you the Forbidden and Limited list for ${formatName} Format. ${formatEmoji}`)
        
         message.author.send(`~ ${formatName} ${formatEmoji} Format Forbidden and Limited List ~`)
-        if (forbiddenCards.length)  message.channel.send(`\n\nThe following cards are forbidden:\n${forbiddenCards.join('\n')}`)
-        if (limitedCards.length)  message.channel.send(`\n\nThe following cards are limited:\n${limitedCards.join('\n')}`)
-        if (semiLimitedCards.length)  message.channel.send(`\n\nThe following cards are semi-limited:\n${semiLimitedCards.join('\n')}`)
+        if (forbiddenCards.length)  message.author.send(`\n\nThe following cards are forbidden:\n${forbiddenCards.join('\n')}`)
+        if (limitedCards.length)  message.author.send(`\n\nThe following cards are limited:\n${limitedCards.join('\n')}`)
+        if (semiLimitedCards.length)  message.author.send(`\n\nThe following cards are semi-limited:\n${semiLimitedCards.join('\n')}`)
         return
     }
 
