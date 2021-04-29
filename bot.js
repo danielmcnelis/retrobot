@@ -430,6 +430,7 @@ client.on('message', async (message) => {
                         return message.channel.send(`Error: The name "${url}" is already taken.`)
                     } else {
                         status['tournament'] = name
+                        status['status'] = "upcoming"
                         status['format'] = formatKey
                         fs.writeFile("./static/status.json", JSON.stringify(status), (err) => { 
                             if (err) console.log(err)
@@ -457,17 +458,21 @@ client.on('message', async (message) => {
                 } else {
                     if (status['tournament'] === name) {
                         delete status['tournament']
+                        delete status['status']
                         delete status['seeded']
                         delete status['format']
                         fs.writeFile("./static/status.json", JSON.stringify(status), (err) => { 
                             if (err) console.log(err)
                         })
                     }
+
+                    await Tournament.destroy({ where: {}, truncate: true })
                     return message.channel.send(`I deleted the tournament named "${name}" from the FormatLibrary.com Challonge account.`)
                 }
             }
           });  
     }
+    
 
     //CHALLONGE - END
     if (cmd.toLowerCase() === `!end`) {
@@ -501,6 +506,7 @@ client.on('message', async (message) => {
                     return message.channel.send(`Error: the tournament you provided, "${name}", could not be finalized.`)
                 } else {
                     delete status['tournament']
+                    delete status['status']
                     delete status['format']
                     delete status['seeded']
                     fs.writeFile("./status/status.json", JSON.stringify(status), (err) => { 
@@ -659,6 +665,12 @@ client.on('message', async (message) => {
                 if (err) {
                     return message.channel.send(`Error: the tournament you provided, "${name}", could not be initialized.`)
                 } else {
+
+                    status['status'] = "active"
+                    fs.writeFile("./static/status.json", JSON.stringify(status), (err) => { 
+                        if (err) console.log(err)
+                    })
+
                     const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
                     const link = `https://docs.google.com/spreadsheets/d/${spreadsheetId}`
                     await addSheet(spreadsheetId, 'Summary')
@@ -1065,7 +1077,7 @@ ${player2.name} has won ${p2Wins}x`)
             return message.channel.send("Sorry, that user was not in the Format Library database. Please try again.")
         }
         
-        if (loser.roles.cache.some(role => role.id === tourRole) || winner.roles.cache.some(role => role.id === tourRole)) {
+        if (status['status'] === 'active' && (loser.roles.cache.some(role => role.id === tourRole) || winner.roles.cache.some(role => role.id === tourRole))) {
             return challongeClient.matches.index({
                 id: status['tournament'],
                 callback: (err, data) => {
@@ -1123,7 +1135,7 @@ ${player2.name} has won ${p2Wins}x`)
             return message.channel.send(`Sorry, ${winner.user.username} was not in the Format Library database. Please try again.`)
         }
 
-        if (winner.roles.cache.some(role => role.id === tourRole) || loser.roles.cache.some(role => role.id === tourRole)) {
+        if (status['status'] === 'active' && (winner.roles.cache.some(role => role.id === tourRole) || loser.roles.cache.some(role => role.id === tourRole))) {
             return challongeClient.matches.index({
                 id: status['tournament'],
                 callback: (err, data) => {
