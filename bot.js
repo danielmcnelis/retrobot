@@ -452,7 +452,7 @@ client.on('message', async (message) => {
         const name = (args[0] ? args[0] : status['tournament'])
         await challongeClient.tournaments.destroy({
             id: name,
-            callback: (err) => {
+            callback: async (err) => {
                 if (err) {
                     return message.channel.send(`Error: the tournament you provided, "${name}", could not be deleted.`)
                 } else {
