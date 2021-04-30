@@ -25,8 +25,6 @@ const convertSortedArrayToObject = (arr) => {
 const saveAllYDK = async () => {
     const allDecks = await Tournament.findAll()
 
-    console.log('allDecks.length', allDecks.length)
-
     for (let i = 0; i < allDecks.length; i++) {
         const member = {
             user: {
@@ -35,9 +33,6 @@ const saveAllYDK = async () => {
         }
 
         const url = allDecks[i].url
-
-        console.log('member.user.username', member.user.username)
-        console.log('url', url)
 
         setTimeout(async function () {
             try {
@@ -150,21 +145,18 @@ const saveYDK = async (member, url, formatDate, formatList) => {
         allforbiddenGoatCardsFromDB.forEach(row => {
             let id = row.card.image.slice(0,-4)
             while (id.length < 8) id = '0' + id
-            console.log('Forbidden cards, id:', id)
             forbiddenCardIds.push(id)
         })
 
         allLimitedGoatCardsFromDB.forEach(row => {
             let id = row.card.image.slice(0,-4)
             while (id.length < 8) id = '0' + id
-            console.log('Limited cards, id:', id)
             limitedCardIds.push(id)
         })
 
         allSemiLimitedGoatCardsFromDB.forEach(row => {
             let id = row.card.image.slice(0,-4)
             while (id.length < 8) id = '0' + id
-            console.log('Semi-Limited cards, id:', id)
             semiLimitedCardIds.push(id)
         })
 

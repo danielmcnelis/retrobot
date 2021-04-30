@@ -180,7 +180,6 @@ const getDeckTypeTournament = async (client, message, member, formatChannel, url
                                         } else {
                                             member.roles.add(tourRole)
                                             entry.update({ participantId: data.participant.id })
-                                            console.log('formatChannel', formatChannel)
                                             client.channels.cache.get(formatChannel).send(`<@${member.user.id}> is now registered for the tournament!`)
                                         }
                                     }
@@ -229,7 +228,6 @@ const getDeckTypeTournament = async (client, message, member, formatChannel, url
                                 } else {
                                     member.roles.add(tourRole)
                                     entry.update({ participantId: data.participant.id })
-                                    console.log('formatChannel', formatChannel)
                                     client.channels.cache.get(formatChannel).send(`<@${member.user.id}> is now registered for the tournament!`)                                }
                             }
                         })
@@ -335,7 +333,6 @@ const removeParticipant = async (message, participants, name, person, drop = fal
             } else {
                 const tourDeck = await Tournament.findOne({ where: { playerId: person.id } })
                 await tourDeck.destroy()
-                console.log(`removing ${member.user.username}'s tournament role`)
                 member.roles.remove(tourRole)
 
                 if (drop) return message.channel.send(`I removed you from the tournament. Better luck next time!`)
