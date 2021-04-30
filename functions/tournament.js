@@ -62,7 +62,13 @@ const getDeckListTournament = async (client, message, member, resubmission = fal
             
                 sendToTournamentChannel(client, member, url, null, false)
                 return message.author.send(response)
-            } else {
+            } else if (issues['unrecognizedCards'].length) {
+                let response = `I'm sorry, ${message.author.username}, the following card IDs were not found in our database:\n${issues['unrecognizedCards'].join('\n')}`
+                response += `\n\nThese cards are either new to the TCG, OCG only, or incorrect in our database. Please contact the Tournament Organizer or the Admin.`
+
+                sendToTournamentChannel(client, member, url, null, false)
+                return message.author.send(response)
+             } {
                 message.author.send(`Thanks, ${member.user.username}, your ${formatName} Format ${formatEmoji} deck is perfectly legal. ${approve}`)
                 return getDeckTypeTournament(client, message, member, formatChannel, url, resubmission)
             }
