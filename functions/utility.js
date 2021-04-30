@@ -149,7 +149,7 @@ const recalculate = async (match, winner, loser, format, z) => {
         await losersRow.save()
         await match.update({ delta })
 
-        console.log(`Match ${z}: a Goat format loss by ${loser} to ${winner} has been incorporated in the recalculation.`)
+        console.log(`Match ${z}: a ${format} format loss by ${loser} to ${winner} has been incorporated in the recalculation.`)
     }, (z*100 + 10000))
 }
 
