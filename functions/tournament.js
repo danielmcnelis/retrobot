@@ -12,7 +12,7 @@ const types = require('../static/types.json')
 
 
 //ASK FOR DB USERNAME
-const askForDBUsername = async (client, message, member, error = false, attempt = 0) => {
+const askForDBUsername = async (client, message, member, error = false, attempt = 0, formatName, formatEmoji, formatChannel, formatDate, formatList) => {
     const filter = m => m.author.id === member.user.id
     if (attempt >= 3) return member.user.send(`Sorry, time's up. You can also provide your DuelingBook username on the Discord server by using the **!db** command, followed by your username.`)
     attempt++
@@ -29,7 +29,7 @@ const askForDBUsername = async (client, message, member, error = false, attempt 
         })
         member.user.send(`Thanks! I've saved your DuelingBook username as: ${collected.first().content}. If that's not correct, you can update it on the Discord server by using the command **!db** followed by your username.`)
         return setTimeout(function() {
-            getDeckListTournament(client, message, member, false)
+            getDeckListTournament(client, message, member, false, formatName, formatEmoji, formatChannel, formatDate, formatList)
         }, 2000)	
     }).catch(err => {
         console.log(err)

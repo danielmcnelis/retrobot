@@ -22,6 +22,7 @@ const { makeSheet, addSheet, writeToSheet } = require('./functions/sheets.js')
 const { uploadDeckFolder } = require('./functions/drive.js')
 const { client, challongeClient } = require('./static/clients.js')
 const rb = "730922003296419850"
+let timeRemaining = null
 
 //READY
 client.on('ready', () => {
@@ -104,7 +105,7 @@ client.on('message', async (message) => {
             formatList = formats[key].list
         }
 
-        if (status['format'] && (capitalize(status['format']) === formats[key].name)) {
+        if (status['format'] && (capitalize(status['format']) === formats[key].database)) {
                 tournamentFormatName = formats[key].name
                 tournamentFormatEmoji = formats[key].emoji
                 tournamentFormatChannel = formats[key].channel
@@ -123,6 +124,21 @@ client.on('message', async (message) => {
         message.channel.send("Please check your DMs.")
         return checkDeckList(client, message, member, formatName, formatEmoji, formatDate, formatList)
     }
+
+
+    // //TIMER
+    // if (cmd.toLowerCase() === `!timer`) {
+    //     if(!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
+    //     const minutes = parseInt(args[0])
+    //     if (!Number.isInteger(minutes)) return message.channel.send("Please specify the number of minutes to set the timer.")
+    //     timeRemaining = minutes
+
+    // }
+
+    // //COUNTDOWN
+    // if (cmd.toLowerCase() === `!countdown`) {
+    //     if(isAdmin(message.member)) 
+    // }
 
 
     //ERRORS
@@ -714,7 +730,7 @@ client.on('message', async (message) => {
                     } else if (player.duelingBook) {
                         return getDeckListTournament(client, message, member, false, tournamentFormatName, tournamentFormatEmoji, tournamentFormatChannel, tournamentFormatDate, tournamentFormatList)
                     } else {
-                        return askForDBUsername(client, message, member)
+                        return askForDBUsername(client, message, member, false, 0, tournamentFormatName, tournamentFormatEmoji, tournamentFormatChannel, tournamentFormatDate, tournamentFormatList)
                     }
                 }
             }
