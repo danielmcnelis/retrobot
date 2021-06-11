@@ -101,7 +101,6 @@ client.on('message', async (message) => {
         
     formatKeys.forEach(function(key) {
         if(message.channel.id === formats[key].channel) {
-            console.log('formats[key]', formats[key])
             formatDatabase = formats[key].database
             formatName = formats[key].name
             formatEmoji = formats[key].emoji
@@ -112,8 +111,7 @@ client.on('message', async (message) => {
         }
 
         console.log(capitalize(status['format']))
-        if (status['format'] && (capitalize(status['format']) === formats[key].database)) {
-                console.log(2)
+        if (status['format'] && (status['format'].toLowerCase() === formats[key].database.toLowerCase())) {
                 tournamentFormatName = formats[key].name
                 tournamentFormatEmoji = formats[key].emoji
                 tournamentFormatChannel = formats[key].channel
