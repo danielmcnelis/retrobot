@@ -111,7 +111,7 @@ client.on('message', async (message) => {
         }
 
         console.log(capitalize(status['format']))
-        if (status['format'] && (status['format'].toLowerCase() === formats[key].database.toLowerCase())) {
+        if (status['format'] && (formats[key].database && status['format'].toLowerCase() === formats[key].database.toLowerCase())) {
                 tournamentFormatName = formats[key].name
                 tournamentFormatEmoji = formats[key].emoji
                 tournamentFormatChannel = formats[key].channel
