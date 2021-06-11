@@ -29,14 +29,12 @@ client.on('ready', () => {
   console.log('RetroBot is online!')
 })
 
-
 //PING
 client.on('message', message => {
   if (message.content === '!ping') {
     message.channel.send("pong")
   }
 })
-
 
 //WELCOME
 client.on('guildMemberAdd', async (member) => {
@@ -78,6 +76,13 @@ client.on('message', async (message) => {
     if (!message.guild || message.author.bot) {
         return
     }
+
+	for(let zeta = 0; zeta < messageArray.length; zeta ++) {
+		if (messageArray[zeta] == '') { 
+			messageArray.splice(zeta, 1)
+			zeta--
+		}
+	}
 
     const formatKeys = Object.keys(formats)
     let formatDatabase = ''
