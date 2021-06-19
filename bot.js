@@ -110,7 +110,6 @@ client.on('message', async (message) => {
             formatList = formats[key].list
         }
 
-        console.log(capitalize(status['format']))
         if (status['format'] && (formats[key].database && status['format'].toLowerCase() === formats[key].database.toLowerCase())) {
                 tournamentFormatName = formats[key].name
                 tournamentFormatEmoji = formats[key].emoji
