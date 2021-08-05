@@ -5,7 +5,7 @@
 const Discord = require('discord.js')
 const fs = require('fs')
 const { Op } = require('sequelize')
-const { sad, lgnd, FL, approve, lmfao } = require('./static/emojis.json')
+const { sad, lgnd, FL, soldier, lmfao } = require('./static/emojis.json')
 const { legalcom, listcom, pfpcom, botcom, rolecom, statscom, profcom, losscom, h2hcom, undocom, rankcom, deckscom, replayscom, yescom, nocom } = require('./static/commands.json')
 const { bfpRole, muteRole, botRole, tourRole, politicsRole } = require('./static/roles.json')
 const { welcomeChannel, registrationChannel, politicsChannel } = require('./static/channels.json')
@@ -53,7 +53,7 @@ client.on('guildMemberAdd', async (member) => {
         createPlayer(member.user.id, member.user.username, member.user.tag) 
         channel.send(`${member} Welcome to the FormatLibrary.com ${FL} Discord server! Use the command **!bot** to learn how to play rated games and join tournaments on this server. ${lgnd}`)
     } else {
-        channel.send(`${member} Welcome back to the FormatLibrary.com ${FL} Discord server! We missed you. ${approve}`)
+        channel.send(`${member} Welcome back to the FormatLibrary.com ${FL} Discord server! We missed you. ${soldier}`)
     }
 })
 
