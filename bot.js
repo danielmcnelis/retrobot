@@ -1400,42 +1400,71 @@ client.on('message', async (message) => {
     // It's also required after using the !combine command, but the bot will remind you to do it.
     if (recalccom.includes(cmd)) { 
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
-        const allPlayers = await Player.findAll()
-        for (let i = 0; i < allPlayers.length; i++) {
-            const player = allPlayers[i]
-            await player.update({
-                stats: 500,
-                backup: null,
-                wins: 0,
-                losses: 0
-            })
+        const stats = await Stats.findAll()
+        const backups = await Backups.findAll()
+        const wins = await Wins.findAll()
+        const losses = await Losses.findAll()
+
+        for (let i = 0; i < stats.length; i++) {
+            const s = stats[i]
+            s[format] = null
+            await s.save()
         }
 
-        const allMatches = await Match.findAll({ order: [["createdAt", "ASC"]]})
+        for (let i = 0; i < backups.length; i++) {
+            const b = backups[i]
+            b[format] = null
+            await b.save()
+        }
+
+        for (let i = 0; i < wins.length; i++) {
+            const w = wins[i]
+            w[format] = 0
+            await w.save()
+        }
+
+        for (let i = 0; i < losses.length; i++) {
+            const l = losses[i]
+            l[format] = 0
+            await l.save()
+        }
+        
+        const allMatches = await Match.findAll({ where: { format: format }, order: [["createdAt", "ASC"]]})
         message.channel.send(`Recalculating data for ${allMatches.length} matches. Please wait...`)
         for (let i = 0; i < allMatches.length; i++) {
             const match = allMatches[i]
             const winnerId = match.winnerId
             const loserId = match.loserId
             const winningPlayer = await Player.findOne({ where: { id: winnerId }})
+            const winnerBackups = await Backups.findOne({ where: { playerId: winnerId } })
+            const winnerStats = await Stats.findOne({ where: { playerId: winnerId } })
+            const winnerWins = await Wins.findOne({ where: { playerId: winnerId } })
             const losingPlayer = await Player.findOne({ where: { id: loserId }})
-            const statsLoser = losingPlayer.stats
-            const statsWinner = winningPlayer.stats
-            const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((statsWinner - statsLoser) / 400))))))
+            const loserBackups = await Backups.findOne({ where: { playerId: loserId } })
+            const loserLosses = await Losses.findOne({ where: { playerId: loserId } })
+            const loserStats = await Stats.findOne({ where: { playerId: loserId } })
             
-            winningPlayer.stats += delta
-            winningPlayer.backup = statsWinner
-            winningPlayer.wins++
-            await winningPlayer.save()
+            const origStatsWinner = winnerStats[format] || 500.00
+            const origStatsLoser = loserStats[format] || 500.00
+            const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origStatsWinner - origStatsLoser) / 400))))))
+            
+            winnerStats[format] ? winnerStats[format] += delta : winnerStats[format] = 500.00 + delta
+            await winnerStats.save()
+            winnerBackups[format] = origStatsWinner
+            await winnerBackups.save()
+            winnerWins[format]++
+            await winnerWins.save()
 
-            losingPlayer.stats -= delta
-            losingPlayer.backup = statsLoser
-            losingPlayer.losses++
-            await losingPlayer.save()
+            loserStats[format] ? loserStats[format] -= delta : loserStats[format] = 500.00 - delta
+            await loserStats.save()
+            loserBackups[format] = origStatsLoser
+            await loserBackups.save()
+            loserLosses[format]++
+            await loserLosses.save()
 
             match.delta = delta
             await match.save()
-            console.log(`Goat Match ${i+1}: ${winningPlayer.name} > ${losingPlayer.name}`)
+            console.log(`${format} Match ${i+1}: ${winningPlayer.name} > ${losingPlayer.name}`)
         }
 
         return message.channel.send(`Recalculation complete!`)
