@@ -143,17 +143,23 @@ client.on('message', async (message) => {
             console.log('old_matches.length', old_matches.length)
             const sorted_matches = old_matches.sort((a, b) => b.id - a.id)
             console.log('sorted_matches.length', sorted_matches.length)
+            console.log('sorted_matches[0]', sorted_matches[0])
             message.channel.send(`Adding ${sorted_matches.length} matches, please wait.`)
             let c = 0
             for (let i = 0; i < sorted_matches.length; i++) {
                 const m = sorted_matches[i]
+                if (!m.winner || !m.loser || !m.format) {
+                    console.log('Bad Match.')
+                    continue
+                }
+
                 const w = await Player.findOne({ where: { id: m.winner }})
                 if (!w || !w.name) continue
                 const l = await Player.findOne({ where: { id: m.loser }})
                 if (!l || !l.name) continue
                 console.log(w.name, '>', l.name, '-', m.format)
                 const nm = await Match.create({ 
-                    format: m.format,
+                    format: m.format.toLowerCase(),
                     winnerId: m.winner,
                     winner_name: w.name,
                     loserId: m.loser,
