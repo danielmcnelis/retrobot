@@ -129,8 +129,8 @@ const getDeckName = async (member, player, override = false) => {
 }
 
 //GET DECK TYPE
-const getDeckType = async (member) => {
-    const raw = fs.readFileSync(`./decks/${member.user.tag}.ydk`, 'utf8')
+const getDeckType = async (player) => {
+    const raw = fs.readFileSync(`./decks/${player.tag}.ydk`, 'utf8')
     const main = raw.split('#extra')[0]
     const arr = main.split('\n').filter(el => el.charAt(0) !== '#' && el.charAt(0) !== '!' && el !== '').sort()
     const ydk = convertArrayToObject(arr)

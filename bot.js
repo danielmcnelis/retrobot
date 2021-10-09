@@ -100,7 +100,7 @@ client.on('message', async (message) => {
             const player = await Player.findOne({ where: { id: maid } })
             if (!player) return
             await saveYDK(player, url, formatDate, formatList)
-            const deckType = await getDeckType(message.member)
+            const deckType = await getDeckType(player)
             return message.channel.send(deckType)
         } else {
             return message.channel.send(`🧪`)
@@ -506,7 +506,7 @@ client.on('message', async (message) => {
         const deckListUrl = await getDeckList(message.member, player, formats[tournament.format].date, formats[tournament.format].list)
         if (!deckListUrl) return
         const deckName = await getDeckName(message.member, player)
-        const deckType = await getDeckType(message.member)
+        const deckType = await getDeckType(player)
         if (!deckType) return
         const deckCategory = getDeckCategory(deckType)
         if (!deckCategory) return
@@ -568,7 +568,7 @@ client.on('message', async (message) => {
         const deckListUrl = await getDeckList(message.member, player, formats[tournament.format].date, formats[tournament.format].list, override = true)
         if (!deckListUrl) return
         const deckName = await getDeckName(message.member, player, override = true)
-        const deckType = await getDeckType(member)
+        const deckType = await getDeckType(player)
         if (!deckType) return
         const deckCategory = getDeckCategory(deckType)
         if (!deckCategory) return
