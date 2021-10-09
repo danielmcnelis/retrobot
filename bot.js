@@ -26,7 +26,7 @@ const {
 const { FL, legend, lmfao, mlady, sad, soldier } = require('./static/emojis.json')
 const fldata = require('./static/fldata.json')
 const formats = require('./static/formats.json')
-const old_matches = require('./static/players.json')
+const old_matches = require('./static/matches.json')
 const old_players = require('./static/players.json')
 const gfdata = require('./static/gfdata.json')
 const { bfpRole, muteRole, tourRole, politicsRole } = require('./static/roles.json')
