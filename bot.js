@@ -26,6 +26,8 @@ const {
 const { FL, legend, lmfao, mlady, sad, soldier } = require('./static/emojis.json')
 const fldata = require('./static/fldata.json')
 const formats = require('./static/formats.json')
+const old_matches = require('./static/players.json')
+const old_players = require('./static/players.json')
 const gfdata = require('./static/gfdata.json')
 const { bfpRole, muteRole, tourRole, politicsRole } = require('./static/roles.json')
 const { challongeAPIKey, discordBotToken } = require('./secrets.json')
@@ -102,6 +104,69 @@ client.on('message', async (message) => {
             return message.channel.send(deckType)
         } else {
             return message.channel.send(`🧪`)
+        }
+    }
+
+    // PLAYERS 
+    if (cmd === `!players`) {
+        if (isProgrammer(message.member)) {
+            console.log('old_players.length', old_players.length)
+            const c = 0
+            for (let i = 0; i < old_players.length; i++) {
+                const p = old_players[i]
+                if (!p.id || !p.name || !p.tag) continue
+                const count = await Player.count({ where: { id: p.id } })
+                if (!count) {
+                    console.log('creating', p.name)
+                    await Player.create({
+                        id: p.id,
+                        name: p.name,
+                        tag: p.tag
+                    })
+    
+                    await Backups.create({ playerId: p.id })
+                    await Losses.create({ playerId: p.id })
+                    await Stats.create({ playerId: p.id })
+                    await Wins.create({ playerId: p.id })
+                    c++
+                }
+            } 
+            return message.channel.send(`Added ${c} old players.`)
+        } else {
+            return message.channel.send(lmfao)
+        }
+    }
+
+    // MATCHES 
+    if (cmd === `!matches`) {
+        if (isProgrammer(message.member)) {
+            console.log('old_matches.length', old_matches.length)
+            const sorted_matches = old_matches.sort((a, b) => b.id - a.id)
+            console.log('sorted_matches.length', sorted_matches.length)
+            message.channel.send(`Adding ${c} matches, please wait.`)
+            let c = 0
+            for (let i = 0; i < sorted_matches.length; i++) {
+                const m = sorted_matches[i]
+                const w = await Player.findOne({ where: { id: m.winner }})
+                if (!w || !w.name) continue
+                const l = await Player.findOne({ where: { id: m.loser }})
+                if (!l || !l.name) continue
+                console.log(w.name, '>', l.name, '-', m.format)
+                const nm = await Match.create({ 
+                    format: m.format,
+                    winnerId: m.winner,
+                    winner_name: w.name,
+                    loserId: m.loser,
+                    loser_name: l.name,
+                    delta: m.delta
+                })
+
+                if (nm) c++
+            } 
+
+            return message.channel.send(`Added ${c} matches to the database.`)
+        } else {
+            return message.channel.send(mlady)
         }
     }
 
