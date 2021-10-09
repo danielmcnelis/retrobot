@@ -143,7 +143,7 @@ client.on('message', async (message) => {
             console.log('old_matches.length', old_matches.length)
             const sorted_matches = old_matches.sort((a, b) => b.id - a.id)
             console.log('sorted_matches.length', sorted_matches.length)
-            message.channel.send(`Adding ${c} matches, please wait.`)
+            message.channel.send(`Adding ${sorted_matches.length} matches, please wait.`)
             let c = 0
             for (let i = 0; i < sorted_matches.length; i++) {
                 const m = sorted_matches[i]
