@@ -1,42 +1,43 @@
 
-const Sequelize = require('sequelize');
-const {db} = require('./db');
+const Sequelize = require('sequelize')
+const {db} = require('./db')
 
 const Tournament = db.define('tournament', {
-    pilot: {
+    id: {
+        primaryKey: true,
         type: Sequelize.STRING,   
+        allowNull: false,
+        unique: true
+    },
+    name: {
+        type: Sequelize.STRING,  
+        defaultValue: 'New Tournament',  
+        allowNull: false
+    },
+    format: {
+        type: Sequelize.STRING,  
+        defaultValue: 'goat',  
         allowNull: false
     },
     url: {
         type: Sequelize.STRING,      
-        allowNull: false
-    },
-    name: {
-        type: Sequelize.STRING,   
-        defaultValue: 'other',    
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     type: {
         type: Sequelize.STRING,   
-        defaultValue: 'other',   
+        defaultValue: 'double elimination',   
         allowNull: false
     },
-    category: {
-        type: Sequelize.STRING,      
-        defaultValue: 'other',
+    state: {
+        type: Sequelize.STRING,   
+        defaultValue: 'pending',   
         allowNull: false
     },
-    losses: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0
-    },
-    participantId: {
-        type: Sequelize.INTEGER,
-        allowNull: true
-    },
-    playerId: {
-        type: Sequelize.STRING, 
-        unique: true
+    rounds: {
+        type: Sequelize.INTEGER,   
+        defaultValue: null,   
+        allowNull: true 
     }
 })
 

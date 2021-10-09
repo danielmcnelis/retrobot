@@ -1,27 +1,35 @@
 
 const Sequelize = require('sequelize');
-const {db} = require('./db');
+const { db } = require('./db');
 
 const Matchup = db.define('matchup', {
-    format: {
-        type: Sequelize.STRING,   
-        allowNull: true
-    },
-    winningType: {
-        type: Sequelize.STRING,   
-        allowNull: true
-    },
-    losingType: {
-        type: Sequelize.STRING,     
-        allowNull: true
-    },
-    wasTournament: {     
-        type: Sequelize.BOOLEAN,  
+    winning_deck_name: {
+        type: Sequelize.TEXT,        
         allowNull: false
     },
-    tournamentName: {     
-        type: Sequelize.STRING,  
-        allowNull: true
+    winning_deck_type: {
+        type: Sequelize.STRING,        
+        allowNull: false
+    },
+    winning_deck_category: {
+        type: Sequelize.STRING,        
+        allowNull: false
+    },
+    losing_deck_name: {
+        type: Sequelize.TEXT,        
+        allowNull: false
+    },
+    losing_deck_type: {
+        type: Sequelize.STRING,        
+        allowNull: false
+    },
+    losing_deck_category: {
+        type: Sequelize.STRING,        
+        allowNull: false
+    },
+    format: {
+        type: Sequelize.STRING,   
+        defaultValue: "goat"
     }
 })
 

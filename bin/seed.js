@@ -1,12 +1,19 @@
 
-const { db } = require('../db/index.js')
+const { db, db2, Card, Entry, Match, Player, Status, Tournament } = require('../db/index.js')
 
 const seed = async () => {
-  await db.sync()
+  await db.sync({force: true})
   db.close()
   console.log(`
     Seeding successful!
-    RB is now ready to rock!
+    RetroBot is now ready to rock!
+  `)
+
+  await db2.sync({force: true})
+  db2.close()
+  console.log(`
+    Seeding successful!
+    Format Library is now ready to rock!
   `)
 }
 

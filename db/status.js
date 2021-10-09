@@ -1,6 +1,6 @@
 
 const Sequelize = require('sequelize')
-const {db2} = require('./db')
+const { db2 } = require('./db')
 
 const Status = db2.define('status', {
   name: {

@@ -3,21 +3,33 @@ const Sequelize = require('sequelize');
 const { db } = require('./db');
 
 const Match = db.define('match', {
-    format: {
+    winnerId: {
         type: Sequelize.STRING,        
         allowNull: false
     },
-    winner: {
+    winner_name: {
         type: Sequelize.STRING,        
         allowNull: false
     },
-    loser: {
+    loserId: {
+        type: Sequelize.STRING,        
+        allowNull: false
+    },
+    loser_name: {
         type: Sequelize.STRING,        
         allowNull: false
     },
     delta: {
         type: Sequelize.FLOAT,        
         allowNull: false
+    },
+    format: {
+        type: Sequelize.STRING,   
+        defaultValue: "goat"
+    },
+    tournament: {
+        type: Sequelize.BOOLEAN,   
+        defaultValue: false
     }
 })
 

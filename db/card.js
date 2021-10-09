@@ -1,17 +1,25 @@
 
 const Sequelize = require('sequelize')
-const {db2} = require('./db')
+const { db2 } = require('./db')
 
 const Card = db2.define('card', {
-  image: {
-    type: Sequelize.TEXT,
-    allowNull: true
-  },
   name: {
     type: Sequelize.TEXT,
     allowNull: false
   },
-  card: {
+  konami_code: {
+    type: Sequelize.TEXT,
+    allowNull: true
+  },
+  tcg_legal: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  ocg_legal: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  image_file: {
     type: Sequelize.TEXT,
     allowNull: true
   },
@@ -19,12 +27,64 @@ const Card = db2.define('card', {
     type: Sequelize.TEXT,
     allowNull: true
   },
-  class: {
+  icon: {
     type: Sequelize.TEXT,
     allowNull: true
   },
-  subclass: {
-    type: Sequelize.TEXT,
+  normal: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  effect: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  fusion: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  ritual: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  synchro: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  }, 
+  xyz: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  pendulum: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  link: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  flip: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  gemini: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  spirit: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  toon: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  tuner: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  union: {
+    type: Sequelize.BOOLEAN,
     allowNull: true
   },
   attribute: {
@@ -36,6 +96,18 @@ const Card = db2.define('card', {
     allowNull: true
   },
   level: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
+  rating: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
+  arrows: {
+    type: Sequelize.TEXT,
+    allowNull: true
+  },
+  scale: {
     type: Sequelize.INTEGER,
     allowNull: true
   },
@@ -51,10 +123,15 @@ const Card = db2.define('card', {
     type: Sequelize.TEXT,
     allowNull: true
   },
-  date: {
+  tcg_date: {
+    type: Sequelize.TEXT,
+    allowNull: true
+  },
+  ocg_date: {
     type: Sequelize.TEXT,
     allowNull: true
   }
 })
 
 module.exports = Card
+

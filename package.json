@@ -24,9 +24,8 @@
   "_spec": "mkdirp@^0.5.1",
   "_where": "/Users/Daniel/Desktop/FullStack/node_modules/eslint",
   "author": {
-    "name": "James Halliday",
-    "email": "mail@substack.net",
-    "url": "http://substack.net"
+    "name": "Daniel McNelis",
+    "email": "dwm253@gmail.com"
   },
   "bin": {
     "mkdirp": "bin/cmd.js"
@@ -68,7 +67,8 @@
   },
   "scripts": {
     "test": "tap test/*.js",
-    "seed": "node ./bin/seed"
+    "seed": "node ./bin/seed",
+    "cards": "node ./bin/cards"
   },
   "version": "0.5.1"
 }
