@@ -111,7 +111,7 @@ client.on('message', async (message) => {
     if (cmd === `!players`) {
         if (isProgrammer(message.member)) {
             console.log('old_players.length', old_players.length)
-            const c = 0
+            let c = 0
             for (let i = 0; i < old_players.length; i++) {
                 const p = old_players[i]
                 if (!p.id || !p.name || !p.tag) continue
