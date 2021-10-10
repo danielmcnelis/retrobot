@@ -817,7 +817,9 @@ client.on('message', async (message) => {
 
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i]
-            if (stats[key]) {
+            console.log('key', key)
+            console.log('stats[key]', stats[key])
+            if (!isNaN(stats[key])) {
                 const medal = getMedal(stats[format])
                 results.push(`${formats[key].emoji} ${formats[key].name}: ${medal}`)
             }
@@ -843,6 +845,8 @@ client.on('message', async (message) => {
 
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i]
+            console.log('key', key)
+            console.log('stats[key]', stats[key])
             if (stats[key] >= 530) {
                 const medal = getMedal(stats[format])
                 results.push(`${formats[key].emoji} ${formats[key].name}: ${medal}`)
