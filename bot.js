@@ -819,7 +819,7 @@ client.on('message', async (message) => {
             const key = keys[i]
             console.log('key', key)
             console.log('stats[key]', stats[key])
-            if (!isNaN(stats[key])) {
+            if (!isNaN(stats[key]) && formats[key]) {
                 const medal = getMedal(stats[format])
                 results.push(`${formats[key].emoji} ${formats[key].name}: ${medal}`)
             }
@@ -847,7 +847,7 @@ client.on('message', async (message) => {
             const key = keys[i]
             console.log('key', key)
             console.log('stats[key]', stats[key])
-            if (stats[key] >= 530) {
+            if (stats[key] >= 530 && formats[key]) {
                 const medal = getMedal(stats[format])
                 results.push(`${formats[key].emoji} ${formats[key].name}: ${medal}`)
             }
