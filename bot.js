@@ -150,9 +150,34 @@ client.on('message', async (message) => {
                 }
 
                 const w = await Player.findOne({ where: { id: m.winner }})
-                if (!w || !w.name) continue
+                if (!w || !w.name) {
+                    const winner = {
+                        user: {
+                            bot: false,
+                            id: m.winner,
+                            name: 'null',
+                            tag: 'null#0000'
+                        }
+                    }
+                    await createPlayer(winner)
+                    i--
+                    continue
+                }
+
                 const l = await Player.findOne({ where: { id: m.loser }})
-                if (!l || !l.name) continue
+                if (!l || !l.name) {
+                    const loser = {
+                        user: {
+                            bot: false,
+                            id: m.loser,
+                            name: 'null',
+                            tag: 'null#0000'
+                        }
+                    }
+                    await createPlayer(loser)
+                    i--
+                    continue
+                }
                 console.log(w.name, '>', l.name, '-', m.format)
                 const nm = await Match.create({ 
                     format: m.format.toLowerCase(),

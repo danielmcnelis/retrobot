@@ -19,6 +19,11 @@ const Player = db.define('player', {
     duelingBook: {
         type: Sequelize.STRING,
         allowNull: true
+    },
+    muted: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
     }
 })
 

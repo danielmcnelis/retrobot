@@ -9,7 +9,7 @@ const Match = db.define('match', {
     },
     winner_name: {
         type: Sequelize.STRING,        
-        allowNull: false
+        allowNull: true
     },
     loserId: {
         type: Sequelize.STRING,        
@@ -17,15 +17,17 @@ const Match = db.define('match', {
     },
     loser_name: {
         type: Sequelize.STRING,        
-        allowNull: false
+        allowNull: true
     },
     delta: {
-        type: Sequelize.FLOAT,        
+        type: Sequelize.FLOAT,  
+        defaultValue: 10,      
         allowNull: false
     },
     format: {
         type: Sequelize.STRING,   
-        defaultValue: "goat"
+        defaultValue: "goat",      
+        allowNull: false
     },
     tournament: {
         type: Sequelize.BOOLEAN,   
