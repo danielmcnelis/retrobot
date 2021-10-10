@@ -813,7 +813,7 @@ client.on('message', async (message) => {
         const stats = await Stats.findOne({ where: { playerId } })
         if (!player || !stats) return message.channel.send("That user is not in the database.")
         const results = []
-        const keys = Object.keys(stats)
+        const keys = Object.keys(stats.attributes)
 
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i]
@@ -841,7 +841,7 @@ client.on('message', async (message) => {
         const stats = await Stats.findOne({ where: { playerId } })
         if (!player || !stats) return message.channel.send("That user is not in the database.")
         const results = []
-        const keys = Object.keys(stats)
+        const keys = Object.keys(stats.attributes)
 
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i]
