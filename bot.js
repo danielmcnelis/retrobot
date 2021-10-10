@@ -155,8 +155,8 @@ client.on('message', async (message) => {
                         user: {
                             bot: false,
                             id: m.winner,
-                            name: 'null',
-                            tag: 'null#0000'
+                            name: null,
+                            tag: null
                         }
                     }
                     await createPlayer(winner)
@@ -170,8 +170,8 @@ client.on('message', async (message) => {
                         user: {
                             bot: false,
                             id: m.loser,
-                            name: 'null',
-                            tag: 'null#0000'
+                            name: null,
+                            tag: null
                         }
                     }
                     await createPlayer(loser)
