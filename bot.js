@@ -23,7 +23,7 @@ const {
     botcom, bracketcom, dbcom, dropcom, flipcom, h2hcom, joincom, legalcom, banscom, losscom, manualcom,
     noshowcom, pfpcom, profcom, rankcom, recalccom, rolecom, signupcom, startcom, statscom, undocom, yescom
 } = require('./static/commands.json')
-const { FL, legend, lmfao, mlady, sad, soldier } = require('./static/emojis.json')
+const { FL, legend, lmfao, mad, mlady, sad, soldier } = require('./static/emojis.json')
 const fldata = require('./static/fldata.json')
 const formats = require('./static/formats.json')
 const old_matches = require('./static/matches.json')
@@ -806,92 +806,56 @@ client.on('message', async (message) => {
         return message.channel.send("I messaged you the list of suppported Yu-Gi-Oh! Formats.")
     }
 
-    // //PROFILE
-    // if (profcom.includes(cmd.toLowerCase())) {
-    //     const playerId = (messageArray.length === 1 ? maid : messageArray[1].replace(/[\\<>@#&!]/g, ""))
-    //     const player = await Player.findOne({ where: { id: playerId } })
+    //PROFILE
+    if (profcom.includes(cmd.toLowerCase())) {
+        const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
+        const player = await Player.findOne({ where: { id: playerId } })
+        const stats = await Stats.findOne({ where: { playerId } })
+        if (!player || !stats) return message.channel.send("That user is not in the database.")
+        const results = []
+        const keys = Object.keys(stats)
 
-    //     if (!player && maid === playerId) {
-    //         createPlayer(member.user.id, member.user.username, member.user.tag);
-    //         return message.channel.send("I added you to the Format Library database. Please try again.")
-    //     } else if (!player && maid !== playerId) {
-    //         return message.channel.send("That user is not in the Format Library database.")
-    //     }
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i]
+            if (stats[key]) {
+                const medal = getMedal(stats[format])
+                results.push(`${formats[key].emoji} ${formats[key].name}: ${medal}`)
+            }
+        }
 
-    //     let vault = {}
-    //     try {
-    //         formatKeys.forEach(async function(key) {
-    //             if (formats[key].name === 'Voice') return
-    //             const formatDatabase = formats[key].database
-    //             const record = await eval(formatDatabase).findOne({ 
-    //                 where: {
-    //                     playerId: playerId
-    //                 }
-    //             })
-    
-    //             if (!record.wins && !record.losses) return
-    
-    //             const medal = getMedal(record.stats)
-    //             vault[`${formats[key].emoji} ${formats[key].name}`] = medal
-    //         })
-    //     } catch (err) {
-    //         console.log(err)
-    //     }
-
-    //     return setTimeout(function () {
-    //         let vault2 = Object.entries(vault).map(function(elem) {
-    //             return `${elem[0]}: ${elem[1]}`
-    //         })
-    //         vault2.unshift(`${FL} --- ${player.name}'s Player Profile --- ${FL}`)
-    //         message.channel.send(vault2.slice(0, 20))
-    //         return message.channel.send(vault2.slice(20))
-    //     }, 1000)
-    // }
+        if (!results.length) {
+            return message.channel.send(`You have not played any ranked games.`)
+        } else {
+            results.unshift(`${FL} --- ${player.name}'s Player Profile --- ${FL}`)
+            return message.channel.send(results.join("\n"))
+        }
+    }
 
 
-    // //MEDALS
-    // if (cmd === `!medals`) {
-    //     const playerId = (messageArray.length === 1 ? maid : messageArray[1].replace(/[\\<>@#&!]/g, ""))
-    //     const player = await Player.findOne({ where: { id: playerId } })
+    //MEDALS
+    if (cmd === `!medals`) {
+        const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
+        const player = await Player.findOne({ where: { id: playerId } })
+        const stats = await Stats.findOne({ where: { playerId } })
+        if (!player || !stats) return message.channel.send("That user is not in the database.")
+        const results = []
+        const keys = Object.keys(stats)
 
-    //     if (!player && maid === playerId) {
-    //         createPlayer(member.user.id, member.user.username, member.user.tag);
-    //         return message.channel.send("I added you to the Format Library database. Please try again.")
-    //     } else if (!player && maid !== playerId) {
-    //         return message.channel.send("That user is not in the Format Library database.")
-    //     }
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i]
+            if (stats[key] >= 530) {
+                const medal = getMedal(stats[format])
+                results.push(`${formats[key].emoji} ${formats[key].name}: ${medal}`)
+            }
+        }
 
-    //     let vault = {}
-    //     try {
-    //         formatKeys.forEach(async function(key) {
-    //             if (formats[key].name === 'Voice') return
-    //             const formatDatabase = formats[key].database
-    //             const record = await eval(formatDatabase).findOne({ 
-    //                 where: {
-    //                     playerId: playerId
-    //                 }
-    //             })
-    
-    //             if (record.stats < 530) return
-
-    //             if (!record.wins && !record.losses) return
-    
-    //             const medal = getMedal(record.stats)
-    //             vault[`${formats[key].emoji} ${formats[key].name}`] = medal
-    //         })
-    //     } catch (err) {
-    //         console.log(err)
-    //     }
-
-    //     return setTimeout(function () {
-    //         let vault2 = Object.entries(vault).map(function(elem) {
-    //             return `${elem[0]}: ${elem[1]}`
-    //         })
-    //         vault2.unshift(`${FL} --- ${player.name}'s Best Medals --- ${FL}`)
-    //         message.channel.send(vault2.slice(0, 20))
-    //         return message.channel.send(vault2.slice(20))
-    //     }, 1000)
-    // }
+        if (!results.length) {
+            return message.channel.send(`You have not earned any prestigious medals. ${mad}`)
+        } else {
+            results.unshift(`${FL} --- ${player.name}'s Best Medals --- ${FL}`)
+            return message.channel.send(results.join("\n"))
+        }
+    }
 
 
     //STATS
@@ -908,7 +872,7 @@ client.on('message', async (message) => {
         const banned_players = [...bans_map.keys()]
         const filtered_stats = all_stats.filter((s) => !banned_players.includes(s.playerId))
         const index = filtered_stats.length ? filtered_stats.findIndex((s) => s.playerId === playerId) : null
-        const rank = index !== null ? `#${index + 1} out of ${filtered_stats.length}` : `N/A`
+        const rank = index ? `#${index + 1} out of ${filtered_stats.length}` : `N/A`
         const elo = stats[format] ? stats[format].toFixed(2) : `500.00`
         const medal = getMedal(stats[format], title = true)
         const winrate = wins[format] || losses[format] ? `${(100 * wins[format] / (wins[format] + losses[format])).toFixed(2)}%` : 'N/A'		
