@@ -862,7 +862,7 @@ client.on('message', async (message) => {
                     return 0
                 } 
             })
-                   
+
         console.log('keys', keys)
 
         for (let i = 0; i < keys.length; i++) {
@@ -896,7 +896,7 @@ client.on('message', async (message) => {
         const banned_players = [...bans_map.keys()]
         const filtered_stats = all_stats.filter((s) => !banned_players.includes(s.playerId))
         const index = filtered_stats.length ? filtered_stats.findIndex((s) => s.playerId === playerId) : null
-        const rank = index ? `#${index + 1} out of ${filtered_stats.length}` : `N/A`
+        const rank = index > -1 ? `#${index + 1} out of ${filtered_stats.length}` : `N/A`
         const elo = stats[format] ? stats[format].toFixed(2) : `500.00`
         const medal = getMedal(stats[format], title = true)
         const winrate = wins[format] || losses[format] ? `${(100 * wins[format] / (wins[format] + losses[format])).toFixed(2)}%` : 'N/A'		
