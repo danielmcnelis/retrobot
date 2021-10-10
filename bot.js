@@ -113,39 +113,17 @@ client.on('message', async (message) => {
             const matches = await Match.findAll()
             for (let i = 0; i < matches.length; i++) {
                 const m = matches[i]
-                if (m.winnerId === '3.96783E+17') {
-                    m.winnerId = '396782974877696000'
-                    m.winner_name = 'finn'
-                    console.log('winner -> finn')
+                if (m.format === 'chaos_warrior') {
+                    m.format = 'warrior'
+                    console.log('format -> warrior')
                     await m.save()
-                } else if (m.loserId === '3.96783E+17') {
-                    m.loserId = '396782974877696000'
-                    m.loser_name = 'finn'
-                    console.log('loser -> finn')
+                } else if (m.format === 'glad_beast') {
+                    m.format = 'gladiator'
+                    console.log('format -> gladiator')
                     await m.save()
-                }
-                
-                if (m.winnerId === '2.66738E+17') {
-                    m.winnerId = '266738498617344000'
-                    m.winner_name = 'Kuru'
-                    console.log('winner -> Kuru')
-                    await m.save()
-                } else if (m.loserId === '2.66738E+17') {
-                    m.loserId = '266738498617344000'
-                    m.loser_name = 'Kuru'
-                    console.log('loser -> Kuru')
-                    await m.save()
-                }
-                
-                if (m.winnerId === '9.34489E+16') {
-                    m.winnerId = '93448920214016000'
-                    m.winner_name = 'Cameron'
-                    console.log('winner -> Cameron')
-                    await m.save()
-                } else if (m.loserId === '9.34489E+16') {
-                    m.loserId = '93448920214016000'
-                    m.loser_name = 'Cameron'
-                    console.log('loser -> Cameron')
+                } else if (m.format === 'crv_goat') {
+                    m.format = 'cyber'
+                    console.log('format -> cyber')
                     await m.save()
                 }
             }

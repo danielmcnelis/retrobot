@@ -33,7 +33,7 @@ const Losses = db.define('losses', {
         defaultValue: 0,          
         allowNull: false
     },
-    chaos_warrior: {
+    warrior: {
         type: Sequelize.INTEGER,  
         defaultValue: 0,          
         allowNull: false
@@ -53,7 +53,7 @@ const Losses = db.define('losses', {
         defaultValue: 0,          
         allowNull: false
     },
-    crv_goat: {
+    cyber: {
         type: Sequelize.INTEGER,  
         defaultValue: 0,          
         allowNull: false
@@ -108,7 +108,7 @@ const Losses = db.define('losses', {
         defaultValue: 0,          
         allowNull: false
     },
-    glad_beast: {
+    gladiator: {
         type: Sequelize.INTEGER,  
         defaultValue: 0,          
         allowNull: false

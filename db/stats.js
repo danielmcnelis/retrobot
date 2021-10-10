@@ -33,7 +33,7 @@ const Stats = db.define('stats', {
         defaultValue: null,          
         allowNull: true
     },
-    chaos_warrior: {
+    warrior: {
         type: Sequelize.FLOAT,  
         defaultValue: null,          
         allowNull: true
@@ -53,7 +53,7 @@ const Stats = db.define('stats', {
         defaultValue: null,          
         allowNull: true
     },
-    crv_goat: {
+    cyber: {
         type: Sequelize.FLOAT,  
         defaultValue: null,          
         allowNull: true
@@ -108,7 +108,7 @@ const Stats = db.define('stats', {
         defaultValue: null,          
         allowNull: true
     },
-    glad_beast: {
+    gladiator: {
         type: Sequelize.FLOAT,  
         defaultValue: null,          
         allowNull: true
