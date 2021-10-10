@@ -815,7 +815,17 @@ client.on('message', async (message) => {
         const results = []
         const keys = Object.keys(stats.dataValues)
             .filter((k) => formats[k])
-            .sort((a, b) => formats[a].date - formats[b].date)
+            .sort((a, b) => {
+                if (formats[a].date > formats[b].date) {
+                    return 1
+                } else if (formats[a].date < formats[b].date) {
+                    return -1
+                } else {
+                    return 0
+                } 
+            })
+
+        console.log('keys', keys)
 
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i]
@@ -843,7 +853,17 @@ client.on('message', async (message) => {
         const results = []
         const keys = Object.keys(stats.dataValues)
             .filter((k) => formats[k])
-            .sort((a, b) => formats[a].date - formats[b].date)
+            .sort((a, b) => {
+                if (formats[a].date > formats[b].date) {
+                    return 1
+                } else if (formats[a].date < formats[b].date) {
+                    return -1
+                } else {
+                    return 0
+                } 
+            })
+                   
+        console.log('keys', keys)
 
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i]
