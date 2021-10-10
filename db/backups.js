@@ -183,6 +183,11 @@ const Backups = db.define('backups', {
         defaultValue: null,          
         allowNull: true
     },
+    newgioh: {
+        type: Sequelize.FLOAT,  
+        defaultValue: null,          
+        allowNull: true
+    },
     nova: {
         type: Sequelize.FLOAT,  
         defaultValue: null,          
@@ -244,6 +249,11 @@ const Backups = db.define('backups', {
         allowNull: true
     },
     six_samurai: {
+        type: Sequelize.FLOAT,  
+        defaultValue: null,          
+        allowNull: true
+    },
+    speed: {
         type: Sequelize.FLOAT,  
         defaultValue: null,          
         allowNull: true

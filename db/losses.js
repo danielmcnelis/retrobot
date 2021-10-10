@@ -183,6 +183,11 @@ const Losses = db.define('losses', {
         defaultValue: 0,          
         allowNull: false
     },
+    newgioh: {
+        type: Sequelize.FLOAT,  
+        defaultValue: null,          
+        allowNull: true
+    },
     nova: {
         type: Sequelize.INTEGER,  
         defaultValue: 0,          
@@ -247,6 +252,11 @@ const Losses = db.define('losses', {
         type: Sequelize.INTEGER,  
         defaultValue: 0,          
         allowNull: false
+    },
+    speed: {
+        type: Sequelize.FLOAT,  
+        defaultValue: null,          
+        allowNull: true
     },
     striker: {
         type: Sequelize.INTEGER,  
