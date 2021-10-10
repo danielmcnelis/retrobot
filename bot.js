@@ -814,11 +814,11 @@ client.on('message', async (message) => {
         if (!player || !stats) return message.channel.send("That user is not in the database.")
         const results = []
         const keys = Object.keys(stats.dataValues)
+            .filter((k) => formats[k])
+            .sort((a, b) => formats[a].date - formats[b].date)
 
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i]
-            console.log('key', key)
-            console.log('stats[key]', stats[key])
             if (stats[key] && formats[key]) {
                 const medal = getMedal(stats[key])
                 results.push(`${formats[key].emoji} ${formats[key].name}: ${medal}`)
@@ -842,11 +842,11 @@ client.on('message', async (message) => {
         if (!player || !stats) return message.channel.send("That user is not in the database.")
         const results = []
         const keys = Object.keys(stats.dataValues)
+            .filter((k) => formats[k])
+            .sort((a, b) => formats[a].date - formats[b].date)
 
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i]
-            console.log('key', key)
-            console.log('stats[key]', stats[key])
             if (stats[key] >= 530 && formats[key]) {
                 const medal = getMedal(stats[key])
                 results.push(`${formats[key].emoji} ${formats[key].name}: ${medal}`)
