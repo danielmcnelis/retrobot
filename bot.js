@@ -140,14 +140,10 @@ client.on('message', async (message) => {
     // MATCHES 
     if (cmd === `!matches`) {
         if (isProgrammer(message.member)) {
-            console.log('old_matches.length', old_matches.length)
-            const sorted_matches = old_matches.sort((a, b) => b.id - a.id)
-            console.log('sorted_matches.length', sorted_matches.length)
-            console.log('sorted_matches[0]', sorted_matches[0])
-            message.channel.send(`Adding ${sorted_matches.length} matches, please wait.`)
+            message.channel.send(`Adding ${old_matches.length} matches, please wait.`)
             let c = 0
-            for (let i = 0; i < sorted_matches.length; i++) {
-                const m = sorted_matches[i]
+            for (let i = 0; i < old_matches.length; i++) {
+                const m = old_matches[i]
                 if (!m.winner || !m.loser || !m.format) {
                     console.log('Bad Match.')
                     continue
@@ -164,7 +160,9 @@ client.on('message', async (message) => {
                     winner_name: w.name,
                     loserId: m.loser,
                     loser_name: l.name,
-                    delta: m.delta
+                    delta: m.delta,
+                    createdAt: m.createdAt,
+                    updatedAt: m.updatedAt
                 })
 
                 if (nm) c++

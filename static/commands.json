@@ -1,5 +1,5 @@
 {
-    "banscom": ["!banlist", "!bans"],
+    "banscom": ["!banlist", "!bans", "!list"],
     "botcom": ["!bot", "!guide", "!help"],
     "bracketcom":["!bracket", "!b", "!challonge", "!show", "!tournament", "!pairings"],
     "dbcom": ["!db", "!dbname", "!duelingbook"],
