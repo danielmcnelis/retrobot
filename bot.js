@@ -148,7 +148,7 @@ client.on('message', async (message) => {
             let c = 0
             for (let i = 0; i < old_players.length; i++) {
                 const p = old_players[i]
-                if (!p.id || !p.name || !p.tag) {
+                if (!p.id || !p.name) {
                     console.log('missing info:', p)
                     continue
                 }
@@ -182,7 +182,7 @@ client.on('message', async (message) => {
             let c = 0
             for (let i = 0; i < goat_players.length; i++) {
                 const p = goat_players[i]
-                if (!p.id || !p.name || !p.tag) {
+                if (!p.id || !p.name) {
                     console.log('missing info:', p)
                     continue
                 }
