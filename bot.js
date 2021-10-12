@@ -112,12 +112,34 @@ client.on('message', async (message) => {
     // FIX 
     if (cmd === `!fix`) {
         if (isProgrammer(message.member)) {
-            return message.channel.send(`🛠️`)
-        } else {
-            return message.channel.send(`🛠️`)
+
+            const all_players = await Player.findAll()
+            for (let i = 0; i < all_players.length; i++) {
+                const p = all_players[i]
+                const b = await Backups.count({ playerId: p.id })
+                if (!b) {
+                    console.log(`create Backups for ${p.id, p.name}`)
+                    await Backups.create({ playerId: p.id })
+                }
+                const s = await Stats.count({ playerId: p.id })
+                if (!s) {
+                    console.log(`create Stats for ${p.id, p.name}`)
+                    await Backups.create({ playerId: p.id })
+                }
+                const l = await Losses.count({ playerId: p.id })
+                if (!l) {
+                    console.log(`create Losses for ${p.id, p.name}`)
+                    await Losses.create({ playerId: p.id })
+                }
+                const w = await Wins.count({ playerId: p.id })
+                if (!w) {
+                    console.log(`create Wins for ${p.id, p.name}`)
+                    await Wins.create({ playerId: p.id })
+                }
+            }
         }
     }
-
+    
     // PLAYERS 
     if (cmd === `!players`) {
         if (isProgrammer(message.member)) {
