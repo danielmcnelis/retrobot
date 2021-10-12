@@ -352,6 +352,8 @@ client.on('message', async (message) => {
                     b >= 120 && b < 130 ? `02:0${b-120}:00.000+00` :
                     b >= 130 && b < 180 ? `02:${b-120}:00.000+00` :
                     null
+
+                return time
             }
 
             for (let i = 0; i < keys.length; i++) {
@@ -452,6 +454,8 @@ client.on('message', async (message) => {
                     b >= 120 && b < 130 ? `02:0${b-120}:00.000+00` :
                     b >= 130 && b < 180 ? `02:${b-120}:00.000+00` :
                     null
+                    
+                return time
             }
 
             for (let i = 0; i < keys.length; i++) {
