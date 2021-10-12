@@ -338,6 +338,7 @@ client.on('message', async (message) => {
     if (cmd === `!fldata`) {
         if (isProgrammer(message.member)) {
             const keys = Object.keys(fldata)
+            console.log('keys', keys)
             message.channel.send(`Adding ${keys.length} dates, please wait.`)
             let c = 0
             const make_times = (b) => {
@@ -358,7 +359,10 @@ client.on('message', async (message) => {
 
             for (let i = 0; i < keys.length; i++) {
                 const key = keys[i]
+                console.log('KEY', key)
                 const arr = fldata[key]
+                console.log('ARR', arr)
+                console.log('ARR.length', arr.length)
 
                 for (let j = 0; j < arr.length; j++) {
                     const minutes = make_times(j)
@@ -370,10 +374,10 @@ client.on('message', async (message) => {
                     const date = `${key} ${minutes}`
                     const m = arr[j]
                     const wId = m.indexOf('>') ? m.slice(0, m.indexOf('>')) :
-                        m.indexOf('<') ? m.slice(m.indexOf('<')) :
+                        m.indexOf('<') ? m.slice(m.indexOf('<') + 1) :
                         null
                     
-                    const lId = m.indexOf('>') ? m.slice(m.indexOf('>')) :
+                    const lId = m.indexOf('>') ? m.slice(m.indexOf('>') + 1) :
                         m.indexOf('<') ? m.slice(0, m.indexOf('<')) :
                         null
 
@@ -440,6 +444,7 @@ client.on('message', async (message) => {
     if (cmd === `!gfdata`) {
         if (isProgrammer(message.member)) {
             const keys = Object.keys(gfdata)
+            console.log('keys', keys)
             message.channel.send(`Adding ${keys.length} dates, please wait.`)
             let c = 0
             const make_times = (b) => {
@@ -454,13 +459,16 @@ client.on('message', async (message) => {
                     b >= 120 && b < 130 ? `02:0${b-120}:00.000+00` :
                     b >= 130 && b < 180 ? `02:${b-120}:00.000+00` :
                     null
-                    
+
                 return time
             }
 
             for (let i = 0; i < keys.length; i++) {
                 const key = keys[i]
-                const arr = fldata[key]
+                console.log('KEY', key)
+                const arr = gfdata[key]
+                console.log('ARR', arr)
+                console.log('ARR.length', arr.length)
 
                 for (let j = 0; j < arr.length; j++) {
                     const minutes = make_times(j)
@@ -471,12 +479,12 @@ client.on('message', async (message) => {
 
                     const date = `${key} ${minutes}`
                     const m = arr[j]
-                    const wId = m.indexOf('>') ? m.slice(0, m.indexOf('>')) :
+                    const wId = m.indexOf('>') ? m.slice(0, m.indexOf('>') + 1) :
                         m.indexOf('<') ? m.slice(m.indexOf('<')) :
                         null
                     
                     const lId = m.indexOf('>') ? m.slice(m.indexOf('>')) :
-                        m.indexOf('<') ? m.slice(0, m.indexOf('<')) :
+                        m.indexOf('<') ? m.slice(0, m.indexOf('<') + 1) :
                         null
 
                     console.log('wId', wId)
