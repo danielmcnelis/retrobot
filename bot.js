@@ -116,6 +116,7 @@ client.on('message', async (message) => {
             const all_players = await Player.findAll()
             for (let i = 0; i < all_players.length; i++) {
                 const p = all_players[i]
+                console.log(`checking ${p.id, p.name}`)
                 const b = await Backups.count({ playerId: p.id })
                 if (!b) {
                     console.log(`create Backups for ${p.id, p.name}`)
@@ -139,7 +140,7 @@ client.on('message', async (message) => {
             }
         }
     }
-    
+
     // PLAYERS 
     if (cmd === `!players`) {
         if (isProgrammer(message.member)) {
