@@ -26,7 +26,9 @@ const {
 const { FL, legend, lmfao, mad, mlady, sad, soldier } = require('./static/emojis.json')
 const fldata = require('./static/fldata.json')
 const formats = require('./static/formats.json')
+const goat_matches = require('./static/goat_matches.json')
 const old_matches = require('./static/matches.json')
+const goat_players = require('./static/goat_players.json')
 const old_players = require('./static/players.json')
 const gfdata = require('./static/gfdata.json')
 const { bfpRole, muteRole, tourRole, politicsRole } = require('./static/roles.json')
@@ -110,25 +112,7 @@ client.on('message', async (message) => {
     // FIX 
     if (cmd === `!fix`) {
         if (isProgrammer(message.member)) {
-            const matches = await Match.findAll()
-            for (let i = 0; i < matches.length; i++) {
-                const m = matches[i]
-                if (m.format === 'chaos_warrior') {
-                    m.format = 'warrior'
-                    console.log('format -> warrior')
-                    await m.save()
-                } else if (m.format === 'glad_beast') {
-                    m.format = 'gladiator'
-                    console.log('format -> gladiator')
-                    await m.save()
-                } else if (m.format === 'crv_goat') {
-                    m.format = 'cyber'
-                    console.log('format -> cyber')
-                    await m.save()
-                }
-            }
-
-            return message.channel.send(`Matches fixed.`)
+            return message.channel.send(`🛠️`)
         } else {
             return message.channel.send(`🛠️`)
         }
@@ -141,7 +125,44 @@ client.on('message', async (message) => {
             let c = 0
             for (let i = 0; i < old_players.length; i++) {
                 const p = old_players[i]
-                if (!p.id || !p.name || !p.tag) continue
+                if (!p.id || !p.name || !p.tag) {
+                    console.log('missing info:', p)
+                    continue
+                }
+                const count = await Player.count({ where: { id: p.id } })
+                if (!count) {
+                    console.log('creating', p.name)
+                    await Player.create({
+                        id: p.id,
+                        name: p.name,
+                        tag: p.tag
+                    })
+    
+                    await Backups.create({ playerId: p.id })
+                    await Losses.create({ playerId: p.id })
+                    await Stats.create({ playerId: p.id })
+                    await Wins.create({ playerId: p.id })
+                    c++
+                }
+            } 
+            return message.channel.send(`Added ${c} old players.`)
+        } else {
+            return message.channel.send(lmfao)
+        }
+    }
+
+
+    // GOAT PLAYERS 
+    if (cmd === `!goatplayers`) {
+        if (isProgrammer(message.member)) {
+            console.log('goat_players.length', goat_players.length)
+            let c = 0
+            for (let i = 0; i < goat_players.length; i++) {
+                const p = goat_players[i]
+                if (!p.id || !p.name || !p.tag) {
+                    console.log('missing info:', p)
+                    continue
+                }
                 const count = await Player.count({ where: { id: p.id } })
                 if (!count) {
                     console.log('creating', p.name)
@@ -228,6 +249,267 @@ client.on('message', async (message) => {
         }
     }
 
+    // GOAT MATCHES 
+    if (cmd === `!goatmatches`) {
+        if (isProgrammer(message.member)) {
+            message.channel.send(`Adding ${goat_matches.length} matches, please wait.`)
+            let c = 0
+            for (let i = 0; i < goat_matches.length; i++) {
+                const m = goat_matches[i]
+                if (!m.winner || !m.loser) {
+                    console.log('Bad Match.')
+                    continue
+                }
+
+                const w = await Player.findOne({ where: { id: m.winner }})
+                if (!w || !w.name) {
+                    const winner = {
+                        user: {
+                            bot: false,
+                            id: m.winner,
+                            name: null,
+                            tag: null
+                        }
+                    }
+                    await createPlayer(winner)
+                    i--
+                    continue
+                }
+
+                const l = await Player.findOne({ where: { id: m.loser }})
+                if (!l || !l.name) {
+                    const loser = {
+                        user: {
+                            bot: false,
+                            id: m.loser,
+                            name: null,
+                            tag: null
+                        }
+                    }
+                    await createPlayer(loser)
+                    i--
+                    continue
+                }
+                console.log(w.name, '>', l.name, '-', m.format)
+                const nm = await Match.create({ 
+                    format: "goat",
+                    winnerId: m.winner,
+                    winner_name: w.name,
+                    loserId: m.loser,
+                    loser_name: l.name,
+                    delta: m.delta,
+                    createdAt: m.createdAt,
+                    updatedAt: m.updatedAt
+                })
+
+                if (nm) c++
+            } 
+
+            return message.channel.send(`Added ${c} matches to the database.`)
+        } else {
+            return message.channel.send(mlady)
+        }
+    }
+
+    // FL DATA 
+    if (cmd === `!fldata`) {
+        if (isProgrammer(message.member)) {
+            const keys = Object.keys(fldata)
+            message.channel.send(`Adding ${keys.length} dates, please wait.`)
+            let c = 0
+            const make_times = (b) => {
+                if (b >= 180) {
+                    console.log('bad b value')
+                    return false
+                }
+                const time = b < 10 ? `00:0${b}:00.000+00` :
+                    b >= 10 && b < 60 ? `00:${b}:00.000+00` :
+                    b >= 60 && b < 70 ? `01:0${b-60}:00.000+00` :
+                    b >= 70 && b < 120 ? `01:${b-60}:00.000+00` :
+                    b >= 120 && b < 130 ? `02:0${b-120}:00.000+00` :
+                    b >= 130 && b < 180 ? `02:${b-120}:00.000+00` :
+                    null
+            }
+
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i]
+                const arr = fldata[key]
+
+                for (let j = 0; j < arr.length; j++) {
+                    const minutes = make_times(j)
+                    if (!minutes) {
+                        console.log('NO MINUTES...')
+                        continue
+                    }
+
+                    const date = `${key} ${minutes}`
+                    const m = arr[j]
+                    const wId = m.indexOf('>') ? m.slice(0, m.indexOf('>')) :
+                        m.indexOf('<') ? m.slice(m.indexOf('<')) :
+                        null
+                    
+                    const lId = m.indexOf('>') ? m.slice(m.indexOf('>')) :
+                        m.indexOf('<') ? m.slice(0, m.indexOf('<')) :
+                        null
+
+                    console.log('wId', wId)
+                    console.log('lId', lId)
+                    if (!wId || !lId) {
+                        console.log('BAD MATCH')
+                        continue
+                    }
+
+                    const w = await Player.findOne({ where: { id: wId }})
+                    if (!w) {
+                        const winner = {
+                            user: {
+                                bot: false,
+                                id: wId,
+                                name: null,
+                                tag: null
+                            }
+                        }
+                        await createPlayer(winner)
+                        i--
+                        continue
+                    }
+                    
+                    const l = await Player.findOne({ where: { id: lId }})
+                    if (!l) {
+                        const loser = {
+                            user: {
+                                bot: false,
+                                id: lId,
+                                name: null,
+                                tag: null
+                            }
+                        }
+                        await createPlayer(loser)
+                        i--
+                        continue
+                    }
+
+                    console.log(w.name, '>', l.name, '-', date)
+                    const nm = await Match.create({ 
+                        format: "goat",
+                        winnerId: wId,
+                        winner_name: w.name,
+                        loserId: lId,
+                        loser_name: l.name,
+                        delta: 10,
+                        createdAt: date,
+                        updatedAt: date
+                    })
+    
+                    if (nm) c++
+                }
+            } 
+
+            return message.channel.send(`Added ${c} matches to the database.`)
+        } else {
+            return message.channel.send(mlady)
+        }
+    }
+
+    // GF DATA 
+    if (cmd === `!gfdata`) {
+        if (isProgrammer(message.member)) {
+            const keys = Object.keys(gfdata)
+            message.channel.send(`Adding ${keys.length} dates, please wait.`)
+            let c = 0
+            const make_times = (b) => {
+                if (b >= 180) {
+                    console.log('bad b value')
+                    return false
+                }
+                const time = b < 10 ? `00:0${b}:00.000+00` :
+                    b >= 10 && b < 60 ? `00:${b}:00.000+00` :
+                    b >= 60 && b < 70 ? `01:0${b-60}:00.000+00` :
+                    b >= 70 && b < 120 ? `01:${b-60}:00.000+00` :
+                    b >= 120 && b < 130 ? `02:0${b-120}:00.000+00` :
+                    b >= 130 && b < 180 ? `02:${b-120}:00.000+00` :
+                    null
+            }
+
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i]
+                const arr = fldata[key]
+
+                for (let j = 0; j < arr.length; j++) {
+                    const minutes = make_times(j)
+                    if (!minutes) {
+                        console.log('NO MINUTES...')
+                        continue
+                    }
+
+                    const date = `${key} ${minutes}`
+                    const m = arr[j]
+                    const wId = m.indexOf('>') ? m.slice(0, m.indexOf('>')) :
+                        m.indexOf('<') ? m.slice(m.indexOf('<')) :
+                        null
+                    
+                    const lId = m.indexOf('>') ? m.slice(m.indexOf('>')) :
+                        m.indexOf('<') ? m.slice(0, m.indexOf('<')) :
+                        null
+
+                    console.log('wId', wId)
+                    console.log('lId', lId)
+                    if (!wId || !lId) {
+                        console.log('BAD MATCH')
+                        continue
+                    }
+
+                    const w = await Player.findOne({ where: { id: wId }})
+                    if (!w) {
+                        const winner = {
+                            user: {
+                                bot: false,
+                                id: wId,
+                                name: null,
+                                tag: null
+                            }
+                        }
+                        await createPlayer(winner)
+                        i--
+                        continue
+                    }
+                    
+                    const l = await Player.findOne({ where: { id: lId }})
+                    if (!l) {
+                        const loser = {
+                            user: {
+                                bot: false,
+                                id: lId,
+                                name: null,
+                                tag: null
+                            }
+                        }
+                        await createPlayer(loser)
+                        i--
+                        continue
+                    }
+
+                    console.log(w.name, '>', l.name, '-', date)
+                    const nm = await Match.create({ 
+                        format: "goat",
+                        winnerId: wId,
+                        winner_name: w.name,
+                        loserId: lId,
+                        loser_name: l.name,
+                        delta: 10,
+                        createdAt: date,
+                        updatedAt: date
+                    })
+    
+                    if (nm) c++
+                }
+            } 
+
+            return message.channel.send(`Added ${c} matches to the database.`)
+        } else {
+            return message.channel.send(mlady)
+        }
+    }
     //AVATAR
     if (pfpcom.includes(cmd)) {
         const user = message.mentions.users.first() || message.author
