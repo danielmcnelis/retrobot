@@ -1785,29 +1785,85 @@ client.on('message', async (message) => {
             const loserStats = await Stats.findOne({ where: { playerId: loserId } })
  
             if (!winningPlayer || !winnerBackups || !winnerStats || !winnerWins) {
-                    const p = await Player.create({
+                    const count = await Player.count({
                         id: winnerId
                     })
-    
-                    await Backups.create({ playerId: p.id })
-                    await Losses.create({ playerId: p.id })
-                    await Stats.create({ playerId: p.id })
-                    await Wins.create({ playerId: p.id })
-                    i--
-                    continue
+
+                    if (!count) {
+                        const p = await Player.create({
+                            id: winnerId
+                        })
+                        if (!winnerBackups) {
+                            await Backups.create({ playerId: p.id })
+                        } 
+
+                        if (!winnerStats) {
+                            await Stats.create({ playerId: p.id })
+                        } 
+                        
+                        if (!winnerWins) {
+                            await Wins.create({ playerId: p.id })
+                        } 
+                        
+                        i--
+                        continue
+                    } else {
+                        if (!winnerBackups) {
+                            await Backups.create({ playerId: p.id })
+                        } 
+
+                        if (!winnerStats) {
+                            await Stats.create({ playerId: p.id })
+                        } 
+                        
+                        if (!winnerWins) {
+                            await Wins.create({ playerId: p.id })
+                        } 
+                        
+                        i--
+                        continue
+                    }
             }
             
             if (!losingPlayer || !loserBackups || !loserStats || !loserLosses) {
-                const p = await Player.create({
+                const count = await Player.count({
                     id: loserId
                 })
 
-                await Backups.create({ playerId: p.id })
-                await Losses.create({ playerId: p.id })
-                await Stats.create({ playerId: p.id })
-                await Wins.create({ playerId: p.id })
-                i--
-                continue
+                if (!count) {
+                    const p = await Player.create({
+                        id: loserId
+                    })
+                    if (!loserBackups) {
+                        await Backups.create({ playerId: p.id })
+                    } 
+
+                    if (!loserStats) {
+                        await Stats.create({ playerId: p.id })
+                    } 
+                    
+                    if (!loserLosses) {
+                        await Losses.create({ playerId: p.id })
+                    } 
+                    
+                    i--
+                    continue
+                } else {
+                    if (!loserBackups) {
+                        await Backups.create({ playerId: p.id })
+                    } 
+
+                    if (!loserStats) {
+                        await Stats.create({ playerId: p.id })
+                    } 
+                    
+                    if (!loserLosses) {
+                        await Losses.create({ playerId: p.id })
+                    } 
+                    
+                    i--
+                    continue
+                }
             }
 
             const origStatsWinner = winnerStats[format] || 500.00
