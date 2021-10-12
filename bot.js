@@ -479,12 +479,12 @@ client.on('message', async (message) => {
 
                     const date = `${key} ${minutes}`
                     const m = arr[j]
-                    const wId = m.indexOf('>') ? m.slice(0, m.indexOf('>') + 1) :
-                        m.indexOf('<') ? m.slice(m.indexOf('<')) :
+                    const wId = m.indexOf('>') ? m.slice(0, m.indexOf('>')) :
+                        m.indexOf('<') ? m.slice(m.indexOf('<') + 1) :
                         null
                     
-                    const lId = m.indexOf('>') ? m.slice(m.indexOf('>')) :
-                        m.indexOf('<') ? m.slice(0, m.indexOf('<') + 1) :
+                    const lId = m.indexOf('>') ? m.slice(m.indexOf('>') + 1) :
+                        m.indexOf('<') ? m.slice(0, m.indexOf('<')) :
                         null
 
                     console.log('wId', wId)
