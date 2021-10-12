@@ -5,7 +5,7 @@
 //MODULE IMPORTS
 const axios = require('axios')
 const Discord = require('discord.js')
-const { Op } = require('sequelize')
+const { Op, ConnectionTimedOutError } = require('sequelize')
 
 //DATABASE IMPORTS
 const { Backups, Card, Losses, Player, Entry, Match, Matchup, Stats, Status, Tournament, Wins }  = require('./db/index.js')
@@ -1800,7 +1800,33 @@ client.on('message', async (message) => {
             const loserBackups = await Backups.findOne({ where: { playerId: loserId } })
             const loserLosses = await Losses.findOne({ where: { playerId: loserId } })
             const loserStats = await Stats.findOne({ where: { playerId: loserId } })
+ 
+            if (!winningPlayer || !winnerBackups || !winnerStats || !winnerWins) {
+                    const p = await Player.create({
+                        id: winnerId
+                    })
+    
+                    await Backups.create({ playerId: p.id })
+                    await Losses.create({ playerId: p.id })
+                    await Stats.create({ playerId: p.id })
+                    await Wins.create({ playerId: p.id })
+                    i--
+                    continue
+            }
             
+            if (!losingPlayer || !loserBackups || !loserStats || !loserWins) {
+                const p = await Player.create({
+                    id: loserId
+                })
+
+                await Backups.create({ playerId: p.id })
+                await Losses.create({ playerId: p.id })
+                await Stats.create({ playerId: p.id })
+                await Wins.create({ playerId: p.id })
+                i--
+                continue
+            }
+
             const origStatsWinner = winnerStats[format] || 500.00
             const origStatsLoser = loserStats[format] || 500.00
             const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origStatsWinner - origStatsLoser) / 400))))))
