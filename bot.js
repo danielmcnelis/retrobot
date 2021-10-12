@@ -1794,30 +1794,30 @@ client.on('message', async (message) => {
                             id: winnerId
                         })
                         if (!winnerBackups) {
-                            await Backups.create({ playerId: p.id })
+                            await Backups.create({ playerId: winnerId })
                         } 
 
                         if (!winnerStats) {
-                            await Stats.create({ playerId: p.id })
+                            await Stats.create({ playerId: winnerId })
                         } 
                         
                         if (!winnerWins) {
-                            await Wins.create({ playerId: p.id })
+                            await Wins.create({ playerId: winnerId })
                         } 
                         
                         i--
                         continue
                     } else {
                         if (!winnerBackups) {
-                            await Backups.create({ playerId: p.id })
+                            await Backups.create({ playerId: winnerId })
                         } 
 
                         if (!winnerStats) {
-                            await Stats.create({ playerId: p.id })
+                            await Stats.create({ playerId: winnerId })
                         } 
                         
                         if (!winnerWins) {
-                            await Wins.create({ playerId: p.id })
+                            await Wins.create({ playerId: winnerId })
                         } 
                         
                         i--
@@ -1835,30 +1835,30 @@ client.on('message', async (message) => {
                         id: loserId
                     })
                     if (!loserBackups) {
-                        await Backups.create({ playerId: p.id })
+                        await Backups.create({ playerId: loserId })
                     } 
 
                     if (!loserStats) {
-                        await Stats.create({ playerId: p.id })
+                        await Stats.create({ playerId: loserId })
                     } 
                     
                     if (!loserLosses) {
-                        await Losses.create({ playerId: p.id })
+                        await Losses.create({ playerId: loserId })
                     } 
                     
                     i--
                     continue
                 } else {
                     if (!loserBackups) {
-                        await Backups.create({ playerId: p.id })
+                        await Backups.create({ playerId: loserId })
                     } 
 
                     if (!loserStats) {
-                        await Stats.create({ playerId: p.id })
+                        await Stats.create({ playerId: loserId })
                     } 
                     
                     if (!loserLosses) {
-                        await Losses.create({ playerId: p.id })
+                        await Losses.create({ playerId: loserId })
                     } 
                     
                     i--
