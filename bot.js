@@ -1814,7 +1814,7 @@ client.on('message', async (message) => {
                     continue
             }
             
-            if (!losingPlayer || !loserBackups || !loserStats || !loserWins) {
+            if (!losingPlayer || !loserBackups || !loserStats || !loserLosses) {
                 const p = await Player.create({
                     id: loserId
                 })
