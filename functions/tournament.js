@@ -472,31 +472,24 @@ const removeParticipant = async (message, member, entry, tournament, drop = fals
 //SEED
 const seed = async (message, tournament) => {
     const format = tournament.format
-    const all_stats = await Stats.findAll({ order: [[format, 'DESC']] })
+    const entries = await Entry.findAll({ where: { tournamentId: tournament.id } })    
     const expEntries = []
     const newbieEntries = []
 
-    for (let i = 0; i < all_stats.length; i++) {
-        const playerId = all_stats[i].playerId
-        const format_stats = all_stats[i][format]
-        const entry = await Entry.findOne({ where: { playerId: playerId }, include: Player })
-        if (entry && format_stats) {
-            console.log('expEntries')
-            expEntries.push([entry.participantId, entry.player.name])
-        } else if (entry && !format_stats) {
-            console.log('newbieEntries')
-            newbieEntries.push([entry.participantId, entry.player.name])
+    for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i]
+        const playerId = entry.playerId
+        const stats = await Stats.findOne({ where: { format, playerId } })
+        if (stats) {
+            expEntries.push([entry.participantId, entry.pilot, stats.elo])
         } else {
-            console.log('continue')
-            continue
+            newbieEntries.push([entry.participantId, entry.pilot, null])
         }
     }
 
-    const seeds = [...expEntries, ...shuffleArray(newbieEntries)]
-
+    const seeds = [...expEntries.sort((a, b) => b[2] - a[2]), ...shuffleArray(newbieEntries)]    
     let count = 0
     const results = []
-
     for (let i = 0; i < seeds.length; i++) {
         const participantId = seeds[i][0]
         const name = seeds[i][1]

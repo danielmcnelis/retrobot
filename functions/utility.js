@@ -2,12 +2,20 @@
 //UTILITY FUNCTIONS
 
 //DATABASE IMPORTS
-const { Backups, Losses, Player, Stats, Wins } = require('../db/index.js')
+const { Membership, Player, Role, Stats } = require('../db/index.js')
 
 //STATIC IMPORTS
 const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend, god } = require('../static/emojis.json')
 const formats = require('../static/formats.json')
 const { adminRole, modRole, tourRole } = require('../static/roles.json')
+
+//CREATE PLAYER
+const assignRoles = async (guild, member) => {
+    const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: guild.id }})
+    if (!membership) return
+    const roles = await Role.findAll({ where: { membershipId: membership.id } })
+    roles.forEach((r) => { member.roles.add(r.roleId) })
+}
 
 //CAPITALIZE
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
@@ -23,20 +31,27 @@ const convertArrayToObject = (arr) => {
 const createPlayer = async (member) => {
     if (!member.user.bot) {
         try {
-            const player = await Player.create({
+            await Player.create({
                 id: `${member.user.id}`,
                 name: `${member.user.username}`,
                 tag: `${member.user.tag}`
             })
-
-            if (!player) return
-            await Backups.create({ playerId: player.id })
-            await Losses.create({ playerId: player.id })
-            await Stats.create({ playerId: player.id })
-            await Wins.create({ playerId: player.id })
         } catch (err) {
             console.log(err)
         }
+    }
+}
+
+//CREATE MEMBERSHIP
+const createMembership = async (guild, member) => {
+    try {
+        await Membership.create({
+            guildId: guild.id,
+            guildName: guild.name,
+            playerId: `${member.user.id}`
+        })
+    } catch (err) {
+        console.log(err)
     }
 }
 
@@ -182,6 +197,9 @@ const isAdmin = (member) => member.roles.cache.some(role => role.id === adminRol
 //IS MOD?
 const isMod = (member) => member.roles.cache.some(role => role.id === modRole)
 
+//IS NEW MEMBER?
+const isNewMember = async (guildId, playerId) => !await Membership.count({ where: { guildId, playerId } })
+
 //IS NEW USER?
 const isNewUser = async (id) => !await Player.count({ where: { id } })
 
@@ -207,9 +225,25 @@ const shuffleArray = (arr) => {
     return arr
 }
 
+//TRACK STATS
+const trackStats = async (id, format) => {
+    if (await isNewUser(id)) {
+        const member = { user: { id } }
+        await createPlayer(member)
+        return trackStats(id, format)
+    } else {
+        await Stats.create({
+            playerId: id,
+            format
+        })
+    }
+}
+
 module.exports = {
+    assignRoles,
     capitalize,
     convertArrayToObject,
+    createMembership,
     createPlayer,
     generateRandomString,
     getDeckCategory,
@@ -219,8 +253,10 @@ module.exports = {
     getRandomSubset,
     isAdmin,
     isMod,
+    isNewMember,
     isNewUser,
     isProgrammer,
     isTourPlayer,
-    shuffleArray
+    shuffleArray,
+    trackStats
 }

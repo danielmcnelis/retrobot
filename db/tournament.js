@@ -1,6 +1,6 @@
 
 const Sequelize = require('sequelize')
-const {db} = require('./db')
+const { db } = require('./db')
 
 const Tournament = db.define('tournament', {
     id: {
@@ -29,6 +29,11 @@ const Tournament = db.define('tournament', {
         defaultValue: 'double elimination',   
         allowNull: false
     },
+    worlds: {
+        type: Sequelize.BOOLEAN,   
+        defaultValue: false,   
+        allowNull: false
+    },
     state: {
         type: Sequelize.STRING,   
         defaultValue: 'pending',   
@@ -38,6 +43,10 @@ const Tournament = db.define('tournament', {
         type: Sequelize.INTEGER,   
         defaultValue: null,   
         allowNull: true 
+    },
+    guildId: {
+        type: Sequelize.STRING,      
+        allowNull: false
     }
 })
 

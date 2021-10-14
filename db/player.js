@@ -1,6 +1,6 @@
 
-const Sequelize = require('sequelize');
-const {db} = require('./db');
+const Sequelize = require('sequelize')
+const { db } = require('./db')
 
 const Player = db.define('player', {
     id: {
@@ -20,12 +20,10 @@ const Player = db.define('player', {
         type: Sequelize.STRING,
         allowNull: true
     },
-    muted: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        allowNull: false
+    password: {
+        type: Sequelize.STRING,
+        allowNull: true
     }
 })
 
 module.exports = Player
-

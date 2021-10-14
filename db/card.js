@@ -1,8 +1,8 @@
 
 const Sequelize = require('sequelize')
-const { db2 } = require('./db')
+const { db } = require('./db')
 
-const Card = db2.define('card', {
+const Card = db.define('card', {
   name: {
     type: Sequelize.TEXT,
     allowNull: false

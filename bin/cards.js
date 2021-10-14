@@ -1,5 +1,5 @@
 
-const { db2, Card, Status } = require('../db/index.js')
+const { db, Card, Status } = require('../db/index.js')
 const cards = require('../static/cards.json')
 const statuses = require('../static/statuses.json')
 

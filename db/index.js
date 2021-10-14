@@ -1,28 +1,24 @@
 
-const { db, db2 } = require('./db')
-const Backups = require('./backups')
-const Card = require('./card')
-const Entry = require('./entry')
-const Losses = require('./losses')
-const Match = require('./match')
-const Matchup = require('./matchup')
-const Player = require('./player')
-const Stats = require('./stats')
-const Status = require('./status')
-const Tournament = require('./tournament')
-const Wins = require('./wins')
-
-Backups.belongsTo(Player)
-Player.hasOne(Backups)
-
-Losses.belongsTo(Player)
-Player.hasOne(Losses)
+const { db } = require('./db')
+const Card = require('./Card')
+const Entry = require('./Entry')
+const Match = require('./Match')
+const Matchup = require('./Matchup')
+const Membership = require('./Membership')
+const Player = require('./Player')
+const Role = require('./Role')
+const Stats = require('./Stats')
+const Status = require('./Status')
+const Tournament = require('./Tournament')
 
 Stats.belongsTo(Player)
-Player.hasOne(Stats)
+Player.hasMany(Stats)
 
-Wins.belongsTo(Player)
-Player.hasOne(Wins)
+Membership.belongsTo(Player)
+Player.hasMany(Membership)
+
+Role.belongsTo(Membership)
+Membership.hasMany(Role)
 
 Entry.belongsTo(Player)
 Player.hasMany(Entry)
@@ -41,16 +37,14 @@ Tournament.hasMany(Matchup)
 
 module.exports = {
   db,
-  db2,
-  Backups,
   Card,
   Entry,
-  Losses,
   Match,
   Matchup,
+  Membership,
   Player,
+  Role,
   Stats,
   Status,
-  Tournament,
-  Wins
+  Tournament
 }

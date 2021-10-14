@@ -5,32 +5,28 @@
 //MODULE IMPORTS
 const axios = require('axios')
 const Discord = require('discord.js')
-const { Op, ConnectionTimedOutError } = require('sequelize')
+const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Backups, Card, Losses, Player, Entry, Match, Matchup, Stats, Status, Tournament, Wins }  = require('./db/index.js')
+const { Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
 
 //FUNCTION IMPORTS
 const { checkDeckList, saveYDK } = require('./functions/deck.js')
 const { uploadDeckFolder } = require('./functions/drive.js')
 const { addSheet, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getDeckType, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
-const { capitalize, createPlayer, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewUser, isProgrammer, isTourPlayer, isWCQ } = require('./functions/utility.js')
+const { assignRoles, capitalize, createMembership, createPlayer, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, trackStats } = require('./functions/utility.js')
 
 // STATIC IMPORTS
-const { welcomeChannel, politicsChannel } = require('./static/channels.json')
+const { welcomeChannel } = require('./static/channels.json')
 const {
-    botcom, bracketcom, dbcom, dropcom, flipcom, h2hcom, joincom, legalcom, banscom, losscom, manualcom,
+    botcom, bracketcom, dbcom, dropcom, h2hcom, joincom, legalcom, banscom, losscom, manualcom, medalscom,
     noshowcom, pfpcom, profcom, rankcom, recalccom, rolecom, signupcom, startcom, statscom, undocom, yescom
 } = require('./static/commands.json')
 const { FL, legend, lmfao, mad, mlady, sad, soldier } = require('./static/emojis.json')
-const fldata = require('./static/fldata.json')
 const formats = require('./static/formats.json')
-const goat_matches = require('./static/goat_matches.json')
 const old_matches = require('./static/matches.json')
-const goat_players = require('./static/goat_players.json')
 const old_players = require('./static/players.json')
-const gfdata = require('./static/gfdata.json')
 const { bfpRole, muteRole, tourRole, politicsRole } = require('./static/roles.json')
 const { challongeAPIKey, discordBotToken } = require('./secrets.json')
 
@@ -45,12 +41,13 @@ client.on('ready', () => {
 //WELCOME
 client.on('guildMemberAdd', async (member) => {
     const channel = client.channels.cache.get(welcomeChannel)
-    if (await isNewUser(member.user.id)) {
-        await createPlayer(member) 
+    const guild = client.guilds.cache.get('414551319031054346')
+    if (await isNewUser(member.user.id)) await createPlayer(member) 
+    if (await isNewMember(guild.id, member.user.id)) {
+        await createMembership(guild, member)
         return channel.send(`${member}, Welcome to the FormatLibrary.com ${FL} discord server. ${legend}`)
     } else {
-        const player = await Player.findOne({ where: { id: member.user.id }})
-        if (player && player.muted) member.roles.add(muteRole)
+        await assignRoles(guild, member)
         return channel.send(`${member}, Welcome back to the FormatLibrary.com ${FL} discord server! We missed you. ${soldier}`)
     }
 })
@@ -83,6 +80,7 @@ client.on('message', async (message) => {
     const args = marr.slice(1)
     const maid = message.author.id
     const mcid = message.channel.id
+    const mgid = message.guild.id
     const format = getFormat(mcid)
     const formatName = formats[format] ? formats[format].name : null
     const formatRole = formats[format] ? formats[format].role : null
@@ -90,6 +88,7 @@ client.on('message', async (message) => {
     const formatDate = formats[format] ? formats[format].date : null
     const formatList = formats[format] ? formats[format].list : null
     if (await isNewUser(maid)) await createPlayer(message.member)
+    if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
 
     //PING 
     if (cmd === `!ping`) return message.channel.send('🏓')
@@ -97,30 +96,20 @@ client.on('message', async (message) => {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            const url = args[0]
-            if (!url) return
-            const player = await Player.findOne({ where: { id: maid } })
-            if (!player) return
-            await saveYDK(player, url, formatDate, formatList)
-            const deckType = await getDeckType(player)
-            return message.channel.send(deckType)
+            const rolesMap = message.guild.roles.cache
+            const roles = [...rolesMap.values()].reduce((a, v) => ({ ...a, [v.id]: v.name}), {})     
+            console.log(roles)
         } else {
             return message.channel.send(`🧪`)
         }
     }
 
-
     // FIX 
     if (cmd === `!fix`) {
         if (isProgrammer(message.member)) {
-            const p = await Player.create({
-                id: '238643652958748675'
-            })
-
-            await Backups.create({ playerId: p.id })
-            await Wins.create({ playerId: p.id })
-            await Losses.create({ playerId: p.id })
-            await Stats.create({ playerId: p.id })
+            return message.channel.send(`🛠️`)
+        } else {
+            return message.channel.send(`🛠️`)
         }
     }
 
@@ -143,11 +132,6 @@ client.on('message', async (message) => {
                         name: p.name,
                         tag: p.tag
                     })
-    
-                    await Backups.create({ playerId: p.id })
-                    await Losses.create({ playerId: p.id })
-                    await Stats.create({ playerId: p.id })
-                    await Wins.create({ playerId: p.id })
                     c++
                 }
             } 
@@ -156,42 +140,6 @@ client.on('message', async (message) => {
             return message.channel.send(lmfao)
         }
     }
-
-
-    // GOAT PLAYERS 
-    if (cmd === `!goatplayers`) {
-        if (isProgrammer(message.member)) {
-            console.log('goat_players.length', goat_players.length)
-            let c = 0
-            for (let i = 0; i < goat_players.length; i++) {
-                const p = goat_players[i]
-                if (!p.id) {
-                    console.log('missing info:', p)
-                    continue
-                }
-                const count = await Player.count({ where: { id: p.id } })
-                if (!count) {
-                    console.log('creating', p.name)
-                    await Player.create({
-                        id: p.id,
-                        name: p.name,
-                        tag: p.tag
-                    })
-    
-                    await Backups.create({ playerId: p.id })
-                    await Losses.create({ playerId: p.id })
-                    await Stats.create({ playerId: p.id })
-                    await Wins.create({ playerId: p.id })
-                    c++
-                }
-            } 
-            return message.channel.send(`Added ${c} old players.`)
-        } else {
-            return message.channel.send(lmfao)
-        }
-    }
-
-
 
     // MATCHES 
     if (cmd === `!matches`) {
@@ -255,279 +203,6 @@ client.on('message', async (message) => {
         }
     }
 
-    // GOAT MATCHES 
-    if (cmd === `!goatmatches`) {
-        if (isProgrammer(message.member)) {
-            message.channel.send(`Adding ${goat_matches.length} matches, please wait.`)
-            let c = 0
-            for (let i = 0; i < goat_matches.length; i++) {
-                const m = goat_matches[i]
-                if (!m.winner || !m.loser) {
-                    console.log('Bad Match.')
-                    continue
-                }
-
-                const w = await Player.findOne({ where: { id: m.winner }})
-                if (!w || !w.name) {
-                    const winner = {
-                        user: {
-                            bot: false,
-                            id: m.winner,
-                            name: null,
-                            tag: null
-                        }
-                    }
-                    await createPlayer(winner)
-                    i--
-                    continue
-                }
-
-                const l = await Player.findOne({ where: { id: m.loser }})
-                if (!l || !l.name) {
-                    const loser = {
-                        user: {
-                            bot: false,
-                            id: m.loser,
-                            name: null,
-                            tag: null
-                        }
-                    }
-                    await createPlayer(loser)
-                    i--
-                    continue
-                }
-                console.log(w.name, '>', l.name, '-', m.format)
-                const nm = await Match.create({ 
-                    format: "goat",
-                    winnerId: m.winner,
-                    winner_name: w.name,
-                    loserId: m.loser,
-                    loser_name: l.name,
-                    delta: m.delta,
-                    createdAt: m.createdAt,
-                    updatedAt: m.updatedAt
-                })
-
-                if (nm) c++
-            } 
-
-            return message.channel.send(`Added ${c} matches to the database.`)
-        } else {
-            return message.channel.send(mlady)
-        }
-    }
-
-    // FL DATA 
-    if (cmd === `!fldata`) {
-        if (isProgrammer(message.member)) {
-            const keys = Object.keys(fldata)
-            console.log('keys', keys)
-            message.channel.send(`Adding ${keys.length} dates, please wait.`)
-            let c = 0
-            const make_times = (b) => {
-                if (b >= 180) {
-                    console.log('bad b value')
-                    return false
-                }
-                const time = b < 10 ? `00:0${b}:00.000+00` :
-                    b >= 10 && b < 60 ? `00:${b}:00.000+00` :
-                    b >= 60 && b < 70 ? `01:0${b-60}:00.000+00` :
-                    b >= 70 && b < 120 ? `01:${b-60}:00.000+00` :
-                    b >= 120 && b < 130 ? `02:0${b-120}:00.000+00` :
-                    b >= 130 && b < 180 ? `02:${b-120}:00.000+00` :
-                    null
-
-                return time
-            }
-
-            for (let i = 0; i < keys.length; i++) {
-                const key = keys[i]
-                console.log('KEY', key)
-                const arr = fldata[key]
-                console.log('ARR', arr)
-                console.log('ARR.length', arr.length)
-
-                for (let j = 0; j < arr.length; j++) {
-                    const minutes = make_times(j)
-                    if (!minutes) {
-                        console.log('NO MINUTES...')
-                        continue
-                    }
-
-                    const date = `${key} ${minutes}`
-                    const m = arr[j]
-                    const wId = m.includes('>') ? m.slice(0, m.indexOf('>')) :
-                        m.includes('<') ? m.slice(m.indexOf('<') + 1) :
-                        null
-                    
-                    const lId = m.includes('>') ? m.slice(m.indexOf('>') + 1) :
-                        m.includes('<') ? m.slice(0, m.indexOf('<')) :
-                        null
-
-                    console.log('wId', wId)
-                    console.log('lId', lId)
-                    if (!wId || !lId) {
-                        console.log('BAD MATCH')
-                        continue
-                    }
-
-                    const w = await Player.findOne({ where: { id: wId }})
-                    if (!w) {
-                        const winner = {
-                            user: {
-                                bot: false,
-                                id: wId,
-                                name: null,
-                                tag: null
-                            }
-                        }
-                        await createPlayer(winner)
-                        j--
-                        continue
-                    }
-                    
-                    const l = await Player.findOne({ where: { id: lId }})
-                    if (!l) {
-                        const loser = {
-                            user: {
-                                bot: false,
-                                id: lId,
-                                name: null,
-                                tag: null
-                            }
-                        }
-                        await createPlayer(loser)
-                        j--
-                        continue
-                    }
-
-                    console.log(w.name, '>', l.name, '-', date)
-                    const nm = await Match.create({ 
-                        format: "goat",
-                        winnerId: wId,
-                        winner_name: w.name,
-                        loserId: lId,
-                        loser_name: l.name,
-                        delta: 10,
-                        createdAt: date,
-                        updatedAt: date
-                    })
-    
-                    if (nm) c++
-                }
-            } 
-
-            return message.channel.send(`Added ${c} matches to the database.`)
-        } else {
-            return message.channel.send(mlady)
-        }
-    }
-
-    // GF DATA 
-    if (cmd === `!gfdata`) {
-        if (isProgrammer(message.member)) {
-            const keys = Object.keys(gfdata)
-            console.log('keys', keys)
-            message.channel.send(`Adding ${keys.length} dates, please wait.`)
-            let c = 0
-            const make_times = (b) => {
-                if (b >= 180) {
-                    console.log('bad b value')
-                    return false
-                }
-                const time = b < 10 ? `00:0${b}:00.000+00` :
-                    b >= 10 && b < 60 ? `00:${b}:00.000+00` :
-                    b >= 60 && b < 70 ? `01:0${b-60}:00.000+00` :
-                    b >= 70 && b < 120 ? `01:${b-60}:00.000+00` :
-                    b >= 120 && b < 130 ? `02:0${b-120}:00.000+00` :
-                    b >= 130 && b < 180 ? `02:${b-120}:00.000+00` :
-                    null
-
-                return time
-            }
-
-            for (let i = 0; i < keys.length; i++) {
-                const key = keys[i]
-                console.log('KEY', key)
-                const arr = gfdata[key]
-                console.log('ARR', arr)
-                console.log('ARR.length', arr.length)
-
-                for (let j = 0; j < arr.length; j++) {
-                    const minutes = make_times(j)
-                    if (!minutes) {
-                        console.log('NO MINUTES...')
-                        continue
-                    }
-
-                    const date = `${key} ${minutes}`
-                    const m = arr[j]
-                    const wId = m.includes('>') ? m.slice(0, m.indexOf('>')) :
-                        m.includes('<') ? m.slice(m.indexOf('<') + 1) :
-                        null
-                    
-                    const lId = m.includes('>') ? m.slice(m.indexOf('>') + 1) :
-                        m.includes('<') ? m.slice(0, m.indexOf('<')) :
-                        null
-
-                    console.log('wId', wId)
-                    console.log('lId', lId)
-                    if (!wId || !lId) {
-                        console.log('BAD MATCH')
-                        continue
-                    }
-
-                    const w = await Player.findOne({ where: { id: wId }})
-                    if (!w) {
-                        const winner = {
-                            user: {
-                                bot: false,
-                                id: wId,
-                                name: null,
-                                tag: null
-                            }
-                        }
-                        await createPlayer(winner)
-                        j--
-                        continue
-                    }
-                    
-                    const l = await Player.findOne({ where: { id: lId }})
-                    if (!l) {
-                        const loser = {
-                            user: {
-                                bot: false,
-                                id: lId,
-                                name: null,
-                                tag: null
-                            }
-                        }
-                        await createPlayer(loser)
-                        j--
-                        continue
-                    }
-
-                    console.log(w.name, '>', l.name, '-', date)
-                    const nm = await Match.create({ 
-                        format: "goat",
-                        winnerId: wId,
-                        winner_name: w.name,
-                        loserId: lId,
-                        loser_name: l.name,
-                        delta: 10,
-                        createdAt: date,
-                        updatedAt: date
-                    })
-    
-                    if (nm) c++
-                }
-            } 
-
-            return message.channel.send(`Added ${c} matches to the database.`)
-        } else {
-            return message.channel.send(mlady)
-        }
-    }
     //AVATAR
     if (pfpcom.includes(cmd)) {
         const user = message.mentions.users.first() || message.author
@@ -574,10 +249,21 @@ client.on('message', async (message) => {
         if (!member) return message.channel.send(`Please tag the user you wish to mute.`)
         const player = await Player.findOne({ where: { id: member.user.id }})
         if (!player) return createPlayer(member)
+        const membership = await Membership.findOne({ where: { playerId: player.id, guildId: mgid }})
+        if (!membership) return createMembership(message.guild, member)
 
         if (!member.roles.cache.some(role => role.id === muteRole)) {
-            player.muted = true
-            await player.save()
+            const count = await Role.count({ where: { membershipId: membership.id, roleId: muteRole } })
+            if (!count) {
+                await Role.create({ 
+                    membershipId: membership.id,
+                    roleId: muteRole,
+                    roleName: `Mute`
+                })
+            }
+
+            const politics = await Role.findOne({ where: { membershipId: membership.id, roleId: politicsRole } })
+            if (politics) await politics.destroy()
             member.roles.add(muteRole)
             member.roles.remove(politicsRole)   
             return message.channel.send(`${member.user.username} now has the Mute role.`)
@@ -592,13 +278,13 @@ client.on('message', async (message) => {
         const member = message.mentions.members.first()
         if (!member) return message.channel.send(`Please tag the user you wish to mute.`)
         const player = await Player.findOne({ where: { id: member.user.id }})
+        if (!player) return createPlayer(member)
+        const membership = await Membership.findOne({ where: { playerId: player.id, guildId: mgid }})
+        if (!membership) return createMembership(message.guild, member)
 
         if (member.roles.cache.some(role => role.id === muteRole)) {
-            if (player) {
-                player.muted = false
-                await player.save()
-            }
-
+            const role = await Role.findOne({ where: { membershipId: membership.id, roleId: muteRole } })
+            if (role) await role.destroy()
             member.roles.remove(muteRole)
             return message.channel.send(`${member.user.username} no longer has the Mute role.`)
         } else {
@@ -644,7 +330,8 @@ client.on('message', async (message) => {
                     rounds: data.tournament.swiss_rounds, 
                     type: data.tournament.tournament_type,
                     format: tournament_format,
-                    url: data.tournament.url
+                    url: data.tournament.url,
+                    guildId: mgid
                 })
             
                 return message.channel.send(
@@ -680,7 +367,8 @@ client.on('message', async (message) => {
                         rounds: data.tournament.swiss_rounds, 
                         type: data.tournament.tournament_type,
                         format: tournament_format,
-                        url: data.tournament.url
+                        url: data.tournament.url,
+                        guildId: mgid
                     })
                 
                     return message.channel.send(
@@ -704,7 +392,7 @@ client.on('message', async (message) => {
         if (!args.length) return message.channel.send(`Please specify the name of the tournament you wish to destroy.`)
 
         const name = args[0]
-        const tournament = await Tournament.findOne({ where: { name: { [Op.iLike]: name } } })
+        const tournament = await Tournament.findOne({ where: { name: { [Op.iLike]: name } }, guildId: mgid })
         if (!tournament) return message.channel.send(`Could not find tournament: "${name}".`)
         if (tournament.state === 'underway') return message.channel.send(`This tournament is underway, meaning it can only be deleted manually.`)
         if (tournament.state === 'complete') return message.channel.send(`This tournament is archived, meaning it can only be deleted manually.`)
@@ -723,7 +411,7 @@ client.on('message', async (message) => {
                     const entry = entries[i]
                     const playerId = entry.playerId	
                     await entry.destroy()
-                    const count = await Entry.count({ where: { playerId: playerId } })
+                    const count = await Entry.count({ where: { playerId } })
                     if (count) {
                         continue
                     } else { 
@@ -746,7 +434,7 @@ client.on('message', async (message) => {
     //START
     if (startcom.includes(cmd)) {
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
-        const tournaments = await Tournament.findAll({ where: { state: 'pending' }, order: [['createdAt', 'ASC']] })
+        const tournaments = await Tournament.findAll({ where: { state: 'pending', guildId: mgid }, order: [['createdAt', 'ASC']] })
 		const tournament = await selectTournament(message, tournaments, maid)
 		if (!tournament) return message.channel.send(`There are no pending tournaments.`)
         const { name, id, url } = tournament
@@ -781,7 +469,7 @@ client.on('message', async (message) => {
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
         if (!args.length) return message.channel.send(`Please specify the name of the tournament you wish to end.`)
         const name = args[0]
-        const tournament = await Tournament.findOne({ where: { name: { [Op.iLike]: name } } })
+        const tournament = await Tournament.findOne({ where: { name: { [Op.iLike]: name }}, guildId: mgid })
         if (tournament.state === 'complete') return message.channel.send(`This tournament has already ended.`)
         if (!tournament) return message.channel.send(`Could not find tournament: "${name}".`)
         const tournament_name = tournament.name
@@ -797,7 +485,7 @@ client.on('message', async (message) => {
                 const entry = entries[i]
                 const playerId = entry.playerId	
                 await entry.destroy()
-                const count = await Entry.count({ where: { playerId: playerId } })
+                const count = await Entry.count({ where: { playerId } })
                 if (count) {
                     continue
                 } else { 
@@ -819,7 +507,7 @@ client.on('message', async (message) => {
 
     //BRACKET
     if (bracketcom.includes(cmd)) {
-        const tournaments = await Tournament.findAll({ where: { state: { [Op.not]: 'complete'} }, order: [['createdAt', 'ASC']]})
+        const tournaments = await Tournament.findAll({ where: { state: { [Op.not]: 'complete'}, guildId: mgid }, order: [['createdAt', 'ASC']]})
         if (!tournaments.length) return message.channel.send(`There are no active tournaments.`)
         
         const results = []
@@ -845,8 +533,8 @@ client.on('message', async (message) => {
         if (isMod(message.member) && mention) return message.channel.send(`Please type **!signup @user** to register someone else for the tournament.`)
         const player = await Player.findOne({ where: { id: maid }})
         if (!player) return message.channel.send(`You are not in the database.`)
-        const tournaments = await Tournament.findAll({ where: { state: 'pending' }, order: [['createdAt', 'ASC']] })
-        const count = await Tournament.count({ where: { state: 'underway' } })
+        const tournaments = await Tournament.findAll({ where: { state: 'pending', guildId: mgid }, order: [['createdAt', 'ASC']] })
+        const count = await Tournament.count({ where: { state: 'underway', guildId: mgid } })
         const tournament = await selectTournament(message, tournaments, maid)
         if (!tournament && count) return message.channel.send(`Sorry, the tournament already started.`)
         if (!tournament && !count) return message.channel.send(`There is no active tournament.`)
@@ -881,7 +569,7 @@ client.on('message', async (message) => {
             if (!new_entry) return message.channel.send(`Error: Could not access database.`)
             message.member.roles.add(tourRole)
             message.author.send(`Thanks! I have all the information we need from you. Good luck in the tournament!`)
-            return client.channels.cache.get(formats[tournament.format].channel).send(`<@${player.id}> is now registered for the tournament!`)
+            return client.channels.cache.get(formats[tournament.format].channel).send(`<@${player.id}> is now registered for ${tournament.name}!`)
         } else {
             await entry.update({
                 url: deckListUrl,
@@ -891,7 +579,7 @@ client.on('message', async (message) => {
             })
     
             message.author.send(`Thanks! I have your updated deck list for the tournament.`)
-            return client.channels.cache.get(formats[tournament.format].channel).send(`<@${player.id}> resubmitted their deck list for the tournament!`)
+            return client.channels.cache.get(formats[tournament.format].channel).send(`<@${player.id}> resubmitted their deck list for ${tournament.name}!`)
         }
     }
 
@@ -902,9 +590,9 @@ client.on('message', async (message) => {
         if (!member) return message.channel.send(`Could not find user in the server.`)
         const player = await Player.findOne({ where: { id: member.user.id }})
         if (!player) return message.channel.send(`${member.user.username} is not in the database.`)
-        const tournaments = await Tournament.findAll({ where: { state: 'pending' }, order: [['createdAt', 'ASC']] })
+        const tournaments = await Tournament.findAll({ where: { state: 'pending', guildId: mgid }, order: [['createdAt', 'ASC']] })
         const tournament = await selectTournament(message, tournaments, maid)
-        const count = await Tournament.count({ where: { state: 'underway' } })
+        const count = await Tournament.count({ where: { state: 'underway', guildId: mgid } })
         if (!tournament && count) return message.channel.send(`Sorry, the tournament already started.`)
         if (!tournament && !count) return message.channel.send(`There is no active tournament.`)
         const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournament.id } })
@@ -943,7 +631,7 @@ client.on('message', async (message) => {
             if (!new_entry) return message.channel.send(`Error: Could not access database.`)
             member.roles.add(tourRole)
             message.author.send(`Thanks! I have all the information we need for ${player.name}!`)
-            return client.channels.cache.get(formats[tournament.format].channel).send(`<@${player.id}> is now registered for the tournament!`)
+            return client.channels.cache.get(formats[tournament.format].channel).send(`<@${player.id}> is now registered for ${tournament.name}!`)
         } else {
             await entry.update({
                 url: deckListUrl,
@@ -953,13 +641,13 @@ client.on('message', async (message) => {
             })
     
             message.author.send(`Thanks! I have ${player.name}'s updated deck list for the tournament.`)
-            return client.channels.cache.get(formats[tournament.format].channel).send(`A moderator resubmitted <@${player.id}>'s deck list for the tournament!`)
+            return client.channels.cache.get(formats[tournament.format].channel).send(`A moderator resubmitted <@${player.id}>'s deck list for ${tournament.name}!`)
         }
     }
 
     //DROP
     if(dropcom.includes(cmd)) {
-        const tournaments = await Entry.findAll({ where: { playerId: maid }, include: Tournament }).map((e) => e.tournament)
+        const tournaments = await Entry.findAll({ where: { playerId: maid }, include: Tournament }).map((e) => e.tournament).filter((t) => t.guild === message.guild)
         if (!tournaments.length) return message.channel.send(`You are not in an active tournament.`)
         const tournament = await selectTournament(message, tournaments, maid)
         let success = tournament.state === 'pending'
@@ -980,25 +668,40 @@ client.on('message', async (message) => {
     }
 
     //REMOVE
-    if (cmd.toLowerCase() === `!remove`) {
+    if (cmd === `!remove`) {
         if (!isMod(message.member)) return message.channel.send('You do not have permission to do that.')
         const member = message.mentions.members.first()
         const playerId = member && member.user ? member.user.id : null
         if (!playerId) return message.channel.send(`Please specify the player you wish to remove.`)
-    
-        const entry = await Entry.findOne({ where: { playerId }, include: [Player, Tournament]})
+        const tournaments = await Entry.findAll({ where: { playerId }, include: Tournament }).map((e) => e.tournament).filter((t) => t.guild === message.guild)
+        if (!tournaments.length) return message.channel.send(`That user is not in any tournaments.`)
+        const tournament = await selectTournament(message, tournaments, maid)
+        const entry = await Entry.findOne({ where: { playerId, tournamentId: tournament.id }, include: Player})
         if (!entry) return message.channel.send(`That user is not in any tournaments.`)
-        const tournament = entry.tournament
 
         return removeParticipant(message, member, entry, tournament, false)
     }
 
     //ROLE
     if (rolecom.includes(cmd)) {
+        const membership = await Membership.findOne({ where: { playerId: maid, guildId: mgid } })
+        if (!membership) return message.channel.send(`You are not in the database.`)
         if (!message.member.roles.cache.some(role => role.id === formatRole)) {
+            const count = await Role.count({ where: { membershipId: membership.id, roleId: formatRole } })
+            if (!count) {
+                await Role.create({ 
+                    membershipId: membership.id,
+                    roleId: formatRole,
+                    roleName: `${formatName} Players`
+                })
+            }
 			message.member.roles.add(formatRole)
             return message.channel.send(`You now have the ${formatName} Players role.`)
         } else {
+            const role = await Role.findOne({ where: { membershipId: membership.id, roleId: formatRole } })
+            if (role) {
+                await role.destroy()
+            } 
             message.member.roles.remove(formatRole)
             return message.channel.send(`You no longer have the ${formatName} Players role.`)
         }
@@ -1034,20 +737,30 @@ client.on('message', async (message) => {
         if (!limited.length) limited.push(`N/A`)
         if (!semilimited.length) semilimited.push(`N/A`)
 
-        const banlist = `**${formatName.toUpperCase()} FORMAT ${formatEmoji} - FORBIDDEN & LIMITED LIST**` +
-        `\n\n**The following cards are forbidden:**` +
-        `\n${forbidden.join("\n")}` +
-        `\n\n**The following cards are limited:**` +
-        `\n${limited.join("\n")}` +
-        `\n\n**The following cards are semi-limited:**` +
-        `\n${semilimited.join("\n")}`
+        const banlist = [
+            `**${formatName.toUpperCase()} FORMAT ${formatEmoji} - FORBIDDEN & LIMITED LIST**`,
+            `\n**The following cards are forbidden:**`,
+            ...forbidden,
+            `\n**The following cards are limited:**`,
+            ...limited,
+            `\n**The following cards are semi-limited:**`,
+            ...semilimited
+        ]
 
-        message.channel.send(`I messaged you the Forbidden & Limited list for ${formatName} Format. ${formatEmoji}`)
-        return message.author.send(banlist)
+        for (let i = 0; i < banlist.length; i += 50) {
+            if (banlist[i+50] && banlist[i+50].startsWith("\n")) {
+                message.author.send(banlist.slice(i, i+51))
+                i++
+            } else {
+                message.author.send(banlist.slice(i, i+50))
+            }
+        }
+
+        return message.channel.send(`I messaged you the Forbidden & Limited list for ${formatName} Format. ${formatEmoji}`)
     }
 
     //BOT USER GUIDE
-    if (botcom.includes(cmd.toLowerCase())) {
+    if (botcom.includes(cmd)) {
         const botEmbed = new Discord.MessageEmbed()
 	        .setColor('#38C368')
         	.setTitle('RetroBot')
@@ -1055,10 +768,10 @@ client.on('message', async (message) => {
 	        .setURL('https://formatlibrary.com/')
 	        .setAuthor('Jazz#2704', 'https://i.imgur.com/wz5TqmR.png', 'https://formatlibrary.com/')
             .setThumbnail('https://i.imgur.com/ul7nKjk.png')
-            .addField('How to Use This Guide', '\nThe following commands can be used for any format in the appropriate channels (i.e. <#414575168174948372>, <#629464112749084673>, etc.). Commands require arguments as follows: (blank) no argument, (@user) mention a user, (n) a number, (link) a URL.')
-        	.addField('Ranked Play Commands', '\n!loss - (@user) - Report a loss to another player. \n!stats - (blank or @user) - Post a player’s stats. \n!top - (n) - Post the channel’s top rated players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a format role. \n!undo - Undo the last loss if you reported it. \n')
+            .addField('How to Use This Guide', '\nThe following commands can be used for any format in the appropriate channels (i.e. <#414575168174948372>, <#629464112749084673>, etc.).')
+        	.addField('Ranked Play Commands', '\n!stats - (blank or @user) - Post a player’s stats. \n!loss - (@user) - Report a loss to another player. \n!top - (n) - Post the channel’s top rated players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a format role. \n!undo - Undo the last loss if you made a mistake. \n')
         	.addField('Format Info Commands', '\n!legal - Privately check if your deck is legal. \n!list - View the Forbidden and Limited list. \n')
-        	.addField('Tournament Commands', '\n!join - Register for the upcoming tournament.\n!resubmit - Resubmit your deck list for the tournament. \n!drop - Drop from the current tournament. \n!show - Post the Challonge link for the current tournament.')
+        	.addField('Tournament Commands', '\n!join - Register for an upcoming tournament.\n!resubmit - Resubmit your deck list for a tournament. \n!drop - Drop from a tournament. \n!bracket - Post the bracket link(s) for the current tournament(s).')
         	.addField('Server Commands', '\n!db - Set your DuelingBook username. \n!prof - (blank or @user) - Post a player’s profile. \n!medals - (blank or @user) - Post a player’s best medals. \n!formats - View a list of supported Retro Formats. \n!bot - View the RetroBot User Guide. \n!mod - View the Moderator Guide.');
 
         message.author.send(botEmbed);
@@ -1067,7 +780,7 @@ client.on('message', async (message) => {
 
 
     //MOD USER GUIDE
-    if (cmd.toLowerCase() === `!mod`) {
+    if (cmd === `!mod`) {
         if (!isMod(message.member)) {
             return message.channel.send("You do not have permission to do that.")
         } 
@@ -1080,16 +793,16 @@ client.on('message', async (message) => {
 	        .setAuthor('Jazz#2704', 'https://i.imgur.com/wz5TqmR.png', 'https://formatlibrary.com/')
         	.setThumbnail('https://i.imgur.com/ul7nKjk.png')
         	.addField('Mod Ranked Play Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
-            .addField('Mod Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Directly add a player to the bracket. \n!noshow - (@user) - Report a no-show. \n!remove - (@user) - Remove a player from the bracket. \n!seed - Assign seeds to participants based on rankings. \n!start - Start the next tournament. \n!end - End the current tournament.')
+            .addField('Mod Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Directly add a player to a bracket. \n!noshow - (@user) - Report a no-show. \n!remove - (@user) - Remove a player from a bracket. \n!start - Start a tournament. \n!end (tournament name) - End a tournament.')
             .addField('Mod Discipline Commands', '\n!mute - (@user) - Mute a user.\n!unmute - (@user) - Unmute a user.')
-            .addField('Mod Server Commands', '\n!census - Update the information of all players in the database.\n!recalc - Recaluate all player stats for a specific format if needed.');
+            .addField('Mod Server Commands', '\n!census - Update the information of all players in the database.\n!recalc - Recaluate all player stats for a specific format.');
 
         message.author.send(botEmbed);
         return message.channel.send("I messaged you the Mod-Only Guide.")
     }
 
     //FORMATS
-    if(cmd.toLowerCase() === `!formats`) {
+    if(cmd === `!formats`) {
         const formatsEmbed = new Discord.MessageEmbed()
             .setColor('#38C368')
             .setURL('https://formatlibrary.com/')
@@ -1107,32 +820,28 @@ client.on('message', async (message) => {
     }
 
     //PROFILE
-    if (profcom.includes(cmd.toLowerCase())) {
+    if (profcom.includes(cmd)) {
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
         const player = await Player.findOne({ where: { id: playerId } })
-        const stats = await Stats.findOne({ where: { playerId } })
-        if (!player || !stats) return message.channel.send("That user is not in the database.")
-        const results = []
-        const keys = Object.keys(stats.dataValues)
-            .filter((k) => formats[k])
+        const all_stats = await Stats.findAll({ where: { playerId } })
             .sort((a, b) => {
-                if (formats[a].date > formats[b].date) {
+                if (formats[a.format].date > formats[b.format].date) {
                     return 1
-                } else if (formats[a].date < formats[b].date) {
+                } else if (formats[a.format].date < formats[b.format].date) {
                     return -1
                 } else {
                     return 0
                 } 
             })
 
-        console.log('keys', keys)
-
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i]
-            if (stats[key] && formats[key]) {
-                const medal = getMedal(stats[key])
-                results.push(`${formats[key].emoji} ${formats[key].name}: ${medal}`)
-            }
+        if (!player || !all_stats) return message.channel.send("That user is not in the database.")
+        const results = []
+        
+        for (let i = 0; i < all_stats.length; i++) {
+            const stats = stats[i]
+            const f = stats.format
+            const medal = getMedal(stats.elo)
+            results.push(`${formats[f].emoji} ${formats[f].name}: ${medal}`)
         }
 
         if (!results.length) {
@@ -1145,32 +854,28 @@ client.on('message', async (message) => {
 
 
     //MEDALS
-    if (cmd === `!medals`) {
+    if (medalscom.includes(cmd)) {
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
         const player = await Player.findOne({ where: { id: playerId } })
-        const stats = await Stats.findOne({ where: { playerId } })
-        if (!player || !stats) return message.channel.send("That user is not in the database.")
-        const results = []
-        const keys = Object.keys(stats.dataValues)
-            .filter((k) => formats[k])
+        const all_stats = await Stats.findAll({ where: { playerId, elo: { [Op.gte]: 530 }} })
             .sort((a, b) => {
-                if (formats[a].date > formats[b].date) {
+                if (formats[a.format].date > formats[b.format].date) {
                     return 1
-                } else if (formats[a].date < formats[b].date) {
+                } else if (formats[a.format].date < formats[b.format].date) {
                     return -1
                 } else {
                     return 0
                 } 
             })
 
-        console.log('keys', keys)
-
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i]
-            if (stats[key] >= 530 && formats[key]) {
-                const medal = getMedal(stats[key])
-                results.push(`${formats[key].emoji} ${formats[key].name}: ${medal}`)
-            }
+        if (!player || !all_stats) return message.channel.send("That user is not in the database.")
+        
+        const results = []
+        for (let i = 0; i < all_stats.length; i++) {
+            const stats = stats[i]
+            const f = stats.format
+            const medal = getMedal(stats.elo)
+            results.push(`${formats[f].emoji} ${formats[f].name}: ${medal}`)
         }
 
         if (!results.length) {
@@ -1186,20 +891,40 @@ client.on('message', async (message) => {
     if (statscom.includes(cmd)) {
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
         const player = await Player.findOne({ where: { id: playerId } })
-        const stats = await Stats.findOne({ where: { playerId } })
-        const wins = await Wins.findOne({ where: { playerId } })
-        const losses = await Losses.findOne({ where: { playerId } })
-        if (!player || !stats || !wins || !losses) return message.channel.send("That user is not in the database.")
+        if (!player) return message.channel.send("That user is not in the database.")
 
-        const all_stats = await Stats.findAll({ where: { [format]: { [Op.not]: null } }, order: [[format, 'DESC']] })
-        const bans_map = await message.guild.fetchBans()
-        const banned_players = [...bans_map.keys()]
-        const filtered_stats = all_stats.filter((s) => !banned_players.includes(s.playerId))
+        const stats = await Stats.findOne({ 
+            where: { 
+                playerId, 
+                format, 
+                [Op.or]: [
+                    { wins: { [Op.not]: null } }, 
+                    { losses: { [Op.not]: null } }, 
+                ]
+            } 
+        })
+
+        const all_stats = await Stats.findAll({ 
+            where: {
+                format,
+                [Op.or]: [
+                    { wins: { [Op.not]: null } }, 
+                    { losses: { [Op.not]: null } }, 
+                ]
+            },
+            order: [['elo', 'DESC']] 
+        })
+
+        const membersMap = await message.guild.members.fetch()
+        const memberIds = [...membersMap.keys()]
+        const filtered_stats = all_stats.filter((s) => memberIds.includes(s.playerId))
         const index = filtered_stats.length ? filtered_stats.findIndex((s) => s.playerId === playerId) : null
-        const rank = stats[format] ? `#${index + 1} out of ${filtered_stats.length}` : `N/A`
-        const elo = stats[format] ? stats[format].toFixed(2) : `500.00`
-        const medal = getMedal(stats[format], title = true)
-        const winrate = wins[format] || losses[format] ? `${(100 * wins[format] / (wins[format] + losses[format])).toFixed(2)}%` : 'N/A'		
+        const rank = stats ? `#${index + 1} out of ${filtered_stats.length}` : `N/A`
+        const elo = stats ? stats.elo.toFixed(2) : `500.00`
+        const medal = getMedal(elo, title = true)
+        const wins = stats ? stats.wins : 0
+        const losses = stats ? stats.losses : 0
+        const winrate = wins || losses ? `${(100 * wins / (wins + losses)).toFixed(2)}%` : 'N/A'		
         
         return message.channel.send(
             `${formatEmoji} --- ${formatName} Stats --- ${formatEmoji}`
@@ -1207,7 +932,7 @@ client.on('message', async (message) => {
             + `\nMedal: ${medal}`
             + `\nRanking: ${rank}`
             + `\nElo Rating: ${elo}`
-            + `\nWins: ${wins[format]}, Losses: ${losses[format]}`
+            + `\nWins: ${wins}, Losses: ${losses}`
             + `\nWin Rate: ${winrate}`
         )
     }
@@ -1218,17 +943,28 @@ client.on('message', async (message) => {
         if (x < 1) return message.channel.send("Please provide a number greater than 0.")
         if (x > 100 || isNaN(x)) return message.channel.send("Please provide a number less than or equal to 100.")
 
-        const all_stats = await Stats.findAll({ where: { [format]: { [Op.not]: null } }, include: Player, order: [[format, 'DESC']] })
-        const bans_map = await message.guild.fetchBans()
-        const banned_players = [...bans_map.keys()]
-        const filtered_stats = all_stats.filter((s) => !banned_players.includes(s.playerId))
+        const all_stats = await Stats.findAll({ 
+            where: {
+                format,
+                [Op.or]: [
+                    { wins: { [Op.not]: null } }, 
+                    { losses: { [Op.not]: null } }, 
+                ]
+            },
+            include: Player,
+            order: [['elo', 'DESC']] 
+        })
+        
+        const membersMap = await message.guild.members.fetch()
+        const memberIds = [...membersMap.keys()]
+        const filtered_stats = all_stats.filter((s) => memberIds.includes(s.playerId))
         const top_stats = filtered_stats.slice(0, x)
         if (!top_stats.length) return message.channel.send(`I'm sorry, we don't have any ${formatName} players.`)
         const results = []
         top_stats.length === 1 ? results[0] = `${formatEmoji} --- The Best ${formatName} Player --- ${formatEmoji}`
         : results[0] = `${formatEmoji} --- Top ${top_stats.length} ${formatName} Players --- ${formatEmoji}`
 
-        for (let i = 0; i < top_stats.length; i++) results[i+1] = `${(i+1)}. ${getMedal(top_stats[i][format])} ${top_stats[i].player.name}`
+        for (let i = 0; i < top_stats.length; i++) results[i+1] = `${(i+1)}. ${getMedal(top_stats[i].elo)} ${top_stats[i].player.name}`
         for (let i = 0; i < results.length; i += 30) message.channel.send(results.slice(i, i+30))
         return
     }
@@ -1241,24 +977,22 @@ client.on('message', async (message) => {
         if (await isNewUser(opid)) await createPlayer(message.mentions.members.first())
         const winner = message.guild.members.cache.get(opid)
         const winningPlayer = await Player.findOne({ where: { id: opid } })
-        const winnerBackups = await Backups.findOne({ where: { playerId: opid } })
-        const winnerLosses = await Losses.findOne({ where: { playerId: opid } })
-        const winnerStats = await Stats.findOne({ where: { playerId: opid } })
-        const winnerWins = await Wins.findOne({ where: { playerId: opid } })
+        const wCount = await Stats.count({ where: { playerId: opid, format } })
+        if (!wCount) await Stats.create({ playerId: opid, format })
+        const winnerStats = await Stats.findOne({ where: { playerId: opid, format } })
         const losingPlayer = await Player.findOne({ where: { id: maid } })
-        const loserBackups = await Backups.findOne({ where: { playerId: maid } })
-        const loserLosses = await Losses.findOne({ where: { playerId: maid } })
-        const loserStats = await Stats.findOne({ where: { playerId: maid } })
-        const loserWins = await Wins.findOne({ where: { playerId: maid } })
+        const lCount = await Stats.count({ where: { playerId: maid, format } })
+        if (!lCount) await Stats.create({ playerId: maid, format })
+        const loserStats = await Stats.findOne({ where: { playerId: maid, format } })
         
         if (winner && winner.user.bot) return message.channel.send(`Sorry, Bots do not play Goat Format... *yet*.`)
         if (opid.length < 17 || opid.length > 18) return message.channel.send(`To report a loss, type **!loss @opponent**.`)
-        if (!losingPlayer || !loserBackups || !loserLosses || !loserStats || !loserWins) return message.channel.send(`You are not in the database.`)
-        if (!winningPlayer || !winnerBackups || !winnerLosses || !winnerStats || !winnerWins) return message.channel.send(`That user is not in the database.`)
+        if (!losingPlayer || !loserStats) return message.channel.send(`You are not in the database.`)
+        if (!winningPlayer || !winnerStats) return message.channel.send(`That user is not in the database.`)
  
         const loserHasTourRole = isTourPlayer(message.member)
         const winnerHasTourRole = isTourPlayer(winner)
-        const activeTournament = await Tournament.count({ where: { state: 'underway' } }) 
+        const activeTournament = await Tournament.count({ where: { state: 'underway', guildId: mgid } }) 
         let isTournamentMatch
         let winningEntry
         let losingEntry
@@ -1293,7 +1027,7 @@ client.on('message', async (message) => {
                 if (common_tournament_ids.length) {
                     for (let i = 0; i < common_tournament_ids.length; i++) {
                         const id = common_tournament_ids[i]
-                        tournament = await Tournament.findOne({ where: { id: id }})
+                        tournament = await Tournament.findOne({ where: { id: id, guildId: mgid }})
                         losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
                         winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
                         if (!losingEntry || !winningEntry) continue
@@ -1325,23 +1059,19 @@ client.on('message', async (message) => {
             }
         }
             
-        const origStatsWinner = winnerStats[format] || 500.00
-        const origStatsLoser = loserStats[format] || 500.00
-        const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origStatsWinner - origStatsLoser) / 400))))))
+        const origEloWinner = winnerStats.elo || 500.00
+        const origEloLoser = loserStats.elo || 500.00
+        const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origEloWinner - origEloLoser) / 400))))))
         
-        winnerStats[format] ? winnerStats[format] += delta : winnerStats[format] = 500.00 + delta
+        winnerStats.elo = origEloWinner + delta
+        winnerStats.backupElo = origEloWinner
+        winnerStats.wins++
         await winnerStats.save()
-        winnerBackups[format] = origStatsWinner
-        await winnerBackups.save()
-        winnerWins[format]++
-        await winnerWins.save()
 
-        loserStats[format] ? loserStats[format] -= delta : loserStats[format] = 500.00 - delta
+        loserStats.elo = origEloLoser - delta
+        loserStats.backupElo = origEloLoser
+        loserStats.losses++
         await loserStats.save()
-        loserBackups[format] = origStatsLoser
-        await loserBackups.save()
-        loserLosses[format]++
-        await loserLosses.save()
 
         const match = await Match.create({
             winnerId: winningPlayer.id,
@@ -1349,7 +1079,7 @@ client.on('message', async (message) => {
             loserId: losingPlayer.id,
             loser_name: losingPlayer.name,
             tournament: isTournamentMatch,
-            format: format,
+            format,
             delta: delta
         })
 
@@ -1362,7 +1092,7 @@ client.on('message', async (message) => {
                 losing_deck_type: losingEntry.deck_type,
                 losing_deck_category: losingEntry.deck_category,
                 matchId: match.id,
-                format: format,
+                format,
                 tournamentId: tournament.id
             })
         }
@@ -1389,22 +1119,20 @@ client.on('message', async (message) => {
         if (loser && await isNewUser(loserId)) await createPlayer(loser)
 
         const winningPlayer = await Player.findOne({ where: { id: winnerId } })
-        const winnerBackups = await Backups.findOne({ where: { playerId: winnerId } })
-        const winnerLosses = await Losses.findOne({ where: { playerId: winnerId } })
-        const winnerStats = await Stats.findOne({ where: { playerId: winnerId } })
-        const winnerWins = await Wins.findOne({ where: { playerId: winnerId } })
+        const wCount = await Stats.count({ where: { playerId: winnerId, format } })
+        if (!wCount) await Stats.create({ playerId: winnerId, format })
+        const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format } })
         const losingPlayer = await Player.findOne({ where: { id: loserId } })
-        const loserBackups = await Backups.findOne({ where: { playerId: loserId } })
-        const loserLosses = await Losses.findOne({ where: { playerId: loserId } })
-        const loserStats = await Stats.findOne({ where: { playerId: loserId } })
-        const loserWins = await Wins.findOne({ where: { playerId: loserId } })
+        const lCount = await Stats.count({ where: { playerId: loserId, format } })
+        if (!lCount) await Stats.create({ playerId: loserId, format })
+        const loserStats = await Stats.findOne({ where: { playerId: loserId, format } })
 
-        if (!losingPlayer || !loserBackups || !loserLosses || !loserStats || !loserWins) return message.channel.send(`Sorry, <@${loserId}> is not in the database.`)
-        if (!winningPlayer || !winnerBackups || !winnerLosses || !winnerStats || !winnerWins) return message.channel.send(`Sorry, <@${winnerId}> is not in the database.`)
+        if (!losingPlayer || !loserStats) return message.channel.send(`Sorry, <@${loserId}> is not in the database.`)
+        if (!winningPlayer || !winnerStats) return message.channel.send(`Sorry, <@${winnerId}> is not in the database.`)
 
         const loserHasTourRole = await isTourPlayer(loser)
         const winnerHasTourRole = await isTourPlayer(winner)
-        const activeTournament = await Tournament.count({ where: { state: 'underway' } }) 
+        const activeTournament = await Tournament.count({ where: { state: 'underway', guildId: mgid } }) 
         let isTournamentMatch
         let winningEntry
         let losingEntry
@@ -1439,7 +1167,7 @@ client.on('message', async (message) => {
                 if (common_tournament_ids.length) {
                     for (let i = 0; i < common_tournament_ids.length; i++) {
                         const id = common_tournament_ids[i]
-                        tournament = await Tournament.findOne({ where: { id: id }})
+                        tournament = await Tournament.findOne({ where: { id: id, guildId: mgid }})
                         losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
                         winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
                         if (!losingEntry || !winningEntry) continue
@@ -1471,23 +1199,19 @@ client.on('message', async (message) => {
             }
         }
             
-        const origStatsWinner = winnerStats[format] || 500.00
-        const origStatsLoser = loserStats[format] || 500.00
-        const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origStatsWinner - origStatsLoser) / 400))))))
+        const origEloWinner = winnerStats.elo || 500.00
+        const origEloLoser = loserStats.elo || 500.00
+        const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origEloWinner - origEloLoser) / 400))))))
         
-        winnerStats[format] ? winnerStats[format] += delta : winnerStats[format] = 500.00 + delta
+        winnerStats.elo = origEloWinner + delta
+        winnerStats.backupElo = origEloWinner
+        winnerStats.wins++
         await winnerStats.save()
-        winnerBackups[format] = origStatsWinner
-        await winnerBackups.save()
-        winnerWins[format]++
-        await winnerWins.save()
 
-        loserStats[format] ? loserStats[format] -= delta : loserStats[format] = 500.00 - delta
+        loserStats.elo = origEloLoser - delta
+        loserStats.backupElo = origEloLoser
+        loserStats.losses++
         await loserStats.save()
-        loserBackups[format] = origStatsLoser
-        await loserBackups.save()
-        loserLosses[format]++
-        await loserLosses.save()
 
         const match = await Match.create({
             winner_name: winningPlayer.name,
@@ -1495,7 +1219,7 @@ client.on('message', async (message) => {
             loser_name: losingPlayer.name,
             loserId: losingPlayer.id,
             tournament: isTournamentMatch,
-            format: format,
+            format,
             delta: delta
         })
 
@@ -1508,7 +1232,7 @@ client.on('message', async (message) => {
                 losing_deck_type: losingEntry.deck_type,
                 losing_deck_category: losingEntry.deck_category,
                 matchId: match.id,
-                format: format,
+                format,
                 tournamentId: tournament.id
             })
         }
@@ -1527,7 +1251,7 @@ client.on('message', async (message) => {
         if (noshow && await isNewUser(noShowId)) await createPlayer(noshow)
         const noShowPlayer = await Player.findOne({ where: { id: noShowId } })
         if (!noShowPlayer) return message.channel.send(`Sorry, <@${noShowId}> is not in the database.`)
-        const tournaments = await Entry.findAll({ where: { playerId: noShowId }, include: Tournament }).map((e) => e.tournament)
+        const tournaments = await Entry.findAll({ where: { playerId: noShowId }, include: Tournament }).map((e) => e.tournament).filter((t) => t.guild === message.guild)
         if (!tournaments.length || !noshow.roles.cache.some(role => role.id === tourRole)) return message.channel.send(`Sorry, ${noShowPlayer.name} is not any tournaments.`)
      
         const tournament = await selectTournament(message, tournaments, maid)
@@ -1574,8 +1298,8 @@ client.on('message', async (message) => {
         if (!player2 && player2Id === maid) return message.channel.send(`You are not in the database.`)
         if (!player2 && player2Id !== maid) return message.channel.send(`The second user is not in the database.`)
 
-        const p1Wins = await Match.count({ where: { winnerId: player1Id, loserId: player2Id, format: format } })
-        const p2Wins = await Match.count({ where: { winnerId: player2Id, loserId: player1Id, format: format } })
+        const p1Wins = await Match.count({ where: { winnerId: player1Id, loserId: player2Id, format } })
+        const p2Wins = await Match.count({ where: { winnerId: player2Id, loserId: player1Id, format } })
         
         return message.channel.send(
             `${formatEmoji} --- H2H ${formatName} Results --- ${formatEmoji}`+
@@ -1586,41 +1310,32 @@ client.on('message', async (message) => {
 
     //UNDO
     if (undocom.includes(cmd)) {
-        const allMatches = await Match.findAll({ where: { format: format }})
+        const allMatches = await Match.findAll({ where: { format }})
         const lastMatch = allMatches.slice(-1)[0]
         const winnerId = lastMatch.winnerId
         const loserId = lastMatch.loserId
         const winningPlayer = await Player.findOne({ where: { id: winnerId } })
+        const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format } })
         const losingPlayer = await Player.findOne({ where: { id: loserId } })
-        const winnerBackups = await Backups.findOne({ where: { playerId: winnerId } })
-        const loserBackups = await Backups.findOne({ where: { playerId: loserId } })
+        const loserStats = await Stats.findOne({ where: { playerId: loserId, format } })
         
         const prompt = (isMod(message.member) ? '' : ' Please get a Moderator to help you.')
         if (maid !== loserId && !isMod(message.member)) return message.channel.send(`You did not participate in the last recorded match.${prompt}`)
 
-        if (!winnerBackups[format] && maid !== loserId) return message.channel.send(`${winningPlayer.name} has no backup stats.${prompt}`)
-        if (!winnerBackups[format] && maid === loserId) return message.channel.send(`Your last opponent, ${winningPlayer.name}, has no backup stats.${prompt}`)
-        if (!loserBackups[format] && maid !== loserId) return message.channel.send(`${losingPlayer.name} has no backup stats.${prompt}`)
-        if (!loserBackups[format] && maid === loserId) return message.channel.send(`You have no backup stats.${prompt}`)
+        if (!winnerStats.backupElo && maid !== loserId) return message.channel.send(`${winningPlayer.name} has no backup stats.${prompt}`)
+        if (!winnerStats.backupElo && maid === loserId) return message.channel.send(`Your last opponent, ${winningPlayer.name}, has no backup stats.${prompt}`)
+        if (!loserStats.backupElo && maid !== loserId) return message.channel.send(`${losingPlayer.name} has no backup stats.${prompt}`)
+        if (!loserStats.backupElo && maid === loserId) return message.channel.send(`You have no backup stats.${prompt}`)
 
-        const winnerStats = await Stats.findOne({ where: { playerId: winnerId } })
-        const winnerWins = await Wins.findOne({ where: { playerId: winnerId } })
-        const loserLosses = await Losses.findOne({ where: { playerId: loserId } })
-        const loserStats = await Stats.findOne({ where: { playerId: loserId } })
-
-        winnerStats[format] = winnerBackups[format]
+        winnerStats.elo = winnerStats.backupElo
+        winnerStats.backupElo = null
+        winnerStats.wins--
         await winnerStats.save()
-        winnerBackups[format] = null
-        await winnerBackups.save()
-        winnerWins[format]--
-        await winnerWins.save()
 
-        loserStats[format] = loserBackups[format]
+        loserStats.elo = loserStats.backupElo
+        loserStats.backupElo = null
+        loserStats.losses--
         await loserStats.save()
-        loserBackups[format] = null
-        await loserBackups.save()
-        loserLosses[format]--
-        await loserLosses.save()
 
         await lastMatch.destroy()
         return message.channel.send(`The last ${formatName} match in which ${winningPlayer.name} defeated ${losingPlayer.name} has been erased. ${formatEmoji}`)
@@ -1634,7 +1349,7 @@ client.on('message', async (message) => {
     // After this is done, there is no way to tell which matches were played on the old account.
     // So be careful with this command. Make sure the accounts are definitely shared.
     // When this command is finished, use the **!recalc** command to update everyone's stats.
-    if (cmd.toLowerCase() === `!combine`) { 
+    if (cmd === `!combine`) { 
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
         const oldId = marr[1].replace(/[\\<>@#&!]/g, "")
         const newId = marr[2].replace(/[\\<>@#&!]/g, "")
@@ -1671,7 +1386,7 @@ client.on('message', async (message) => {
                     const format = match.format
                     if (!formats.includes(format)) formats.push(format)
                     
-                    if (
+                    if (4
                         (match.winnerId === oldId && match.loserId === newId) || 
                         (match.loserId === oldId && match.winnerId === newId)
                     ) {
@@ -1682,7 +1397,7 @@ client.on('message', async (message) => {
                             winnerId: newPlayer.id,
                             winner_name: newPlayer.name
                         })
-                        count++
+                        count++      
                     } else if (match.loserId === oldId) {
                         await match.update({
                             loserId: newPlayer.id,
@@ -1711,13 +1426,18 @@ client.on('message', async (message) => {
     // It also creates new players if they are not in the database (i.e. they joined while bot was down).
     if (cmd === `!census`) { 
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
-        const members_map = await message.guild.members.fetch()
-        const members = [...members_map.values()]
+        const membersMap = await message.guild.members.fetch()
+        const members = [...membersMap.values()]
+        const rolesMap = message.guild.roles.cache
+        const roles = [...rolesMap.values()].reduce((a, v) => ({ ...a, [v.id]: v.name}), {})     
         let updateCount = 0
         let createCount = 0
+        let memberCount = 0
+        let roleCount = 0
 
         for (let i = 0; i < members.length; i++) {
             const member = members[i]
+            if (member.user.bot) continue
             const player = await Player.findOne({ where: { id: member.user.id } })
             if (player && ( player.name !== member.user.username || player.tag !== member.user.tag )) {
                 updateCount++
@@ -1729,9 +1449,36 @@ client.on('message', async (message) => {
                 createCount++
                 await createPlayer(member)
             }
+
+            const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: mgid } })
+            if (!membership) {
+                memberCount++
+                await createMembership(message.guild, member)
+            }
+
+            for (let j = 0; j < member._roles.length; j ++) {
+                const roleId = member._roles[j]
+                const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: mgid } })
+                if (!membership) break
+                const count = await Role.count({ where: { membershipId: membership.id, roleId: roleId }})
+                if (!count) {
+                    await Role.create({
+                        membershipId: membership.id,
+                        roleId: roleId,
+                        roleName: roles[roleId]
+                    })
+                    roleCount++
+                }
+            }
         }
 
-        return message.channel.send(`You added ${createCount} player(s) to the database and updated ${updateCount} other(s).`)
+        return message.channel.send(
+            `You added the following to the database:` +
+            `\n- ${createCount} new ${createCount === 1 ? 'player' : 'players'}` +
+            `\n- ${memberCount} new ${memberCount === 1 ? 'member' : 'members'}` +
+            `\n- ${updateCount} updated ${updateCount === 1 ? 'player' : 'players'}` +
+            `\n- ${roleCount} updated ${roleCount === 1 ? 'role' : 'roles'}`
+        )    
     }
 
     //RECALCULATE
@@ -1740,149 +1487,53 @@ client.on('message', async (message) => {
     // It's also required after using the !combine command, but the bot will remind you to do it.
     if (recalccom.includes(cmd)) { 
         if (!isMod(message.member)) return message.channel.send("You do not have permission to do that.")
-        const stats = await Stats.findAll()
-        const backups = await Backups.findAll()
-        const wins = await Wins.findAll()
-        const losses = await Losses.findAll()
+        const all_stats = await Stats.findAll({ where: { format } })
 
-        for (let i = 0; i < stats.length; i++) {
-            const s = stats[i]
-            s[format] = null
-            await s.save()
-        }
-
-        for (let i = 0; i < backups.length; i++) {
-            const b = backups[i]
-            b[format] = null
-            await b.save()
-        }
-
-        for (let i = 0; i < wins.length; i++) {
-            const w = wins[i]
-            w[format] = 0
-            await w.save()
-        }
-
-        for (let i = 0; i < losses.length; i++) {
-            const l = losses[i]
-            l[format] = 0
-            await l.save()
+        for (let i = 0; i < all_stats.length; i++) {
+            const stats = all_stats[i]
+            stats.elo = 500.00
+            stats.backupElo = null
+            stats.wins = 0
+            stats.losses = 0
+            await stats.save()
         }
         
-        const allMatches = await Match.findAll({ where: { format: format }, order: [["createdAt", "ASC"]]})
+        const allMatches = await Match.findAll({ where: { format }, order: [["createdAt", "ASC"]]})
         message.channel.send(`Recalculating data for ${allMatches.length} matches. Please wait...`)
         for (let i = 0; i < allMatches.length; i++) {
             const match = allMatches[i]
             const winnerId = match.winnerId
             const loserId = match.loserId
             const winningPlayer = await Player.findOne({ where: { id: winnerId }})
-            const winnerBackups = await Backups.findOne({ where: { playerId: winnerId } })
-            const winnerStats = await Stats.findOne({ where: { playerId: winnerId } })
-            const winnerWins = await Wins.findOne({ where: { playerId: winnerId } })
+            const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format } })
             const losingPlayer = await Player.findOne({ where: { id: loserId }})
-            const loserBackups = await Backups.findOne({ where: { playerId: loserId } })
-            const loserLosses = await Losses.findOne({ where: { playerId: loserId } })
-            const loserStats = await Stats.findOne({ where: { playerId: loserId } })
- 
-            if (!winningPlayer || !winnerBackups || !winnerStats || !winnerWins) {
-                    const count = await Player.count({
-                        id: winnerId
-                    })
+            const loserStats = await Stats.findOne({ where: { playerId: loserId, format } })
 
-                    if (!count) {
-                        const p = await Player.create({
-                            id: winnerId
-                        })
-                        if (!winnerBackups) {
-                            await Backups.create({ playerId: winnerId })
-                        } 
-
-                        if (!winnerStats) {
-                            await Stats.create({ playerId: winnerId })
-                        } 
-                        
-                        if (!winnerWins) {
-                            await Wins.create({ playerId: winnerId })
-                        } 
-                        
-                        i--
-                        continue
-                    } else {
-                        if (!winnerBackups) {
-                            await Backups.create({ playerId: winnerId })
-                        } 
-
-                        if (!winnerStats) {
-                            await Stats.create({ playerId: winnerId })
-                        } 
-                        
-                        if (!winnerWins) {
-                            await Wins.create({ playerId: winnerId })
-                        } 
-                        
-                        i--
-                        continue
-                    }
-            }
-            
-            if (!losingPlayer || !loserBackups || !loserStats || !loserLosses) {
-                const count = await Player.count({
-                    id: loserId
-                })
-
-                if (!count) {
-                    const p = await Player.create({
-                        id: loserId
-                    })
-                    if (!loserBackups) {
-                        await Backups.create({ playerId: loserId })
-                    } 
-
-                    if (!loserStats) {
-                        await Stats.create({ playerId: loserId })
-                    } 
-                    
-                    if (!loserLosses) {
-                        await Losses.create({ playerId: loserId })
-                    } 
-                    
-                    i--
-                    continue
-                } else {
-                    if (!loserBackups) {
-                        await Backups.create({ playerId: loserId })
-                    } 
-
-                    if (!loserStats) {
-                        await Stats.create({ playerId: loserId })
-                    } 
-                    
-                    if (!loserLosses) {
-                        await Losses.create({ playerId: loserId })
-                    } 
-                    
-                    i--
-                    continue
-                }
+            if (!winningPlayer || !winnerStats) {
+                await trackStats(winnerId, format)
+                i--
+                continue
             }
 
-            const origStatsWinner = winnerStats[format] || 500.00
-            const origStatsLoser = loserStats[format] || 500.00
-            const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origStatsWinner - origStatsLoser) / 400))))))
+            if (!losingPlayer || !loserStats) {
+                await trackStats(loserId, format)
+                i--
+                continue
+            }
+
+            const origEloWinner = winnerStats.elo || 500.00
+            const origEloLoser = loserStats.elo || 500.00
+            const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origEloWinner - origEloLoser) / 400))))))
             
-            winnerStats[format] ? winnerStats[format] += delta : winnerStats[format] = 500.00 + delta
+            winnerStats.elo = origEloWinner + delta
+            winnerStats.backupElo = origEloWinner
+            winnerStats.wins++
             await winnerStats.save()
-            winnerBackups[format] = origStatsWinner
-            await winnerBackups.save()
-            winnerWins[format]++
-            await winnerWins.save()
-
-            loserStats[format] ? loserStats[format] -= delta : loserStats[format] = 500.00 - delta
+    
+            loserStats.elo = origEloLoser - delta
+            loserStats.backupElo = origEloLoser
+            loserStats.losses++
             await loserStats.save()
-            loserBackups[format] = origStatsLoser
-            await loserBackups.save()
-            loserLosses[format]++
-            await loserLosses.save()
 
             match.delta = delta
             await match.save()
@@ -1891,27 +1542,4 @@ client.on('message', async (message) => {
 
         return message.channel.send(`Recalculation complete!`)
     }
-
-    //INITIATE
-    // These are the steps required to add a new format to the rankings database:
-    // 1. Create a channel, a role, and an emoji for the format on Discord. 
-    // 2. Create a new format element in static/formats.json and give it the IDs of the above variables.
-    // 3. Create a new model file for the format in db/models.
-    // 4. Define the relationships for the model in db/index.js.
-    // 5. Export and import the model in all files where format models are required: bot.js, functions/tournament.js, and functions/utility.js.
-    // 6. Use this command in the format channel to add the datatable for the new format to the postgreSQL database. 
-    if (cmd.toLowerCase() === `!initiate` || cmd.toLowerCase() === `!init`) { 
-        if (!isAdmin(message.member)) return message.channel.send("You do not have permission to do that.")
-        if (!formatName) return message.channel.send(`Sorry, this command is only valid in specific format channels, like <#414575168174948372> or <#629464112749084673>.`)
-        const allFormatLibraryPlayers = await YugiKaiba.findAll()
-
-        allFormatLibraryPlayers.forEach(async function (player) {
-            console.log('playerId', player.playerId)
-            await eval(formatDatabase).create({ playerId: player.playerId })
-        })
-
-        return message.channel.send(`The ${formatName} database is ready to go! ${formatEmoji}`)
-    }
-
-
 })

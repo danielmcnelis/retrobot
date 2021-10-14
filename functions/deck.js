@@ -19,8 +19,6 @@ const { legend } = require('../static/emojis.json')
 
 //SAVE YDK
 const saveYDK = async (player, url, formatDate, formatList) => {
-    console.log('formatDate', formatDate)
-    console.log('formatList', formatList)
     const options = new firefox.Options()
     options.addArguments("-headless")
     const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build()
@@ -94,7 +92,9 @@ const saveYDK = async (player, url, formatDate, formatList) => {
             }
         }
 
-		fs.writeFile(`./decks/${player.tag}.ydk`, file, (err) => {
+        const tag = player.tag.replace(/[^\w\s]/gi, "_").replace(/ /g,'')
+
+		fs.writeFile(`./decks/${tag}.ydk`, file, (err) => {
 			if(err) {
 				return console.log(err)
 			} else {

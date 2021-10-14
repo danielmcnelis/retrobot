@@ -1,17 +1,18 @@
 
-const Sequelize = require('sequelize');
-const { db } = require('./db');
+const Sequelize = require('sequelize')
+const { db } = require('./db')
 
 const Match = db.define('match', {
-    winnerId: {
-        type: Sequelize.STRING,        
+    format: {
+        type: Sequelize.STRING,   
+        defaultValue: "goat",      
         allowNull: false
     },
     winner_name: {
         type: Sequelize.STRING,        
         allowNull: true
     },
-    loserId: {
+    winnerId: {
         type: Sequelize.STRING,        
         allowNull: false
     },
@@ -19,14 +20,13 @@ const Match = db.define('match', {
         type: Sequelize.STRING,        
         allowNull: true
     },
+    loserId: {
+        type: Sequelize.STRING,        
+        allowNull: false
+    },
     delta: {
         type: Sequelize.FLOAT,  
         defaultValue: 10,      
-        allowNull: false
-    },
-    format: {
-        type: Sequelize.STRING,   
-        defaultValue: "goat",      
         allowNull: false
     },
     tournament: {
