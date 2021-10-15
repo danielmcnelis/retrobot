@@ -22,7 +22,7 @@ const {
     driver, duplication, economics, ecto, emissary, emmersblade, exodia, faultroll, fert, fire, firedog, fishborg, 
     fortress, freed, fulhelm, fusi, fusiongate, garden, gate, gateway, gbind, gearframe, gearfried, ggadget, gigantes, 
     gkass, gkspear, goblin, gobzomb, gorilla, gotss, gottoms, granmarg, gravirose, grepher, gspark, horus6, horus8, 
-    hugerev, icarus, insect, jdrag, jinzo, kalut, koala, kristya, lacooda, laquari, lastturn, lava, leftarm, leftleg, 
+    hugerev, icarus, insect, jdrag, jinzo, kalut, koala, kmdrago, kristya, lacooda, laquari, lastturn, lava, leftarm, leftleg, 
     life, lion, limiter, llab, lonefire, luminous, lv2, mali, manju, manticore, mask, mataza, mazera, meanae, mech, 
     megamorph, meta, mezuki, milus, mimic, miracle, mobius, mof, monk, moray, motr, natures, necrovalley, 
     needle, nightass, oath, panda, pixie, poison, purity, pyrlight, quickdraw, raiza, rat, reasoning, recharge, redmd, 
@@ -30,7 +30,7 @@ const {
     serpent, shallow, silent, sirocco, skull, slump, smackdown, smoke, solemn, solidarity, sorc, soulex, soulrel, 
     spy, ssunited, stein, storm, strike, susa, swap, swapfrog, taiyou, tdrag, tethys, thanksgiving, thestalos, tiger, 
     tomato, tooncannon, toonelf, treeborn, trio, trunade, tsuk, tuningware, turtle, underdog, valhalla, vayu, vrocket, 
-    whirlwind, wicked, wmc, worl, xhead, ygadget, zombyra, zorc
+    whirlwind, wicked, wmc, worl, wyvern, xhead, ygadget, zombyra, zorc
 } = require('../static/cards.json')
 
 //SAVE YDK
