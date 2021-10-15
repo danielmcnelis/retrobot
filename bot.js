@@ -108,7 +108,7 @@ client.on('message', async (message) => {
             const tournaments = await Tournament.findAll({ where: { state: 'pending', guildId: mgid }, order: [['createdAt', 'ASC']] })
             const tournament = await selectTournament(message, tournaments, maid)
             if (!tournament) return message.channel.send(`There are no pending tournaments.`)
-            const entries = await Entry.findAll({ where: { tournamentId: id }, include: Player })
+            const entries = await Entry.findAll({ where: { tournamentId: tournament.id }, include: Player })
             for (let i = 0; i < entries.length; i++) {
                 const entry = entries[i]
                 const deckType = await getDeckType(entry.player, tournament.format)
