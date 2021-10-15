@@ -112,7 +112,7 @@ client.on('message', async (message) => {
             for (let i = 0; i < entries.length; i++) {
                 const entry = entries[i]
                 const deckType = await getDeckType(entry.player, tournament.format)
-                await entry.update({ deckType })
+                await entry.update({ deck_type: deckType })
                 console.log(`${entry.pilot}'s deck appears to be: ${deckType}`)
             }
             return message.channel.send(`🛠️`)
