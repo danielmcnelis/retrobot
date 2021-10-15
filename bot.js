@@ -11,10 +11,10 @@ const { Op } = require('sequelize')
 const { Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
 
 //FUNCTION IMPORTS
-const { checkDeckList, saveYDK } = require('./functions/deck.js')
+const { checkDeckList, getDeckType, saveYDK } = require('./functions/deck.js')
 const { uploadDeckFolder } = require('./functions/drive.js')
 const { addSheet, makeSheet, writeToSheet } = require('./functions/sheets.js')
-const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getDeckType, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
+const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
 const { assignRoles, capitalize, createMembership, createPlayer, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, trackStats } = require('./functions/utility.js')
 
 // STATIC IMPORTS
@@ -105,6 +105,16 @@ client.on('message', async (message) => {
     // FIX 
     if (cmd === `!fix`) {
         if (isProgrammer(message.member)) {
+            const tournaments = await Tournament.findAll({ where: { state: 'pending', guildId: mgid }, order: [['createdAt', 'ASC']] })
+            const tournament = await selectTournament(message, tournaments, maid)
+            if (!tournament) return message.channel.send(`There are no pending tournaments.`)
+            const entries = await Entry.findAll({ where: { tournamentId: id }, include: Player })
+            for (let i = 0; i < entries.length; i++) {
+                const entry = entries[i]
+                const deckType = await getDeckType(entry.player, tournament.format)
+                await entry.update({ deckType })
+                console.log(`${entry.pilot}'s deck appears to be: ${deckType}`)
+            }
             return message.channel.send(`🛠️`)
         } else {
             return message.channel.send(`🛠️`)
@@ -231,7 +241,7 @@ client.on('message', async (message) => {
     if (cmd === `!politics`) {
         if(message.member.roles.cache.some(role => role.id === bfpRole)) {
             return message.channel.send(`You do not have permission to do that.`)
-        } else if (!message.member.roles.cache.some(role => role.id === goatRole)) {
+        } else if (!message.member.roles.cache.some(role => role.id === politicsRole)) {
 			message.member.roles.add(politicsRole)
             return message.channel.send(`You now have the Politics role.`)
         } else {
@@ -544,7 +554,7 @@ client.on('message', async (message) => {
         const deckListUrl = await getDeckList(message.member, player, formats[tournament.format].date, formats[tournament.format].list)
         if (!deckListUrl) return
         const deckName = await getDeckName(message.member, player)
-        const deckType = await getDeckType(player)
+        const deckType = await getDeckType(player, tournament.format)
         if (!deckType) return
         const deckCategory = getDeckCategory(deckType)
         if (!deckCategory) return

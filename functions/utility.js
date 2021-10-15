@@ -9,7 +9,7 @@ const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend,
 const formats = require('../static/formats.json')
 const { adminRole, modRole, tourRole } = require('../static/roles.json')
 
-//CREATE PLAYER
+//ASSIGN ROLES
 const assignRoles = async (guild, member) => {
     const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: guild.id }})
     if (!membership) return
