@@ -16,16 +16,21 @@ const { convertArrayToObject } = require('./utility.js')
 
 //STATIC IMPORTS
 const { 
-    angel, archfiend, barrel, bazoo, ben_kei, bigbang, bigshield, blade, bls, brain, bwc, canceller,
-    cannon, cardd, cat, clown, coin, collapse, convulsion, countdown, cyjar, dda, ddwl, decree, desserts, difu, diva,
-    dmoc, drain, driver, economics, ecto, emissary, exodia, fire, freed, fusi, fusiongate, gate, gbind, gearfried,
-    gigantes, gkass, gkspear, goblin, granmarg, horus6, horus8, hugerev, icarus, insect, jinzo, kalut, koala, lacooda, lava,
-    lastturn, leftarm, leftleg, life, limiter, llab, luminous, lv2, mali, manju, manticore, mask, mataza, mazera, meanae,
-    mech, megamorph, meta, milus, mimic, miracle, mobius, mof, natures, necro, necromancer, needle, nightass, oath, panda,
-    pixie, poison, purity, pyrlight, rat, reasoning, redmd, relinq, reprod, rightarm, rightleg, rftdd, rml, rota, serpent,
-    scapegoat, scarabs, sdm, shallow, silent, skull, slump, smackdown, smoke, solemn, sorc, soulex, soulrel, spy,
-    stein, storm, strike, susa, swap, taiyou, tdrag, thanksgiving, thestalos, tiger, tomato, tooncannon, toonelf, 
-    trio, trunade, tsuk, turtle, underdog, whirlwind, wicked, wmc, worl, xhead, zombyra, zorc 
+    airbellum, alius, alo, angel, archer, archfiend, arma, barrel, bazoo, ben_kei, bfadd, bigbang, bigshield, blade, bls,
+    brain, bushi, bwc, caius, canceller, cannon, cardd, cat, chariot, clown, codarus, coelacanth, coin, collapse, 
+    consonance, convulsion, countdown, cyjar, dad, dandy, dda, ddwl, debris, decree, desserts, difu, diva, dmoc, drain, 
+    driver, duplication, economics, ecto, emissary, emmersblade, exodia, faultroll, fert, fire, firedog, fishborg, 
+    fortress, freed, fulhelm, fusi, fusiongate, garden, gate, gateway, gbind, gearframe, gearfried, ggadget, gigantes, 
+    gkass, gkspear, goblin, gobzomb, gorilla, gotss, gottoms, granmarg, gravirose, grepher, gspark, horus6, horus8, 
+    hugerev, icarus, insect, jdrag, jinzo, kalut, koala, kristya, lacooda, laquari, lastturn, lava, leftarm, leftleg, 
+    life, lion, limiter, llab, lonefire, luminous, lv2, mali, manju, manticore, mask, mataza, mazera, meanae, mech, 
+    megamorph, meta, mezuki, milus, mimic, miracle, mobius, mof, monk, moray, motr, natures, necrovalley, 
+    needle, nightass, oath, panda, pixie, poison, purity, pyrlight, quickdraw, raiza, rat, reasoning, recharge, redmd, 
+    rejuv, rekindling, relinq, reprod, rgadget, rightarm, rightleg, rftdd, rml, rota, salvo, scapegoat, scarabs, sdm, 
+    serpent, shallow, silent, sirocco, skull, slump, smackdown, smoke, solemn, solidarity, sorc, soulex, soulrel, 
+    spy, ssunited, stein, storm, strike, susa, swap, swapfrog, taiyou, tdrag, tethys, thanksgiving, thestalos, 
+    tiger, tomato, tooncannon, toonelf, trio, trunade, tsuk, tuningware, turtle, underdog, valhalla, vayu, vrocket, 
+    whirlwind, wicked, wmc, worl, xhead, ygadget, zombyra, zorc
 } = require('../static/cards.json')
 
 //SAVE YDK
@@ -173,7 +178,7 @@ const getDeckType = async (player, format) => {
     const ydk = convertArrayToObject(arr)
 
     const deckType = format === 'goat' ? (
-            (ydk[collapse] >= 2 || ydk[insect] >= 2  || ydk[susa] >= 2 || ydk[toonelf] >= 2 || ydk[mazera] >= 2 || ydk[pixie] >= 2 || ydk[ecto] >= 2 || ydk[silent] >= 2 || ydk[skull] >= 2 || ydk[hugerev] >= 2 || ydk[necromancer] >= 2 || ydk[smackdown] >= 2 || ydk[pyrlight] >= 2 || ydk[clown] >= 2 || ydk[coin] >= 2) ? 'other' :
+            (ydk[collapse] >= 2 || ydk[insect] >= 2  || ydk[susa] >= 2 || ydk[toonelf] >= 2 || ydk[mazera] >= 2 || ydk[pixie] >= 2 || ydk[ecto] >= 2 || ydk[silent] >= 2 || ydk[skull] >= 2 || ydk[hugerev] >= 2 || ydk[necrovalleymancer] >= 2 || ydk[smackdown] >= 2 || ydk[pyrlight] >= 2 || ydk[clown] >= 2 || ydk[coin] >= 2) ? 'other' :
             (ydk[cat] >= 2  && (ydk[panda] >= 2 || ydk[milus] >= 2) && !ydk[stein] && (ydk[trunade] >= 2 || ydk[decree] >= 2)) ? 'cat otk' :
             (ydk[cat] >= 2 && ydk[manticore] && ydk[wicked] >= 2) ? 'cat control' :
             (ydk[ben_kei] >= 2 && (ydk[trunade] >= 2 || ydk[decree] >= 2)) ? 'ben kei otk' :
@@ -210,7 +215,7 @@ const getDeckType = async (player, format) => {
             ((ydk[llab] == 2 || ydk[gbind] == 2 || ydk[worl] >= 2) && !ydk[lacooda] && !ydk[scarabs] && (ydk[koala] >= 2 || ydk[barrel] >= 2 || ydk[desserts] >= 2 || ydk[wmc] >= 2 || ydk[lava] >= 2 || ydk[fire] >= 2)) ? 'stall burn' :
             (ydk[tsuk] >= 2 && (ydk[lacooda] >= 2 || ydk[mask] >= 2 || ydk[mimic] >= 2) && ydk[solemn] >= 2 && !ydk[soulex] && !ydk[manju]) ? 'flip control' :
             (ydk[drain] >= 2 && !ydk[lacooda] && !ydk[scarabs] && (ydk[barrel] >= 2 || ydk[desserts] >= 2 || ydk[wmc] >= 2 || ydk[lava] >= 2)) ? 'drain burn' :
-            (ydk[spy] >= 2 && ydk[necro] >= 2 && (ydk[gkass] || ydk[gkspear])) ? 'gravekeeper' :
+            (ydk[spy] >= 2 && ydk[necrovalley] >= 2 && (ydk[gkass] || ydk[gkspear])) ? 'gravekeeper' :
             (ydk[lacooda] >= 2 && ydk[scarabs] >= 2 && (ydk[gbind] >= 2 || ydk[llab] >= 2 || ydk[worl] >= 2)) ? 'pacman' :
             (ydk[scapegoat] && ydk[meta] && ydk[soulex] >= 2) ? 'soul control' :
             ((ydk[thestalos] >= 2 || ydk[mobius] >= 2 || ydk[granmarg] >= 2) && (ydk[brain] >= 2 || ydk[soulex] >= 2 || (ydk[brain] && ydk[soulex]))) ? 'monarch' :
@@ -235,8 +240,8 @@ const getDeckType = async (player, format) => {
             (ydk[redmd] >= 2 && ydk[wyvern] && ydk[kmdrago] && !ydk[consonance] && !ydk[rejuv]) ? 'dragon beatdown' :
             (ydk[redmd] >= 2 && ydk[consonance] >= 2 && ydk[rejuv] >= 2 && !ydk[exodia]) ? 'dragon turbo' :
             (ydk[consonance] >= 2 && ydk[rejuv] >= 2 && ydk[exodia]) ? 'exodia ftk' :
-            (ydk[krysta] >= 2 && ydk[ddwl] >= 2 && ydk[rftdd]) ? 'fairy control' :
-            (ydk[krysta] >= 2 && ydk[tethys] >= 2 && ydk[valhalla] >= 2) ? 'fairy turbo' :
+            (ydk[kristya] >= 2 && ydk[ddwl] >= 2 && ydk[rftdd]) ? 'fairy control' :
+            (ydk[kristya] >= 2 && ydk[tethys] >= 2 && ydk[valhalla] >= 2) ? 'fairy turbo' :
             (ydk[coelacanth] >= 2 && ydk[fishborg] >= 2 && ydk[moray] >= 2) ? 'fish otk' :
             (ydk[firedog] >= 2 && ydk[gkspy] >= 2 && ydk[rekindling] >= 2) ? 'flamvell' :
             (ydk[swapfrog] >= 2 && ydk[caius] >= 2 && (ydk[raiza] || ydk[mobius] || ydk[thestalos]) && !ydk[diva]) ? 'frog monarch' :
@@ -246,7 +251,7 @@ const getDeckType = async (player, format) => {
             (ydk[gearframe] >= 2 && ydk[fortress] >= 2 && !ydk[ggadget]) ? 'machina' :
             (ydk[laquari] >= 2 && ydk[chariot] >= 2) ? 'gladiator beast' :
             (ydk[jdrag] >= 2 && ydk[recharge] >= 2) ? 'lightsworn' :
-            (ydk[lonefire] >= 2 && ydk[dandy] >= 2 && ydk[quickdraw] && ydk[debris] && !ydk[jdrag] && !ydk[gobzom] && !ydk[rekindling] && !ydk[duplication]) ? 'quickdraw plant' :
+            (ydk[lonefire] >= 2 && ydk[dandy] >= 2 && ydk[quickdraw] && ydk[debris] && !ydk[jdrag] && !ydk[gobzomb] && !ydk[rekindling] && !ydk[duplication]) ? 'quickdraw plant' :
             (ydk[vrocket] >= 2 && ydk[dandy] >= 2 && ydk[quickdraw]) ? 'volcanic quickdraw' :
             (ydk[dandy] >= 2  && ydk[quickdraw] && ydk[firedog] >= 2 && ydk[rekindling] >= 2) ? 'flamvell quickdraw' :
             (ydk[quickdraw] >= 2 && ydk[tuningware] >= 2 && ydk[duplication] >= 2) ? 'quickdraw machine' :
@@ -256,10 +261,10 @@ const getDeckType = async (player, format) => {
             (ydk[cat] && ydk[monk] && ydk[airbellum] >= 2 && ydk[gkspy] >= 2) ? 'synchro cat' :
             (ydk[sorc] && ydk[dad] && ydk[recharge] >= 2 && !ydk[jdrag]) ? 'chaos lightsworn' :
             (ydk[caius] >= 2 && ydk[treeborn] && ydk[recharge] >= 2 && !ydk[jdrag]) ? 'lightsworn monarch' :
-            (ydk[vayu] >= 2 && ydk[sirocco] >= 2 && ydk[arma] && ydk[grepher] && ydk[bftdd]) ? 'vayu turbo' :
+            (ydk[vayu] >= 2 && ydk[sirocco] >= 2 && ydk[arma] && ydk[grepher] && ydk[bfadd]) ? 'vayu turbo' :
             (ydk[vrocket] >= 2 && ydk[garden] >= 2 && !ydk[caius] && !ydk[quickdraw]) ? 'volcanic garden' : 
             (ydk[vrocket] >= 2 && ydk[caius] >= 2 && !ydk[garden] && !ydk[quickdraw]) ? 'volcanic monarch' : 
-            (ydk[emmersblade] >= 2 && ydk[faultroll] >= 2 && ydk[fullhelm] >= 2 && ydk[gottoms] >= 2) ? 'x-saber' : 
+            (ydk[emmersblade] >= 2 && ydk[faultroll] >= 2 && ydk[fulhelm] >= 2 && ydk[gottoms] >= 2) ? 'x-saber' : 
             (ydk[necrovalley] >= 2 && ydk[gkspy] >= 2 && ydk[wmc] >= 2) ? 'gravekeeper burn' : 
             (ydk[salvo] >= 2 && ydk[dad]) ? 'salvo dad' : 
             (ydk[lonefire] >= 2 && (ydk[lion] >= 2 || ydk[gravirose] >= 2) && (ydk[fert] >= 2 || ydk[motr] >= 2) && !ydk[quickdraw]) ? 'plant' : 
