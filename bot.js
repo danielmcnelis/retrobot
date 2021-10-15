@@ -96,9 +96,7 @@ client.on('message', async (message) => {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            const rolesMap = message.guild.roles.cache
-            const roles = [...rolesMap.values()].reduce((a, v) => ({ ...a, [v.id]: v.name}), {})     
-            console.log(roles)
+            return message.channel.send(`🧪`)
         } else {
             return message.channel.send(`🧪`)
         }
@@ -148,17 +146,17 @@ client.on('message', async (message) => {
             let c = 0
             for (let i = 0; i < old_matches.length; i++) {
                 const m = old_matches[i]
-                if (!m.winner || !m.loser || !m.format) {
+                if (!m.winnerId || !m.loserId || !m.format) {
                     console.log('Bad Match.')
                     continue
                 }
 
-                const w = await Player.findOne({ where: { id: m.winner }})
-                if (!w || !w.name) {
+                const w = await Player.findOne({ where: { id: m.winnerId }})
+                if (!w) {
                     const winner = {
                         user: {
                             bot: false,
-                            id: m.winner,
+                            id: m.winnerId,
                             name: null,
                             tag: null
                         }
@@ -168,12 +166,12 @@ client.on('message', async (message) => {
                     continue
                 }
 
-                const l = await Player.findOne({ where: { id: m.loser }})
-                if (!l || !l.name) {
+                const l = await Player.findOne({ where: { id: m.loserId }})
+                if (!l) {
                     const loser = {
                         user: {
                             bot: false,
-                            id: m.loser,
+                            id: m.loserId,
                             name: null,
                             tag: null
                         }
@@ -185,9 +183,9 @@ client.on('message', async (message) => {
                 console.log(w.name, '>', l.name, '-', m.format)
                 const nm = await Match.create({ 
                     format: m.format.toLowerCase(),
-                    winnerId: m.winner,
+                    winnerId: m.winnerId,
                     winner_name: w.name,
-                    loserId: m.loser,
+                    loserId: m.loserId,
                     loser_name: l.name,
                     delta: m.delta,
                     createdAt: m.createdAt,
@@ -647,7 +645,7 @@ client.on('message', async (message) => {
 
     //DROP
     if(dropcom.includes(cmd)) {
-        const tournaments = await Entry.findAll({ where: { playerId: maid }, include: Tournament }).map((e) => e.tournament).filter((t) => t.guild === message.guild)
+        const tournaments = await Entry.findAll({ where: { playerId: maid }, include: Tournament }).map((e) => e.tournament).filter((t) => t.guildId ===== message.guild)
         if (!tournaments.length) return message.channel.send(`You are not in an active tournament.`)
         const tournament = await selectTournament(message, tournaments, maid)
         let success = tournament.state === 'pending'
@@ -673,7 +671,7 @@ client.on('message', async (message) => {
         const member = message.mentions.members.first()
         const playerId = member && member.user ? member.user.id : null
         if (!playerId) return message.channel.send(`Please specify the player you wish to remove.`)
-        const tournaments = await Entry.findAll({ where: { playerId }, include: Tournament }).map((e) => e.tournament).filter((t) => t.guild === message.guild)
+        const tournaments = await Entry.findAll({ where: { playerId }, include: Tournament }).map((e) => e.tournament).filter((t) => t.guildId ===== message.guild)
         if (!tournaments.length) return message.channel.send(`That user is not in any tournaments.`)
         const tournament = await selectTournament(message, tournaments, maid)
         const entry = await Entry.findOne({ where: { playerId, tournamentId: tournament.id }, include: Player})
@@ -1251,7 +1249,7 @@ client.on('message', async (message) => {
         if (noshow && await isNewUser(noShowId)) await createPlayer(noshow)
         const noShowPlayer = await Player.findOne({ where: { id: noShowId } })
         if (!noShowPlayer) return message.channel.send(`Sorry, <@${noShowId}> is not in the database.`)
-        const tournaments = await Entry.findAll({ where: { playerId: noShowId }, include: Tournament }).map((e) => e.tournament).filter((t) => t.guild === message.guild)
+        const tournaments = await Entry.findAll({ where: { playerId: noShowId }, include: Tournament }).map((e) => e.tournament).filter((t) => t.guildId ===== message.guild)
         if (!tournaments.length || !noshow.roles.cache.some(role => role.id === tourRole)) return message.channel.send(`Sorry, ${noShowPlayer.name} is not any tournaments.`)
      
         const tournament = await selectTournament(message, tournaments, maid)

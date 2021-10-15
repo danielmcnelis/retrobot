@@ -44,6 +44,11 @@ const Tournament = db.define('tournament', {
         defaultValue: null,   
         allowNull: true 
     },
+    channelId: {
+        type: Sequelize.STRING,   
+        defaultValue: null,       
+        allowNull: true
+    },
     guildId: {
         type: Sequelize.STRING,      
         allowNull: false
