@@ -28,8 +28,8 @@ const {
     needle, nightass, oath, panda, pixie, poison, purity, pyrlight, quickdraw, raiza, rat, reasoning, recharge, redmd, 
     rejuv, rekindling, relinq, reprod, rgadget, rightarm, rightleg, rftdd, rml, rota, salvo, scapegoat, scarabs, sdm, 
     serpent, shallow, silent, sirocco, skull, slump, smackdown, smoke, solemn, solidarity, sorc, soulex, soulrel, 
-    spy, ssunited, stein, storm, strike, susa, swap, swapfrog, taiyou, tdrag, tethys, thanksgiving, thestalos, 
-    tiger, tomato, tooncannon, toonelf, trio, trunade, tsuk, tuningware, turtle, underdog, valhalla, vayu, vrocket, 
+    spy, ssunited, stein, storm, strike, susa, swap, swapfrog, taiyou, tdrag, tethys, thanksgiving, thestalos, tiger, 
+    tomato, tooncannon, toonelf, treeborn, trio, trunade, tsuk, tuningware, turtle, underdog, valhalla, vayu, vrocket, 
     whirlwind, wicked, wmc, worl, xhead, ygadget, zombyra, zorc
 } = require('../static/cards.json')
 
