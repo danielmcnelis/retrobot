@@ -165,23 +165,17 @@ const createSheetData = async () => {
     const sheet2DataA = [['Deck', 'Entries', 'Percent']]
     const sheet2DataB = [[], ['Category', 'Entries', 'Percent']]
 
-    allDecks.forEach(function (deck) {
-        typeData[deck.type] ? typeData[deck.type]++ : typeData[deck.type] = 1
-        catData[deck.category] ? catData[deck.category]++ : catData[deck.category] = 1
-        const row = [deck.pilot, deck.name, deck.type, deck.url]
-        sheet1Data.push(row)
+    allDecks.forEach((d) => {
+        typeData[d.type] ? typeData[d.type]++ : typeData[d.type] = 1
+        catData[d.category] ? catData[d.category]++ : catData[d.category] = 1
+        sheet1Data.push([d.pilot, d.name, d.type, d.url])
     })
 
     let typeDataArr = Object.entries(typeData).sort((b, a) => b[0].localeCompare(a[0]))
     let catDataArr = Object.entries(catData).sort((b, a) => b[0].localeCompare(a[0]))
 
-    let typeDataArr2 = typeDataArr.map(function(elem) {
-        return [elem[0], elem[1], `${(elem[1], elem[1] / allDecks.length * 100).toFixed(2)}%`]
-    })
-
-    let catDataArr2 = catDataArr.map(function(elem) {
-        return [capitalize(elem[0]), elem[1], `${(elem[1], elem[1] / allDecks.length * 100).toFixed(2)}%`]
-    })
+    let typeDataArr2 = typeDataArr.map((e) => [e[0], e[1], `${(e[1], e[1] / allDecks.length * 100).toFixed(2)}%`])
+    let catDataArr2 = catDataArr.map((e) =>[capitalize(e[0]), e[1], `${(e[1], e[1] / allDecks.length * 100).toFixed(2)}%`])
 
     const sheet2Data = [...sheet2DataA, ...typeDataArr2, ...sheet2DataB, ...catDataArr2]
 

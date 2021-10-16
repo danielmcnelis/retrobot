@@ -96,6 +96,13 @@ client.on('message', async (message) => {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
+            const name = 'PumpkingOfGames'
+            const { sheet1Data, sheet2Data } = await createSheetData()
+            const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
+			await addSheet(spreadsheetId, 'Summary')
+			await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
+			await uploadDeckFolder(name)
+
             return message.channel.send(`🧪`)
         } else {
             return message.channel.send(`🧪`)
