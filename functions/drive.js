@@ -5,10 +5,7 @@ const { access_token, refresh_token } = require('../secrets.json')
 const { client_secret, client_id, redirect_uris } = require('../credentials.json')
 const fs = require('fs')            
 
-const oAuth2Client = new google.auth.OAuth2(
-    client_id, client_secret, redirect_uris[0], access_token, refresh_token)
-
-oAuth2Client.setCredentials(drive_token)
+const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0], access_token, refresh_token)
 
 const drive = google.drive({ version: 'v3', auth: oAuth2Client})
 
