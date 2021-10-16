@@ -1408,7 +1408,7 @@ client.on('message', async (message) => {
                     const format = match.format
                     if (!formats.includes(format)) formats.push(format)
                     
-                    if (4
+                    if (
                         (match.winnerId === oldId && match.loserId === newId) || 
                         (match.loserId === oldId && match.winnerId === newId)
                     ) {
