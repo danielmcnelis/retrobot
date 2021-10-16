@@ -100,10 +100,10 @@ client.on('message', async (message) => {
             const { sheet1Data, sheet2Data } = await createSheetData()
             console.log('sheet1Data', sheet1Data)
             console.log('sheet2Data', sheet2Data)
-            // const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
-			// await addSheet(spreadsheetId, 'Summary')
-			// await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
-			// await uploadDeckFolder(name)
+            const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
+			await addSheet(spreadsheetId, 'Summary')
+			await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
+			await uploadDeckFolder(name)
 
             return message.channel.send(`🧪`)
         } else {
