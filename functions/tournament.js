@@ -166,9 +166,9 @@ const createSheetData = async () => {
     const sheet2DataB = [[], ['Category', 'Entries', 'Percent']]
 
     allDecks.forEach((d) => {
-        typeData[d.type] ? typeData[d.type]++ : typeData[d.type] = 1
-        catData[d.category] ? catData[d.category]++ : catData[d.category] = 1
-        sheet1Data.push([d.pilot, d.name, d.type, d.url])
+        typeData[d.deck_type] ? typeData[d.deck_type]++ : typeData[d.deck_type] = 1
+        catData[d.deck_category] ? catData[d.deck_category]++ : catData[d.deck_category] = 1
+        sheet1Data.push([d.pilot, d.deck_name, d.deck_type, d.url])
     })
 
     let typeDataArr = Object.entries(typeData).sort((b, a) => b[0].localeCompare(a[0]))
