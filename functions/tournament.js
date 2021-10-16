@@ -59,7 +59,7 @@ const askForDBName = async (member, player, override = false, error = false, att
 }
 
 //GET DECK LIST TOURNAMENT
-const getDeckList = async (member, player, formatDate, formatList, override = false) => {            
+const getDeckList = async (member, player, formatDate, formatList, tournamentName, override = false) => {            
     const filter = m => m.author.id === member.user.id
     const pronoun = override ? `${player.name}'s` : 'your'
     const msg = await member.user.send(`Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`);
@@ -70,7 +70,7 @@ const getDeckList = async (member, player, formatDate, formatList, override = fa
         const url = collected.first().content
         if (url.includes("www.duelingbook.com/deck")) {		
             member.send('Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.')
-            const issues = await saveYDK(player, url, formatDate, formatList)
+            const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
 
             if (override) {
                 member.send(`Thanks, ${member.user.username}, I saved a copy of ${pronoun} deck. ${legend}`)

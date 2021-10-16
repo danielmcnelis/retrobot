@@ -34,7 +34,7 @@ const {
 } = require('../static/cards.json')
 
 //SAVE YDK
-const saveYDK = async (player, url, formatDate, formatList) => {
+const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'other') => {
     const options = new firefox.Options()
     options.addArguments("-headless")
     const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build()
@@ -110,7 +110,7 @@ const saveYDK = async (player, url, formatDate, formatList) => {
 
         const tag = player.tag.replace(/[^\w\s]/gi, "_").replace(/ /g,'')
 
-		fs.writeFile(`./decks/${tag}.ydk`, file, (err) => {
+		fs.writeFile(`./decks/${tournamentName}/${tag}.ydk`, file, (err) => {
 			if(err) {
 				return console.log(err)
 			} else {
@@ -141,7 +141,7 @@ const saveYDK = async (player, url, formatDate, formatList) => {
 }
 
 //CHECK DECK LIST
-const checkDeckList = async (member, player, formatDate, formatEmoji, formatList, formatName) => {  
+const checkDeckList = async (member, player, formatDate, formatEmoji, formatList, formatName, tournamentName = 'other') => {  
     const filter = m => m.author.id === member.user.id
     const msg = await member.user.send(`Please provide a duelingbook.com/deck link for the ${formatName} Format ${formatEmoji} deck you would like to check.`);
     const collected = await msg.channel.awaitMessages(filter, {
@@ -151,7 +151,7 @@ const checkDeckList = async (member, player, formatDate, formatEmoji, formatList
         const url = collected.first().content
         if (url.includes("www.duelingbook.com/deck")) {		
             member.send('Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.')
-            const issues = await saveYDK(player, url, formatDate, formatList)
+            const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
             return issues
         } else {
             message.author.send("Sorry, I only accept duelingbook.com/deck links.")    
@@ -169,8 +169,8 @@ const checkDeckList = async (member, player, formatDate, formatEmoji, formatList
 
 
 //GET DECK TYPE
-const getDeckType = async (player, format) => {
-    const raw = fs.readFileSync(`./decks/${player.tag.replace(/[^\w\s]/gi, "_").replace(/ /g,'')}.ydk`, 'utf8')
+const getDeckType = async (player, format, tournamentName = 'other') => {
+    const raw = fs.readFileSync(`./decks/${tournamentName}/${player.tag.replace(/[^\w\s]/gi, "_").replace(/ /g,'')}.ydk`, 'utf8')
     if (!raw) return
     const main = raw.split('#extra')[0]
     if (!main) return

@@ -11,7 +11,7 @@ const { Op } = require('sequelize')
 const { Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
 
 //FUNCTION IMPORTS
-const { checkDeckList, getDeckType, saveYDK } = require('./functions/deck.js')
+const { checkDeckList, getDeckType } = require('./functions/deck.js')
 const { uploadDeckFolder } = require('./functions/drive.js')
 const { addSheet, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
@@ -111,7 +111,7 @@ client.on('message', async (message) => {
             const entries = await Entry.findAll({ where: { tournamentId: tournament.id }, include: Player })
             for (let i = 0; i < entries.length; i++) {
                 const entry = entries[i]
-                const deckType = await getDeckType(entry.player, tournament.format)
+                const deckType = await getDeckType(entry.player, tournament.format, tournament.name)
                 await entry.update({ deck_type: deckType })
                 console.log(`${entry.pilot}'s deck appears to be: ${deckType}`)
             }
@@ -309,7 +309,7 @@ client.on('message', async (message) => {
         const tournament_type = await getTournamentType(message)
         if (!tournament_type) return message.channel.send(`Please select a valid tournament type.`)
         const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
-        const name = args[0]
+        const name = args[0].replace(/[^\w\s]/gi, "_").replace(/ /g,'')
         const emoji = name.includes('FLC') ? FL :
             name.includes('YRS') ? mlady :
             name.includes('DLC') ? lmfao :
@@ -342,6 +342,13 @@ client.on('message', async (message) => {
                     guildId: mgid
                 })
             
+                fs.mkdir(`./decks/${name}`, (err) => {
+                    if (err) {
+                        return console.error(err)
+                    }
+                    console.log(`made new directory: ./decks/${name}`)
+                })
+
                 return message.channel.send(
                     `You created a new tournament:` + 
                     `\nName: ${data.tournament.name} ${emoji}` + 
@@ -378,7 +385,14 @@ client.on('message', async (message) => {
                         url: data.tournament.url,
                         guildId: mgid
                     })
-                
+                    
+                    fs.mkdir(`./decks/${name}`, (err) => {
+                        if (err) {
+                            return console.error(err)
+                        }
+                        console.log(`made new directory: ./decks/${name}`)
+                    })
+                    
                     return message.channel.send(
                         `You created a new tournament:` + 
                         `\nName: ${data.tournament.name} ${emoji}` + 
@@ -551,10 +565,10 @@ client.on('message', async (message) => {
         message.channel.send(`Please check your DMs.`)
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player)
         if (!dbName) return
-        const deckListUrl = await getDeckList(message.member, player, formats[tournament.format].date, formats[tournament.format].list)
+        const deckListUrl = await getDeckList(message.member, player, formats[tournament.format].date, formats[tournament.format].list, tournament.name)
         if (!deckListUrl) return
         const deckName = await getDeckName(message.member, player)
-        const deckType = await getDeckType(player, tournament.format)
+        const deckType = await getDeckType(player, tournament.format, tournament.name)
         if (!deckType) return
         const deckCategory = getDeckCategory(deckType)
         if (!deckCategory) return
@@ -613,10 +627,10 @@ client.on('message', async (message) => {
 
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player, override = true)
         if (!dbName) return
-        const deckListUrl = await getDeckList(message.member, player, formats[tournament.format].date, formats[tournament.format].list, override = true)
+        const deckListUrl = await getDeckList(message.member, player, formats[tournament.format].date, formats[tournament.format].list, tournament.name, override = true)
         if (!deckListUrl) return
         const deckName = await getDeckName(message.member, player, override = true)
-        const deckType = await getDeckType(player)
+        const deckType = await getDeckType(player, tournament.format, tournament.name)
         if (!deckType) return
         const deckCategory = getDeckCategory(deckType)
         if (!deckCategory) return
