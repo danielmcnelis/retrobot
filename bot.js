@@ -856,7 +856,8 @@ client.on('message', async (message) => {
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
         const player = await Player.findOne({ where: { id: playerId } })
         const all_stats = await Stats.findAll({ where: { playerId } })
-            .sort((a, b) => {
+        console.log('all_stats.length', all_stats.length)
+        all_stats.sort((a, b) => {
                 if (formats[a.format].date > formats[b.format].date) {
                     return 1
                 } else if (formats[a.format].date < formats[b.format].date) {
@@ -889,8 +890,16 @@ client.on('message', async (message) => {
     if (medalscom.includes(cmd)) {
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
         const player = await Player.findOne({ where: { id: playerId } })
-        const all_stats = await Stats.findAll({ where: { playerId, elo: { [Op.gte]: 530 }} })
-            .sort((a, b) => {
+        const all_stats = await Stats.findAll({ 
+            where: { 
+                playerId, 
+                elo: { 
+                    [Op.gte]: 530 
+                }
+            } 
+        })
+        console.log('all_stats.length', all_stats.length)
+        all_stats.sort((a, b) => {
                 if (formats[a.format].date > formats[b.format].date) {
                     return 1
                 } else if (formats[a.format].date < formats[b.format].date) {
