@@ -871,7 +871,7 @@ client.on('message', async (message) => {
         const results = []
         
         for (let i = 0; i < all_stats.length; i++) {
-            const stats = stats[i]
+            const stats = all_stats[i]
             const f = stats.format
             const medal = getMedal(stats.elo)
             results.push(`${formats[f].emoji} ${formats[f].name}: ${medal}`)
@@ -913,7 +913,7 @@ client.on('message', async (message) => {
         
         const results = []
         for (let i = 0; i < all_stats.length; i++) {
-            const stats = stats[i]
+            const stats = all_stats[i]
             const f = stats.format
             const medal = getMedal(stats.elo)
             results.push(`${formats[f].emoji} ${formats[f].name}: ${medal}`)
