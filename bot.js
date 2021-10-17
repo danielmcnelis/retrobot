@@ -5,6 +5,7 @@
 //MODULE IMPORTS
 const axios = require('axios')
 const Discord = require('discord.js')
+const fs = require('fs')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
