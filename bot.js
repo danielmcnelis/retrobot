@@ -856,16 +856,16 @@ client.on('message', async (message) => {
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
         const player = await Player.findOne({ where: { id: playerId } })
         const all_stats = await Stats.findAll({ where: { playerId } })
-        console.log('all_stats.length', all_stats.length)
+        
         all_stats.sort((a, b) => {
-                if (formats[a.format].date > formats[b.format].date) {
-                    return 1
-                } else if (formats[a.format].date < formats[b.format].date) {
-                    return -1
-                } else {
-                    return 0
-                } 
-            })
+            if (formats[a.format].date > formats[b.format].date) {
+                return 1
+            } else if (formats[a.format].date < formats[b.format].date) {
+                return -1
+            } else {
+                return 0
+            } 
+        })
 
         if (!player || !all_stats) return message.channel.send("That user is not in the database.")
         const results = []
@@ -898,16 +898,16 @@ client.on('message', async (message) => {
                 }
             } 
         })
-        console.log('all_stats.length', all_stats.length)
+
         all_stats.sort((a, b) => {
-                if (formats[a.format].date > formats[b.format].date) {
-                    return 1
-                } else if (formats[a.format].date < formats[b.format].date) {
-                    return -1
-                } else {
-                    return 0
-                } 
-            })
+            if (formats[a.format].date > formats[b.format].date) {
+                return 1
+            } else if (formats[a.format].date < formats[b.format].date) {
+                return -1
+            } else {
+                return 0
+            } 
+        })
 
         if (!player || !all_stats) return message.channel.send("That user is not in the database.")
         
