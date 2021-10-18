@@ -18,7 +18,14 @@ const assignRoles = async (guild, member) => {
 }
 
 //CAPITALIZE
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
+const capitalize = (str, eachWord = false) => {
+    if (eachWord) {
+        const splt = str.split(' ').map((s) => capitalize(s))
+        return splt.join('')
+    } else {
+        return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+} 
 
 //CONVERT ARRAY TO OBJECT
 const convertArrayToObject = (arr) => {

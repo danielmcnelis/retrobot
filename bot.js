@@ -106,8 +106,8 @@ client.on('message', async (message) => {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i]
                 const player = { tag: file.slice(0, -4) }
-                const deckType = await getDeckType(player, 'edison', 'PumpkingOfGames')
-                const deckCategory = getDeckCategory(deckType)
+                const deckType = capitalize(await getDeckType(player, 'edison', 'PumpkingOfGames'), eachWord = true)
+                const deckCategory = capitalize(getDeckCategory(deckType))
                 data.types[deckType] ? data.types[deckType]++ : data.types[deckType] = 1
                 data.cats[deckCategory] ? data.cats[deckCategory]++ : data.cats[deckCategory] = 1
             }
