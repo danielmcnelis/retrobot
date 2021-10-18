@@ -21,7 +21,7 @@ const assignRoles = async (guild, member) => {
 const capitalize = (str, eachWord = false) => {
     if (eachWord) {
         const splt = str.split(' ').map((s) => capitalize(s))
-        return splt.join('')
+        return splt.join(' ')
     } else {
         return str.charAt(0).toUpperCase() + str.slice(1)
     }
@@ -98,7 +98,8 @@ const getDeckCategory = (deckType) => {
         deckType === 'vanilla beatdown' ||
         deckType === 'warrior' ||
         deckType === 'zombie') ? 'aggro'
-        : (deckType === 'drain burn' ||
+        : (deckType === 'counter fairy' ||
+        deckType === 'drain burn' ||
         deckType === 'final countdown' ||
         deckType === 'goat burn' ||
         deckType === 'pacman' ||
@@ -106,6 +107,7 @@ const getDeckCategory = (deckType) => {
         deckType === 'stall deckout') ? 'lockdown'
         : (deckType === 'ben kei otk' ||
         deckType === 'cat otk' ||
+        deckType === 'chain burn' ||
         deckType === 'dimension fusion turbo' ||
         deckType === 'dragon turbo' ||
         deckType === 'economics ftk' ||

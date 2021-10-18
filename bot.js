@@ -106,14 +106,14 @@ client.on('message', async (message) => {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i]
                 const player = { tag: file.slice(0, -4) }
-                const deckType = capitalize(await getDeckType(player, 'edison', 'PumpkingOfGames'), eachWord = true)
-                const deckCategory = capitalize(getDeckCategory(deckType))
+                const deckType = await getDeckType(player, 'edison', 'PumpkingOfGames')
+                const deckCategory = getDeckCategory(deckType)
                 data.types[deckType] ? data.types[deckType]++ : data.types[deckType] = 1
                 data.cats[deckCategory] ? data.cats[deckCategory]++ : data.cats[deckCategory] = 1
             }
 
-            const types = Object.entries(data.types).sort().map((e) => `${e[0]}: ${e[1]}`)
-            const cats = Object.entries(data.cats).sort().map((e) => `${e[0]}: ${e[1]}`)
+            const types = Object.entries(data.types).sort().map((e) => `${capitalize(e[0], eachWord = true)}: ${e[1]}`)
+            const cats = Object.entries(data.cats).sort().map((e) => `${capitalize(e[0])}: ${e[1]}`)
             
             return message.channel.send(
                 `Deck Types:\n${types.join('\n')}` +

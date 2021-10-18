@@ -16,17 +16,17 @@ const { convertArrayToObject } = require('./utility.js')
 
 //STATIC IMPORTS
 const { 
-    airbellum, alius, alo, angel, archer, archfiend, arma, barrel, bazoo, ben_kei, bfadd, bigbang, bigshield, blade, bls,
-    brain, bushi, bwc, caius, canceller, cannon, cardd, cat, chariot, clown, codarus, coelacanth, coin, collapse, 
-    consonance, convulsion, countdown, cyjar, dad, dandy, dda, ddwl, debris, decree, desserts, difu, diva, dmoc, drain, 
-    driver, duplication, economics, ecto, emissary, emmersblade, exodia, faultroll, fert, fire, firedog, fishborg, 
+    accum, airbellum, alius, alo, angel, archer, archfiend, arma, artemis, barrel, bazoo, ben_kei, bfadd, bigbang, bigshield, blade, bls,
+    boomboxen, brain, bribe, bushi, bwc, caius, canceller, cannon, cardd, cat, celfon, chariot, clown, codarus, coelacanth, coin, collapse, 
+    consonance, convulsion, countdown, cstrike, cyjar, dad, dandy, dda, ddwl, debris, decree, desserts, detonation, difu, diva, dmoc, drain, 
+    drastic, driver, duplication, economics, ecto, emissary, emmersblade, exodia, faultroll, fert, fire, firedog, fishborg, 
     fortress, freed, fulhelm, fusi, fusiongate, garden, gate, gateway, gbind, gearframe, gearfried, ggadget, gigantes, 
-    gkass, gkspear, goblin, gobzomb, gorilla, gotss, gottoms, granmarg, gravirose, grepher, gspark, horus6, horus8, 
+    gkass, gkspear, goblin, gobzomb, gorilla, gotss, gottoms, gozen, granmarg, gravirose, grepher, gspark, horus6, horus8, 
     hugerev, icarus, insect, jdrag, jinzo, kalut, koala, kmdrago, kristya, lacooda, laquari, lastturn, lava, leftarm, leftleg, 
     life, lion, limiter, llab, lonefire, luminous, lv2, mali, manju, manticore, mask, mataza, mazera, meanae, mech, 
     megamorph, meta, mezuki, milus, mimic, miracle, mobius, mof, monk, moray, motr, natures, necrovalley, 
     needle, nightass, oath, panda, pixie, poison, purity, pyrlight, quickdraw, raiza, rat, reasoning, recharge, redmd, 
-    rejuv, rekindling, relinq, reprod, rgadget, rightarm, rightleg, rftdd, rml, rota, salvo, scapegoat, scarabs, sdm, 
+    rejuv, rekindling, relinq, remoten, reprod, rgadget, rightarm, rightleg, rivalry, rftdd, rml, rota, ryko, salvo, scapegoat, scarabs, sdm, 
     serpent, shallow, silent, sirocco, skull, slump, smackdown, smoke, solemn, solidarity, sorc, soulex, soulrel, 
     spy, ssunited, stein, storm, strike, susa, swap, swapfrog, taiyou, tdrag, tethys, thanksgiving, thestalos, tiger, 
     tomato, tooncannon, toonelf, treeborn, trio, trunade, tsuk, tuningware, turtle, underdog, valhalla, vayu, vrocket, 
@@ -229,19 +229,22 @@ const getDeckType = async (player, format, tournamentName = 'other') => {
             ((!ydk[llab] || ydk[llab] <= 1) && (!ydk[gbind] || ydk[gbind] <= 1) && (!ydk[worl] || ydk[worl] <= 1) && (ydk[koala] >= 2 || ydk[bigshield] >= 2) && (ydk[barrel] >= 2 || ydk[fire] >= 2 || ydk[poison] >= 2)) ? 'speed burn' :
             (ydk[sorc] >= 2 && ydk[tomato] && ydk[angel] && !ydk[scapegoat] && !ydk[meta]) ? 'chaos recruiter' :
             (ydk[sorc] && ydk[rota] && ydk[solemn] >= 2) ? 'chaos warrior' :
-            ((!ydk[sorc] || ydk[sorc] <= 1) && ydk[rota]  && (ydk[blade] || ydk[ddwl] || ydk[lv2]) && ydk[solemn] >= 2 && !ydk[llab] && !ydk[gbind] && !ydk[worl] && !ydk[freed]) ? 'warrior' :
+            ((!ydk[sorc] || ydk[sorc] <= 1) && ydk[rota] && (ydk[blade] || ydk[ddwl] || ydk[lv2]) && ydk[solemn] >= 2 && !ydk[llab] && !ydk[gbind] && !ydk[worl] && !ydk[freed]) ? 'warrior' :
             (ydk[sorc] >= 2 && ydk[tdrag] >= 3 && ydk[mof] && !ydk[scapegoat]) ? 'chaos turbo' :
             (ydk[sorc] >= 2 && ydk[meta] && ydk[scapegoat]) ? 'chaos control' :
             ((!ydk[sorc] || ydk[sorc] <= 1) && ((ydk[scapegoat] && ydk[meta] >= 2) || (ydk[scapegoat] >= 2 && ydk[meta])) && ydk[bls] && (!ydk[bigbang] || ydk[bigbang] <= 1)) ? 'goat control' :
             'other'
         ) : format === 'edison' ? (
             (ydk[kalut] >= 2 && ydk[whirlwind] >= 2 && ydk[icarus] >= 2) ? 'blackwing' :
+            (ydk[accum] >= 2 && ydk[cstrike] >= 2 && ydk[detonation] >= 2) ? 'chain burn' :
             (ydk[diva] >= 2 && ydk[mali] >= 2 && ydk[miracle] >= 2) ? 'diva hero' :
-            (ydk[alius] >= 2 && ydk[gspark] >= 2 && ydk[miracle] >= 2) ? 'hero beatdown' :
+            (ydk[alius] >= 2 && ydk[gspark] >= 2) ? 'hero beatdown' :
             (ydk[redmd] >= 2 && ydk[wyvern] && ydk[kmdrago] && !ydk[consonance] && !ydk[rejuv]) ? 'dragon beatdown' :
-            (ydk[redmd] >= 2 && ydk[consonance] >= 2 && ydk[rejuv] >= 2 && !ydk[exodia]) ? 'dragon turbo' :
+            (ydk[redmd] >= 2 && ydk[consonance] >= 2 && ydk[tradein] >= 2 && !ydk[exodia]) ? 'dragon turbo' :
+            (ydk[boomboxen] >= 2 && ydk[celfon] >= 2 && ydk[remoten] >= 2) ? 'morphtronic' :
             (ydk[consonance] >= 2 && ydk[rejuv] >= 2 && ydk[exodia]) ? 'exodia ftk' :
-            (ydk[kristya] >= 2 && ydk[ddwl] >= 2 && ydk[rftdd]) ? 'fairy control' :
+            (ydk[artemis] >= 2 && ydk[bribe] >= 2 && ydk[drastic] >= 2) ? 'counter fairy' :
+            (ydk[kristya] >= 2 && ydk[ddwl] >= 2 && ydk[ryko] >= 2) ? 'fairy control' :
             (ydk[kristya] >= 2 && ydk[tethys] >= 2 && ydk[valhalla] >= 2) ? 'fairy turbo' :
             (ydk[kristya] >= 3 && !!ydk[tethys] && ydk[rivalry] && ydk[gozen]) ? 'fairy stun' :
             (ydk[coelacanth] >= 2 && ydk[fishborg] >= 2 && ydk[moray] >= 2) ? 'fish otk' :
