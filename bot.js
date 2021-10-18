@@ -94,6 +94,36 @@ client.on('message', async (message) => {
     //PING 
     if (cmd === `!ping`) return message.channel.send('🏓')
 
+    //SEED 
+    if (cmd === `!seed`) return message.channel.send('🌱')
+
+    // DATA 
+    if (cmd === `!data`) {
+        if (isProgrammer(message.member)) {
+            const folder = './decks/PumpkingOfGames'
+            const files = fs.readdirSync(folder)
+            const data = { types: {}, cats: {} }
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i]
+                const player = { tag: file }
+                const deckType = await getDeckType(player, 'edison', 'PumpkingOfGames')
+                const deckCategory = getDeckCategory(deckType)
+                data.types[deckType] ? data.types[deckType]++ : data.types[deckType] = 1
+                data.cats[deckCategory] ? data.cats[deckCategory]++ : data.cats[deckCategory] = 1
+            }
+
+            const types = Object.entries(data.types).sort().map((e) => `${e[0]}:${e[1]}`)
+            const cats = Object.entries(data.cats).sort().map((e) => `${e[0]}:${e[1]}`)
+            
+            return message.channel.send(
+                `Deck Types:\n${types.join('\n')}` +
+                `Deck Categories:\n${cats.join('\n')}`
+            )
+        } else {
+            return message.channel.send(`📊`)
+        }
+    }
+
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
@@ -104,7 +134,7 @@ client.on('message', async (message) => {
             const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
 			await addSheet(spreadsheetId, 'Summary')
 			await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
-			await uploadDeckFolder(name)
+			//await uploadDeckFolder(name)
 
             return message.channel.send(`🧪`)
         } else {
@@ -115,16 +145,6 @@ client.on('message', async (message) => {
     // FIX 
     if (cmd === `!fix`) {
         if (isProgrammer(message.member)) {
-            const tournaments = await Tournament.findAll({ where: { state: 'pending', guildId: mgid }, order: [['createdAt', 'ASC']] })
-            const tournament = await selectTournament(message, tournaments, maid)
-            if (!tournament) return message.channel.send(`There are no pending tournaments.`)
-            const entries = await Entry.findAll({ where: { tournamentId: tournament.id }, include: Player })
-            for (let i = 0; i < entries.length; i++) {
-                const entry = entries[i]
-                const deckType = await getDeckType(entry.player, tournament.format, tournament.name)
-                await entry.update({ deck_type: deckType })
-                console.log(`${entry.pilot}'s deck appears to be: ${deckType}`)
-            }
             return message.channel.send(`🛠️`)
         } else {
             return message.channel.send(`🛠️`)

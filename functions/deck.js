@@ -273,6 +273,7 @@ const getDeckType = async (player, format, tournamentName = 'other') => {
             'other' 
         ) : 'other'
 
+    console.log('determined deckType:', deckType)
     return deckType
 }
 

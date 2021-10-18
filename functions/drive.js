@@ -1,12 +1,18 @@
 
 
-const {google} = require('googleapis')
-const { access_token, refresh_token } = require('../secrets.json')         
+const { google } = require('googleapis')
+const { access_token, refresh_token, token_type, bearer } = require('../secrets.json')         
 const { client_secret, client_id, redirect_uris } = require('../credentials.json')
 const fs = require('fs')            
 
 const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0], access_token, refresh_token)
-oAuth2Client.setCredentials({ client_secret, client_id, redirect_uris, access_token, refresh_token })
+oAuth2Client.setCredentials({ 
+  access_token, 
+  refresh_token,
+  token_type,
+  bearer,
+  scope:"https://www.googleapis.com/auth/drive"
+ })
 
 const drive = google.drive({ version: 'v3', auth: oAuth2Client})
 
