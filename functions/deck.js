@@ -170,7 +170,8 @@ const checkDeckList = async (member, player, formatDate, formatEmoji, formatList
 
 //GET DECK TYPE
 const getDeckType = async (player, format, tournamentName = 'other') => {
-    const raw = fs.readFileSync(`./decks/${tournamentName}/${player.tag.replace(/[^\w\s]/gi, "_").replace(/ /g,'')}.ydk`, 'utf8')
+    const file = `./decks/${tournamentName}/${player.tag.replace(/[^\w\s]/gi, "_").replace(/ /g,'')}.ydk`
+    const raw = fs.readFileSync(file, 'utf8')
     if (!raw) return
     const main = raw.split('#extra')[0]
     if (!main) return
@@ -273,7 +274,7 @@ const getDeckType = async (player, format, tournamentName = 'other') => {
             'other' 
         ) : 'other'
 
-    console.log('determined deckType:', deckType)
+    console.log(file, ' is ', deckType)
     return deckType
 }
 

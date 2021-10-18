@@ -112,12 +112,12 @@ client.on('message', async (message) => {
                 data.cats[deckCategory] ? data.cats[deckCategory]++ : data.cats[deckCategory] = 1
             }
 
-            const types = Object.entries(data.types).sort().map((e) => `${e[0]}:${e[1]}`)
-            const cats = Object.entries(data.cats).sort().map((e) => `${e[0]}:${e[1]}`)
+            const types = Object.entries(data.types).sort().map((e) => `${e[0]}: ${e[1]}`)
+            const cats = Object.entries(data.cats).sort().map((e) => `${e[0]}: ${e[1]}`)
             
             return message.channel.send(
                 `Deck Types:\n${types.join('\n')}` +
-                `Deck Categories:\n${cats.join('\n')}`
+                `\n\nDeck Categories:\n${cats.join('\n')}`
             )
         } else {
             return message.channel.send(`📊`)

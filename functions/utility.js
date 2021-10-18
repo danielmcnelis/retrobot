@@ -68,6 +68,7 @@ const generateRandomString = (length, chars) => {
 const getDeckCategory = (deckType) => {
     return (deckType === 'aggro bomb' ||
         deckType === 'bazoo return' ||
+        deckType === 'blackwing' ||
         deckType === 'canceller stun' ||
         deckType === 'chaos recruiter' ||
         deckType === 'chaos return' ||
@@ -76,11 +77,15 @@ const getDeckCategory = (deckType) => {
         deckType === 'drain beatdown' ||
         deckType === 'earth beatdown' ||
         deckType === 'emissary beatdown' ||
+        deckType === 'gladiator beast' ||
         deckType === 'gearfried' ||
         deckType === 'gravekeeper' ||
+        deckType === 'hero beatdown' ||
         deckType === 'light beatdown' ||
-        deckType === 'light return' ||
+        deckType === 'quickdraw plant' ||
+        deckType === 'machina' ||
         deckType === 'machine' ||
+        deckType === 'six samurai' ||
         deckType === 'strike ninja' ||
         deckType === 'tiger stun' ||
         deckType === 'vanilla beatdown' ||
@@ -95,9 +100,12 @@ const getDeckCategory = (deckType) => {
         : (deckType === 'ben kei otk' ||
         deckType === 'cat otk' ||
         deckType === 'dimension fusion turbo' ||
+        deckType === 'dragon turbo' ||
         deckType === 'economics ftk' ||
         deckType === 'empty jar' ||
         deckType === 'exodia' ||
+        deckType === 'fairy turbo' ||
+        deckType === 'fish otk' ||
         deckType === 'fusion gate turbo' ||
         deckType === 'horus turbo' ||
         deckType === 'last turn' ||
@@ -106,18 +114,27 @@ const getDeckCategory = (deckType) => {
         deckType === 'speed burn' ||
         deckType === 'stein cat otk' ||
         deckType === 'stein gate turbo' ||
-        deckType === 'stein otk') ? 'combo'
+        deckType === 'stein otk' ||
+        deckType === 'x-saber') ? 'combo'
         : (deckType === 'cat control' || 
         deckType === 'chaos control' ||
         deckType === 'chaos turbo' ||
+        deckType === 'diva frog' ||
+        deckType === 'diva hero' ||
         deckType === 'emissary control' ||
+        deckType === 'fairy control' ||
         deckType === 'flip control' ||
+        deckType === 'frog monarch' ||
         deckType === 'goat control' ||
         deckType === 'heavy slump' ||
         deckType === 'horus control' ||
         deckType === 'monarch' ||
+        deckType === 'quickdraw plant' ||
+        deckType === 'quickdraw zombie' ||
         deckType === 'relinquished' ||
         deckType === 'soul control' ||
+        deckType === 'vayu turbo' ||
+        deckType === 'volcanic quickdraw' ||
         deckType === 'zorc') ? 'control'
         : 'other'
 }
