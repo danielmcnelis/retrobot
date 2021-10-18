@@ -243,6 +243,7 @@ const getDeckType = async (player, format, tournamentName = 'other') => {
             (ydk[consonance] >= 2 && ydk[rejuv] >= 2 && ydk[exodia]) ? 'exodia ftk' :
             (ydk[kristya] >= 2 && ydk[ddwl] >= 2 && ydk[rftdd]) ? 'fairy control' :
             (ydk[kristya] >= 2 && ydk[tethys] >= 2 && ydk[valhalla] >= 2) ? 'fairy turbo' :
+            (ydk[kristya] >= 3 && !!ydk[tethys] && ydk[rivalry] && ydk[gozen]) ? 'fairy stun' :
             (ydk[coelacanth] >= 2 && ydk[fishborg] >= 2 && ydk[moray] >= 2) ? 'fish otk' :
             (ydk[firedog] >= 2 && ydk[spy] >= 2 && ydk[rekindling] >= 2) ? 'flamvell' :
             (ydk[swapfrog] >= 2 && ydk[caius] >= 2 && (ydk[raiza] || ydk[mobius] || ydk[thestalos]) && !ydk[diva]) ? 'frog monarch' :
