@@ -950,7 +950,7 @@ client.on('message', async (message) => {
 
     //STATS
     if (statscom.includes(cmd)) {
-        const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
+        const playerId = message.mentions.users.first() ? message.mentions.users.first().id : args[0] ? args[0] : maid	
         const player = await Player.findOne({ where: { id: playerId } })
         if (!player) return message.channel.send("That user is not in the database.")
 
