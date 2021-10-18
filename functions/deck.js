@@ -29,7 +29,7 @@ const {
     rejuv, rekindling, relinq, remoten, reprod, rgadget, rightarm, rightleg, rivalry, rftdd, rml, rota, ryko, salvo, scapegoat, scarabs, sdm, 
     serpent, shallow, silent, sirocco, skull, slump, smackdown, smoke, solemn, solidarity, sorc, soulex, soulrel, 
     spy, ssunited, stein, storm, strike, susa, swap, swapfrog, taiyou, tdrag, tethys, thanksgiving, thestalos, tiger, 
-    tomato, tooncannon, toonelf, treeborn, trio, trunade, tsuk, tuningware, turtle, underdog, valhalla, vayu, vrocket, 
+    tomato, tooncannon, toonelf, tradein, treeborn, trio, trunade, tsuk, tuningware, turtle, underdog, valhalla, vayu, vrocket, 
     whirlwind, wicked, wmc, worl, wyvern, xhead, ygadget, zanji, zombyra, zorc
 } = require('../static/cards.json')
 
