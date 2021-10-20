@@ -134,7 +134,7 @@ client.on('message', async (message) => {
             const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
 			await addSheet(spreadsheetId, 'Summary')
 			await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
-			//await uploadDeckFolder(name)
+			await uploadDeckFolder(name)
 
             return message.channel.send(`🧪`)
         } else {
