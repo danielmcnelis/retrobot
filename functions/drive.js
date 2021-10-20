@@ -1,7 +1,7 @@
 
 
 const { google } = require('googleapis')
-const { drive } = require('../secrets.json')    
+const { driveTokens } = require('../secrets.json')    
 const { access_token, refresh_token, token_type } = driveTokens      
 const { client_secret, client_id, redirect_uris } = require('../credentials.json')
 const fs = require('fs')            

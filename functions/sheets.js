@@ -1,6 +1,6 @@
 
 const {google} = require('googleapis')
-const { sheets } = require('../secrets.json')
+const { sheetsTokens } = require('../secrets.json')
 const { access_token, refresh_token } = sheetsTokens
 const { client_secret, client_id, redirect_uris } = require('../credentials.json')
 const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0], access_token, refresh_token)
