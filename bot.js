@@ -127,15 +127,6 @@ client.on('message', async (message) => {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            const name = 'PumpkingOfGames'
-            const { sheet1Data, sheet2Data } = await createSheetData()
-            console.log('sheet1Data', sheet1Data)
-            console.log('sheet2Data', sheet2Data)
-            const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
-			await addSheet(spreadsheetId, 'Summary')
-			await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
-			await uploadDeckFolder(name)
-
             return message.channel.send(`🧪`)
         } else {
             return message.channel.send(`🧪`)
@@ -506,10 +497,10 @@ client.on('message', async (message) => {
 		if (status === 200) { 
 			tournament.state = 'underway'
 			await tournament.save()
-			//const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
-			//await addSheet(spreadsheetId, 'Summary')
-			//await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
-			//await uploadDeckFolder(name)
+			const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
+			await addSheet(spreadsheetId, 'Summary')
+			await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
+			await uploadDeckFolder(name)
 			return message.channel.send(`Let's go! Your tournament is starting now: https://challonge.com/${url} ${formats[tournament.format].emoji}`)
 		} else {
 			return message.channel.send(`Error: could not access Challonge.com.`)
