@@ -157,25 +157,25 @@ const selectTournament = async (message, tournaments, playerId) => {
 ////// TOURNAMENT HOST FUNCTIONS ///////
 
 // CREATE SHEET DATA
-const createSheetData = async () => {
-    const allDecks = await Entry.findAll()
+const createSheetData = async (tournament) => {
+    const entries = await Entry.findAll({ where: { tournamentId: tournament.id}, include: Player })
     const typeData = {}
     const catData = {}
     const sheet1Data = [['Player', 'Deck', 'Type', 'Link']]
     const sheet2DataA = [['Deck', 'Entries', 'Percent']]
     const sheet2DataB = [[], ['Category', 'Entries', 'Percent']]
 
-    allDecks.forEach((d) => {
-        typeData[d.deck_type] ? typeData[d.deck_type]++ : typeData[d.deck_type] = 1
-        catData[d.deck_category] ? catData[d.deck_category]++ : catData[d.deck_category] = 1
-        sheet1Data.push([d.pilot, d.deck_name, d.deck_type, d.url])
+    entries.forEach((e) => {
+        typeData[e.deck_type] ? typeData[e.deck_type]++ : typeData[e.deck_type] = 1
+        catData[e.deck_category] ? catData[e.deck_category]++ : catData[e.deck_category] = 1
+        sheet1Data.push([e.pilot, e.deck_name, e.deck_type, e.url])            
     })
 
     let typeDataArr = Object.entries(typeData).sort((b, a) => b[0].localeCompare(a[0]))
     let catDataArr = Object.entries(catData).sort((b, a) => b[0].localeCompare(a[0]))
 
-    let typeDataArr2 = typeDataArr.map((e) => [e[0], e[1], `${(e[1], e[1] / allDecks.length * 100).toFixed(2)}%`])
-    let catDataArr2 = catDataArr.map((e) =>[capitalize(e[0]), e[1], `${(e[1], e[1] / allDecks.length * 100).toFixed(2)}%`])
+    let typeDataArr2 = typeDataArr.map((e) => [e[0], e[1], `${(e[1], e[1] / entries.length * 100).toFixed(2)}%`])
+    let catDataArr2 = catDataArr.map((e) =>[capitalize(e[0]), e[1], `${(e[1], e[1] / entries.length * 100).toFixed(2)}%`])
 
     const sheet2Data = [...sheet2DataA, ...typeDataArr2, ...sheet2DataB, ...catDataArr2]
 

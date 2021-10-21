@@ -481,11 +481,11 @@ client.on('message', async (message) => {
 		const tournament = await selectTournament(message, tournaments, maid)
 		if (!tournament) return message.channel.send(`There are no pending tournaments.`)
         const { name, id, url } = tournament
-		const unregistered = await Entry.findAll({ where: { participantId: null, tournamentId: id } })
-        if (unregistered.length) return message.channel.send('One of more players has not been signed up. Please check the Database.')
-		const entries = await Entry.findAll({ where: { tournamentId: id } })
-		if (!entries.length) return message.channel.send(`Error: missing entrants.`)
-		const { sheet1Data, sheet2Data } = await createSheetData()
+		const unregCount = await Entry.count({ where: { participantId: null, tournamentId: id } })
+        if (unregCount) return message.channel.send('One of more players has not been signed up. Please check the Database.')
+		const entryCount = await Entry.count({ where: { tournamentId: id } })
+		if (!entryCount) return message.channel.send(`Error: missing entrants.`)
+		const { sheet1Data, sheet2Data } = await createSheetData(tournament)
 		const success = await seed(message, tournament)
 		if (!success) return message.channel.send(`Error seeding tournament. Please try again or start it manually.`)
 
