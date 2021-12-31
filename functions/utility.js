@@ -2,12 +2,112 @@
 //UTILITY FUNCTIONS
 
 //DATABASE IMPORTS
-const { Membership, Player, Role, Stats } = require('../db/index.js')
+const { Card, Membership, Player, Role, Stats } = require('../db/index.js')
 
 //STATIC IMPORTS
 const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend, god } = require('../static/emojis.json')
 const formats = require('../static/formats.json')
 const { adminRole, modRole, tourRole } = require('../static/roles.json')
+
+//FETCH CARD NAMES
+const fetchCardNames = async () => {
+    const names = await Card.findAll().map((card) => card.name)
+    return names
+}
+
+//FIND CARD
+const findCard = async (query, fuzzyCards) => {
+    const fuzzy_search = fuzzyCards.get(query, null, 0.36) || []
+	fuzzy_search.sort((a, b) => b[0] - a[0])
+	if (!fuzzy_search[0]) return false
+
+	let partial_match
+	if (query.length >= 10) {
+		for (let i = 0; i < fuzzy_search.length; i++) {
+			const result = fuzzy_search[i][1]
+			if (result.replace(/[^\w\s]/gi, "").toLowerCase().includes(query.toLowerCase())) {
+				partial_match = result
+				break
+			}
+		}
+	}
+
+	const card_name = partial_match ? partial_match :
+		fuzzy_search[0][0] > 0.5 ? fuzzy_search[0][1] :
+		null
+		
+    return card_name
+}
+
+//SEARCH
+const search = async (query, fuzzyCards) => {
+	const card_name = await findCard(query, fuzzyCards)
+	if (!card_name) return false
+
+	const card = await Card.findOne({ 
+		where: { 
+			name: {
+				[Op.iLike]: card_name
+			}
+		}
+	})
+
+	if (!card) return false
+	
+	const color = card.category === "Spell" ? "#42f578" :
+		card.category === "Trap" ? "#e624ed" :
+		card.category === "Monster" && card.fusion ? "#a930ff" :
+		card.category === "Monster" && card.ritual ? "#3b7cf5" :
+		card.category === "Monster" && card.synchro ? "#ebeef5" :
+		card.category === "Monster" && card.xyz ? "#6e6e6e" :
+		card.category === "Monster" && card.pendulum ? "#a5e096" :
+		card.category === "Monster" && card.link ? "#468ef2" :
+		card.category === "Monster" && card.normal ? "#faf18e" :
+		card.category === "Monster" && card.effect ? "#f5b042" :
+		null
+
+	const classes = []
+	if (card.normal) classes.push("Normal")
+	if (card.fusion) classes.push("Fusion")
+	if (card.ritual) classes.push("Ritual")
+	if (card.synchro) classes.push("Synchro")
+	if (card.xyz) classes.push("Xyz")
+	if (card.pendulum) classes.push("Pendulum")
+	if (card.link) classes.push("Link")
+	if (card.flip) classes.push("Flip")
+	if (card.gemini) classes.push("Gemini")
+	if (card.spirit) classes.push("Spirit")
+	if (card.toon) classes.push("Toon")
+	if (card.tuner) classes.push("Tuner")
+	if (card.union) classes.push("Union")
+	if (card.effect) classes.push("Effect")
+
+	const labels = card.category === "Monster" ? 
+		`**Attribute:** ${card.attribute}` + 
+		`\n${card.xyz ? `**Rank:** ${card.level}` : card.link ? `**Link Rating:** ${card.rating}` : `**Level:** ${card.level}`}` +
+		`\n**Release Date:** ${card.tcg_date || 'OCG Only'}` +
+		`\n**[** ${card.type} / ${classes.join(" / ")} **]**` :
+		`**Category: ${card.icon}**` +
+		`\n**Release Date:** ${card.tcg_date || 'OCG Only'}`
+	
+	const stats = card.category === "Monster" ? 
+			`**ATK:** ${card.atk === null ? '?' : card.atk}` + 
+			` ${!card.link ? `**DEF:** ${card.def === null ? '?' : card.def}` : ''}` :
+			''
+	
+	const attachment = fs.existsSync(`../merchbot2/public/card_images/${card.image_file}`) ?
+		new Discord.MessageAttachment(`../merchbot2/public/card_images/${card.image_file}`, card.image_file) :
+		false
+
+	const thumbnail = attachment ? `attachment://${card.image_file}` : `https://ygoprodeck.com/pics/${card.image_file}`
+	const cardEmbed = new Discord.MessageEmbed()
+	if (attachment) cardEmbed.attachFiles(attachment) 
+	cardEmbed.setColor(color)
+	cardEmbed.setTitle(card.name)
+	cardEmbed.setThumbnail(thumbnail)
+	cardEmbed.setDescription(`${labels}\n\n${card.description}\n\n${stats}`)
+	return cardEmbed
+}
 
 //ASSIGN ROLES
 const assignRoles = async (guild, member) => {
@@ -271,6 +371,7 @@ module.exports = {
     convertArrayToObject,
     createMembership,
     createPlayer,
+    fetchCardNames,
     generateRandomString,
     getDeckCategory,
     getFormat,
@@ -283,6 +384,7 @@ module.exports = {
     isNewUser,
     isProgrammer,
     isTourPlayer,
+    search,
     shuffleArray,
     trackStats
 }

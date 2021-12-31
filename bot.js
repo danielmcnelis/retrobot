@@ -7,6 +7,7 @@ const axios = require('axios')
 const Discord = require('discord.js')
 const fs = require('fs')
 const { Op } = require('sequelize')
+const FuzzySet = require('fuzzyset')
 
 //DATABASE IMPORTS
 const { Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
@@ -16,7 +17,7 @@ const { checkDeckList, getDeckType } = require('./functions/deck.js')
 const { uploadDeckFolder } = require('./functions/drive.js')
 const { addSheet, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
-const { assignRoles, capitalize, createMembership, createPlayer, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, trackStats } = require('./functions/utility.js')
+const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats } = require('./functions/utility.js')
 
 // STATIC IMPORTS
 const { welcomeChannel } = require('./static/channels.json')
@@ -33,10 +34,13 @@ const { challongeAPIKey, discordBotToken } = require('./secrets.json')
 
 const client = new Discord.Client()
 client.login(discordBotToken)
+const fuzzyCards = FuzzySet([], false)
 
 //READY
 client.on('ready', () => {
   console.log('RetroBot is online!')
+  const names = await fetchCardNames()
+  names.forEach((card) => fuzzyCards.add(card))
 })
 
 //WELCOME
@@ -65,8 +69,8 @@ client.on('message', async (message) => {
 		message.author.bot || 
 		//do not allow users to parrot @everyone or @here with the bot
 		message.content.includes('@everyone') || message.content.includes('@here') ||
-		//only allow commands starting with !
-		(!message.content.startsWith("!"))
+		//only allow commands starting with ! or including {}
+		(!message.content.startsWith("!") || !message.content.includes("{"))
 	) return
 
     const marr = message.content.split(" ")
@@ -90,6 +94,14 @@ client.on('message', async (message) => {
     const formatList = formats[format] ? formats[format].list : null
     if (await isNewUser(maid)) await createPlayer(message.member)
     if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
+
+    //CARD SEARCH USING CURLY BRACKETS
+    if (!message.content.startsWith("!") && message.content.includes(`{`) && message.content.includes(`}`)) { 
+        const query = message.content.slice(message.content.indexOf('{') + 1, message.content.indexOf('}'))
+        const cardEmbed = await search(query, fuzzyCards)
+        if (!cardEmbed) return message.channel.send(`Could not find card: "${query}".`)
+        else return message.channel.send(cardEmbed)
+    }
 
     //PING 
     if (cmd === `!ping`) return message.channel.send('🏓')
