@@ -3,6 +3,7 @@
 
 //MODULE IMPORTS
 const fs = require('fs')
+const Discord = require('discord.js')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
