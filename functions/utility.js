@@ -1,6 +1,10 @@
 
 //UTILITY FUNCTIONS
 
+//MODULE IMPORTS
+const fs = require('fs')
+const { Op } = require('sequelize')
+
 //DATABASE IMPORTS
 const { Card, Membership, Player, Role, Stats } = require('../db/index.js')
 
