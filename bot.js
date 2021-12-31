@@ -37,7 +37,7 @@ client.login(discordBotToken)
 const fuzzyCards = FuzzySet([], false)
 
 //READY
-client.on('ready', () => {
+client.on('ready', async() => {
   console.log('RetroBot is online!')
   const names = await fetchCardNames()
   names.forEach((card) => fuzzyCards.add(card))
