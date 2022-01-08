@@ -133,5 +133,6 @@ const Card = db.define('card', {
   }
 })
 
+
 module.exports = Card
 
