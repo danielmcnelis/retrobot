@@ -1,6 +1,6 @@
 
 const { db } = require('./db')
-const Card = require('./carD')
+const Card = require('./Card')
 const Entry = require('./Entry')
 const Match = require('./Match')
 const Matchup = require('./Matchup')
