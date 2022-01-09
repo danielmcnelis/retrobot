@@ -74,10 +74,10 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
         const file = deck_arr.join('\n')
         const cards_arr = deck_arr.filter(el => el.charAt(0) !== '#' && el.charAt(0) !== '!' && el !== '').sort()
         const cards_obj = convertArrayToObject(cards_arr)        
-        const card_ids = await Card.findAll({ where: { tcg_date: { [Op.lte]: formatDate } }}).map(c => c.konami_code)
-        const forbidden_card_ids = await Status.findAll({ where: { [formatList]: 'forbidden' }, include: Card }).map(s => s.card.konami_code)
-        const limited_card_ids = await Status.findAll({ where: { [formatList]: 'limited' }, include: Card }).map(s => s.card.konami_code)
-        const semi_limited_card_ids = await Status.findAll({ where: { [formatList]: 'semi-limited' }, include: Card }).map(s => s.card.konami_code)
+        const card_ids = [...await Card.findAll({ where: { tcg_date: { [Op.lte]: formatDate } }})].map(c => c.konami_code)
+        const forbidden_card_ids = [...await Status.findAll({ where: { [formatList]: 'forbidden' }, include: Card })].map(s => s.card.konami_code)
+        const limited_card_ids = [...await Status.findAll({ where: { [formatList]: 'limited' }, include: Card })].map(s => s.card.konami_code)
+        const semi_limited_card_ids = [...await Status.findAll({ where: { [formatList]: 'semi-limited' }, include: Card })].map(s => s.card.konami_code)
 
         const illegalCards = []
         const forbiddenCards = []
@@ -143,23 +143,23 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
 //CHECK DECK LIST
 const checkDeckList = async (member, player, formatDate, formatEmoji, formatList, formatName, tournamentName = 'other') => {  
     const filter = m => m.author.id === member.user.id
-    const msg = await member.user.send(`Please provide a duelingbook.com/deck link for the ${formatName} Format ${formatEmoji} deck you would like to check.`);
+    const msg = await member.user.send({ content: `Please provide a duelingbook.com/deck link for the ${formatName} Format ${formatEmoji} deck you would like to check.`});
     const collected = await msg.channel.awaitMessages(filter, {
         max: 1,
         time: 180000
     }).then(async collected => {
         const url = collected.first().content
         if (url.includes("www.duelingbook.com/deck")) {		
-            member.send('Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.')
+            member.send({ content: 'Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.'})
             const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
             return issues
         } else {
-            message.author.send("Sorry, I only accept duelingbook.com/deck links.")    
+            message.author.send({ content: "Sorry, I only accept duelingbook.com/deck links."})    
             return false  
         }
     }).catch(err => {
         console.log(err)
-        member.send(`Sorry, time's up. Go back to the server and try again.`)
+        member.send({ content: `Sorry, time's up. Go back to the server and try again.`})
         return false
     })
 

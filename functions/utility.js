@@ -16,8 +16,8 @@ const { adminRole, modRole, tourRole } = require('../static/roles.json')
 
 //FETCH CARD NAMES
 const fetchCardNames = async () => {
-    const names = await Card.findAll()
-    return names.map((card) => card.name)
+    const names = [...await Card.findAll()].map((card) => card.name)
+    return names
 }
 
 //FIND CARD

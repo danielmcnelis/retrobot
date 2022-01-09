@@ -28,7 +28,7 @@ const askForDBName = async (member, player, override = false, error = false, att
     const greeting = override ? '' : 'Hi! '
     const prompt = error ? `I think you're getting ahead of yourself. First, I need ${pronoun} DuelingBook name.`
     : `${greeting}This appears to be ${player.name}'s first tournament in our system. Can you please provide ${pronoun} DuelingBook name?`
-	const msg = await member.user.send(prompt)
+	const msg = await member.user.send({ content: prompt })
 
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
@@ -37,7 +37,7 @@ const askForDBName = async (member, player, override = false, error = false, att
         const dbName = collected.first().content
         if (dbName.includes("duelingbook.com/deck") || dbName.includes("imgur.com")) {
             if (attempt >= 3) {
-                member.user.send(`Sorry, time's up. Go back to the server and try again.`)
+                member.user.send({ content: `Sorry, time's up. Go back to the server and try again.`})
                 return false
             } else {
                 return askForDBName(member, player, override, true, attempt++)
@@ -46,12 +46,12 @@ const askForDBName = async (member, player, override = false, error = false, att
             await player.update({
                 duelingBook: dbName
             })
-            member.user.send(`Thanks! I saved ${pronoun} DuelingBook name as: ${dbName}. If that's wrong, go back to the server and type **!db name**.`)
+            member.user.send({ content: `Thanks! I saved ${pronoun} DuelingBook name as: ${dbName}. If that's wrong, go back to the server and type **!db name**.`})
             return dbName
         }
     }).catch((err) => {
         console.log(err)
-        member.user.send(`Sorry, time's up. Go back to the server and try again.`)
+        member.user.send({ content: `Sorry, time's up. Go back to the server and try again.`})
         return false
     })
 
@@ -62,18 +62,18 @@ const askForDBName = async (member, player, override = false, error = false, att
 const getDeckList = async (member, player, formatDate, formatList, tournamentName, override = false) => {            
     const filter = m => m.author.id === member.user.id
     const pronoun = override ? `${player.name}'s` : 'your'
-    const msg = await member.user.send(`Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`);
+    const msg = await member.user.send({ content: `Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`});
     const collected = await msg.channel.awaitMessages(filter, {
         max: 1,
         time: 180000
     }).then(async (collected) => {
         const url = collected.first().content
         if (url.includes("www.duelingbook.com/deck")) {		
-            member.send('Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.')
+            member.send({ content: 'Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.'})
             const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
 
             if (override) {
-                member.send(`Thanks, ${member.user.username}, I saved a copy of ${pronoun} deck. ${legend}`)
+                member.send({ content: `Thanks, ${member.user.username}, I saved a copy of ${pronoun} deck. ${legend}`})
                 return url
             } else if (issues['illegalCards'].length || issues['forbiddenCards'].length || issues['limitedCards'].length || issues['semiLimitedCards'].length) {
                 let response = `I'm sorry, ${member.user.username}, ${pronoun} deck is not legal. ${legend}`
@@ -83,25 +83,25 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
                 if (issues['semiLimitedCards'].length) response += `\n\nThe following cards are semi-limited:\n${issues['semiLimitedCards'].join('\n')}`
                 response += `\n\nPlease edit ${pronoun} deck and try again once it's legal. If you believe this message is in error, contact the Tournament Organizer.`
             
-                member.send(response)
+                member.send({ content: response })
                 return false
             } else if (issues['unrecognizedCards'].length) {
                 let response = `I'm sorry, ${member.user.username}, the following card IDs were not found in our database:\n${issues['unrecognizedCards'].join('\n')}`
                 response += `\n\nThese cards are either alternate artwork, new to the TCG, OCG only, or incorrect in our database. Please contact the Tournament Organizer or the Admin if you can't resolve this.`
                 
-                member.send(response)
+                member.send({ content: response })
                 return false
              } else {
-                member.send(`Thanks, ${member.user.username}, ${pronoun} deck is perfectly legal. ${legend}`)
+                member.send({ content: `Thanks, ${member.user.username}, ${pronoun} deck is perfectly legal. ${legend}`})
                 return url
             }
         } else {
-            member.send("Sorry, I only accept duelingbook.com/deck links.")
+            member.send({ content: "Sorry, I only accept duelingbook.com/deck links."})
             return false
         }
     }).catch((err) => {
         console.log(err)
-        member.send(`Sorry, time's up. Go back to the server and try again.`)
+        member.send({ content: `Sorry, time's up. Go back to the server and try again.`})
         return false
     })
 
@@ -111,7 +111,7 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
 //GET DECK NAME
 const getDeckName = async (member, player, override = false) => {
     const pronoun = override ? `${player.name}'s` : 'your'
-	const msg = await member.send(`Please provide the common name for ${pronoun} deck (i.e. Chaos Control, Chaos Turbo, Warrior, etc.).`)
+	const msg = await member.send({ content: `Please provide the common name for ${pronoun} deck (i.e. Chaos Control, Chaos Turbo, Warrior, etc.).`})
     const filter = m => m.author.id === member.user.id
     const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
@@ -121,7 +121,7 @@ const getDeckName = async (member, player, override = false) => {
         return response
     }).catch(err => {    
         console.log(err)
-        member.send(`Sorry, time's up.`)
+        member.send({ content: `Sorry, time's up.`})
         return false
     })
 
@@ -134,14 +134,14 @@ const selectTournament = async (message, tournaments, playerId) => {
     if (tournaments.length === 1) return tournaments[0]
     const options = tournaments.map((tournament, index) => `(${index + 1}) ${tournament.name}`)
     const filter = m => m.author.id === playerId
-    const msg = await message.channel.send(`Please select a tournament:\n${options.join('\n')}`)
+    const msg = await message.channel.send({ content: `Please select a tournament:\n${options.join('\n')}`})
     const collected = await msg.channel.awaitMessages(filter, {
         max: 1,
         time: 15000
     }).then(collected => {
         const num = parseInt(collected.first().content.match(/\d+/))
         if (!num || !tournaments[num - 1]) {
-            message.channel.send(`Sorry, ${collected.first().content} is not a valid option.`)
+            message.channel.send({ content: `Sorry, ${collected.first().content} is not a valid option.`})
             return null
         }
         else return tournaments[num - 1]
@@ -190,7 +190,7 @@ const createSheetData = async (tournament) => {
 // GET TOURNAMENT TYPE
 const getTournamentType = async (message) => {
     const filter = m => m.author.id === message.author.id
-	const msg = await message.channel.send(`What type of tournament is this?\n(1) Single Elimination\n(2) Double Elimination\n(3) Swiss\n(4) Round Robin`)
+	const msg = await message.channel.send({ content: `What type of tournament is this?\n(1) Single Elimination\n(2) Double Elimination\n(3) Swiss\n(4) Round Robin`})
 	const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
 		time: 15000
@@ -203,7 +203,7 @@ const getTournamentType = async (message) => {
         else return false
 	}).catch(err => {
 		console.log(err)
-        message.channel.send(`Sorry, time's up.`)
+        message.channel.send({ content: `Sorry, time's up.`})
 	})
 
     return collected
@@ -212,7 +212,7 @@ const getTournamentType = async (message) => {
 // GET TOURNAMENT FORMAT
 const getTournamentFormat = async (message) => {
     const filter = m => m.author.id === message.author.id
-	const msg = await message.channel.send(`What format will be played in this tournament?`)
+	const msg = await message.channel.send({ content: `What format will be played in this tournament?`})
 	const collected = await msg.channel.awaitMessages(filter, {
 		max: 1,
 		time: 15000
@@ -222,7 +222,7 @@ const getTournamentFormat = async (message) => {
         else return false
 	}).catch(err => {
 		console.log(err)
-        message.channel.send(`Sorry, time's up.`)
+        message.channel.send({ content: `Sorry, time's up.`})
         return false
 	})
 
@@ -242,21 +242,21 @@ const removeParticipant = async (message, member, entry, tournament, drop = fals
             member.roles.remove(tourRole)
         
             if (drop) {
-                return message.channel.send(`I removed you from the tournament. Better luck next time!`)
+                return message.channel.send({ content: `I removed you from the tournament. Better luck next time!`})
             } else {
-                return message.channel.send(`${member.user.username} has been removed from the tournament.`)
+                return message.channel.send({ content: `${member.user.username} has been removed from the tournament.`})
             }
         } else if (!success && drop) {
-            return message.channel.send(`Hmm... I don't see you in the participants list.`)
+            return message.channel.send({ content: `Hmm... I don't see you in the participants list.`})
         } else if (!success && !drop) {
-            return message.channel.send(`I could not find ${member.user.username} in the participants list.`)
+            return message.channel.send({ content: `I could not find ${member.user.username} in the participants list.`})
         }
     } catch (err) {
         console.log(err)
         if (drop) {
-            return message.channel.send(`Hmm... I don't see you in the participants list.`)
+            return message.channel.send({ content: `Hmm... I don't see you in the participants list.`})
         } else {
-            return message.channel.send(`I could not find ${member.user.username} in the participants list.`)
+            return message.channel.send({ content: `I could not find ${member.user.username} in the participants list.`})
         }
     }   
 }
@@ -304,7 +304,7 @@ const seed = async (message, tournament) => {
         }   
     }
 
-    for (let i = 0; i < results.length; i += 30) message.channel.send(results.slice(i, i + 30))
+    for (let i = 0; i < results.length; i += 30) message.channel.send({ content: results.slice(i, i + 30)})
     return count === seeds.length
 }
 
@@ -447,7 +447,7 @@ const processMatchResult = async (message, winningPlayer, losingPlayer, tourname
     const losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
     const winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
     if (!losingEntry || !winningEntry) {
-        message.channel.send(`Sorry I could not find your tournament in the database.`)
+        message.channel.send({ content: `Sorry I could not find your tournament in the database.`})
         return false
     } 
 
@@ -476,7 +476,7 @@ const processMatchResult = async (message, winningPlayer, losingPlayer, tourname
     })
      
     if (!success) {
-        message.channel.send(`Error: could not update bracket for ${tournament.name}.`)
+        message.channel.send({ content: `Error: could not update bracket for ${tournament.name}.`})
         return false
     } 
  
@@ -512,22 +512,22 @@ const processMatchResult = async (message, winningPlayer, losingPlayer, tourname
     const loserWaitingOnP2 = loserMatchWaitingOn && loserMatchWaitingOn.p1 && loserMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: loserMatchWaitingOn.p2 }, include: Player }) : null
 
     setTimeout(() => {
-        if (loserEliminated) return message.channel.send(`${losingPlayer.name}, You are eliminated from the tournament. Better luck next time!`)
-        else if (loserNextOpponent) return message.channel.send(`New Match: <@${losingPlayer.id}> (DB: ${losingPlayer.duelingBook}) vs. <@${loserNextOpponent.playerId}> (DB: ${loserNextOpponent.player.duelingBook}). Good luck to both duelists.`)
+        if (loserEliminated) return message.channel.send({ content: `${losingPlayer.name}, You are eliminated from the tournament. Better luck next time!`})
+        else if (loserNextOpponent) return message.channel.send({ content: `New Match: <@${losingPlayer.id}> (DB: ${losingPlayer.duelingBook}) vs. <@${loserNextOpponent.playerId}> (DB: ${loserNextOpponent.player.duelingBook}). Good luck to both duelists.`})
         else if (loserMatchWaitingOn && loserWaitingOnP1 && loserWaitingOnP2) {
-            return message.channel.send(`${losingPlayer.name}, You are waiting for the result of ${loserWaitingOnP1.player.name} (DB: ${loserWaitingOnP1.player.duelingBook}) vs ${loserWaitingOnP2.player.name} (DB: ${loserWaitingOnP2.player.duelingBook}).`)
+            return message.channel.send({ content: `${losingPlayer.name}, You are waiting for the result of ${loserWaitingOnP1.player.name} (DB: ${loserWaitingOnP1.player.duelingBook}) vs ${loserWaitingOnP2.player.name} (DB: ${loserWaitingOnP2.player.duelingBook}).`})
         }
-        else return message.channel.send(`${losingPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
+        else return message.channel.send({ content: `${losingPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`})
     }, 2000)
     
     if (!winnerNextMatch || (winnerNextMatch && loserNextMatch !== winnerNextMatch)) {
         setTimeout(() => {
-            if (!winnerNextMatch) return message.channel.send(`<@${winningPlayer.id}>, You won the tournament! Congratulations on your stellar performance! ${legend}`)
-            else if (winnerNextOpponent) return message.channel.send(`New Match: <@${winningPlayer.id}> (DB: ${winningPlayer.duelingBook}) vs. <@${winnerNextOpponent.playerId}> (DB: ${winnerNextOpponent.player.duelingBook}). Good luck to both duelists.`)
+            if (!winnerNextMatch) return message.channel.send({ content: `<@${winningPlayer.id}>, You won the tournament! Congratulations on your stellar performance! ${legend}`})
+            else if (winnerNextOpponent) return message.channel.send({ content: `New Match: <@${winningPlayer.id}> (DB: ${winningPlayer.duelingBook}) vs. <@${winnerNextOpponent.playerId}> (DB: ${winnerNextOpponent.player.duelingBook}). Good luck to both duelists.`})
             else if (winnerMatchWaitingOn && winnerWaitingOnP1 && winnerWaitingOnP2) {
-                return message.channel.send(`${winningPlayer.name}, You are waiting for the result of ${winnerWaitingOnP1.player.name} (DB: ${winnerWaitingOnP1.player.duelingBook}) vs ${winnerWaitingOnP2.player.name} (DB: ${winnerWaitingOnP2.player.duelingBook}).`)
+                return message.channel.send({ content: `${winningPlayer.name}, You are waiting for the result of ${winnerWaitingOnP1.player.name} (DB: ${winnerWaitingOnP1.player.duelingBook}) vs ${winnerWaitingOnP2.player.name} (DB: ${winnerWaitingOnP2.player.duelingBook}).`})
             }
-            else return message.channel.send(`${winningPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`)
+            else return message.channel.send({ content: `${winningPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`})
         }, 4000)
     }
 
