@@ -238,7 +238,7 @@ client.on('messageCreate', async (message) => {
 
             return message.channel.send({ content: `Added ${c} matches to the database.`})
         } else {
-            return message.channel.send({ content: mlady})
+            return message.channel.send({ content: `{mlady}`})
         }
     }
 
@@ -283,7 +283,7 @@ client.on('messageCreate', async (message) => {
 
     //MUTE 
     if(cmd === `!mute`) {
-        if (!isMod(message.member)) return message.channel.send({ content: "You do not have permission to do that."})
+        if (!isMod(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
         const member = message.mentions.members.first()
         if (!member) return message.channel.send({ content: `Please tag the user you wish to mute.`})
         const player = await Player.findOne({ where: { id: member.user.id }})
@@ -313,7 +313,7 @@ client.on('messageCreate', async (message) => {
 
     //UNMUTE 
     if(cmd === `!unmute`) {
-        if (!isMod(message.member)) return message.channel.send({ content: "You do not have permission to do that."})
+        if (!isMod(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
         const member = message.mentions.members.first()
         if (!member) return message.channel.send({ content: `Please tag the user you wish to mute.`})
         const player = await Player.findOne({ where: { id: member.user.id }})
@@ -333,7 +333,7 @@ client.on('messageCreate', async (message) => {
         
     //CREATE 
     if (cmd === `!create`) {
-        if (!isMod(message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
+        if (!isMod(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
         if (!args.length) return message.channel.send({ content: `Please provide a name for the new tournament.`})
         const tournament_format = await getTournamentFormat(message)
         if (!tournament_format) return message.channel.send({ content: `Please specify a valid format.`})
@@ -774,7 +774,7 @@ client.on('messageCreate', async (message) => {
             if (issues['forbiddenCards'].length) response += `\n\nThe following cards are forbidden:\n${issues['forbiddenCards'].join('\n')}`
             if (issues['limitedCards'].length) response += `\n\nThe following cards are limited:\n${issues['limitedCards'].join('\n')}`
             if (issues['semiLimitedCards'].length) response += `\n\nThe following cards are semi-limited:\n${issues['semiLimitedCards'].join('\n')}`
-            return message.author.send({ content: response })
+            return message.author.send({ content: response.toString() })
         } else {
             return message.author.send({ content: `Congrats, your ${formatName} Format deck is perfectly legal! ${formatEmoji}`})
         }
@@ -802,10 +802,10 @@ client.on('messageCreate', async (message) => {
 
         for (let i = 0; i < banlist.length; i += 50) {
             if (banlist[i+50] && banlist[i+50].startsWith("\n")) {
-                message.author.send({ content: banlist.slice(i, i+51)})
+                message.author.send({ content: banlist.slice(i, i+51).join('\n').toString()})
                 i++
             } else {
-                message.author.send({ content: banlist.slice(i, i+50)})
+                message.author.send({ content: banlist.slice(i, i+50).join('\n').toString()})
             }
         }
 
@@ -902,7 +902,7 @@ client.on('messageCreate', async (message) => {
             return message.channel.send({ content: `You have not played any ranked games.`})
         } else {
             results.unshift(`${FL} --- ${player.name}'s Player Profile --- ${FL}`)
-            return message.channel.send({ content: results.join("\n")})
+            return message.channel.send({ content: results.join('\n').toString()})
         }
     }
 
@@ -944,7 +944,7 @@ client.on('messageCreate', async (message) => {
             return message.channel.send({ content: `You have not earned any prestigious medals. ${mad}`})
         } else {
             results.unshift(`${FL} --- ${player.name}'s Best Medals --- ${FL}`)
-            return message.channel.send({ content: results.join("\n")})
+            return message.channel.send({ content: results.join('\n').toString()})
         }
     }
 
@@ -1425,8 +1425,8 @@ client.on('messageCreate', async (message) => {
         if (!newPlayer) return message.channel.send({ content: `<@${newId}> is not in the database.`})
 
         const filter = m => m.author.id === message.author.id
-        const msg = await message.channel.send({ content: `Are you sure you want to combine ${oldPlayer.name}'s stats with ${newPlayer.name}'s stats?\n\n⚠️ **WARNING** ⚠️\nThis cannot be undone. ${oldPlayer.name}'s stats will be forever lost.`})
-        const collected = await msg.channel.awaitMessages(filter, {
+        message.channel.send({ content: `Are you sure you want to combine ${oldPlayer.name}'s stats with ${newPlayer.name}'s stats?\n\n⚠️ **WARNING** ⚠️\nThis cannot be undone. ${oldPlayer.name}'s stats will be forever lost.`})
+        await message.channel.awaitMessages(filter, {
             max: 1,
             time: 15000
         }).then(async collected => {

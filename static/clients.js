@@ -1,6 +1,6 @@
 
 const { discordBotToken} = require('../secrets.json')
-const { Client, Intents } = require('discord.js')
+const { Client } = require('discord.js')
 const client = new Client({ 
     intents: [ 
         'GUILDS', 
