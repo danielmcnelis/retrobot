@@ -144,7 +144,8 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
 const checkDeckList = async (member, player, formatDate, formatEmoji, formatList, formatName, tournamentName = 'other') => {  
     const filter = m => m.author.id === member.user.id
     const { channel } = await member.user.send({ content: `Please provide a duelingbook.com/deck link for the ${formatName} Format ${formatEmoji} deck you would like to check.`});
-    return await channel.awaitMessages(filter, {
+    return await channel.awaitMessages({
+        filter,
         max: 1,
         time: 180000
     }).then(async collected => {

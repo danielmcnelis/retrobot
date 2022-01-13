@@ -29,7 +29,8 @@ const askForDBName = async (member, player, override = false, error = false, att
     const prompt = error ? `I think you're getting ahead of yourself. First, I need ${pronoun} DuelingBook name.`
     : `${greeting}This appears to be ${player.name}'s first tournament in our system. Can you please provide ${pronoun} DuelingBook name?`
 	const { channel } = await member.user.send({ content: prompt.toString() })
-    return channel.awaitMessages(filter, {
+    return channel.awaitMessages({
+        filter,
 		max: 1,
         time: 30000
     }).then(async (collected) => {
@@ -60,7 +61,8 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
     const filter = m => m.author.id === member.user.id
     const pronoun = override ? `${player.name}'s` : 'your'
     const { channel } = await member.user.send({ content: `Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`});
-    return await channel.awaitMessages(filter, {
+    return await channel.awaitMessages({
+        filter,
         max: 1,
         time: 180000
     }).then(async (collected) => {
@@ -108,7 +110,8 @@ const getDeckName = async (member, player, override = false) => {
     const pronoun = override ? `${player.name}'s` : 'your'
     const filter = m => m.author.id === member.user.id
 	const { channel } = await member.send({ content: `Please provide the common name for ${pronoun} deck (i.e. Chaos Control, Chaos Turbo, Warrior, etc.).`})
-    return await channel.awaitMessages(filter, {
+    return await channel.awaitMessages({
+        filter,
 		max: 1,
         time: 20000
     }).then(async collected => {
@@ -128,7 +131,8 @@ const selectTournament = async (message, tournaments, playerId) => {
     const options = tournaments.map((tournament, index) => `(${index + 1}) ${tournament.name}`)
     const filter = m => m.author.id === playerId
     const { channel } = await message.channel.send({ content: `Please select a tournament:\n${options.join('\n')}`})
-    return await channel.awaitMessages(filter, {
+    return await channel.awaitMessages({
+        filter,
         max: 1,
         time: 15000
     }).then(collected => {
@@ -182,7 +186,8 @@ const createSheetData = async (tournament) => {
 const getTournamentType = async (message) => {
     const filter = m => m.author.id === message.author.id
 	const { channel } = await message.channel.send({ content: `What type of tournament is this?\n(1) Single Elimination\n(2) Double Elimination\n(3) Swiss\n(4) Round Robin`})
-	return await channel.awaitMessages(filter, {
+	return await channel.awaitMessages({
+        filter,
 		max: 1,
 		time: 15000
 	}).then(collected => {
@@ -202,7 +207,8 @@ const getTournamentType = async (message) => {
 const getTournamentFormat = async (message) => {
     const filter = m => m.author.id === message.author.id
 	message.channel.send({ content: `What format will be played in this tournament?`})
-	return await message.channel.awaitMessages(filter, {
+	return await message.channel.awaitMessages({
+        filter,
 		max: 1,
 		time: 15000
 	}).then(collected => {
