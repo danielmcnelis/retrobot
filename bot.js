@@ -577,7 +577,7 @@ client.on('messageCreate', async (message) => {
             )
         }
 
-        return message.channel.send({ content: results.join('\n\n')})
+        return message.channel.send({ content: results.join('\n\n').toString() })
     }
 
     //JOIN
@@ -902,7 +902,7 @@ client.on('messageCreate', async (message) => {
             return message.channel.send({ content: `You have not played any ranked games.`})
         } else {
             results.unshift(`${FL} --- ${player.name}'s Player Profile --- ${FL}`)
-            return message.channel.send({ content: results.join('\n').toString()})
+            return message.channel.send({ content: results.join('\n').toString() })
         }
     }
 
@@ -944,7 +944,7 @@ client.on('messageCreate', async (message) => {
             return message.channel.send({ content: `You have not earned any prestigious medals. ${mad}`})
         } else {
             results.unshift(`${FL} --- ${player.name}'s Best Medals --- ${FL}`)
-            return message.channel.send({ content: results.join('\n').toString()})
+            return message.channel.send({ content: results.join('\n').toString() })
         }
     }
 
@@ -1028,7 +1028,7 @@ client.on('messageCreate', async (message) => {
         : results[0] = `${formatEmoji} --- Top ${top_stats.length} ${formatName} Players --- ${formatEmoji}`
 
         for (let i = 0; i < top_stats.length; i++) results[i+1] = `${(i+1)}. ${getMedal(top_stats[i].elo)} ${top_stats[i].player.name}`
-        for (let i = 0; i < results.length; i += 30) message.channel.send({ content: results.slice(i, i+30)})
+        for (let i = 0; i < results.length; i += 30) message.channel.send({ content: results.slice(i, i+30).join('\n').toString() })
         return
     }
 
