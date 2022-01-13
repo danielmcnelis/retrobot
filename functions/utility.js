@@ -104,9 +104,8 @@ const search = async (query, fuzzyCards) => {
 		new Discord.MessageAttachment(`../merchbot2/public/card_images/${card.image_file}`, card.image_file) :
 		false
 
-	const thumbnail = attachment ? `attachment://${card.image_file}` : `https://ygoprodeck.com/pics/${card.image_file}`
-	const cardEmbed = new Discord.MessageEmbed()
-	if (attachment) cardEmbed.attachFiles(attachment) 
+	const thumbnail = attachment ? `attachment://${card.image_file}` : `https://ygoprodeck.com/pics/${card.image_file}`    
+    const cardEmbed = new Discord.MessageEmbed()
 	cardEmbed.setColor(color)
 	cardEmbed.setTitle(card.name)
 	cardEmbed.setThumbnail(thumbnail)
