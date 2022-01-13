@@ -96,9 +96,13 @@ client.on('messageCreate', async (message) => {
     //CARD SEARCH USING CURLY BRACKETS
     if (!message.content.startsWith("!") && message.content.includes(`{`) && message.content.includes(`}`)) { 
         const query = message.content.slice(message.content.indexOf('{') + 1, message.content.indexOf('}'))
-        const cardEmbed = await search(query, fuzzyCards)
+        const { cardEmbed, attachment } = await search(query, fuzzyCards)
         if (!cardEmbed) return message.channel.send({ content: `Could not find card: "${query}".`})
-        else return message.channel.send({ embeds: [cardEmbed] })
+        if (attachment) {
+            return message.channel.send({ embeds: [cardEmbed], files: [attachment] })
+        } else {
+            return message.channel.send({ embeds: [cardEmbed] })
+        }
     }
 
     //PING 

@@ -111,7 +111,7 @@ const search = async (query, fuzzyCards) => {
 	cardEmbed.setTitle(card.name)
 	cardEmbed.setThumbnail(thumbnail)
 	cardEmbed.setDescription(`${labels}\n\n${card.description}\n\n${stats}`)
-	return cardEmbed
+	return { cardEmbed, attachment }
 }
 
 //ASSIGN ROLES
