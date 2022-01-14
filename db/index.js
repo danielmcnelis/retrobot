@@ -6,6 +6,7 @@ const Match = require('./Match')
 const Matchup = require('./Matchup')
 const Membership = require('./Membership')
 const Player = require('./Player')
+const Queue = require('./Queue')
 const Role = require('./Role')
 const Stats = require('./Stats')
 const Status = require('./Status')
@@ -26,6 +27,9 @@ Player.hasMany(Entry)
 Entry.belongsTo(Tournament)
 Tournament.hasMany(Entry)
 
+Queue.belongsTo(Player)
+Player.hasMany(Queue)
+
 Status.belongsTo(Card)
 Card.hasOne(Status)
 
@@ -43,6 +47,7 @@ module.exports = {
   Matchup,
   Membership,
   Player,
+  Queue,
   Role,
   Stats,
   Status,
