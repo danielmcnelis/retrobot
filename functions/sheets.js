@@ -1,14 +1,19 @@
 
 const { google } = require('googleapis')
-const { googleDriveToken } = require('../secrets.json')
-const { access_token, refresh_token } = googleDriveToken   
+const token = require('../token.json')
+const { access_token, refresh_token } = token   
 const { installed } = require('../credentials.json')
 const { client_secret, client_id, redirect_uris } = installed
 
-const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0], access_token, refresh_token)
+const oAuth2Client = new google.auth.OAuth2(
+    client_id, 
+    client_secret, 
+    redirect_uris[0], 
+    access_token, 
+    refresh_token
+  )
 
 oAuth2Client.setCredentials({ access_token, refresh_token })
-
 const sheets = google.sheets({ version: 'v4', auth: oAuth2Client})
 
 async function makeSheet(title = 'Deck Lists', values = []) {
