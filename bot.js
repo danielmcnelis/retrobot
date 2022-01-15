@@ -591,16 +591,16 @@ client.on('messageCreate', async (message) => {
         return message.channel.send({ content: results.join('\n\n').toString() })
     }
 
-    // CLEAR
-    if (cmd === '!clear') {
+    // QUIT
+    if (cmd === '!quit') {
         if (!isMod(message.member)) return message.channel.send({ content: "You do not have permission to do that.", })
         const element = marr.slice(1, marr.length).join(" ")
-        if (!element) return message.channel.send({ content: `Please specify what you wish to clear.` })
+        if (!element) return message.channel.send({ content: `Please specify the application you wish to quit.` })
         const cleared = await clearStatus(element)
         if (cleared) {
-            return message.channel.send({content: `Cleared ${element}.`})
+            return message.channel.send({content: `Quit ${element}.`})
         } else {
-            return message.channel.send({ content: `Failed to clear ${element}.`})
+            return message.channel.send({ content: `Failed to quit ${element}.`})
         }
     }
     
@@ -889,7 +889,7 @@ client.on('messageCreate', async (message) => {
         	.addField('Mod Ranked Play Commands', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
             .addField('Mod Tournament Commands', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Directly add a player to a bracket. \n!noshow - (@user) - Report a no-show. \n!remove - (@user) - Remove a player from a bracket. \n!start - Start a tournament. \n!end (tournament name) - End a tournament.')
             .addField('Mod Discipline Commands', '\n!mute - (@user) - Mute a user.\n!unmute - (@user) - Unmute a user.')
-            .addField('Mod Server Commands', '\n!census - Update the information of all players in the database.\n!recalc - Recaluate all player stats for a specific format.');
+            .addField('Mod Server Commands', '\n!census - Update the information of all players in the database.\n!recalc - Recaluate all player stats for a specific format.\n!quit - (app) - Quit an app the bot is using');
 
         message.author.send({ embeds: [botEmbed] })
         return message.channel.send({ content: "I messaged you the Mod-Only Guide."})
