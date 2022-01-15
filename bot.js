@@ -14,7 +14,7 @@ const { Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tourname
 
 //FUNCTION IMPORTS
 const { checkDeckList, getDeckType } = require('./functions/deck.js')
-const { uploadDeckFolder } = require('./functions/drive.js')
+const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
 const { addSheet, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
 const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats } = require('./functions/utility.js')
@@ -514,7 +514,8 @@ client.on('messageCreate', async (message) => {
 			const spreadsheetId = await makeSheet(`${name} Deck Lists`, sheet1Data)
 			await addSheet(spreadsheetId, 'Summary')
 			await writeToSheet(spreadsheetId, 'Summary', 'RAW', sheet2Data)
-			await uploadDeckFolder(name)
+			await checkExpiryDate()
+            await uploadDeckFolder(name)
 			return message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${formats[tournament.format].emoji}`})
 		} else {
 			return message.channel.send({ content: `Error: could not access Challonge.com.`})

@@ -1,23 +1,52 @@
 
 
 const { google } = require('googleapis')
-const { googleDriveToken } = require('../secrets.json')    
-const { access_token, refresh_token, token_type } = googleDriveToken      
+const { access_token, refresh_token, expiry_date } = require('../token.json')
 const { installed } = require('../credentials.json')
 const { client_secret, client_id, redirect_uris } = installed
 const fs = require('fs')            
+const axios = require('axios')
 
-const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0], access_token, refresh_token)
-oAuth2Client.setCredentials({ 
-  access_token, 
-  refresh_token,
-  token_type,
-  scope:"https://www.googleapis.com/auth/drive"
- })
+const generateNewToken = async (currentTime) => {
+  const { data } = await axios.post('https://www.googleapis.com/oauth2/v4/token', {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "refresh_token": refresh_token,
+        "grant_type": "refresh_token"
+     })
 
-const drive = google.drive({ version: 'v3', auth: oAuth2Client})
+  const token = {
+    access_token: data.access_token,
+    refresh_token: refresh_token,
+    scope: data.scope,
+    token_type: data.token_type,
+    expiry_date: currentTime + data.expires_in
+  }
+
+  const tokenString = JSON.stringify(token);
+  fs.writeFileSync('../token.json', tokenString);
+}
+
+const checkExpiryDate = async () => {
+  const currentTime = Date.now()
+  if (currentTime > expiry_date) {
+    await generateNewToken(currentTime) 
+  } else {
+    console.log('access token has not expired')
+  }
+}
 
 const uploadDeckFolder = async (tournamentName) => {
+  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0], access_token, refresh_token)
+  oAuth2Client.setCredentials({ 
+    access_token, 
+    refresh_token,
+    token_type,
+    scope:"https://www.googleapis.com/auth/drive"
+  })
+
+  const drive = google.drive({ version: 'v4', auth: oAuth2Client})
+
   const fileMetadata = {
     'name': `${tournamentName} Decks`,
     'mimeType': 'application/vnd.google-apps.folder'
@@ -27,7 +56,7 @@ const uploadDeckFolder = async (tournamentName) => {
   const extensions = fs.readdirSync(folder)
 
   try {
-    await drive.files.create({
+    drive.files.create({
       resource: fileMetadata,
       fields: 'id'
     }, function (err, file) {
@@ -49,7 +78,7 @@ const uploadDeckFolder = async (tournamentName) => {
               body: fs.createReadStream(`./decks/${tournamentName}/${extension}`)
             }
 
-            saveFile(fileMetadata, media, i) 
+            saveFile(drive, fileMetadata, media, i) 
         }
       }
     })
@@ -58,7 +87,7 @@ const uploadDeckFolder = async (tournamentName) => {
   }
 }
 
-const saveFile = async (fileMetadata, media, i) => {
+const saveFile = async (drive, fileMetadata, media, i) => {
 	return setTimeout(async function() {
       await drive.files.create({
         resource: fileMetadata,
@@ -75,5 +104,6 @@ const saveFile = async (fileMetadata, media, i) => {
 }
 
 module.exports = {
+  checkExpiryDate,
   uploadDeckFolder
 }
