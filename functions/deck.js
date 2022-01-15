@@ -40,118 +40,111 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
     options.addArguments("-headless")
     const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build()
     
-    try {
+    const get_deck = `
+        deck_arr = ["#created by ...", "#main"]
+
+        for (let i = 0; i < deck_filled_arr.length; i++) {
+            if (~~deck_filled_arr[i].data("serial_number") > 0) {
+                deck_arr.push(deck_filled_arr[i].data("serial_number"))
+            }
+        }
+
+        deck_arr.push("#extra")
+        for (i = 0; i < extra_filled_arr.length; i++) {
+            if (~~extra_filled_arr[i].data("serial_number") > 0) {
+                deck_arr.push(extra_filled_arr[i].data("serial_number"))   
+            }
+        }
+
+        deck_arr.push("!side")
+        for (i = 0; i < side_filled_arr.length; i++) {
+            if (~~side_filled_arr[i].data("serial_number") > 0) {
+                deck_arr.push(side_filled_arr[i].data("serial_number"))
+            }
+        }
+
+        deck_arr.push("")
+        return deck_arr
+    `
+
+    try {      
         console.log(`Loading ${player.tag}'s deck at ${url}...`)
-        const get_deck = `
-            deck_arr = ["#created by ...", "#main"]
+        await driver.get(url)
+        console.log('driver got Url')
+        await driver.wait(until.elementLocated(By.id("deck_card1")))
+        console.log('driver found deck_card1')
+        deck_arr = await driver.executeScript(get_deck)
+        console.log('driver executed script')
+    } catch (err) {
+        console.log(err)
+    } finally {
+        await driver.quit()
+        await clearStatus('firefox')
+    }
 
-            for (let i = 0; i < deck_filled_arr.length; i++) {
-                if (~~deck_filled_arr[i].data("serial_number") > 0) {
-                    deck_arr.push(deck_filled_arr[i].data("serial_number"))
-                }
+    if (!deck_arr.length) return false
+    const file = deck_arr.join('\n')
+    const cards_arr = deck_arr.filter(el => el.charAt(0) !== '#' && el.charAt(0) !== '!' && el !== '').sort()
+    const cards_obj = convertArrayToObject(cards_arr)        
+    const card_ids = [...await Card.findAll({ where: { tcg_date: { [Op.lte]: formatDate } }})].map(c => c.konami_code)
+    const forbidden_card_ids = [...await Status.findAll({ where: { [formatList]: 'forbidden' }, include: Card })].map(s => s.card.konami_code)
+    const limited_card_ids = [...await Status.findAll({ where: { [formatList]: 'limited' }, include: Card })].map(s => s.card.konami_code)
+    const semi_limited_card_ids = [...await Status.findAll({ where: { [formatList]: 'semi-limited' }, include: Card })].map(s => s.card.konami_code)
+
+    const illegalCards = []
+    const forbiddenCards = []
+    const limitedCards = []
+    const semiLimitedCards = []
+    const unrecognizedCards = []
+
+    const keys = Object.keys(cards_obj)
+    for (let i = 0; i < keys.length; i++) {
+        let konami_code = keys[i]
+        while (konami_code.length < 8) konami_code = '0' + konami_code 
+        if (!card_ids.includes(konami_code)) {
+            const card = await Card.findOne({ where: { konami_code: konami_code } })
+            if (card) {
+                illegalCards.push(card.name)
+            } else {
+                unrecognizedCards.push(konami_code)
             }
-
-            deck_arr.push("#extra")
-            for (i = 0; i < extra_filled_arr.length; i++) {
-                if (~~extra_filled_arr[i].data("serial_number") > 0) {
-                    deck_arr.push(extra_filled_arr[i].data("serial_number"))   
-                }
-            }
-
-            deck_arr.push("!side")
-            for (i = 0; i < side_filled_arr.length; i++) {
-                if (~~side_filled_arr[i].data("serial_number") > 0) {
-                    deck_arr.push(side_filled_arr[i].data("serial_number"))
-                }
-            }
-
-            deck_arr.push("")
-            return deck_arr
-        `
-
-        try {      
-            console.log(`Loading ${player.tag}'s deck at ${url}...`);
-            await driver.get(url);
-            console.log('driver got Url')
-            await driver.wait(until.elementLocated(By.id("deck_card1")));
-            console.log('driver got Url')
-            deck_arr = await driver.executeScript(get_deck);
-            console.log('driver executed script')
-        } catch (err) {
-          console.log(err)
-        } finally {
-          await driver.quit();
-          await clearStatus('firefox')
+        } else if (forbidden_card_ids.includes(konami_code)) {
+            const card = await Card.findOne({ where: { konami_code: konami_code } })
+            if (card) forbiddenCards.push(card.name)
+        } else if (limited_card_ids.includes(konami_code) && cards_obj[konami_code] > 1) {
+            const card = await Card.findOne({ where: { konami_code: konami_code } })
+            if (card) limitedCards.push(card.name)
+        } else if (semi_limited_card_ids.includes(konami_code) && cards_obj[konami_code] > 2) {
+            const card = await Card.findOne({ where: { konami_code: konami_code } })
+            if (card) semiLimitedCards.push(card.name)
         }
+    }
 
-        if (!deck_arr.length) return false
-        const file = deck_arr.join('\n')
-        const cards_arr = deck_arr.filter(el => el.charAt(0) !== '#' && el.charAt(0) !== '!' && el !== '').sort()
-        const cards_obj = convertArrayToObject(cards_arr)        
-        const card_ids = [...await Card.findAll({ where: { tcg_date: { [Op.lte]: formatDate } }})].map(c => c.konami_code)
-        const forbidden_card_ids = [...await Status.findAll({ where: { [formatList]: 'forbidden' }, include: Card })].map(s => s.card.konami_code)
-        const limited_card_ids = [...await Status.findAll({ where: { [formatList]: 'limited' }, include: Card })].map(s => s.card.konami_code)
-        const semi_limited_card_ids = [...await Status.findAll({ where: { [formatList]: 'semi-limited' }, include: Card })].map(s => s.card.konami_code)
+    const tag = player.tag.replace(/[^\w\s]/gi, "_").replace(/ /g,'')
 
-        const illegalCards = []
-        const forbiddenCards = []
-        const limitedCards = []
-        const semiLimitedCards = []
-        const unrecognizedCards = []
-
-        const keys = Object.keys(cards_obj)
-        for (let i = 0; i < keys.length; i++) {
-            let konami_code = keys[i]
-            while (konami_code.length < 8) konami_code = '0' + konami_code 
-            if (!card_ids.includes(konami_code)) {
-                const card = await Card.findOne({ where: { konami_code: konami_code } })
-                if (card) {
-                    illegalCards.push(card.name)
-                } else {
-                    unrecognizedCards.push(konami_code)
-                }
-            } else if (forbidden_card_ids.includes(konami_code)) {
-                const card = await Card.findOne({ where: { konami_code: konami_code } })
-                if (card) forbiddenCards.push(card.name)
-            } else if (limited_card_ids.includes(konami_code) && cards_obj[konami_code] > 1) {
-                const card = await Card.findOne({ where: { konami_code: konami_code } })
-                if (card) limitedCards.push(card.name)
-            } else if (semi_limited_card_ids.includes(konami_code) && cards_obj[konami_code] > 2) {
-                const card = await Card.findOne({ where: { konami_code: konami_code } })
-                if (card) semiLimitedCards.push(card.name)
-            }
+    fs.writeFile(`./decks/${tournamentName}/${tag}.ydk`, file, (err) => {
+        if(err) {
+            return console.log(err)
+        } else {
+            console.log(`${player.tag}'s deck was saved!`)
         }
+    })
+    
+    illegalCards.sort()
+    forbiddenCards.sort()
+    limitedCards.sort()
+    semiLimitedCards.sort()
+    unrecognizedCards.sort()
 
-        const tag = player.tag.replace(/[^\w\s]/gi, "_").replace(/ /g,'')
+    const issues = {
+        illegalCards,
+        forbiddenCards,
+        limitedCards,
+        semiLimitedCards,
+        unrecognizedCards
+    }
 
-		fs.writeFile(`./decks/${tournamentName}/${tag}.ydk`, file, (err) => {
-			if(err) {
-				return console.log(err)
-			} else {
-                console.log(`${player.tag}'s deck was saved!`)
-            }
-		})
-        
-        illegalCards.sort()
-        forbiddenCards.sort()
-        limitedCards.sort()
-        semiLimitedCards.sort()
-        unrecognizedCards.sort()
-
-        const issues = {
-            illegalCards,
-            forbiddenCards,
-            limitedCards,
-            semiLimitedCards,
-            unrecognizedCards
-        }
-
-        return issues
-	} catch (err) {
-		console.log(err)
-	} finally {
-		await driver.quit()
-	}
+    return issues
 }
 
 //CHECK DECK LIST
