@@ -46,7 +46,7 @@ const uploadDeckFolder = async (tournamentName) => {
     scope:"https://www.googleapis.com/auth/drive"
   })
 
-  const drive = google.drive({ version: 'v4', auth: oAuth2Client})
+  const drive = google.drive({ version: 'v3', auth: oAuth2Client})
 
   const fileMetadata = {
     'name': `${tournamentName} Decks`,

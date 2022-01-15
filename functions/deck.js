@@ -12,7 +12,7 @@ const { Op } = require('sequelize')
 const { Card, Status } = require('../db')
 
 //FUNCTION IMPORTS
-const { convertArrayToObject } = require('./utility.js')
+const { clearStatus, convertArrayToObject } = require('./utility.js')
 
 //STATIC IMPORTS
 const { 
@@ -35,6 +35,7 @@ const {
 
 //SAVE YDK
 const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'other') => {
+    let deck_arr = []
     const options = new firefox.Options()
     options.addArguments("-headless")
     const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build()
@@ -68,9 +69,22 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
             return deck_arr
         `
 
-		await driver.get(url)
-		await driver.wait(until.elementLocated(By.id('deck_card1')))
-		const deck_arr = await driver.executeScript(get_deck)
+        try {      
+            console.log(`Loading ${player.tag}'s deck at ${url}...`);
+            await driver.get(url);
+            console.log('driver got Url')
+            await driver.wait(until.elementLocated(By.id("deck_card1")));
+            console.log('driver got Url')
+            deck_arr = await driver.executeScript(get_deck);
+            console.log('driver executed script')
+        } catch (err) {
+          console.log(err)
+        } finally {
+          await driver.quit();
+          await clearStatus('firefox')
+        }
+
+        if (!deck_arr.length) return false
         const file = deck_arr.join('\n')
         const cards_arr = deck_arr.filter(el => el.charAt(0) !== '#' && el.charAt(0) !== '!' && el !== '').sort()
         const cards_obj = convertArrayToObject(cards_arr)        

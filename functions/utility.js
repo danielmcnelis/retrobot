@@ -7,12 +7,21 @@ const Discord = require('discord.js')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Card, Membership, Player, Role, Stats } = require('../db/index.js')
+const { Card, Info, Membership, Player, Role, Stats } = require('../db/index.js')
 
 //STATIC IMPORTS
 const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend, god } = require('../static/emojis.json')
 const formats = require('../static/formats.json')
 const { adminRole, modRole, tourRole } = require('../static/roles.json')
+
+//CLEAR STATUS
+const clearStatus = async (element) => {
+    const info = await Info.findOne({ where: { element } })
+    if (!info) return
+    info.status = 'free'
+    console.log(`${element} is now free`)
+    await info.save()
+}
 
 //FETCH CARD NAMES
 const fetchCardNames = async () => {
@@ -373,6 +382,7 @@ module.exports = {
     assignRoles,
     capitalize,
     convertArrayToObject,
+    clearStatus,
     createMembership,
     createPlayer,
     fetchCardNames,
