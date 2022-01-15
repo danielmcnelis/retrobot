@@ -796,9 +796,18 @@ client.on('messageCreate', async (message) => {
     if (legalcom.includes(cmd)) {
         const player = await Player.findOne({ where: { id: maid } })
         if (!player) return message.channel.send({ content: `Sorry.`})
-        message.channel.send({ content: "Please check your DMs."})
+
+        const info = await Info.findOne({ where: { element: 'firefox' }})
+        if (!info || info.status !== 'free') {
+            return message.channel.send(`Another user is submitting their deck. Please wait a bit and try **!legal** again.`)
+        } else {
+            info.status = 'occupied'
+            await info.save()
+            message.channel.send({ content: `Please check your DMs.` });
+        }
+        
         const issues = await checkDeckList(message.member, player, formatDate, formatEmoji, formatList, formatName)
-        if (!issues) return
+        if (!issues) return clearStatus('firefox')
 
         if (issues['illegalCards'].length || issues['forbiddenCards'].length || issues['limitedCards'].length || issues['semiLimitedCards'].length) {
             let response = `I'm sorry, ${player.name}, your deck is not legal for ${formatName} Format. ${formatEmoji}`
