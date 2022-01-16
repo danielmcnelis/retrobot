@@ -129,9 +129,13 @@ const assignRoles = async (guild, member) => {
     if (!membership) return
     const roles = await Role.findAll({ where: { membershipId: membership.id } })
     console.log('roles.length', roles.length)
-    roles.forEach((r) => { 
+    roles.forEach(async (r) => { 
         console.log('r', r)
-        member.roles.add(r.roleId) 
+        try {
+            await member.roles.add(r.roleId) 
+        } catch (err) {
+            console.log(err)
+        }
     })
 }
 
