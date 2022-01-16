@@ -79,8 +79,8 @@ client.on('messageCreate', async (message) => {
 		}
 	}
     
-    const cmd = marr[0].toLowerCase()
-    const args = marr.slice(1)
+    const cmd = marr[0] ? marr[0].toLowerCase() : ''
+    const args = marr[1] ? marr.slice(1) : ''
     const maid = message.author.id
     const mcid = message.channel.id
     const mgid = message.guild.id
