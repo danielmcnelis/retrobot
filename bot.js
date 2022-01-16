@@ -66,9 +66,9 @@ client.on('messageCreate', async (message) => {
 		//no commands from bots
 		message.author.bot || 
 		//do not allow users to parrot @everyone or @here with the bot
-		message.content.includes('@everyone') || message.content.includes('@here') ||
+		message.content.includes('@everyone') || message.content.includes('@here')
 		//only allow commands starting with ! or including {}
-		(!message.content.startsWith("!") && !message.content.includes("{"))
+		//(!message.content.startsWith("!") && !message.content.includes("{"))
 	) return
 
     const marr = message.content.split(" ")
