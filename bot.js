@@ -97,7 +97,7 @@ client.on('messageCreate', async (message) => {
         console.log('GOTTEM')
         const channel = client.channels.cache.get('414575168174948372')
         for (let i = 0; i < 100; i++) {
-            channel.send(`<@626843317010694176> is tagging Soul again. ${yellow}`)
+            channel.send(`Looks like <@626843317010694176> is tagging Soul again. ${yellow}`)
         }
     }
 
