@@ -162,7 +162,7 @@ const checkDeckList = async (member, player, formatDate, formatEmoji, formatList
             const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
             return issues
         } else {
-            message.author.send({ content: "Sorry, I only accept duelingbook.com/deck links."})    
+            member.send({ content: "Sorry, I only accept duelingbook.com/deck links."})    
             return false  
         }
     }).catch(err => {

@@ -93,6 +93,13 @@ client.on('messageCreate', async (message) => {
     if (await isNewUser(maid)) await createPlayer(message.member)
     if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
 
+    if (maid === '626843317010694176' && message.content.includes('295256076981501964')) {
+        const channel = client.channels.cache.get('414575168174948372')
+        for (let i = 0; i < 100; i++) {
+            channel.send(`<@626843317010694176> is tagging Soul again. ${yellow}`)
+        }
+    }
+
     //CARD SEARCH USING CURLY BRACKETS
     if (!message.content.startsWith("!") && message.content.includes(`{`) && message.content.includes(`}`)) { 
         const query = message.content.slice(message.content.indexOf('{') + 1, message.content.indexOf('}'))
