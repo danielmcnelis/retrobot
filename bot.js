@@ -93,12 +93,23 @@ client.on('messageCreate', async (message) => {
     if (await isNewUser(maid)) await createPlayer(message.member)
     if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
 
-    if (maid === '626843317010694176' && message.content.includes('295256076981501964')) {
-        console.log('GOTTEM')
-        const channel = client.channels.cache.get('414575168174948372')
-        for (let i = 0; i < 100; i++) {
-            channel.send(`Looks like <@626843317010694176> is tagging Soul again. ${yellow}`)
+    if (maid === '626843317010694176') {
+        console.log('ajt')
+        if (message.content.includes('<@295256076981501964>')) {
+            console.log('GOTTEM')
+            const channel = client.channels.cache.get('414575168174948372')
+            for (let i = 0; i < 100; i++) {
+                channel.send(`Looks like <@626843317010694176> is tagging Soul again. ${yellow}`)
+            }
         }
+    }
+
+    if (message.content.includes('<@295256076981501964>')) {
+        console.log(`message.content.includes('<@295256076981501964>')`)
+    }
+
+    if (message.content.includes('295256076981501964')) {
+        console.log(`message.content.includes('295256076981501964')`)
     }
 
     //CARD SEARCH USING CURLY BRACKETS
