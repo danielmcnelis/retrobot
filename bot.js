@@ -68,7 +68,7 @@ client.on('messageCreate', async (message) => {
 		//do not allow users to parrot @everyone or @here with the bot
 		message.content.includes('@everyone') || message.content.includes('@here')
 		//only allow commands starting with ! or including {}
-		//(!message.content.startsWith("!") && !message.content.includes("{"))
+		(!message.content.startsWith("!") && !message.content.includes("{") && !message.content.includes('295256076981501964') && message.author.id !== '626843317010694176')
 	) return
 
     const marr = message.content.split(" ")
@@ -103,11 +103,7 @@ client.on('messageCreate', async (message) => {
             }
         }
     }
-
-    if (message.content.includes('<@295256076981501964>')) {
-        console.log(`message.content.includes('<@295256076981501964>')`)
-    }
-
+    
     if (message.content.includes('295256076981501964')) {
         console.log(`message.content.includes('295256076981501964')`)
     }
