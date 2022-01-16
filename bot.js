@@ -66,7 +66,7 @@ client.on('messageCreate', async (message) => {
 		//no commands from bots
 		message.author.bot || 
 		//do not allow users to parrot @everyone or @here with the bot
-		message.content.includes('@everyone') || message.content.includes('@here')
+		message.content.includes('@everyone') || message.content.includes('@here') ||
 		//only allow commands starting with ! or including {}
 		(!message.content.startsWith("!") && !message.content.includes("{") && !message.content.includes('295256076981501964') && message.author.id !== '626843317010694176')
 	) return
@@ -103,7 +103,7 @@ client.on('messageCreate', async (message) => {
             }
         }
     }
-    
+
     if (message.content.includes('295256076981501964')) {
         console.log(`message.content.includes('295256076981501964')`)
     }
