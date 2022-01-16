@@ -784,6 +784,7 @@ client.on('messageCreate', async (message) => {
 
     //ROLE
     if (rolecom.includes(cmd)) {
+        if (!formatRole) return
         const membership = await Membership.findOne({ where: { playerId: maid, guildId: mgid } })
         if (!membership) return message.channel.send({ content: `You are not in the database.`})
         if (!message.member.roles.cache.some(role => role.id === formatRole)) {
