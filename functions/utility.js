@@ -124,13 +124,10 @@ const search = async (query, fuzzyCards) => {
 
 //ASSIGN ROLES
 const assignRoles = async (guild, member) => {
-    console.log('assignRoles()')
     const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: guild.id }})
     if (!membership) return
     const roles = await Role.findAll({ where: { membershipId: membership.id } })
-    console.log('roles.length', roles.length)
     roles.forEach(async (r) => { 
-        console.log('r', r)
         try {
             await member.roles.add(r.roleId) 
         } catch (err) {
