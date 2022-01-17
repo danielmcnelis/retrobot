@@ -64,11 +64,11 @@ client.on('messageCreate', async (message) => {
 		//no commands in DMs
 		!message.guild || 
 		//no commands from bots
-		message.author.bot
+		message.author.bot ||
 		//do not allow users to parrot @everyone or @here with the bot
 		//message.content.includes('@everyone') || message.content.includes('@here')
 		//only allow commands starting with ! or including {}
-		//(!message.content.startsWith("!") && !message.content.includes("{"))
+		(!message.content.startsWith("!") && !message.content.includes("{") || message.mentions.users.size || message.mentions.roles.size || message.mentions.everyone)
 	) return
 
     const marr = message.content.split(" ")
@@ -93,16 +93,14 @@ client.on('messageCreate', async (message) => {
     if (await isNewUser(maid)) await createPlayer(message.member)
     if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
 
-    
     if (message.mentions.users.size || message.mentions.roles.size || message.mentions.everyone) {
-        console.log('message.mentions', message.mentions)
-        const users = [...message.mentions.users.values()]
-        const roles = [...message.mentions.users.values()]
+        const users = [...message.mentions.users.values()].map((u) => u.username)
+        const roles = [...message.mentions.roles.values()].map((r) => r.name)
         const everyone = message.mentions.everyone ? '@everyone / @here' : null
+        const list = [...users, ...roles, ...everyone].map((e) => !!e)
         const channel = client.channels.cache.get('932527779763851314')
         const authorName = message.author.username
-        channel.send({ content: `${authorName} tagged ${users.length} users, ${roles.length} users, ${everyone ? 'everyone or here' : ''}`})
-    
+        channel.send({ content: `${authorName} tagged: ${list} in ${message.channel.name}.`})
     }
 
     //CARD SEARCH USING CURLY BRACKETS
