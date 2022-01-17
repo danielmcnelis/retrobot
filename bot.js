@@ -1090,6 +1090,8 @@ client.on('messageCreate', async (message) => {
         if (eloHistory.length < x) x = eloHistory.length
         console.log('eloHistory.slice(-x)', eloHistory.slice(-x))
 
+        const data = eloHistory.slice(-x)
+
         const chart = new QuickChart()
         chart.setConfig({
             type: 'line',
@@ -1100,7 +1102,7 @@ client.on('messageCreate', async (message) => {
                     label: false,
                     backgroundColor: 'rgb(10, 54, 138)',
                     borderColor: 'rgb(10, 54, 138)',
-                    data: eloHistory.slice(-x),
+                    data: data,
                     fill: false,
                 }
                 ],
@@ -1113,9 +1115,19 @@ client.on('messageCreate', async (message) => {
                 xAxes: [{
                     display: false,
                     gridLines: {
-                      display: true,
+                        display: true,
                     },
-                  }],
+                }],
+                scales: {
+                    yAxes: [
+                        {
+                            ticks: {
+                                suggestedMin: Math.min(data) - 10,
+                                suggestedMax: Math.max(data) + 10,
+                            }
+                        }
+                    ]
+                },
             },
         })
 
