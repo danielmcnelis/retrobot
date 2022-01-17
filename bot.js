@@ -96,7 +96,7 @@ client.on('messageCreate', async (message) => {
     if (message.mentions.users.size || message.mentions.roles.size || message.mentions.everyone) {
         const users = [...message.mentions.users.values()].map((u) => u.username)
         const roles = [...message.mentions.roles.values()].map((r) => r.name)
-        const everyone = message.mentions.everyone ? '@everyone / @here' : null
+        const everyone = message.mentions.everyone ? ['@everyone / @here'] : []
         const list = [...users, ...roles, ...everyone].map((e) => !!e)
         const channel = client.channels.cache.get('932527779763851314')
         const authorName = message.author.username
