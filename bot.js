@@ -1059,6 +1059,7 @@ client.on('messageCreate', async (message) => {
 
     //HIST
     if (cmd === `!hist` || cmd === `!history`) {
+        if (!format) return
         let x = message.mentions.users.first() ? parseInt(args[1]) : parseInt(args[0]) || 10
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
         if (x > 100 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 100."})
@@ -1091,8 +1092,8 @@ client.on('messageCreate', async (message) => {
         console.log('eloHistory.slice(-x)', eloHistory.slice(-x))
 
         const data = eloHistory.slice(-x)
-        const suggestedMin = Math.round(Math.min(data) / 10) * 10 - 10
-        const suggestedMax = Math.round(Math.max(data) / 10) * 10 + 10
+        const suggestedMin = Math.round(Math.min(...data) / 10) * 10 - 10
+        const suggestedMax = Math.round(Math.max(...data) / 10) * 10 + 10
         console.log('suggestedMin', suggestedMin)
         console.log('suggestedMax', suggestedMax)
 
