@@ -96,9 +96,11 @@ client.on('messageCreate', async (message) => {
     {
         const mentions = Array.from(message.mentions)
         console.log('mentions', mentions)
-        const channel = client.channels.cache.get('932527779763851314')
-        const authorName = message.author.username
-        channel.send({ content: `${authorName} tagged:`})
+        if (mentions.length) {
+            const channel = client.channels.cache.get('932527779763851314')
+            const authorName = message.author.username
+            channel.send({ content: `${authorName} tagged:`})
+        }
     }
 
     //CARD SEARCH USING CURLY BRACKETS
