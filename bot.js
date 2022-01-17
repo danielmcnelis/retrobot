@@ -1091,6 +1091,10 @@ client.on('messageCreate', async (message) => {
         console.log('eloHistory.slice(-x)', eloHistory.slice(-x))
 
         const data = eloHistory.slice(-x)
+        const suggestedMin = Math.round(Math.min(data) / 10) * 10 - 10
+        const suggestedMax = Math.round(Math.max(data) / 10) * 10 + 10
+        console.log('suggestedMin', suggestedMin)
+        console.log('suggestedMax', suggestedMax)
 
         const chart = new QuickChart()
         chart.setConfig({
@@ -1109,8 +1113,8 @@ client.on('messageCreate', async (message) => {
             },
             options: {
                 title: {
-                display: true,
-                text: `${player.name}'s ${capitalize(format)} Elo History - L${x}`,
+                    display: true,
+                    text: `${player.name}'s ${capitalize(format)} Elo History - L${x}`,
                 },
                 xAxes: [{
                     display: false,
@@ -1122,14 +1126,16 @@ client.on('messageCreate', async (message) => {
                     yAxes: [
                         {
                             ticks: {
-                                suggestedMin: Math.min(data) - 10,
-                                suggestedMax: Math.max(data) + 10,
+                                suggestedMin: suggestedMin,
+                                suggestedMax: suggestedMax,
                             }
                         }
                     ]
                 },
             },
         })
+
+        
 
         const url = await chart.getShortUrl()
         return message.channel.send({ content: `${url}` })
