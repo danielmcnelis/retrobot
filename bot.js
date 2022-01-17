@@ -94,6 +94,7 @@ client.on('messageCreate', async (message) => {
     if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
 
     if (message.mentions.users.size || message.mentions.roles.size || message.mentions.everyone) {
+        console.log('message.mentions', message.mentions)
         const users = [...message.mentions.users.values()].map((u) => u.username)
         const roles = [...message.mentions.roles.values()].map((r) => r.name)
         const everyone = message.mentions.everyone ? ['@everyone / @here'] : []
