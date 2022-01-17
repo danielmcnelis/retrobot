@@ -1099,7 +1099,6 @@ client.on('messageCreate', async (message) => {
                 labels: Array.from({length: x}, (_, i) => x - i),
                 datasets: [
                 {
-                    label: false,
                     backgroundColor: 'rgb(10, 54, 138)',
                     borderColor: 'rgb(10, 54, 138)',
                     data: data,
