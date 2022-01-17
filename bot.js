@@ -1060,7 +1060,7 @@ client.on('messageCreate', async (message) => {
     //HIST
     if (cmd === `!hist` || cmd === `!history`) {
         if (!format) return
-        let x = message.mentions.users.first() ? parseInt(args[1]) : parseInt(args[0]) || 100
+        let x = message.mentions.users.first() ? parseInt(args[1]) : parseInt(args[0]) || 50
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
         if (x > 250 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 250."})
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
