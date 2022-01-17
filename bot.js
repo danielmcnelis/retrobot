@@ -94,14 +94,14 @@ client.on('messageCreate', async (message) => {
     if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
 
     
-    if (maid === '194147938786738176') {
+    if (message.mentions.users.size || message.mentions.roles.size || message.mentions.everyone) {
         console.log('message.mentions', message.mentions)
-        // const mentions = [...message.mentions.values()]
-        // if (mentions.length) {
-        //     const channel = client.channels.cache.get('932527779763851314')
-        //     const authorName = message.author.username
-        //     channel.send({ content: `${authorName} tagged:`})
-        // }
+        const users = [...message.mentions.users.values()]
+        const roles = [...message.mentions.users.values()]
+        const everyone = message.mentions.everyone ? '@everyone / @here' : null
+        const channel = client.channels.cache.get('932527779763851314')
+        const authorName = message.author.username
+        channel.send({ content: `${authorName} tagged ${users.length} users, ${roles.length} users, ${everyone ? 'everyone or here' : ''}`})
     
     }
 
