@@ -100,7 +100,7 @@ client.on('messageCreate', async (message) => {
         const list = [...users, ...roles, ...everyone].map((e) => !!e)
         const channel = client.channels.cache.get('932527779763851314')
         const authorName = message.author.username
-        channel.send({ content: `${authorName} tagged: ${list.join(', ')} in ${message.channel.name}.`})
+        channel.send({ content: `${authorName} tagged: ${list.join(', ')} in <#${message.channel.id}>.`})
     }
 
     //CARD SEARCH USING CURLY BRACKETS
