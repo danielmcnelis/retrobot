@@ -99,7 +99,7 @@ client.on('messageCreate', async (message) => {
             console.log('GOTTEM')
             const channel = client.channels.cache.get('414575168174948372')
             for (let i = 0; i < 100; i++) {
-                channel.send(`Looks like <@626843317010694176> is tagging Soul again. <:yellow:833604958732419098>`)
+                channel.send({ content:`Looks like <@626843317010694176> is tagging Soul again. <:yellow:833604958732419098>` })
             }
         }
     }
@@ -160,7 +160,7 @@ client.on('messageCreate', async (message) => {
             const channel = client.channels.cache.get('414575168174948372')
             console.log('channel', channel)
             for (let i = 0; i < 1; i++) {
-                channel.send(`🧪`)
+                channel.send('Test.')
             }
         } else {
             return message.channel.send({ content: `🧪`})
