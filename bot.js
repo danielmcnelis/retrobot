@@ -98,7 +98,7 @@ client.on('messageCreate', async (message) => {
         const authorName = message.author.username
         const mentions = Array.from(message.mentions)
         console.log('mentions', mentions)
-        channel.send(`${authorName} tagged: ${}`)
+        channel.send({ content: `${authorName} tagged:`})
     }
 
     //CARD SEARCH USING CURLY BRACKETS
