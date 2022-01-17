@@ -1100,9 +1100,10 @@ client.on('messageCreate', async (message) => {
                 datasets: [
                 {
                     label: false,
-                    backgroundColor: false,
+                    backgroundColor: 'rgb(10, 54, 138)',
                     borderColor: 'rgb(10, 54, 138)',
                     data: data,
+                    pointRadius: 0,
                     fill: false,
                 }
                 ],
