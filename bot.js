@@ -60,7 +60,6 @@ client.on('guildMemberRemove', member => client.channels.cache.get(welcomeChanne
 
 //COMMANDS
 client.on('messageCreate', async (message) => {
-    console.log('message', message)
     if (
 		//no commands in DMs
 		!message.guild || 
@@ -95,7 +94,7 @@ client.on('messageCreate', async (message) => {
     if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
 
     {
-        const mentions = Array.from(message.mentions)
+        const mentions = [...message.mentions.values()]
         if (mentions.length) {
             const channel = client.channels.cache.get('932527779763851314')
             const authorName = message.author.username
