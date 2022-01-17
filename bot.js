@@ -93,7 +93,7 @@ client.on('messageCreate', async (message) => {
     if (await isNewUser(maid)) await createPlayer(message.member)
     if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
 
-    if (message.mentions.first()) {
+    if (message.mentions.length) {
         const channel = client.channels.cache.get('932527779763851314')
         const authorName = message.author.username
         const mentions = Array.from(message.mentions)
