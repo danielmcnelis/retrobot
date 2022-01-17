@@ -1094,7 +1094,7 @@ client.on('messageCreate', async (message) => {
         chart.setConfig({
             type: 'line',
             data: {
-                labels: new Array.from({length: x}, (_, i) => x - i),
+                labels: Array.from({length: x}, (_, i) => x - i),
                 datasets: [
                 {
                     label: false,
