@@ -1059,7 +1059,7 @@ client.on('messageCreate', async (message) => {
 
     //HIST
     if (cmd === `!hist` || cmd === `!history`) {
-        const x = message.mentions.users.first() ? parseInt(args[1]) : parseInt(args[0]) || 10
+        let x = message.mentions.users.first() ? parseInt(args[1]) : parseInt(args[0]) || 10
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
         if (x > 100 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 100."})
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
@@ -1086,7 +1086,8 @@ client.on('messageCreate', async (message) => {
             const nextElo = prevElo + (sign * delta)
             eloHistory.push(nextElo)
         }
-	 
+
+        if (eloHistory.length < x) x = eloHistory.length
         console.log('eloHistory.slice(-x)', eloHistory.slice(-x))
 
         const chart = new QuickChart()
