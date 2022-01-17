@@ -1099,6 +1099,7 @@ client.on('messageCreate', async (message) => {
                 labels: Array.from({length: x}, (_, i) => x - i),
                 datasets: [
                     {
+                        label: 'Elo',
                         backgroundColor: 'rgb(10, 54, 138)',
                         borderColor: 'rgb(10, 54, 138)',
                         data: data,
@@ -1106,8 +1107,9 @@ client.on('messageCreate', async (message) => {
                         fill: false,
                     },
                     {
-                        backgroundColor: 'rgb(97, 104, 117)',
-                        borderColor: 'rgb(97, 104, 117)',
+                        label: '500',
+                        backgroundColor: 'rgb(186, 186, 186)',
+                        borderColor: 'rgb(186, 186, 186)',
                         data: new Array(x).fill(500),
                         pointRadius: 0,
                         fill: false,
@@ -1118,6 +1120,9 @@ client.on('messageCreate', async (message) => {
                 title: {
                     display: true,
                     text: `${player.name}'s ${capitalize(format)} Elo History - Last ${x} Matches`,
+                },
+                legend: {
+                    display: false
                 },
                 xAxes: [{
                     display: false,
