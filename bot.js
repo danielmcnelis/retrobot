@@ -1062,7 +1062,7 @@ client.on('messageCreate', async (message) => {
         if (!format) return
         let x = message.mentions.users.first() ? parseInt(args[1]) : parseInt(args[0]) || 10
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
-        if (x > 100 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 100."})
+        if (x > 1000 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 1000."})
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
         const player = await Player.findOne({ where: { id: playerId } })
         if (!player) return message.channel.send({ content: "That user is not in the database."})
@@ -1092,6 +1092,10 @@ client.on('messageCreate', async (message) => {
         console.log('eloHistory.slice(-x)', eloHistory.slice(-x))
 
         const data = eloHistory.slice(-x)
+        const suggestedMin = Math.round(Math.min(...data) / 100) * 100 - 100
+        const suggestedMax = Math.round(Math.max(...data) / 100) * 100 + 100
+        console.log('suggestedMin', suggestedMin)
+        console.log('suggestedMax', suggestedMax)
 
         const chart = new QuickChart()
         chart.setConfig({
@@ -1123,8 +1127,8 @@ client.on('messageCreate', async (message) => {
                     yAxes: [
                         {
                             ticks: {
-                                suggestedMin: 200,
-                                suggestedMax: 800,
+                                suggestedMin: suggestedMin,
+                                suggestedMax: suggestedMax,
                             }
                         }
                     ]
