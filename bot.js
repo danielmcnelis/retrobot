@@ -156,7 +156,12 @@ client.on('messageCreate', async (message) => {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            return message.channel.send({ content: `🧪`})
+            console.log('GOTTEM')
+            const channel = client.channels.cache.get('414575168174948372')
+            console.log('channel', channel)
+            for (let i = 0; i < 1; i++) {
+                channel.send(`🧪`)
+            }
         } else {
             return message.channel.send({ content: `🧪`})
         }
