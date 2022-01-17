@@ -1059,6 +1059,10 @@ client.on('messageCreate', async (message) => {
 
     //HIST
     if (cmd === `!hist` || cmd === `!history`) {
+        const x = parseInt(args[0]) || 10
+        if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
+        if (x > 100 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 100."})
+
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : args[0] ? args[0] : maid	
         const player = await Player.findOne({ where: { id: playerId } })
         if (!player) return message.channel.send({ content: "That user is not in the database."})
@@ -1084,19 +1088,19 @@ client.on('messageCreate', async (message) => {
             eloHistory.push(nextElo)
         }
 	 
-        console.log('eloHistory', eloHistory)
+        console.log('eloHistory.slice(-x)', eloHistory.slice(-x))
 
         const chart = new QuickChart()
         chart.setConfig({
             type: 'line',
             data: {
-                labels: [],
+                labels: new Array(x).fill(0),
                 datasets: [
                 {
-                    label: 'My First dataset',
+                    label: false,
                     backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    data: eloHistory.slice(-10),
+                    borderColor: 'rgb(10, 54, 138)',
+                    data: eloHistory.slice(-x),
                     fill: false,
                 }
                 ],
@@ -1104,10 +1108,16 @@ client.on('messageCreate', async (message) => {
             options: {
                 title: {
                 display: true,
-                text: `${player.name}'s Elo History`,
+                text: `${player.name}'s ${capitalize(format)} Elo History - L${x}`,
                 },
+                xAxes: [{
+                    display: false,
+                    gridLines: {
+                      display: true,
+                    },
+                  }],
             },
-            })
+        })
 
         const url = await chart.getShortUrl()
         return message.channel.send({ content: `${url}` })
