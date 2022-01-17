@@ -64,11 +64,11 @@ client.on('messageCreate', async (message) => {
 		//no commands in DMs
 		!message.guild || 
 		//no commands from bots
-		message.author.bot || 
+		message.author.bot
 		//do not allow users to parrot @everyone or @here with the bot
-		message.content.includes('@everyone') || message.content.includes('@here') ||
+		//message.content.includes('@everyone') || message.content.includes('@here')
 		//only allow commands starting with ! or including {}
-		(!message.content.startsWith("!") && !message.content.includes("{") && !message.content.includes('295256076981501964') && message.author.id !== '626843317010694176')
+		//(!message.content.startsWith("!") && !message.content.includes("{"))
 	) return
 
     const marr = message.content.split(" ")
@@ -93,19 +93,12 @@ client.on('messageCreate', async (message) => {
     if (await isNewUser(maid)) await createPlayer(message.member)
     if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
 
-    if (maid === '626843317010694176') {
-        console.log('ajt')
-        if (message.content.includes('295256076981501964')) {
-            console.log('GOTTEM')
-            const channel = client.channels.cache.get('414575168174948372')
-            for (let i = 0; i < 100; i++) {
-                channel.send({ content:`Looks like <@626843317010694176> is tagging Soul again. <:yellow:833604958732419098>` })
-            }
-        }
-    }
-
-    if (message.content.includes('295256076981501964')) {
-        console.log(`message.content.includes('295256076981501964')`)
+    if (message.mentions.first()) {
+        const channel = client.channels.cache.get('932527779763851314')
+        const authorName = message.author.username
+        const mentions = Array.from(message.mentions)
+        console.log('mentions', mentions)
+        channel.send(`${authorName} tagged: ${}`)
     }
 
     //CARD SEARCH USING CURLY BRACKETS
@@ -160,7 +153,7 @@ client.on('messageCreate', async (message) => {
             const channel = client.channels.cache.get('414575168174948372')
             console.log('channel', channel)
             for (let i = 0; i < 1; i++) {
-                channel.send('Test.')
+                channel.send(`🧪`)
             }
         } else {
             return message.channel.send({ content: `🧪`})
