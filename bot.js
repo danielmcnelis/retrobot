@@ -172,96 +172,6 @@ client.on('messageCreate', async (message) => {
         }
     }
 
-    // PLAYERS 
-    if (cmd === `!players`) {
-        if (isProgrammer(message.member)) {
-            console.log('old_players.length', old_players.length)
-            let c = 0
-            for (let i = 0; i < old_players.length; i++) {
-                const p = old_players[i]
-                if (!p.id) {
-                    console.log('missing info:', p)
-                    continue
-                }
-                const count = await Player.count({ where: { id: p.id } })
-                if (!count) {
-                    console.log('creating', p.name)
-                    await Player.create({
-                        id: p.id,
-                        name: p.name,
-                        tag: p.tag
-                    })
-                    c++
-                }
-            } 
-            return message.channel.send({ content: `Added ${c} old players.`})
-        } else {
-            return message.channel.send({ content: lmfao })
-        }
-    }
-
-    // MATCHES 
-    if (cmd === `!matches`) {
-        if (isProgrammer(message.member)) {
-            message.channel.send({ content: `Adding ${old_matches.length} matches, please wait.`})
-            let c = 0
-            for (let i = 0; i < old_matches.length; i++) {
-                const m = old_matches[i]
-                if (!m.winnerId || !m.loserId || !m.format) {
-                    console.log('Bad Match.')
-                    continue
-                }
-
-                const w = await Player.findOne({ where: { id: m.winnerId }})
-                if (!w) {
-                    const winner = {
-                        user: {
-                            bot: false,
-                            id: m.winnerId,
-                            name: null,
-                            tag: null
-                        }
-                    }
-                    await createPlayer(winner)
-                    i--
-                    continue
-                }
-
-                const l = await Player.findOne({ where: { id: m.loserId }})
-                if (!l) {
-                    const loser = {
-                        user: {
-                            bot: false,
-                            id: m.loserId,
-                            name: null,
-                            tag: null
-                        }
-                    }
-                    await createPlayer(loser)
-                    i--
-                    continue
-                }
-                console.log(w.name, '>', l.name, '-', m.format)
-                const nm = await Match.create({ 
-                    format: m.format.toLowerCase(),
-                    winnerId: m.winnerId,
-                    winner_name: w.name,
-                    loserId: m.loserId,
-                    loser_name: l.name,
-                    delta: m.delta,
-                    createdAt: m.createdAt,
-                    updatedAt: m.updatedAt
-                })
-
-                if (nm) c++
-            } 
-
-            return message.channel.send({ content: `Added ${c} matches to the database.`})
-        } else {
-            return message.channel.send({ content: `{mlady}`})
-        }
-    }
-
     //AVATAR
     if (pfpcom.includes(cmd)) {
         const user = message.mentions.users.first() || message.author
@@ -785,7 +695,7 @@ client.on('messageCreate', async (message) => {
 
     //ROLE
     if (rolecom.includes(cmd)) {
-        if (!formatRole) return
+        if (!formatRole) return message.channel.send({ content: `Try using **!stats** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const membership = await Membership.findOne({ where: { playerId: maid, guildId: mgid } })
         if (!membership) return message.channel.send({ content: `You are not in the database.`})
         if (!message.member.roles.cache.some(role => role.id === formatRole)) {
@@ -811,6 +721,7 @@ client.on('messageCreate', async (message) => {
 
     //LEGAL
     if (legalcom.includes(cmd)) {
+        if (!format) return message.channel.send({ content: `Try using **!legal** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const player = await Player.findOne({ where: { id: maid } })
         if (!player) return message.channel.send({ content: `Sorry.`})
 
@@ -840,6 +751,7 @@ client.on('messageCreate', async (message) => {
 
     //BANLIST
     if (banscom.includes(cmd)) {
+        if (!format) return message.channel.send({ content: `Try using **!banlist** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const forbidden = [...await Status.findAll({ where: { [formatList]: 'forbidden' }, order: [["name", "ASC"]] })].map((s) => s.name)
         const limited = [...await Status.findAll({ where: { [formatList]: 'limited' }, order: [["name", "ASC"]] })].map((s) => s.name)
         const semilimited = [...await Status.findAll({ where: { [formatList]: 'semi-limited' }, order: [["name", "ASC"]] })].map((s) => s.name)
@@ -1009,6 +921,7 @@ client.on('messageCreate', async (message) => {
 
     //STATS
     if (statscom.includes(cmd)) {
+        if (!format) return message.channel.send({ content: `Try using **!stats** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : args[0] ? args[0] : maid	
         const player = await Player.findOne({ where: { id: playerId } })
         if (!player) return message.channel.send({ content: "That user is not in the database."})
@@ -1059,7 +972,7 @@ client.on('messageCreate', async (message) => {
 
     //HIST
     if (cmd === `!hist` || cmd === `!history`) {
-        if (!format) return
+        if (!format) return message.channel.send({ content: `Try using **!hist** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         let x = message.mentions.users.first() ? parseInt(args[1]) || 50 : parseInt(args[0]) || 50
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
         if (x > 250 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 250."})
@@ -1152,6 +1065,7 @@ client.on('messageCreate', async (message) => {
 
     //RANK
     if (rankcom.includes(cmd)) {
+        if (!format) return message.channel.send({ content: `Try using **!top** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const x = parseInt(args[0]) || 10
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
         if (x > 100 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 100."})
@@ -1184,6 +1098,7 @@ client.on('messageCreate', async (message) => {
 
     //LOSS
     if (losscom.includes(cmd)) {
+        if (!format) return message.channel.send({ content: `Try using **!loss** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const opid = message.mentions.users.first() ? message.mentions.users.first().id : null	
         if (!opid) return message.channel.send({ content: `No player specified.`})
         if (opid === maid) return message.channel.send({ content: `You cannot lose a match to yourself.`})
@@ -1316,7 +1231,7 @@ client.on('messageCreate', async (message) => {
     //MANUAL
     if (manualcom.includes(cmd)) {
         if (!isMod(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
-
+        if (!format) return message.channel.send({ content: `Try using **!manual** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const usersMap = message.mentions.users
         const userIds = [...usersMap.keys()]	
         const winnerId = message.mentions.users.first() ? message.mentions.users.first().id : args.length > 0 ? args[0]	: null
@@ -1495,6 +1410,7 @@ client.on('messageCreate', async (message) => {
 
     //H2H
     if (h2hcom.includes(cmd)) {
+        if (!format) return message.channel.send({ content: `Try using **!h2h** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const usersMap = message.mentions.users
         const userIds = [...usersMap.keys()]
         const player1Id = message.mentions.users.first() ? message.mentions.users.first().id : null	
@@ -1523,6 +1439,7 @@ client.on('messageCreate', async (message) => {
 
     //UNDO
     if (undocom.includes(cmd)) {
+        if (!format) return message.channel.send({ content: `Try using **!undo** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const allMatches = await Match.findAll({ where: { format }})
         const lastMatch = allMatches.slice(-1)[0]
         const winnerId = lastMatch.winnerId
@@ -1701,6 +1618,7 @@ client.on('messageCreate', async (message) => {
     // It's also required after using the !combine command, but the bot will remind you to do it.
     if (recalccom.includes(cmd)) { 
         if (!isMod(message.member)) return message.channel.send({ content: "You do not have permission to do that."})
+        if (!format) return message.channel.send({ content: `Try using **!recalc** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const all_stats = await Stats.findAll({ where: { format } })
 
         for (let i = 0; i < all_stats.length; i++) {
