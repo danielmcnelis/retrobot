@@ -1100,7 +1100,7 @@ client.on('messageCreate', async (message) => {
                 datasets: [
                 {
                     label: false,
-                    backgroundColor: 'rgb(10, 54, 138)',
+                    backgroundColor: false,
                     borderColor: 'rgb(10, 54, 138)',
                     data: data,
                     fill: false,
