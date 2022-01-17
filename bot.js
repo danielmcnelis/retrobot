@@ -8,6 +8,7 @@ const Discord = require('discord.js')
 const fs = require('fs')
 const { Op } = require('sequelize')
 const FuzzySet = require('fuzzyset')
+const QuickChart = require('quickchart-js');
 
 //DATABASE IMPORTS
 const { Info, Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
@@ -1008,7 +1009,6 @@ client.on('messageCreate', async (message) => {
 
     //STATS
     if (statscom.includes(cmd)) {
-        
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : args[0] ? args[0] : maid	
         const player = await Player.findOne({ where: { id: playerId } })
         if (!player) return message.channel.send({ content: "That user is not in the database."})
@@ -1045,7 +1045,7 @@ client.on('messageCreate', async (message) => {
         const wins = stats ? stats.wins : 0
         const losses = stats ? stats.losses : 0
         const winrate = wins || losses ? `${(100 * wins / (wins + losses)).toFixed(2)}%` : 'N/A'		
-        
+
         return message.channel.send({ content: 
             `${formatEmoji} --- ${formatName} Stats --- ${formatEmoji}`
             + `\nName: ${player.name}`
@@ -1056,6 +1056,63 @@ client.on('messageCreate', async (message) => {
             + `\nWin Rate: ${winrate}`
         })
     }
+
+    //HIST
+    if (cmd === `!hist` || cmd === `!history`) {
+        const playerId = message.mentions.users.first() ? message.mentions.users.first().id : args[0] ? args[0] : maid	
+        const player = await Player.findOne({ where: { id: playerId } })
+        if (!player) return message.channel.send({ content: "That user is not in the database."})
+        let eloHistory = [500]
+
+        const matches = await Match.findAll({
+            where: {
+                format,
+                [Op.or]: [
+                    { winnerId: playerId }, 
+                    { loserId: playerId }
+                ]
+            },
+            order: [['createdAt', 'ASC']]
+        })
+
+        for (let i = 0; i < matches.length; i++) {
+            const match = matches[i]
+            const delta = match.delta
+            const sign = match.winnerId === playerId ? 1 : -1
+            const prevElo = eloHistory.slice(-1)[0] 
+            const nextElo = prevElo + (sign * delta)
+            eloHistory.push(nextElo)
+        }
+	 
+        console.log('eloHistory', eloHistory)
+
+        const chart = new QuickChart()
+        chart.setConfig({
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                {
+                    label: 'My First dataset',
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: eloHistory.slice(-10),
+                    fill: false,
+                }
+                ],
+            },
+            options: {
+                title: {
+                display: true,
+                text: `${player.name}'s Elo History`,
+                },
+            },
+            })
+
+        const url = await chart.getShortUrl()
+        return message.channel.send({ content: `${url}` })
+    }
+
 
     //RANK
     if (rankcom.includes(cmd)) {

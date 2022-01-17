@@ -41,6 +41,7 @@
     "google-spreadsheet": "^3.2.0",
     "googleapis": "^92.0.0",
     "pg": "^8.7.1",
+    "quickchart-js": "^2.0.3",
     "selenium-webdriver": "^4.1.0",
     "sequelize": "^6.12.5"
   },
