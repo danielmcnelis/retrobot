@@ -1059,11 +1059,10 @@ client.on('messageCreate', async (message) => {
 
     //HIST
     if (cmd === `!hist` || cmd === `!history`) {
-        const x = parseInt(args[0]) || 10
+        const x = message.mentions.users.first() ? parseInt(args[1]) : parseInt(args[0]) || 10
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
         if (x > 100 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 100."})
-
-        const playerId = message.mentions.users.first() ? message.mentions.users.first().id : args[0] ? args[0] : maid	
+        const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
         const player = await Player.findOne({ where: { id: playerId } })
         if (!player) return message.channel.send({ content: "That user is not in the database."})
         let eloHistory = [500]
@@ -1094,11 +1093,11 @@ client.on('messageCreate', async (message) => {
         chart.setConfig({
             type: 'line',
             data: {
-                labels: new Array(x).fill(0),
+                labels: new Array.from({length: x}, (_, i) => x - i),
                 datasets: [
                 {
                     label: false,
-                    backgroundColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgb(10, 54, 138)',
                     borderColor: 'rgb(10, 54, 138)',
                     data: eloHistory.slice(-x),
                     fill: false,
