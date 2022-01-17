@@ -1098,13 +1098,20 @@ client.on('messageCreate', async (message) => {
             data: {
                 labels: Array.from({length: x}, (_, i) => x - i),
                 datasets: [
-                {
-                    backgroundColor: 'rgb(10, 54, 138)',
-                    borderColor: 'rgb(10, 54, 138)',
-                    data: data,
-                    pointRadius: 0,
-                    fill: false,
-                }
+                    {
+                        backgroundColor: 'rgb(10, 54, 138)',
+                        borderColor: 'rgb(10, 54, 138)',
+                        data: data,
+                        pointRadius: 0,
+                        fill: false,
+                    },
+                    {
+                        backgroundColor: 'rgb(97, 104, 117)',
+                        borderColor: 'rgb(97, 104, 117)',
+                        data: new Array(x).fill(500),
+                        pointRadius: 0,
+                        fill: false,
+                    },
                 ],
             },
             options: {
