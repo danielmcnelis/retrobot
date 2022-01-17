@@ -93,13 +93,16 @@ client.on('messageCreate', async (message) => {
     if (await isNewUser(maid)) await createPlayer(message.member)
     if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
 
-    {
-        const mentions = [...message.mentions.values()]
-        if (mentions.length) {
-            const channel = client.channels.cache.get('932527779763851314')
-            const authorName = message.author.username
-            channel.send({ content: `${authorName} tagged:`})
-        }
+    
+    if (maid === '194147938786738176') {
+        console.log('message.mentions', message.mentions)
+        // const mentions = [...message.mentions.values()]
+        // if (mentions.length) {
+        //     const channel = client.channels.cache.get('932527779763851314')
+        //     const authorName = message.author.username
+        //     channel.send({ content: `${authorName} tagged:`})
+        // }
+    
     }
 
     //CARD SEARCH USING CURLY BRACKETS
