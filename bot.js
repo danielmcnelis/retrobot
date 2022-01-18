@@ -975,7 +975,7 @@ client.on('messageCreate', async (message) => {
         if (!format) return message.channel.send({ content: `Try using **!hist** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         let x = message.mentions.users.first() ? parseInt(args[1]) || 50 : parseInt(args[0]) || 50
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
-        if (x > 500 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 500."})
+        if (x > 2500 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 2500."})
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
         const player = await Player.findOne({ where: { id: playerId } })
         if (!player) return message.channel.send({ content: "That user is not in the database."})
@@ -1002,64 +1002,67 @@ client.on('messageCreate', async (message) => {
         }
 
         if (eloHistory.length < x) x = eloHistory.length
-        const data = eloHistory.slice(-x)
-        const suggestedMin = Math.round(Math.min(...data) / 25) * 25 - 25
-        const suggestedMax = Math.round(Math.max(...data) / 25) * 25 + 25
-        const chart = new QuickChart()
-        chart.setConfig({
-            type: 'line',
-            data: {
-                labels: Array.from({length: x}, (_, i) => x - i),
-                datasets: [
-                    {
-                        label: 'Elo',
-                        backgroundColor: 'rgb(10, 54, 138)',
-                        borderColor: 'rgb(10, 54, 138)',
-                        data: data,
-                        pointRadius: 0,
-                        fill: false,
-                    },
-                    {
-                        label: '500',
-                        backgroundColor: 'rgb(186, 186, 186)',
-                        borderColor: 'rgb(186, 186, 186)',
-                        data: new Array(x).fill(500),
-                        pointRadius: 0,
-                        fill: false,
-                    },
-                ],
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: `${player.name}'s ${capitalize(format)} Elo History - Last ${x} Matches`,
-                },
-                legend: {
-                    display: false
-                },
-                xAxes: [{
-                    display: false,
-                    gridLines: {
-                        display: true,
-                    },
-                }],
-                scales: {
-                    yAxes: [
+
+        for (let i = 0; i < x; i += 250) {
+            let xAxisLength = x - i >= 250 ? 250 : x - i
+            const data = eloHistory.slice(i, i + 250)
+            const suggestedMin = Math.round(Math.min(...data) / 25) * 25 - 25
+            const suggestedMax = Math.round(Math.max(...data) / 25) * 25 + 25
+            const chart = new QuickChart()
+            chart.setConfig({
+                type: 'line',
+                data: {
+                    labels: Array.from({length: xAxisLength - i}, (_, k) => xAxisLength - i - k),
+                    datasets: [
                         {
-                            ticks: {
-                                suggestedMin: suggestedMin,
-                                suggestedMax: suggestedMax,
-                            }
-                        }
-                    ]
+                            label: 'Elo',
+                            backgroundColor: 'rgb(10, 54, 138)',
+                            borderColor: 'rgb(10, 54, 138)',
+                            data: data,
+                            pointRadius: 0,
+                            fill: false,
+                        },
+                        {
+                            label: '500',
+                            backgroundColor: 'rgb(186, 186, 186)',
+                            borderColor: 'rgb(186, 186, 186)',
+                            data: new Array(x).fill(500),
+                            pointRadius: 0,
+                            fill: false,
+                        },
+                    ],
                 },
-            },
-        })
-
-        
-
-        const url = await chart.getShortUrl()
-        return message.channel.send({ content: `${url}` })
+                options: {
+                    title: {
+                        display: true,
+                        text: `${player.name}'s ${capitalize(format)} Elo History - Last ${x} Matches`,
+                    },
+                    legend: {
+                        display: false
+                    },
+                    xAxes: [{
+                        display: false,
+                        gridLines: {
+                            display: true,
+                        },
+                    }],
+                    scales: {
+                        yAxes: [
+                            {
+                                ticks: {
+                                    suggestedMin: suggestedMin,
+                                    suggestedMax: suggestedMax,
+                                }
+                            }
+                        ]
+                    },
+                },
+            })
+    
+            
+            const url = await chart.getShortUrl()
+            message.channel.send({ content: `${url}` })
+        }
     }
 
 
