@@ -1011,7 +1011,7 @@ client.on('messageCreate', async (message) => {
             console.log('xAxisLength', xAxisLength)
             const data = eloHistory.slice(i, i + 250)
             console.log('data', data)
-            const matchNumbers = Array.from({length: x - i}, (_, k) => x - i - k)
+            const matchNumbers = Array.from({length: xAxisLength}, (_, k) => i + k)
             console.log('matchNumbers', matchNumbers)
             const chart = new QuickChart()
             chart.setConfig({
@@ -1040,7 +1040,7 @@ client.on('messageCreate', async (message) => {
                 options: {
                     title: {
                         display: true,
-                        text: `${player.name}'s ${capitalize(format)} Elo History - Last ${x} Matches`,
+                        text: `${player.name}'s ${capitalize(format)} Elo History - Matches ${x} - ${x + xAxisLength}`,
                     },
                     legend: {
                         display: false
