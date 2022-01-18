@@ -1003,9 +1003,6 @@ client.on('messageCreate', async (message) => {
 
         const suggestedMin = Math.round(Math.min(...eloHistory) / 25) * 25 - 25
         const suggestedMax = Math.round(Math.max(...eloHistory) / 25) * 25 + 25
-
-        console.log('data', data)
-
         if (eloHistory.length < x) x = eloHistory.length
 
         for (let i = 0; i < x; i += 250) {
@@ -1013,6 +1010,7 @@ client.on('messageCreate', async (message) => {
             let xAxisLength = x - i >= 250 ? 250 : x - i
             console.log('xAxisLength', xAxisLength)
             const data = eloHistory.slice(i, i + 250)
+            console.log('data', data)
             const matchNumbers = Array.from({length: x - i}, (_, k) => x - i - k)
             console.log('matchNumbers', matchNumbers)
             const chart = new QuickChart()
