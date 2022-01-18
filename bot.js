@@ -1040,7 +1040,7 @@ client.on('messageCreate', async (message) => {
                 options: {
                     title: {
                         display: true,
-                        text: `${player.name}'s ${capitalize(format)} Elo History - Matches ${x} - ${x + xAxisLength}`,
+                        text: `${player.name}'s ${capitalize(format)} Elo History - Matches ${i} - ${i + xAxisLength}`,
                     },
                     legend: {
                         display: false
