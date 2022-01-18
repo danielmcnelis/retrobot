@@ -1001,18 +1001,25 @@ client.on('messageCreate', async (message) => {
             eloHistory.push(nextElo)
         }
 
+        const suggestedMin = Math.round(Math.min(...eloHistory) / 25) * 25 - 25
+        const suggestedMax = Math.round(Math.max(...eloHistory) / 25) * 25 + 25
+
+        console.log('data', data)
+
         if (eloHistory.length < x) x = eloHistory.length
 
         for (let i = 0; i < x; i += 250) {
+            console.log('i', i)
             let xAxisLength = x - i >= 250 ? 250 : x - i
+            console.log('xAxisLength', xAxisLength)
             const data = eloHistory.slice(i, i + 250)
-            const suggestedMin = Math.round(Math.min(...data) / 25) * 25 - 25
-            const suggestedMax = Math.round(Math.max(...data) / 25) * 25 + 25
+            const matchNumbers = Array.from({length: x - i}, (_, k) => x - i - k)
+            console.log('matchNumbers', matchNumbers)
             const chart = new QuickChart()
             chart.setConfig({
                 type: 'line',
                 data: {
-                    labels: Array.from({length: xAxisLength - i}, (_, k) => xAxisLength - i - k),
+                    labels: matchNumbers,
                     datasets: [
                         {
                             label: 'Elo',
@@ -1026,7 +1033,7 @@ client.on('messageCreate', async (message) => {
                             label: '500',
                             backgroundColor: 'rgb(186, 186, 186)',
                             borderColor: 'rgb(186, 186, 186)',
-                            data: new Array(x).fill(500),
+                            data: new Array(xAxisLength).fill(500),
                             pointRadius: 0,
                             fill: false,
                         },
