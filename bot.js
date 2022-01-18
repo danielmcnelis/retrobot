@@ -973,7 +973,7 @@ client.on('messageCreate', async (message) => {
     //HIST
     if (cmd === `!hist` || cmd === `!history`) {
         if (!format) return message.channel.send({ content: `Try using **!hist** in channels like: <#414575168174948372> or <#629464112749084673>.`})
-        let x = message.mentions.users.first() ? parseInt(args[1]) || 50 : parseInt(args[0]) || 50
+        let x = message.mentions.users.first() ? parseInt(args[1]) || 250 : parseInt(args[0]) || 250
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
         if (x > 2500 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 2500."})
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
@@ -1006,13 +1006,9 @@ client.on('messageCreate', async (message) => {
         if (eloHistory.length < x) x = eloHistory.length
 
         for (let i = 0; i < x; i += 250) {
-            console.log('i', i)
             let xAxisLength = x - i >= 250 ? 250 : x - i
-            console.log('xAxisLength', xAxisLength)
             const data = eloHistory.slice(i, i + 250)
-            console.log('data', data)
             const matchNumbers = Array.from({length: xAxisLength}, (_, k) => i + k)
-            console.log('matchNumbers', matchNumbers)
             const chart = new QuickChart()
             chart.setConfig({
                 type: 'line',
