@@ -975,7 +975,7 @@ client.on('messageCreate', async (message) => {
         if (!format) return message.channel.send({ content: `Try using **!hist** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         let x = message.mentions.users.first() ? parseInt(args[1]) || 50 : parseInt(args[0]) || 50
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
-        if (x > 250 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 250."})
+        if (x > 500 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 500."})
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
         const player = await Player.findOne({ where: { id: playerId } })
         if (!player) return message.channel.send({ content: "That user is not in the database."})
