@@ -183,7 +183,7 @@ const getDeckType = async (player, format, tournamentName = 'other') => {
     const ydk = convertArrayToObject(arr)
 
     const deckType = format === 'goat' ? (
-            (ydk[collapse] >= 2 || ydk[insect] >= 2  || ydk[susa] >= 2 || ydk[toonelf] >= 2 || ydk[mazera] >= 2 || ydk[pixie] >= 2 || ydk[ecto] >= 2 || ydk[silent] >= 2 || ydk[skull] >= 2 || ydk[hugerev] >= 2 || ydk[necrovalleymancer] >= 2 || ydk[smackdown] >= 2 || ydk[pyrlight] >= 2 || ydk[clown] >= 2 || ydk[coin] >= 2) ? 'other' :
+            (ydk[collapse] >= 2 || ydk[insect] >= 2  || ydk[susa] >= 2 || ydk[toonelf] >= 2 || ydk[mazera] >= 2 || ydk[pixie] >= 2 || ydk[ecto] >= 2 || ydk[silent] >= 2 || ydk[skull] >= 2 || ydk[hugerev] >= 2 || ydk[necrovalley] >= 2 || ydk[smackdown] >= 2 || ydk[pyrlight] >= 2 || ydk[clown] >= 2 || ydk[coin] >= 2) ? 'other' :
             (ydk[cat] >= 2  && (ydk[panda] >= 2 || ydk[milus] >= 2) && !ydk[stein] && (ydk[trunade] >= 2 || ydk[decree] >= 2)) ? 'cat otk' :
             (ydk[cat] >= 2 && ydk[manticore] && ydk[wicked] >= 2) ? 'cat control' :
             (ydk[ben_kei] >= 2 && (ydk[trunade] >= 2 || ydk[decree] >= 2)) ? 'ben kei otk' :
