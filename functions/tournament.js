@@ -32,7 +32,7 @@ const askForDBName = async (member, player, override = false, error = false, att
     return channel.awaitMessages({
         filter,
 		max: 1,
-        time: 30000
+        time: 15000
     }).then(async (collected) => {
         const dbName = collected.first().content
         if (dbName.includes("duelingbook.com/deck") || dbName.includes("imgur.com")) {
@@ -64,7 +64,7 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
     return await channel.awaitMessages({
         filter,
         max: 1,
-        time: 180000
+        time: 30000
     }).then(async (collected) => {
         const url = collected.first().content
         if (url.includes("www.duelingbook.com/deck")) {		
@@ -113,7 +113,7 @@ const getDeckName = async (member, player, override = false) => {
     return await channel.awaitMessages({
         filter,
 		max: 1,
-        time: 20000
+        time: 15000
     }).then(async collected => {
         const response = collected.first().content.toLowerCase()
         return response
