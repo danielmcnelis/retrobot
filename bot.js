@@ -21,10 +21,10 @@ const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeck
 const { assignRoles, capitalize, clearStatus, createMembership, createPlayer, fetchCardNames, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats, killFirefox } = require('./functions/utility.js')
 
 // STATIC IMPORTS
-const { welcomeChannel } = require('./static/channels.json')
+const { botSpamChannel, welcomeChannel } = require('./static/channels.json')
 const { client } = require('./static/clients.js')
 const {
-    botcom, bracketcom, dbcom, dropcom, h2hcom, joincom, legalcom, banscom, losscom, manualcom, medalscom,
+    botcom, bracketcom, dbcom, dropcom, h2hcom, joincom, legalcom, banscom, histcom, losscom, manualcom, medalscom,
     noshowcom, pfpcom, profcom, rankcom, recalccom, rolecom, signupcom, startcom, statscom, undocom, yescom
 } = require('./static/commands.json')
 const { FL, legend, lmfao, mad, mlady, sad, soldier } = require('./static/emojis.json')
@@ -982,7 +982,7 @@ client.on('messageCreate', async (message) => {
     }
 
     //HIST
-    if (cmd === `!hist` || cmd === `!history`) {
+    if (histcom.includes(cmd)) {
         if (!format) return message.channel.send({ content: `Try using **!hist** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         let x = message.mentions.users.first() ? parseInt(args[1]) || 250 : parseInt(args[0]) || 250
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
@@ -1012,14 +1012,13 @@ client.on('messageCreate', async (message) => {
             eloHistory.push(nextElo)
         }
 
-        const suggestedMin = Math.round(Math.min(...eloHistory) / 25) * 25 - 25
-        const suggestedMax = Math.round(Math.max(...eloHistory) / 25) * 25 + 25
         if (eloHistory.length < x) x = eloHistory.length
 
-        for (let i = 0; i < x; i += 250) {
-            let xAxisLength = x - i >= 250 ? 250 : x - i
+        if (x <= 250) {
             const data = eloHistory.slice(i, i + 250)
-            const matchNumbers = Array.from({length: xAxisLength}, (_, k) => i + k)
+            const suggestedMin = Math.round(Math.min(...data) / 25) * 25 - 25
+            const suggestedMax = Math.round(Math.max(...data) / 25) * 25 + 25
+            const matchNumbers = Array.from({length: x}, (_, k) => i - k)
             const chart = new QuickChart()
             chart.setConfig({
                 type: 'line',
@@ -1038,7 +1037,7 @@ client.on('messageCreate', async (message) => {
                             label: '500',
                             backgroundColor: 'rgb(186, 186, 186)',
                             borderColor: 'rgb(186, 186, 186)',
-                            data: new Array(xAxisLength).fill(500),
+                            data: new Array(x).fill(500),
                             pointRadius: 0,
                             fill: false,
                         },
@@ -1047,7 +1046,7 @@ client.on('messageCreate', async (message) => {
                 options: {
                     title: {
                         display: true,
-                        text: `${player.name}'s ${capitalize(format)} Elo History - Matches ${i} - ${i + xAxisLength}`,
+                        text: `${player.name}'s ${capitalize(format)} Elo History - Last ${x} Matches`,
                     },
                     legend: {
                         display: false
@@ -1071,9 +1070,71 @@ client.on('messageCreate', async (message) => {
                 },
             })
     
-            
             const url = await chart.getShortUrl()
             message.channel.send({ content: `${url}` })
+        } else {
+            for (let i = 0; i < x; i += 250) {
+                let xAxisLength = x - i >= 250 ? 250 : x - i
+                const data = eloHistory.slice(i, i + 250)
+                const suggestedMin = Math.round(Math.min(...eloHistory) / 25) * 25 - 25
+                const suggestedMax = Math.round(Math.max(...eloHistory) / 25) * 25 + 25
+                const matchNumbers = Array.from({length: xAxisLength}, (_, k) => i + k)
+                const chart = new QuickChart()
+                chart.setConfig({
+                    type: 'line',
+                    data: {
+                        labels: matchNumbers,
+                        datasets: [
+                            {
+                                label: 'Elo',
+                                backgroundColor: 'rgb(10, 54, 138)',
+                                borderColor: 'rgb(10, 54, 138)',
+                                data: data,
+                                pointRadius: 0,
+                                fill: false,
+                            },
+                            {
+                                label: '500',
+                                backgroundColor: 'rgb(186, 186, 186)',
+                                borderColor: 'rgb(186, 186, 186)',
+                                data: new Array(xAxisLength).fill(500),
+                                pointRadius: 0,
+                                fill: false,
+                            },
+                        ],
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: `${player.name}'s ${capitalize(format)} Elo History - Matches ${i} - ${i + xAxisLength}`,
+                        },
+                        legend: {
+                            display: false
+                        },
+                        xAxes: [{
+                            display: false,
+                            gridLines: {
+                                display: true,
+                            },
+                        }],
+                        scales: {
+                            yAxes: [
+                                {
+                                    ticks: {
+                                        suggestedMin: suggestedMin,
+                                        suggestedMax: suggestedMax,
+                                    }
+                                }
+                            ]
+                        },
+                    },
+                })
+                
+                const url = await chart.getShortUrl()
+                const channel = client.channels.cache.get(botSpamChannel)
+                if (!channel) return message.channel.send(`Error: could not find bot-spam channel.`)
+                message.channel.send({ content: `${url}` })
+            }
         }
     }
 

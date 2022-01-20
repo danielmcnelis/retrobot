@@ -4,12 +4,13 @@
     "bracketcom":["!bracket", "!b", "!challonge", "!show", "!tournament", "!pairings"],
     "dbcom": ["!db", "!dbname", "!duelingbook"],
     "dropcom": ["!drop", "!quit", "!out", "!leave", "!exit"],
-    "h2hcom": ["!h", "!h2h", "!head2head", "!headtohead"],
+    "h2hcom": ["!h2h", "!head2head", "!headtohead"],
+    "histcom": ["!hist","!h", "!history", "!chart", "!graph"],
     "joincom": ["!join", "!j", "!enter", "!play", "!in", "!resubmit"],
     "legalcom": ["!legal", "!check", "!checklegal", "!legalcheck", "!checkdeck", "!deckcheck"],
     "losscom": ["!loss", "!l", "!lose", "!lost", "!lossvs", "!lossto", "!lossat", "!losevs", "!loseto", "!loseat", "!lostvs", "!lostto", "!lostat"],
     "manualcom": ["!manual", "!man"],
-    "medalscom": ["!medals", "!medal", "!m"],
+    "medalscom": ["!medals", "!m", "!medal"],
     "nocom": ["no", "nah", "nope", "naw", "n", "na", "nein", "non", "iie", "iya", "nee", "nej", "net"],
     "noshowcom": ["!noshow", "!late", "!n"],
     "pfpcom": ["!pfp", "!avatar"],
@@ -21,5 +22,5 @@
     "startcom": ["!start", "!begin", "!go"],
     "statscom": ["!stats", "!s", "!rank", "!ranking", "!rating", "!elo"],
     "undocom": ["!undo", "!undolast", "!u"],
-    "yescom": ["yes", "yeah", "yea", "ye", "ya", "yah", "yh", "y", "sure", "ok", "okay", "k", "sure", "si", "ja", "oui", "hai", "ha", "ee", "da"]  
+    "yescom": ["yes", "yeah", "yea", "ye", "ya", "yah", "yh", "y", "sure", "ok", "okay", "k", "sure", "si", "j", "ja", "oui", "hai", "ha", "ee", "da"]  
 }
