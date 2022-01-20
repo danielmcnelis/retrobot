@@ -1140,7 +1140,7 @@ client.on('messageCreate', async (message) => {
                     message.channel.send({ content: `The chart(s) you requested will appear in <#${botSpamChannel}>.`})
                 }
 
-                message.channel.send({ content: `${url}` })
+                channel.send({ content: `${url}` })
             }
         }
     }
