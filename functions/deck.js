@@ -12,7 +12,7 @@ const { Op } = require('sequelize')
 const { Card, Status } = require('../db')
 
 //FUNCTION IMPORTS
-const { clearStatus, convertArrayToObject } = require('./utility.js')
+const { clearStatus, convertArrayToObject, killFirefox } = require('./utility.js')
 
 //STATIC IMPORTS
 const { 
@@ -38,7 +38,7 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
     let deck_arr = []
     const options = new firefox.Options()
     options.addArguments("-headless")
-    const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build()
+    let driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build()
     
     const get_deck = `
         deck_arr = ["#created by ...", "#main"]
@@ -71,14 +71,24 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
         console.log(`Loading ${player.tag}'s deck at ${url}...`)
         await driver.get(url)
         console.log('driver got Url')
-        await driver.wait(until.elementLocated(By.id("deck_card1")))
+        await driver.wait(until.elementLocated(By.id('deck_card1')), 10000)
         console.log('driver found deck_card1')
         deck_arr = await driver.executeScript(get_deck)
         console.log('driver executed script')
     } catch (err) {
         console.log(err)
-    } finally {
+        await driver.close()
+        console.log('driver closed')
         await driver.quit()
+        console.log('driver quit')
+        await killFirefox()
+        await clearStatus('firefox')
+    } finally {
+        await driver.close()
+        console.log('driver closed')
+        await driver.quit()
+        console.log('driver quit')
+        await killFirefox()
         await clearStatus('firefox')
     }
 
@@ -121,7 +131,6 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
     }
 
     const tag = player.tag.replace(/[^\w\s]/gi, "_").replace(/ /g,'')
-
     fs.writeFile(`./decks/${tournamentName}/${tag}.ydk`, file, (err) => {
         if(err) {
             return console.log(err)
@@ -282,7 +291,7 @@ const getDeckType = async (player, format, tournamentName = 'other') => {
             'other' 
         ) : 'other'
 
-    console.log(file, ' is ', deckType)
+    console.log(file, 'is', deckType)
     return deckType
 }
 

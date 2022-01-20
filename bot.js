@@ -18,7 +18,7 @@ const { checkDeckList, getDeckType } = require('./functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
-const { assignRoles, capitalize, clearStatus, createMembership, createPlayer, fetchCardNames, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats } = require('./functions/utility.js')
+const { assignRoles, capitalize, clearStatus, createMembership, createPlayer, fetchCardNames, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats, killFirefox } = require('./functions/utility.js')
 
 // STATIC IMPORTS
 const { welcomeChannel } = require('./static/channels.json')
@@ -522,11 +522,22 @@ client.on('messageCreate', async (message) => {
         if (!isMod(message.member)) return message.channel.send({ content: "You do not have permission to do that.", })
         const element = marr.slice(1, marr.length).join(" ")
         if (!element) return message.channel.send({ content: `Please specify the application you wish to quit.` })
+        
+        if (element === 'firefox') {
+            try {
+                await killFirefox()
+            } catch (err) {
+                console.log(err)
+                return message.channel.send({ content: `Failed to quit ${element}.`})
+            }
+        }
+
+        const emoji = element === 'firefox' ? '🦊' : ''
         const cleared = await clearStatus(element)
         if (cleared) {
-            return message.channel.send({content: `Quit ${element}.`})
+            return message.channel.send({content: `You force quit ${element}. ${emoji}`})
         } else {
-            return message.channel.send({ content: `Failed to quit ${element}.`})
+            return message.channel.send({ content: `Failed to quit ${element}. ${emoji}`})
         }
     }
     
