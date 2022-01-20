@@ -1030,7 +1030,7 @@ client.on('messageCreate', async (message) => {
                             backgroundColor: 'rgb(10, 54, 138)',
                             borderColor: 'rgb(10, 54, 138)',
                             data: data,
-                            pointRadius: 0,
+                            pointRadius: 3,
                             fill: false,
                         },
                         {
@@ -1090,7 +1090,7 @@ client.on('messageCreate', async (message) => {
                                 backgroundColor: 'rgb(10, 54, 138)',
                                 borderColor: 'rgb(10, 54, 138)',
                                 data: data,
-                                pointRadius: 0,
+                                pointRadius: 3,
                                 fill: false,
                             },
                             {
