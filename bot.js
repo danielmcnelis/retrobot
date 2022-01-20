@@ -528,16 +528,16 @@ client.on('messageCreate', async (message) => {
                 await killFirefox()
             } catch (err) {
                 console.log(err)
-                return message.channel.send({ content: `Failed to quit ${element}.`})
+                return message.channel.send({ content: `Failed to quit ${capitalize(element)}. ${emoji}`})
             }
         }
 
         const emoji = element === 'firefox' ? '🦊' : ''
         const cleared = await clearStatus(element)
         if (cleared) {
-            return message.channel.send({content: `You force quit ${element}. ${emoji}`})
+            return message.channel.send({content: `You force quit ${capitalize(element)}. ${emoji}`})
         } else {
-            return message.channel.send({ content: `Failed to quit ${element}. ${emoji}`})
+            return message.channel.send({ content: `Failed to quit ${elecapitalize(element)}. ${emoji}`})
         }
     }
     
