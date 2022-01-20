@@ -1019,6 +1019,7 @@ client.on('messageCreate', async (message) => {
             const suggestedMin = Math.round(Math.min(...data) / 25) * 25 - 25
             const suggestedMax = Math.round(Math.max(...data) / 25) * 25 + 25
             const matchNumbers = Array.from({length: x}, (_, k) => x - k)
+            const radius = x <= 10 ? 3 : x <= 50 ? 2 : 1
             const chart = new QuickChart()
             chart.setConfig({
                 type: 'line',
@@ -1030,7 +1031,7 @@ client.on('messageCreate', async (message) => {
                             backgroundColor: 'rgb(10, 54, 138)',
                             borderColor: 'rgb(10, 54, 138)',
                             data: data,
-                            pointRadius: 3,
+                            pointRadius: radius,
                             fill: false,
                         },
                         {
@@ -1079,6 +1080,7 @@ client.on('messageCreate', async (message) => {
                 const suggestedMin = Math.round(Math.min(...eloHistory) / 25) * 25 - 25
                 const suggestedMax = Math.round(Math.max(...eloHistory) / 25) * 25 + 25
                 const matchNumbers = Array.from({length: xAxisLength}, (_, k) => i + k)
+                const radius = xAxisLength <= 10 ? 3 : xAxisLength <= 50 ? 2 : 1
                 const chart = new QuickChart()
                 chart.setConfig({
                     type: 'line',
@@ -1090,7 +1092,7 @@ client.on('messageCreate', async (message) => {
                                 backgroundColor: 'rgb(10, 54, 138)',
                                 borderColor: 'rgb(10, 54, 138)',
                                 data: data,
-                                pointRadius: 3,
+                                pointRadius: radius,
                                 fill: false,
                             },
                             {
@@ -1132,7 +1134,12 @@ client.on('messageCreate', async (message) => {
                 
                 const url = await chart.getShortUrl()
                 const channel = client.channels.cache.get(botSpamChannel)
-                if (!channel) return message.channel.send(`Error: could not find bot-spam channel.`)
+                if (!channel) {
+                    return message.channel.send({ content: `Error: could not find bot-spam channel.`})
+                } else if (i === 0) {
+                    message.channel.send({ content: `The chart(s) you requested will appear in <#${botSpamChannel}>.`})
+                }
+
                 message.channel.send({ content: `${url}` })
             }
         }
