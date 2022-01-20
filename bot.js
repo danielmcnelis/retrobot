@@ -1015,10 +1015,10 @@ client.on('messageCreate', async (message) => {
         if (eloHistory.length < x) x = eloHistory.length
 
         if (x <= 250) {
-            const data = eloHistory.slice(i, i + 250)
+            const data = eloHistory.slice(-x)
             const suggestedMin = Math.round(Math.min(...data) / 25) * 25 - 25
             const suggestedMax = Math.round(Math.max(...data) / 25) * 25 + 25
-            const matchNumbers = Array.from({length: x}, (_, k) => i - k)
+            const matchNumbers = Array.from({length: x}, (_, k) => x - k)
             const chart = new QuickChart()
             chart.setConfig({
                 type: 'line',
