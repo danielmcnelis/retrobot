@@ -28,7 +28,8 @@ const askForDBName = async (member, player, override = false, error = false, att
     const greeting = override ? '' : 'Hi! '
     const prompt = error ? `I think you're getting ahead of yourself. First, I need ${pronoun} DuelingBook name.`
     : `${greeting}This appears to be ${player.name}'s first tournament in our system. Can you please provide ${pronoun} DuelingBook name?`
-	const { channel } = await member.user.send({ content: prompt.toString() })
+	const { channel } = await member.send({ content: prompt.toString() }).catch(err)
+    if (!channel) return false
     return channel.awaitMessages({
         filter,
 		max: 1,
@@ -37,7 +38,7 @@ const askForDBName = async (member, player, override = false, error = false, att
         const dbName = collected.first().content
         if (dbName.includes("duelingbook.com/deck") || dbName.includes("imgur.com")) {
             if (attempt >= 3) {
-                member.user.send({ content: `Sorry, time's up. Go back to the server and try again.`})
+                member.send({ content: `Sorry, time's up. Go back to the server and try again.`})
                 return false
             } else {
                 return askForDBName(member, player, override, true, attempt++)
@@ -46,12 +47,12 @@ const askForDBName = async (member, player, override = false, error = false, att
             await player.update({
                 duelingBook: dbName
             })
-            member.user.send({ content: `Thanks! I saved ${pronoun} DuelingBook name as: ${dbName}. If that's wrong, go back to the server and type **!db name**.`})
+            member.send({ content: `Thanks! I saved ${pronoun} DuelingBook name as: ${dbName}. If that's wrong, go back to the server and type **!db name**.`})
             return dbName
         }
     }).catch((err) => {
         console.log(err)
-        member.user.send({ content: `Sorry, time's up. Go back to the server and try again.`})
+        member.send({ content: `Sorry, time's up. Go back to the server and try again.`})
         return false
     })
 }
@@ -60,7 +61,8 @@ const askForDBName = async (member, player, override = false, error = false, att
 const getDeckList = async (member, player, formatDate, formatList, tournamentName, override = false) => {            
     const filter = m => m.author.id === member.user.id
     const pronoun = override ? `${player.name}'s` : 'your'
-    const { channel } = await member.user.send({ content: `Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`});
+    const { channel } = await member.send({ content: `Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`}).catch(err)
+    if (!channel) return false
     return await channel.awaitMessages({
         filter,
         max: 1,
@@ -109,7 +111,8 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
 const getDeckName = async (member, player, override = false) => {
     const pronoun = override ? `${player.name}'s` : 'your'
     const filter = m => m.author.id === member.user.id
-	const { channel } = await member.send({ content: `Please provide the common name for ${pronoun} deck (i.e. Chaos Control, Chaos Turbo, Warrior, etc.).`})
+	const { channel } = await member.send({ content: `Please provide the common name for ${pronoun} deck (i.e. Chaos Control, Chaos Turbo, Warrior, etc.).`}).catch(err)
+    if (!channel) return false
     return await channel.awaitMessages({
         filter,
 		max: 1,
