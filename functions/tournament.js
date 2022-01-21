@@ -29,8 +29,8 @@ const askForDBName = async (member, player, override = false, error = false, att
     const prompt = error ? `I think you're getting ahead of yourself. First, I need ${pronoun} DuelingBook name.`
     : `${greeting}This appears to be ${player.name}'s first tournament in our system. Can you please provide ${pronoun} DuelingBook name?`
 	const message = await member.send({ content: prompt.toString() }).catch((err) => console.log(err))
-    if (!message) return false
-    return message.channel.awaitMessages({
+    if (!message || !message.channel) return false
+    return await message.channel.awaitMessages({
         filter,
 		max: 1,
         time: 15000
@@ -62,14 +62,14 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
     const filter = m => m.author.id === member.user.id
     const pronoun = override ? `${player.name}'s` : 'your'
     const message = await member.send({ content: `Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`}).catch((err) => console.log(err))
-    if (!message) return false
+    if (!message || !message.channel) return false
     return await message.channel.awaitMessages({
         filter,
         max: 1,
         time: 30000
     }).then(async (collected) => {
         const url = collected.first().content
-        if (url.includes("www.duelingbook.com/deck")) {		
+        if (url.includes("duelingbook.com/deck")) {		
             member.send({ content: 'Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.'})
             const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
 
@@ -112,7 +112,7 @@ const getDeckName = async (member, player, override = false) => {
     const pronoun = override ? `${player.name}'s` : 'your'
     const filter = m => m.author.id === member.user.id
 	const message = await member.send({ content: `Please provide the common name for ${pronoun} deck (i.e. Chaos Control, Chaos Turbo, Warrior, etc.).`}).catch((err) => console.log(err))
-    if (!message) return false
+    if (!message || !message.channel) return false
     return await message.channel.awaitMessages({
         filter,
 		max: 1,
@@ -133,8 +133,8 @@ const selectTournament = async (message, tournaments, playerId) => {
     if (tournaments.length === 1) return tournaments[0]
     const options = tournaments.map((tournament, index) => `(${index + 1}) ${tournament.name}`)
     const filter = m => m.author.id === playerId
-    const { channel } = await message.channel.send({ content: `Please select a tournament:\n${options.join('\n')}`})
-    return await channel.awaitMessages({
+    message.channel.send({ content: `Please select a tournament:\n${options.join('\n').toString()}`})
+    return await message.channel.awaitMessages({
         filter,
         max: 1,
         time: 15000
@@ -188,8 +188,8 @@ const createSheetData = async (tournament) => {
 // GET TOURNAMENT TYPE
 const getTournamentType = async (message) => {
     const filter = m => m.author.id === message.author.id
-	const { channel } = await message.channel.send({ content: `What type of tournament is this?\n(1) Single Elimination\n(2) Double Elimination\n(3) Swiss\n(4) Round Robin`})
-	return await channel.awaitMessages({
+	message.channel.send({ content: `What type of tournament is this?\n(1) Single Elimination\n(2) Double Elimination\n(3) Swiss\n(4) Round Robin`})
+	return await message.channel.awaitMessages({
         filter,
 		max: 1,
 		time: 15000

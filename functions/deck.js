@@ -71,7 +71,7 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
         console.log(`Loading ${player.tag}'s deck at ${url}...`)
         await driver.get(url)
         console.log('driver got Url')
-        await driver.wait(until.elementLocated(By.id('deck_card1')), 60000)
+        await driver.wait(until.elementLocated(By.id('deck_card1')), 30000)
         console.log('driver found deck_card1')
         deck_arr = await driver.executeScript(get_deck)
         console.log('driver executed script')
@@ -156,7 +156,7 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
 const checkDeckList = async (member, player, formatDate, formatEmoji, formatList, formatName, tournamentName = 'other') => {  
     const filter = m => m.author.id === member.user.id
     const message = await member.send({ content: `Please provide a duelingbook.com/deck link for the ${formatName} Format ${formatEmoji} deck you would like to check.`}).catch((err) => console.log(err))
-    if (!message) return false
+    if (!message || !message.channel) return false
     return await message.channel.awaitMessages({
         filter,
         max: 1,

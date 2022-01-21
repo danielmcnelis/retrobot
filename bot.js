@@ -1576,7 +1576,7 @@ client.on('messageCreate', async (message) => {
 
         const filter = m => m.author.id === message.author.id
         message.channel.send({ content: `Are you sure you want to combine ${oldPlayer.name}'s stats with ${newPlayer.name}'s stats?\n\n⚠️ **WARNING** ⚠️\nThis cannot be undone. ${oldPlayer.name}'s stats will be forever lost.`})
-        await message.channel.awaitMessages({
+        return await message.channel.awaitMessages({
         filter,
             max: 1,
             time: 15000
