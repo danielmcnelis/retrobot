@@ -28,7 +28,7 @@ const askForDBName = async (member, player, override = false, error = false, att
     const greeting = override ? '' : 'Hi! '
     const prompt = error ? `I think you're getting ahead of yourself. First, I need ${pronoun} DuelingBook name.`
     : `${greeting}This appears to be ${player.name}'s first tournament in our system. Can you please provide ${pronoun} DuelingBook name?`
-	const message = await member.send({ content: prompt.toString() })
+	const message = await member.send({ content: prompt.toString() }).catch((err) => console.log(err))
     if (!message) return false
     return message.channel.awaitMessages({
         filter,
@@ -61,7 +61,7 @@ const askForDBName = async (member, player, override = false, error = false, att
 const getDeckList = async (member, player, formatDate, formatList, tournamentName, override = false) => {            
     const filter = m => m.author.id === member.user.id
     const pronoun = override ? `${player.name}'s` : 'your'
-    const message = await member.send({ content: `Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`})
+    const message = await member.send({ content: `Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`}).catch((err) => console.log(err))
     if (!message) return false
     return await message.channel.awaitMessages({
         filter,
@@ -111,7 +111,7 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
 const getDeckName = async (member, player, override = false) => {
     const pronoun = override ? `${player.name}'s` : 'your'
     const filter = m => m.author.id === member.user.id
-	const message = await member.send({ content: `Please provide the common name for ${pronoun} deck (i.e. Chaos Control, Chaos Turbo, Warrior, etc.).`})
+	const message = await member.send({ content: `Please provide the common name for ${pronoun} deck (i.e. Chaos Control, Chaos Turbo, Warrior, etc.).`}).catch((err) => console.log(err))
     if (!message) return false
     return await message.channel.awaitMessages({
         filter,
