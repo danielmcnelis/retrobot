@@ -1239,6 +1239,7 @@ client.on('messageCreate', async (message) => {
                     for (let i = 0; i < common_tournament_ids.length; i++) {
                         const id = common_tournament_ids[i]
                         tournament = await Tournament.findOne({ where: { id: id, guildId: mgid }})
+                        if (!tournament) continue
                         losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
                         winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
                         if (!losingEntry || !winningEntry) continue
@@ -1379,6 +1380,7 @@ client.on('messageCreate', async (message) => {
                     for (let i = 0; i < common_tournament_ids.length; i++) {
                         const id = common_tournament_ids[i]
                         tournament = await Tournament.findOne({ where: { id: id, guildId: mgid }})
+                        if (!tournament) continue
                         losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
                         winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
                         if (!losingEntry || !winningEntry) continue
