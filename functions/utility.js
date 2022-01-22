@@ -358,10 +358,10 @@ const getRandomSubset = (arr, n) => {
 }
 
 //IS ADMIN?
-const isAdmin = (member) => member.roles.cache.some(role => role.id === adminRole)
+const isAdmin = (member) => member && member.roles.cache.some(role => role.id === adminRole)
 
 //IS MOD?
-const isMod = (member) => member.roles.cache.some(role => role.id === modRole)
+const isMod = (member) => member && member.roles.cache.some(role => role.id === modRole)
 
 //IS NEW MEMBER?
 const isNewMember = async (guildId, playerId) => !await Membership.count({ where: { guildId, playerId } })
@@ -370,10 +370,10 @@ const isNewMember = async (guildId, playerId) => !await Membership.count({ where
 const isNewUser = async (id) => !await Player.count({ where: { id } })
 
 //IS PROGRAMMER?
-const isProgrammer = (member) => member.user.id === '194147938786738176'
+const isProgrammer = (member) => member && member.user.id === '194147938786738176'
 
 //IS TOURNAMENT PLAYER?
-const isTourPlayer = (member) => member.roles.cache.some(role => role.id === tourRole)
+const isTourPlayer = (member) => member && member.roles.cache.some(role => role.id === tourRole)
 
 //SHUFFLE ARRAY
 const shuffleArray = (arr) => {

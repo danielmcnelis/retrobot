@@ -416,6 +416,7 @@ client.on('messageCreate', async (message) => {
 
     //START
     if (startcom.includes(cmd)) {
+        console.log(1234)
         if (!isMod(message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
         const tournaments = await Tournament.findAll({ where: { state: 'pending', guildId: mgid }, order: [['createdAt', 'ASC']] })
 		const tournament = await selectTournament(message, tournaments, maid)

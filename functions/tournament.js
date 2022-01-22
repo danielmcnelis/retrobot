@@ -129,6 +129,7 @@ const getDeckName = async (member, player, override = false) => {
 
 // SELECT TOURNAMENT
 const selectTournament = async (message, tournaments, playerId) => {
+    console.log('sT')
     if (tournaments.length === 0) return false
     if (tournaments.length === 1) return tournaments[0]
     const options = tournaments.map((tournament, index) => `(${index + 1}) ${tournament.name}`)
