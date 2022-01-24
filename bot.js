@@ -163,12 +163,27 @@ client.on('messageCreate', async (message) => {
         }
     }
 
-    // FIX 
+    // FIX
     if (cmd === `!fix`) {
         if (isProgrammer(message.member)) {
-            return message.channel.send({ content: `🛠️`})
+            const tournaments = await Tournament.findAll({
+                where: {
+                guildId: mgid,
+                updatedAt: {
+                    [Op.gte]: "2021-12-06 03:20:04.198+00",
+                },
+                },
+                order: [["createdAt", "ASC"]],
+            })
+
+            const tournament = await selectTournament(message, tournaments, maid)
+            if (!tournament) return message.channel.send({ content: `There are no tournaments.` })
+            const { name } = tournament
+            await checkExpiryDate()
+            await uploadDeckFolder(name)
+            return message.channel.send({ content: `Your tournament files have been uploaded! ${goat}` })
         } else {
-            return message.channel.send({ content: `🛠️`})
+            return message.channel.send({ content: `🛠️` })
         }
     }
 
