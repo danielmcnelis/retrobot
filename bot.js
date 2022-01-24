@@ -192,7 +192,7 @@ client.on('messageCreate', async (message) => {
                 console.log(err)
             }
 
-            return message.channel.send({ content: `Your tournament files have been uploaded! ${goat}` })
+            return message.channel.send({ content: `Your tournament files have been uploaded! ${FL}` })
         } else {
             return message.channel.send({ content: `🛠️` })
         }
