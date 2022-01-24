@@ -183,10 +183,6 @@ client.on('messageCreate', async (message) => {
 
             try {
                 await checkExpiryDate()
-            } catch (err) {
-                console.log(err)
-            }
-            try {
                 await uploadDeckFolder(name)
             } catch (err) {
                 console.log(err)

@@ -2,7 +2,7 @@
 
 const { google } = require('googleapis')
 const token = require('../token.json')
-const { access_token, refresh_token, expiry_date } = token
+const { access_token, refresh_token, token_type, expiry_date } = token
 const { installed } = require('../credentials.json')
 const { client_secret, client_id, redirect_uris } = installed
 const fs = require('fs')            
