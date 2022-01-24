@@ -2,7 +2,7 @@
 
 const { google } = require('googleapis')
 const token = require('../token.json')
-const { access_token, refresh_token, token_type, expiry_date } = token
+const { access_token, refresh_token, expiry_date } = token
 const { installed } = require('../credentials.json')
 const { client_secret, client_id, redirect_uris } = installed
 const fs = require('fs')            
@@ -40,14 +40,15 @@ const checkExpiryDate = async () => {
 }
 
 const uploadDeckFolder = async (tournamentName) => {
-  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0], access_token, refresh_token)
-  oAuth2Client.setCredentials({ 
+  const oAuth2Client = new google.auth.OAuth2(
+    client_id, 
+    client_secret, 
+    redirect_uris[0], 
     access_token, 
-    refresh_token,
-    token_type,
-    scope:"https://www.googleapis.com/auth/drive"
-  })
+    refresh_token
+  )
 
+  oAuth2Client.setCredentials(token)
   const drive = google.drive({ version: 'v3', auth: oAuth2Client})
 
   const fileMetadata = {
