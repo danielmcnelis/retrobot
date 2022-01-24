@@ -24,6 +24,7 @@ const generateNewToken = async (currentTime) => {
     expiry_date: currentTime + data.expires_in
   }
 
+  console.log('regeneratedToken', regeneratedToken)
   const tokenString = JSON.stringify(regeneratedToken);
   fs.writeFileSync('../token.json', tokenString);
 }
@@ -31,6 +32,7 @@ const generateNewToken = async (currentTime) => {
 const checkExpiryDate = async () => {
   const currentTime = Date.now()
   if (currentTime > expiry_date) {
+    console.log('generating new token')
     await generateNewToken(currentTime) 
   } else {
     console.log('access token has not expired')

@@ -179,8 +179,19 @@ client.on('messageCreate', async (message) => {
             const tournament = await selectTournament(message, tournaments, maid)
             if (!tournament) return message.channel.send({ content: `There are no tournaments.` })
             const { name } = tournament
-            await checkExpiryDate()
-            await uploadDeckFolder(name)
+            console.log('name', name)
+
+            try {
+                await checkExpiryDate()
+            } catch (err) {
+                console.log(err)
+            }
+            try {
+                await uploadDeckFolder(name)
+            } catch (err) {
+                console.log(err)
+            }
+
             return message.channel.send({ content: `Your tournament files have been uploaded! ${goat}` })
         } else {
             return message.channel.send({ content: `🛠️` })
