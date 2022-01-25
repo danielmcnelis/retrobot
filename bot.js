@@ -674,7 +674,7 @@ client.on('messageCreate', async (message) => {
             })
 
             if (!new_entry) return message.channel.send({ content: `Error: Could not access database.`})
-            member.roles.add(tourRole)
+            mentioned.roles.add(tourRole)
             message.author.send({ content: `Thanks! I have all the information we need for ${player.name}!`})
             return client.channels.cache.get(formats[tournament.format].channel).send({ content: `<@${player.id}> is now registered for ${tournament.name}!`})
         } else {
