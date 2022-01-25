@@ -631,10 +631,10 @@ client.on('messageCreate', async (message) => {
     //SIGN UP
     if (signupcom.includes(cmd)) {
         if (!isMod(message.member)) return message.channel.send({ content: 'You do not have permission to do that. Please type **!join** instead.'})   
-        const member = message.mentions.members.first()
-        if (!member) return message.channel.send({ content: `Could not find user in the server.`})
-        const player = await Player.findOne({ where: { id: member.user.id }})
-        if (!player) return message.channel.send({ content: `${member.user.username} is not in the database.`})
+        const mentioned = message.mentions.members.first()
+        if (!mentioned) return message.channel.send({ content: `Could not find user in the server.`})
+        const player = await Player.findOne({ where: { id: mentioned.user.id }})
+        if (!player) return message.channel.send({ content: `${mentioned.user.username} is not in the database.`})
         const tournaments = await Tournament.findAll({ where: { state: 'pending', guildId: mgid }, order: [['createdAt', 'ASC']] })
         const tournament = await selectTournament(message, tournaments, maid)
         const count = await Tournament.count({ where: { state: 'underway', guildId: mgid } })
@@ -650,9 +650,9 @@ client.on('messageCreate', async (message) => {
 
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player, override = true)
         if (!dbName) return
-        const deckListUrl = await getDeckList(member, player, formats[tournament.format].date, formats[tournament.format].list, tournament.name, override = true)
+        const deckListUrl = await getDeckList(message.member, player, formats[tournament.format].date, formats[tournament.format].list, tournament.name, override = true)
         if (!deckListUrl) return
-        const deckName = await getDeckName(member, player, override = true)
+        const deckName = await getDeckName(message.member, player, override = true)
         const deckType = await getDeckType(player, tournament.format, tournament.name)
         if (!deckType) return
         const deckCategory = getDeckCategory(deckType)
