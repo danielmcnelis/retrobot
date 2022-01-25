@@ -650,9 +650,9 @@ client.on('messageCreate', async (message) => {
 
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player, override = true)
         if (!dbName) return
-        const deckListUrl = await getDeckList(message.member, player, formats[tournament.format].date, formats[tournament.format].list, tournament.name, override = true)
+        const deckListUrl = await getDeckList(member, player, formats[tournament.format].date, formats[tournament.format].list, tournament.name, override = true)
         if (!deckListUrl) return
-        const deckName = await getDeckName(message.member, player, override = true)
+        const deckName = await getDeckName(member, player, override = true)
         const deckType = await getDeckType(player, tournament.format, tournament.name)
         if (!deckType) return
         const deckCategory = getDeckCategory(deckType)
