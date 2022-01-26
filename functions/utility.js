@@ -66,7 +66,7 @@ const findCard = async (query, fuzzyCards) => {
 	if (query.length >= 10) {
 		for (let i = 0; i < fuzzy_search.length; i++) {
 			const result = fuzzy_search[i][1]
-			if (result.replace(/[^\w\s]/gi, "").toLowerCase().includes(query.toLowerCase())) {
+			if (result.replace(/[^\ws]/gi, "").toLowerCase().includes(query.toLowerCase())) {
 				partial_match = result
 				break
 			}
