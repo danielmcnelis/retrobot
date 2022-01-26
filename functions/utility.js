@@ -82,6 +82,7 @@ const findCard = async (query, fuzzyCards) => {
 
 //SEARCH
 const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, formatList) => {
+    console.log('formatName, formatEmoji, formatDate, formatList', formatName, formatEmoji, formatDate, formatList)
 	const card_name = await findCard(query, fuzzyCards)
 	if (!card_name) return false
 
@@ -103,12 +104,17 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
         }
     })
 
+    console.log('!!status', !!status)
+
     const position = status ? status[formatList] : 'unlimited'
     const indicator = position === 'unlimited' ? '' :
         position === 'semi-limited' ? semi :
         position === 'limited' ? limited :
         position === 'forbidden' ? forbidden :
         ''
+
+    console.log('position', position)
+    console.log('indicator', indicator)
 
     const legal = card.tcg_date && (card.tcg_date <= formatDate)
     console.log('legal', legal)
