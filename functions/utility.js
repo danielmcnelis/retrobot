@@ -148,14 +148,14 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 	if (card.effect) classes.push("Effect")
 
 	const labels = card.category === "Monster" ? 
-		`**Attribute:** ${card.attribute} ${eval(card.attribute)}` + 
+		(`**Attribute:** ${card.attribute} ${eval(card.attribute)}` + 
 		`\n${card.xyz ? `**Rank:** ${card.level} ${Rank}` : card.link ? `**Link Rating:** ${card.rating} ${Link}` : `**Level:** ${card.level} ${Star}`}` +
 		`\n**Release Date:** ${card.tcg_date || 'OCG Only'}` +
         formatName ? `\n**${formatName} ${formatEmoji} Status:** ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal' }` : '' +
-		`\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**` :
-		`**Category: ${card.icon}** ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
+		`\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**`) :
+		(`**Category: ${card.icon}** ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
 		`\n**Release Date:** ${card.tcg_date || 'OCG Only'}` +
-        formatName ? `\n**${formatName} ${formatEmoji} Status:** ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal' }` : ''
+        formatName ? `\n**${formatName} ${formatEmoji} Status:** ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal' }` : '')
 	
 	const stats = card.category === "Monster" ? 
 			`**ATK:** ${card.atk === null ? '?' : card.atk} ${ATK}` + 
