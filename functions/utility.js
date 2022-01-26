@@ -154,7 +154,8 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
         formatName ? `\n**${formatName} ${formatEmoji} Status:** ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal' }` : '' +
 		`\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**` :
 		`**Category: ${card.icon}** ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
-		`\n**Release Date:** ${card.tcg_date || 'OCG Only'}`
+		`\n**Release Date:** ${card.tcg_date || 'OCG Only'}` +
+        formatName ? `\n**${formatName} ${formatEmoji} Status:** ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal' }` : ''
 	
 	const stats = card.category === "Monster" ? 
 			`**ATK:** ${card.atk === null ? '?' : card.atk} ${ATK}` + 
