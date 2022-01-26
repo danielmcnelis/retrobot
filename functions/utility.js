@@ -82,6 +82,7 @@ const findCard = async (query, fuzzyCards) => {
 
 //SEARCH
 const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, formatList) => {
+    console.log('formatName, formatEmoji, formatDate, formatList', formatName, formatEmoji, formatDate, formatList)
 	const card_name = await findCard(query, fuzzyCards)
 	if (!card_name) return false
 
@@ -139,12 +140,13 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 	if (card.effect) classes.push("Effect")
 
 	const labels = card.category === "Monster" ? 
-		//`Attribute: ${card.attribute} ${eval(card.attribute)}` + 
+		`Attribute: ${card.attribute} ${eval(card.attribute)}` + 
 		`\n${card.xyz ? `Rank: ${card.level} ${Rank}` : card.link ? `Link Rating: ${card.rating} ${Link}` : `Level: ${card.level} ${Star}`}` +
 		`\nRelease Date: ${card.tcg_date || 'OCG Only'}` +
         `${formatName ? `\n${formatName} ${formatEmoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}` +
 		`\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**` :
-		`Category: ${card.icon} ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
+		`Card: ${card.category} ${eval(card.category)}` +
+        `\nCategory: ${card.icon} ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
 		`\nRelease Date: ${card.tcg_date || 'OCG Only'}` +
         `${formatName ? `\n**${formatName} ${formatEmoji} Status:** ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}`
 	
@@ -159,9 +161,8 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 
 	const thumbnail = attachment ? `attachment://${card.image_file}` : `https://ygoprodeck.com/pics/${card.image_file}`    
     const cardEmbed = new Discord.MessageEmbed()
-    cardEmbed.setAuthor({ name: `${card.name} ${card.attribute ? eval(card.attribute) : eval(card.category)}` })
 	cardEmbed.setColor(color)
-	//cardEmbed.setTitle(card.name)
+	cardEmbed.setTitle(card.name)
 	cardEmbed.setThumbnail(thumbnail)
 	cardEmbed.setDescription(`${labels}\n\n${card.description}\n\n${stats}`)
 	return { cardEmbed, attachment }
