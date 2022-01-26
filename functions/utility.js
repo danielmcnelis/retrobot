@@ -150,8 +150,8 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
         `${formatName ? `\n${formatName} ${formatEmoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}`
 	
 	const stats = card.category === "Monster" ? 
-			`**ATK:** ${card.atk === null ? '?' : card.atk} ${ATK}` + 
-			` ${!card.link ? `**DEF:** ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
+			`ATK: ${card.atk === null ? '?' : card.atk} ${ATK}` + 
+			` ${!card.link ? `DEF: ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
 			''
 	
 	const attachment = fs.existsSync(`../merchbot2/public/card_images/${card.image_file}`) ?
