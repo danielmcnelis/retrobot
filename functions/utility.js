@@ -104,21 +104,13 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
         }
     })
 
-    console.log('!!status', !!status)
-
     const position = status ? status[formatList] : 'unlimited'
     const indicator = position === 'unlimited' ? '' :
         position === 'semi-limited' ? semi :
         position === 'limited' ? limited :
         position === 'forbidden' ? forbidden :
         ''
-
-    console.log('position', position)
-    console.log('indicator', indicator)
-
     const legal = card.tcg_date && (card.tcg_date <= formatDate)
-    console.log('legal', legal)
-
 	const color = card.category === "Spell" ? "#42f578" :
 		card.category === "Trap" ? "#e624ed" :
 		card.category === "Monster" && card.fusion ? "#a930ff" :
@@ -148,13 +140,13 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 	if (card.effect) classes.push("Effect")
 
 	const labels = card.category === "Monster" ? 
-		`**Attribute:** ${card.attribute} ${eval(card.attribute)}` + 
-		`\n${card.xyz ? `**Rank:** ${card.level} ${Rank}` : card.link ? `**Link Rating:** ${card.rating} ${Link}` : `**Level:** ${card.level} ${Star}`}` +
-		`\n**Release Date:** ${card.tcg_date || 'OCG Only'}` +
-        `${formatName ? `\n**${formatName} ${formatEmoji} Status:** ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}` +
+		`Attribute: ${card.attribute} ${eval(card.attribute)}` + 
+		`\n${card.xyz ? `Rank: ${card.level} ${Rank}` : card.link ? `Link Rating: ${card.rating} ${Link}` : `Level: ${card.level} ${Star}`}` +
+		`\nRelease Date: ${card.tcg_date || 'OCG Only'}` +
+        `${formatName ? `\n${formatName} ${formatEmoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}` +
 		`\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**` :
-		`**Category: ${card.icon}** ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
-		`\n**Release Date:** ${card.tcg_date || 'OCG Only'}` +
+		`Category: ${card.icon} ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
+		`\nRelease Date: ${card.tcg_date || 'OCG Only'}` +
         `${formatName ? `\n**${formatName} ${formatEmoji} Status:** ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}`
 	
 	const stats = card.category === "Monster" ? 
