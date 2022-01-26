@@ -11,7 +11,13 @@ const { exec } = require('child_process')
 const { Card, Info, Membership, Player, Role, Stats } = require('../db/index.js')
 
 //STATIC IMPORTS
-const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend, god } = require('../static/emojis.json')
+const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend, god, ATK, DEF,
+    DARK, LIGHT, EARTH, WIND, WATER, DIVINE, FIRE, Aqua, Beast, BeastWarrior, Continuous, 
+    Counter, Cyberse, Dinosaur, DivineBeast, Dragon, Equip, Fairy, Field, Fiend, Fish, 
+    Insect, Link, Machine, Normal, Plant, Psychic, Pyro, QuickPlay, Rank, Reptile, 
+    Ritual, Rock, Scale, SeaSerpent, Spell, Spellcaster, Star, Thunder, Trap, Warrior, 
+    WingedBeast, Wyrm, Zombie
+ } = require('../static/emojis.json')
 const formats = require('../static/formats.json')
 const { adminRole, modRole, tourRole } = require('../static/roles.json')
 
@@ -118,16 +124,16 @@ const search = async (query, fuzzyCards) => {
 	if (card.effect) classes.push("Effect")
 
 	const labels = card.category === "Monster" ? 
-		`**Attribute:** ${card.attribute}` + 
-		`\n${card.xyz ? `**Rank:** ${card.level}` : card.link ? `**Link Rating:** ${card.rating}` : `**Level:** ${card.level}`}` +
+		`**Attribute:** ${card.attribute} ${eval(card.attribute)}` + 
+		`\n${card.xyz ? `**Rank:** ${card.level} ${Rank}` : card.link ? `**Link Rating:** ${card.rating} ${Link}` : `**Level:** ${card.level} ${Star}`}` +
 		`\n**Release Date:** ${card.tcg_date || 'OCG Only'}` +
-		`\n**[** ${card.type} / ${classes.join(" / ")} **]**` :
-		`**Category: ${card.icon}**` +
+		`\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**` :
+		`**Category: ${card.icon}** ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
 		`\n**Release Date:** ${card.tcg_date || 'OCG Only'}`
 	
 	const stats = card.category === "Monster" ? 
-			`**ATK:** ${card.atk === null ? '?' : card.atk}` + 
-			` ${!card.link ? `**DEF:** ${card.def === null ? '?' : card.def}` : ''}` :
+			`**ATK:** ${card.atk === null ? '?' : card.atk} ${ATK}` + 
+			` ${!card.link ? `**DEF:** ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
 			''
 	
 	const attachment = fs.existsSync(`../merchbot2/public/card_images/${card.image_file}`) ?
