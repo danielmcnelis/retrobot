@@ -82,7 +82,6 @@ const findCard = async (query, fuzzyCards) => {
 
 //SEARCH
 const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, formatList) => {
-    console.log('formatName, formatEmoji, formatDate, formatList', formatName, formatEmoji, formatDate, formatList)
 	const card_name = await findCard(query, fuzzyCards)
 	if (!card_name) return false
 
@@ -148,7 +147,7 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 		`Card: ${card.category} ${eval(card.category)}` +
         `\nCategory: ${card.icon} ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
 		`\nRelease Date: ${card.tcg_date || 'OCG Only'}` +
-        `${formatName ? `\n**${formatName} ${formatEmoji} Status:** ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}`
+        `${formatName ? `\n${formatName} ${formatEmoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}`
 	
 	const stats = card.category === "Monster" ? 
 			`**ATK:** ${card.atk === null ? '?' : card.atk} ${ATK}` + 
