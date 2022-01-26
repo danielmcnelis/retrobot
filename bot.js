@@ -821,7 +821,7 @@ client.on('messageCreate', async (message) => {
         	.setTitle('RetroBot')
 	        .setDescription('A Rankings and Tournament Bot for FormatLibrary.com.\n' )
 	        .setURL('https://formatlibrary.com/')
-	        .setAuthor('Jazz#2704', 'https://i.imgur.com/wz5TqmR.png', 'https://formatlibrary.com/')
+            .setAuthor({ name: 'Jazz#2704', iconURL: 'https://i.imgur.com/wz5TqmR.png', url: 'https://formatlibrary.com/' })
             .setThumbnail('https://i.imgur.com/ul7nKjk.png')
             .addField('How to Use This Guide', '\nThe following commands can be used for any format in the appropriate channels (i.e. <#414575168174948372>, <#629464112749084673>, etc.).')
         	.addField('Ranked Play Commands', '\n!stats - (blank or @user) - Post a player’s stats. \n!loss - (@user) - Report a loss to another player. \n!top - (n) - Post the channel’s top rated players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a format role. \n!undo - Undo the last loss if you made a mistake. \n')
