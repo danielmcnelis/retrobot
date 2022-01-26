@@ -29,8 +29,6 @@ const {
 } = require('./static/commands.json')
 const { FL, legend, lmfao, mad, mlady, sad, soldier } = require('./static/emojis.json')
 const formats = require('./static/formats.json')
-const old_matches = require('./static/matches.json')
-const old_players = require('./static/players.json')
 const { bfpRole, muteRole, tourRole, politicsRole } = require('./static/roles.json')
 const { challongeAPIKey } = require('./secrets.json')
 const fuzzyCards = FuzzySet([], false)
@@ -107,7 +105,7 @@ client.on('messageCreate', async (message) => {
     //CARD SEARCH USING CURLY BRACKETS
     if (!message.content.startsWith("!") && message.content.includes(`{`) && message.content.includes(`}`)) { 
         const query = message.content.slice(message.content.indexOf('{') + 1, message.content.indexOf('}'))
-        const { cardEmbed, attachment } = await search(query, fuzzyCards)
+        const { cardEmbed, attachment } = await search(query, fuzzyCards, formatName, formatEmoji, formatDate, formatList)
         if (!cardEmbed) return message.channel.send({ content: `Could not find card: "${query}".`})
         if (attachment) {
             return message.channel.send({ embeds: [cardEmbed], files: [attachment] })
