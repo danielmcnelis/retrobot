@@ -541,7 +541,7 @@ client.on('messageCreate', async (message) => {
     // QUIT
     if (cmd === '!quit') {
         if (!isMod(message.member)) return message.channel.send({ content: "You do not have permission to do that.", })
-        const element = marr.slice(1, marr.length).join(" ")
+        const element = marr.slice(1, marr.length).join(" ").toLowerCase()
         if (!element) return message.channel.send({ content: `Please specify the application you wish to quit.` })
         
         if (element === 'firefox') {
@@ -558,7 +558,7 @@ client.on('messageCreate', async (message) => {
         if (cleared) {
             return message.channel.send({content: `You force quit ${capitalize(element)}. ${emoji}`})
         } else {
-            return message.channel.send({ content: `Failed to quit ${elecapitalize(element)}. ${emoji}`})
+            return message.channel.send({ content: `Failed to quit ${capitalize(element)}. ${emoji}`})
         }
     }
     
