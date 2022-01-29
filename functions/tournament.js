@@ -373,10 +373,10 @@ const findOtherPreReqMatch = (matchesArr = [], nextMatchId, completedMatchId) =>
         if (match.id === nextMatchId) {
             const pre_reqs = match.prerequisite_match_ids_csv.split(",").map((e) => parseInt(e))
             if (pre_reqs[0] === completedMatchId) {
-                const pairing = getPairing(matchesArr = [], pre_reqs[1])
+                const pairing = getPairing(matchesArr, pre_reqs[1])
                 return pairing
             } else if (pre_reqs[1] === completedMatchId) {
-                const pairing = getPairing(matchesArr = [], pre_reqs[0])
+                const pairing = getPairing(matchesArr, pre_reqs[0])
                 return pairing
             } 
             else return false
@@ -447,7 +447,7 @@ const processMatchResult = async (message, winningPlayer, losingPlayer, tourname
         return false
     } 
 
-    const matchesArr = await getMatches(tournament.id)
+    const matchesArr = await getMatches(tournament.id) || []
     let matchId = false
     let scores = false
     for (let i = 0; i < matchesArr.length; i++) {
@@ -487,10 +487,10 @@ const processMatchResult = async (message, winningPlayer, losingPlayer, tourname
     
     winningEntry.wins++
     await winningEntry.save()
-    const updatedMatchesArr = await getMatches(tournament.id)
-    const winnerNextMatch = findNextMatch(updatedmatchesArr = [], matchId, winningEntry.participantId)
-    const winnerNextOpponent = winnerNextMatch ? await findNextOpponent(tournament.id, updatedmatchesArr = [], winnerNextMatch, winningEntry.participantId) : null
-    const winnerMatchWaitingOn = winnerNextOpponent ? null : findOtherPreReqMatch(updatedmatchesArr = [], winnerNextMatch, matchId) 
+    const updatedMatchesArr = await getMatches(tournament.id) || []
+    const winnerNextMatch = findNextMatch(updatedMatchesArr, matchId, winningEntry.participantId)
+    const winnerNextOpponent = winnerNextMatch ? await findNextOpponent(tournament.id, updatedMatchesArr, winnerNextMatch, winningEntry.participantId) : null
+    const winnerMatchWaitingOn = winnerNextOpponent ? null : findOtherPreReqMatch(updatedMatchesArr, winnerNextMatch, matchId) 
     const winnerWaitingOnP1 = winnerMatchWaitingOn && winnerMatchWaitingOn.p1 && winnerMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: winnerMatchWaitingOn.p1 }, include: Player }) : null
     const winnerWaitingOnP2 = winnerMatchWaitingOn && winnerMatchWaitingOn.p1 && winnerMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: winnerMatchWaitingOn.p2 }, include: Player }) : null
 
@@ -507,9 +507,9 @@ const processMatchResult = async (message, winningPlayer, losingPlayer, tourname
         await losingEntry.destroy()
     }
 
-    const loserNextMatch = loserEliminated ? null : findNextMatch(updatedmatchesArr = [], matchId, losingEntry.participantId)
-    const loserNextOpponent = loserNextMatch ? await findNextOpponent(tournament.id, updatedmatchesArr = [], loserNextMatch, losingEntry.participantId) : null
-    const loserMatchWaitingOn = loserNextOpponent ? null : findOtherPreReqMatch(updatedmatchesArr = [], loserNextMatch, matchId) 
+    const loserNextMatch = loserEliminated ? null : findNextMatch(updatedMatchesArr, matchId, losingEntry.participantId)
+    const loserNextOpponent = loserNextMatch ? await findNextOpponent(tournament.id, updatedMatchesArr, loserNextMatch, losingEntry.participantId) : null
+    const loserMatchWaitingOn = loserNextOpponent ? null : findOtherPreReqMatch(updatedMatchesArr, loserNextMatch, matchId) 
     const loserWaitingOnP1 = loserMatchWaitingOn && loserMatchWaitingOn.p1 && loserMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: loserMatchWaitingOn.p1 }, include: Player }) : null
     const loserWaitingOnP2 = loserMatchWaitingOn && loserMatchWaitingOn.p1 && loserMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: loserMatchWaitingOn.p2 }, include: Player }) : null
 
