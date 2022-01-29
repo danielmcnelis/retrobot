@@ -460,16 +460,22 @@ const processMatchResult = async (message, winningPlayer, losingPlayer, tourname
         }
     }
 
-    const success = await axios({
-        method: 'put',
-        url: `https://formatlibrary:${challongeAPIKey}@api.challonge.com/v1/tournaments/${tournament.id}/matches/${matchId}.json`,
-        data: {
-            match: {
-                winner_id: winningEntry.participantId,
-                scores_csv: scores
+    let success
+
+    try {
+        success = await axios({
+            method: 'put',
+            url: `https://formatlibrary:${challongeAPIKey}@api.challonge.com/v1/tournaments/${tournament.id}/matches/${matchId}.json`,
+            data: {
+                match: {
+                    winner_id: winningEntry.participantId,
+                    scores_csv: scores
+                }
             }
-        }
-    })
+        })
+    } catch (err) {
+        console.log(err)
+    }
      
     if (!success) {
         message.channel.send({ content: `Error: could not update bracket for ${tournament.name}.`})
