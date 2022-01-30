@@ -235,7 +235,7 @@ const removeParticipant = async (message, member, entry, tournament, drop = fals
 
         if (success) {
             await entry.destroy()
-            member.roles.remove(tourRole)
+            member.roles.remove(tourRole).catch((err) => console.log(err))
         
             if (drop) {
                 return message.channel.send({ content: `I removed you from the tournament. Better luck next time!`})
@@ -259,6 +259,7 @@ const removeParticipant = async (message, member, entry, tournament, drop = fals
 
 //SEED
 const seed = async (message, tournament) => {
+    message.channel.send({ content: `Seeding in progress, please wait.`})
     const format = tournament.format
     const entries = await Entry.findAll({ where: { tournamentId: tournament.id } })    
     const expEntries = []

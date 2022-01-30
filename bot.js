@@ -1339,7 +1339,7 @@ client.on('messageCreate', async (message) => {
         if (!format) return message.channel.send({ content: `Try using **!manual** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const usersMap = message.mentions.users
         const userIds = [...usersMap.keys()]	
-        const winnerId = message.mentions.users.first() ? message.mentions.users.first().id : args.length > 0 ? args[0]	: null
+        const winnerId = message.mentions.users.first() ? message.mentions.users.first().id : args.length > 0 ? args[0] : null
         const loserId = userIds.length > 1 ? userIds[1] : args.length > 1 ? args[1] : null	
         if (!winnerId || !loserId) return message.channel.send({ content: `Please specify 2 players.`})
         if (winnerId === loserId) return message.channel.send({ content: `Please specify 2 different players.`})
@@ -1350,6 +1350,9 @@ client.on('messageCreate', async (message) => {
 
         if (winner && await isNewUser(winnerId)) await createPlayer(winner)
         if (loser && await isNewUser(loserId)) await createPlayer(loser)
+
+        if (!winner && await isNewUser(winnerId)) return message.channel.send(`Sorry, unable to add user ${winnerId} to the database.`)
+        if (!loser && await isNewUser(loserId)) return message.channel.send(`Sorry, unable to add user ${loserId} to the database.`)
 
         const winningPlayer = await Player.findOne({ where: { id: winnerId } })
         const wCount = await Stats.count({ where: { playerId: winnerId, format } })
@@ -1663,6 +1666,7 @@ client.on('messageCreate', async (message) => {
     // It also creates new players if they are not in the database (i.e. they joined while bot was down).
     if (cmd === `!census`) { 
         if (!isMod(message.member)) return message.channel.send({ content: "You do not have permission to do that."})
+        message.channel.send({ content: `One moment please.`})
         const membersMap = await message.guild.members.fetch()
         const members = [...membersMap.values()]
         const rolesMap = message.guild.roles.cache
