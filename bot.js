@@ -1175,11 +1175,17 @@ client.on('messageCreate', async (message) => {
             order: [['createdAt', 'ASC']]
         })
 
+        console.log('matches.length', matches.length)
+
         const summary = {}
         for (let i = 0; i < matches.length; i++) {
             const match = matches[i]
             const createdAt = match.createdAt
+            console.log('createdAt', createdAt)
+            if (!createdAt) continue
             const month = createdAt.slice(0, 6)
+            console.log('month', month)
+            if (!month) continue
             summary[month] ? summary[month]++ : summary[month] = 1
         }
         console.log('summary', summary)
