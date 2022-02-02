@@ -1169,7 +1169,7 @@ client.on('messageCreate', async (message) => {
 
     //ACTIVITY
     if (activitycom.includes(cmd)) {
-        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        //if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const matches = format ? await Match.findAll({
             where: { format },
             order: [['createdAt', 'ASC']]
