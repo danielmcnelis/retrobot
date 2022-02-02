@@ -1180,7 +1180,7 @@ client.on('messageCreate', async (message) => {
         const summary = {}
         for (let i = 0; i < matches.length; i++) {
             const match = matches[i]
-            const createdAt = match.createdAt.tostring()
+            const createdAt = match.createdAt.toString()
             console.log('createdAt', createdAt)
             if (!createdAt) continue
             const month = createdAt.slice(0, 6)
