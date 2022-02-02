@@ -1211,7 +1211,7 @@ client.on('messageCreate', async (message) => {
         
         const chart = new QuickChart()
         chart.setConfig({
-            type: 'line',
+            type: 'bar',
             data: {
                 labels,
                 datasets: [
