@@ -1178,10 +1178,18 @@ client.on('messageCreate', async (message) => {
         console.log('matches.length', matches.length)
 
         const summary = {}
-        for (let i = 0; i < matches.length; i++) {
-            const match = matches[i]
-            const month = match.createdAt.toISOString().slice(0, 7)
-            summary[month] ? summary[month]++ : summary[month] = 1
+        if (format) {
+            for (let i = 0; i < matches.length; i++) {
+                const match = matches[i]
+                const month = match.createdAt.toISOString().slice(0, 7)
+                summary[month] ? summary[month]++ : summary[month] = 1
+            }
+        } else {
+            for (let i = 0; i < matches.length; i++) {
+                const match = matches[i]
+                const format = match.format
+                summary[format] ? summary[format]++ : summary[format] = 1
+            }
         }
         console.log('summary', summary)
 
