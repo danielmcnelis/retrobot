@@ -1,4 +1,5 @@
 {
+    "activitycom": ["!activity", "!a", "!active", "!act"],
     "banscom": ["!banlist", "!bans", "!list"],
     "botcom": ["!bot", "!guide", "!help"],
     "bracketcom":["!bracket", "!b", "!challonge", "!show", "!tournament", "!pairings"],

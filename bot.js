@@ -24,7 +24,7 @@ const { assignRoles, capitalize, clearStatus, createMembership, createPlayer, fe
 const { botSpamChannel, welcomeChannel } = require('./static/channels.json')
 const { client } = require('./static/clients.js')
 const {
-    botcom, bracketcom, dbcom, dropcom, h2hcom, joincom, legalcom, banscom, histcom, losscom, manualcom, medalscom,
+    activitycom, botcom, bracketcom, dbcom, dropcom, h2hcom, joincom, legalcom, banscom, histcom, losscom, manualcom, medalscom,
     noshowcom, pfpcom, profcom, rankcom, recalccom, rolecom, signupcom, startcom, statscom, undocom, yescom
 } = require('./static/commands.json')
 const { FL, legend, lmfao, mad, mlady, sad, soldier } = require('./static/emojis.json')
@@ -769,12 +769,12 @@ client.on('messageCreate', async (message) => {
         const issues = await checkDeckList(message.member, player, formatDate, formatEmoji, formatList, formatName)
         if (!issues) return clearStatus('firefox')
 
-        if (issues['illegalCards'].length || issues['forbiddenCards'].length || issues['limitedCards'].length || issues['semiLimitedCards'].length) {
+        if (issues.illegalCards.length || issues.forbiddenCards.length || issues.limitedCards.length || issues.semiLimitedCards.length) {
             let response = `I'm sorry, ${player.name}, your deck is not legal for ${formatName} Format. ${formatEmoji}`
-            if (issues['illegalCards'].length) response += `\n\nThe following cards are not included in this format:\n${issues['illegalCards'].join('\n')}`
-            if (issues['forbiddenCards'].length) response += `\n\nThe following cards are forbidden:\n${issues['forbiddenCards'].join('\n')}`
-            if (issues['limitedCards'].length) response += `\n\nThe following cards are limited:\n${issues['limitedCards'].join('\n')}`
-            if (issues['semiLimitedCards'].length) response += `\n\nThe following cards are semi-limited:\n${issues['semiLimitedCards'].join('\n')}`
+            if (issues.illegalCards.length) response += `\n\nThe following cards are not included in this format:\n${issues.illegalCards.join('\n')}`
+            if (issues.forbiddenCards.length) response += `\n\nThe following cards are forbidden:\n${issues.forbiddenCards.join('\n')}`
+            if (issues.limitedCards.length) response += `\n\nThe following cards are limited:\n${issues.limitedCards.join('\n')}`
+            if (issues.semiLimitedCards.length) response += `\n\nThe following cards are semi-limited:\n${issues.semiLimitedCards.join('\n')}`
             return message.author.send({ content: response.toString() })
         } else {
             return message.author.send({ content: `Congrats, your ${formatName} Format deck is perfectly legal! ${formatEmoji}`})
@@ -1166,6 +1166,77 @@ client.on('messageCreate', async (message) => {
         }
     }
 
+
+    //ACTIVITY
+    if (activitycom.includes(cmd)) {
+        if (!format) return message.channel.send({ content: `Try using **${com}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        const matches = await Match.findAll({
+            where: { format },
+            order: [['createdAt', 'ASC']]
+        })
+
+        const summary = {}
+        const data = []
+        const labels = []
+
+        for (let i = 0; i < matches.length; i++) {
+            const match = matches[i]
+            const createdAt = match.createdAt
+            const month = createdAt.slice(0, 6)
+            summary[month] ? summary[month]++ : summary[month] = 1
+        }
+
+        const labels = Object.keys(summary).sort((a, b) => b - a).map((k) => {
+            const month = k.slice(-2)
+            const label = month === '00' ? 'Jan' :
+            month === '01' ? 'Feb' :
+            month === '02' ? 'Mar' :
+            month === '03' ? 'Apr' :
+            month === '04' ? 'May' :
+            month === '05' ? 'Jun' :
+            month === '06' ? 'Jul' :
+            month === '07' ? 'Aug' :
+            month === '08' ? 'Sep' :
+            month === '09' ? 'Oct' :
+            month === '10' ? 'Nov' :
+            'Dec'
+
+            return label
+        })
+        console.log('labels', labels)
+
+        const data = Object.entries(summary).sort((a, b) => b[0] - a[0]).map((k) => k[1])
+        console.log('data', data)
+        
+        const chart = new QuickChart()
+        chart.setConfig({
+            type: 'line',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: 'Activity',
+                        backgroundColor: 'rgb(10, 54, 138)',
+                        borderColor: 'rgb(10, 54, 138)',
+                        data: data,
+                        fill: false,
+                    }
+                ],
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: `${capitalize(format)} Activity Chart`,
+                },
+                legend: {
+                    display: false
+                }
+            },
+        })
+
+        const url = await chart.getShortUrl()
+        message.channel.send({ content: `${url}` })
+    }
 
     //RANK
     if (rankcom.includes(cmd)) {
