@@ -1188,21 +1188,22 @@ client.on('messageCreate', async (message) => {
         console.log('summary', summary)
 
         const labels = Object.keys(summary).sort((a, b) => b - a).map((k) => {
-            const month = k.slice(-2)
-            const label = month === '00' ? 'Jan' :
-            month === '01' ? 'Feb' :
-            month === '02' ? 'Mar' :
-            month === '03' ? 'Apr' :
-            month === '04' ? 'May' :
-            month === '05' ? 'Jun' :
-            month === '06' ? 'Jul' :
-            month === '07' ? 'Aug' :
-            month === '08' ? 'Sep' :
-            month === '09' ? 'Oct' :
-            month === '10' ? 'Nov' :
+            const m = k.slice(-2)
+            const month = m === '01' ? 'Jan' :
+            m === '02' ? 'Feb' :
+            m === '03' ? 'Mar' :
+            m === '04' ? 'Apr' :
+            m === '05' ? 'May' :
+            m === '06' ? 'Jun' :
+            m === '07' ? 'Jul' :
+            m === '08' ? 'Aug' :
+            m === '09' ? 'Sep' :
+            m === '10' ? 'Oct' :
+            m === '11' ? 'Nov' :
             'Dec'
 
-            return label
+            const year = k.slice(2, 4)
+            return `${month} ${year}`
         })
         console.log('labels', labels)
 
