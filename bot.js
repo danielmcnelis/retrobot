@@ -1176,15 +1176,13 @@ client.on('messageCreate', async (message) => {
         })
 
         const summary = {}
-        const data = []
-        const labels = []
-
         for (let i = 0; i < matches.length; i++) {
             const match = matches[i]
             const createdAt = match.createdAt
             const month = createdAt.slice(0, 6)
             summary[month] ? summary[month]++ : summary[month] = 1
         }
+        console.log('summary', summary)
 
         const labels = Object.keys(summary).sort((a, b) => b - a).map((k) => {
             const month = k.slice(-2)
