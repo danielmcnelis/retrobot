@@ -1190,6 +1190,13 @@ client.on('messageCreate', async (message) => {
                 const format = match.format
                 summary[format] ? summary[format]++ : summary[format] = 1
             }
+
+            Object.keys(summary).forEach((k) => {
+                if (summary[k] < 100) {
+                    summary.other ? summary.other += summary[k] : summary.other = summary[k]
+                    delete summary[k]
+                }
+            })
         }
         console.log('summary', summary)
 
