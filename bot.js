@@ -1229,7 +1229,7 @@ client.on('messageCreate', async (message) => {
             options: {
                 title: {
                     display: true,
-                    text: `${capitalize(format)} Activity Chart`,
+                    text: `${format ? format.name : 'Format Library'} Activity Chart`,
                 },
                 legend: {
                     display: false
