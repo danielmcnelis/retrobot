@@ -1220,7 +1220,7 @@ client.on('messageCreate', async (message) => {
         }) : Object.entries(summary).sort((a, b) => b[1] - a[1]).map((k) => k[0])
 
         console.log('labels', labels)
-
+        
         const data = format ? Object.entries(summary).sort((a, b) => b[0] - a[0]).map((k) => k[1]) :
             Object.entries(summary).sort((a, b) => b[1] - a[1]).map((k) => k[1])
         
@@ -1244,7 +1244,7 @@ client.on('messageCreate', async (message) => {
             options: {
                 title: {
                     display: true,
-                    text: `${format ? format.name : 'Format Library'} Activity Chart`,
+                    text: `${formatName || 'Format Library'} Activity Chart`,
                 },
                 legend: {
                     display: false
