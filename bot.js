@@ -1169,7 +1169,8 @@ client.on('messageCreate', async (message) => {
 
     //ACTIVITY
     if (activitycom.includes(cmd)) {
-        const matches = format ? await Match.findAll({
+        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        const matches = await Match.findAll({
             where: { 
                 format,
                 createdAt: {
@@ -1177,7 +1178,7 @@ client.on('messageCreate', async (message) => {
                 }
             },
             order: [['createdAt', 'ASC']]
-        }) : await Match.findAll()
+        })
 
         console.log('matches.length', matches.length)
 
@@ -1196,48 +1197,23 @@ client.on('messageCreate', async (message) => {
             '12': 0,
         }
         
-        if (format) {
-            for (let i = 0; i < matches.length; i++) {
-                const match = matches[i]
-                const month = match.createdAt.getMonth() + 1
-                summary[month] ? summary[month]++ : summary[month] = 1
-            }
-        } else {
-            for (let i = 0; i < matches.length; i++) {
-                const match = matches[i]
-                const format = match.format
-                summary[format] ? summary[format]++ : summary[format] = 1
-            }
-
-            Object.keys(summary).forEach((k) => {
-                if (summary[k] < 100) {
-                    summary.other ? summary.other += summary[k] : summary.other = summary[k]
-                    delete summary[k]
-                }
-            })
+        for (let i = 0; i < matches.length; i++) {
+            const match = matches[i]
+            const month = match.createdAt.getMonth() + 1
+            summary[month] ? summary[month]++ : summary[month] = 1
         }
-
         console.log('summary', summary)
-
-        const labels = format ? () => {
-            const month = new Date.getMonth()
-            const months = [
-                "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-            ]
-
-            const arr = []
-            for (let i = month; i <= 11; i++) arr.push(months[i])
-            for (let i = month - 1; i >= 0; i--) arr.unshift(months[i])
-            console.log('arr', arr)
-            return arr
-        } : Object.entries(summary).sort((a, b) => b[1] - a[1]).map((k) => k[0])
-
+        const month = new Date.getMonth()
+        const months = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ]
+        const labels = []
+        for (let i = month; i <= 11; i++) arr.push(months[i])
+        for (let i = month - 1; i >= 0; i--) arr.unshift(months[i])
         console.log('labels', labels)
-
-        const data = format ? Object.entries(summary).sort((a, b) => b[0] - a[0]).map((k) => k[1]) :
-            Object.entries(summary).sort((a, b) => b[1] - a[1]).map((k) => k[1])
-        
+           
+        const data = Object.entries(summary).sort((a, b) => b[0] - a[0]).map((k) => k[1])
         console.log('data', data)
         
         const chart = new QuickChart()
@@ -1258,7 +1234,7 @@ client.on('messageCreate', async (message) => {
             options: {
                 title: {
                     display: true,
-                    text: `${formatName || 'Format Library'} Activity Chart`,
+                    text: `${formatName} Activity Chart`,
                 },
                 legend: {
                     display: false
