@@ -1169,9 +1169,13 @@ client.on('messageCreate', async (message) => {
 
     //ACTIVITY
     if (activitycom.includes(cmd)) {
-        //if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const matches = format ? await Match.findAll({
-            where: { format },
+            where: { 
+                format,
+                createdAt: {
+                    [Op.gte]: new Date().setFullYear(new Date().getFullYear() - 1)
+                }
+            },
             order: [['createdAt', 'ASC']]
         }) : await Match.findAll()
 
@@ -1198,6 +1202,7 @@ client.on('messageCreate', async (message) => {
                 }
             })
         }
+
         console.log('summary', summary)
 
         const labels = format ? Object.keys(summary).sort((a, b) => b - a).map((k) => {
@@ -1215,12 +1220,11 @@ client.on('messageCreate', async (message) => {
             m === '11' ? 'Nov' :
             'Dec'
 
-            const year = k.slice(2, 4)
-            return `${month} ${year}`
+            return month
         }) : Object.entries(summary).sort((a, b) => b[1] - a[1]).map((k) => k[0])
 
         console.log('labels', labels)
-        
+
         const data = format ? Object.entries(summary).sort((a, b) => b[0] - a[0]).map((k) => k[1]) :
             Object.entries(summary).sort((a, b) => b[1] - a[1]).map((k) => k[1])
         
@@ -1248,7 +1252,16 @@ client.on('messageCreate', async (message) => {
                 },
                 legend: {
                     display: false
-                }
+                },
+                scales: {
+                    yAxes: [
+                        {
+                            ticks: {
+                                suggestedMax: 100
+                            }
+                        }
+                    ]
+                },
             },
         })
 
