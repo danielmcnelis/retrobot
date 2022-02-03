@@ -1169,12 +1169,16 @@ client.on('messageCreate', async (message) => {
 
     //ACTIVITY
     if (activitycom.includes(cmd)) {
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})  
+        const today = new Date()
+        console.log('today', today)
+        const cutoff = new Date().setFullYear(today.getFullYear() - 1).setMonth(today.getMonth() === 11 ? 1 : today.getMonth() + 1).setDate(1)
+        console.log('cutoff', cutoff)
         const matches = await Match.findAll({
             where: { 
                 format,
                 createdAt: {
-                    [Op.gte]: new Date().setFullYear(new Date().getFullYear() - 1)
+                    [Op.gte]: cutoff
                 }
             },
             order: [['createdAt', 'ASC']]
@@ -1183,18 +1187,18 @@ client.on('messageCreate', async (message) => {
         console.log('matches.length', matches.length)
 
         const summary = {
-            '01': 0,
-            '02': 0,
-            '03': 0,
-            '04': 0,
-            '05': 0,
-            '06': 0,
-            '07': 0,
-            '08': 0,
-            '09': 0,
+            '0': 0,
+            '1': 0,
+            '2': 0,
+            '3': 0,
+            '4': 0,
+            '5': 0,
+            '6': 0,
+            '7': 0,
+            '8': 0,
+            '9': 0,
             '10': 0,
             '11': 0,
-            '12': 0,
         }
         
         for (let i = 0; i < matches.length; i++) {
@@ -1202,6 +1206,7 @@ client.on('messageCreate', async (message) => {
             const month = match.createdAt.toISOString().slice(5, 7)
             summary[month] ? summary[month]++ : summary[month] = 1
         }
+
         console.log('summary', summary)
         const month = new Date().getMonth()
         console.log('month', month)
@@ -1209,12 +1214,19 @@ client.on('messageCreate', async (message) => {
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ]
+
         const labels = []
-        for (let i = month + 1; i <= 11; i++) labels.push(months[i])
-        for (let i = 0; i <= month; i++) labels.push(months[i])
-        console.log('labels', labels)
-           
-        const data = Object.entries(summary).sort((a, b) => b[0] - a[0]).map((k) => k[1])
+        const data = []
+        for (let i = month + 1; i <= 11; i++) {
+            labels.push(months[i])
+            data.push(summary[i])
+        }
+        for (let i = 0; i <= month; i++) {
+            labels.push(months[i])
+            data.push(summary[i])
+        }
+
+        console.log('labels', labels)   
         console.log('data', data)
         
         const chart = new QuickChart()
