@@ -1172,7 +1172,11 @@ client.on('messageCreate', async (message) => {
         if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})  
         const today = new Date()
         console.log('today', today)
-        const cutoff = new Date().setFullYear(today.getFullYear() - 1).setMonth(today.getMonth() === 11 ? 1 : today.getMonth() + 1).setDate(1)
+        const cutoff = new Date()
+            .setDate(1)
+            .setMonth(today.getMonth() === 11 ? 1 : today.getMonth() + 1)
+            .setFullYear(today.getMonth() === 11 ? today.getFullYear() : today.getFullYear() - 1)
+
         console.log('cutoff', cutoff)
         const matches = await Match.findAll({
             where: { 
