@@ -1203,7 +1203,7 @@ client.on('messageCreate', async (message) => {
             summary[month] ? summary[month]++ : summary[month] = 1
         }
         console.log('summary', summary)
-        const month = new Date.getMonth()
+        const month = new Date().getMonth()
         const months = [
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
