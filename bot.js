@@ -1177,7 +1177,7 @@ client.on('messageCreate', async (message) => {
             today.getMonth() === 11 ? 1 : today.getMonth() + 1,
             1
         )
-        
+
         console.log('cutoff', cutoff)
         const matches = await Match.findAll({
             where: { 
@@ -1208,7 +1208,7 @@ client.on('messageCreate', async (message) => {
         
         for (let i = 0; i < matches.length; i++) {
             const match = matches[i]
-            const month = match.createdAt.toISOString().slice(5, 7)
+            const month = match.createdAt.getMonth()
             summary[month] ? summary[month]++ : summary[month] = 1
         }
 
