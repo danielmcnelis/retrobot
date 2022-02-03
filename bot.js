@@ -1219,7 +1219,7 @@ client.on('messageCreate', async (message) => {
 
         console.log('summary', summary)
 
-        const labels = format ? (() => {
+        const labels = format ? () => {
             const month = new Date.getMonth()
             const months = [
                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
@@ -1229,8 +1229,9 @@ client.on('messageCreate', async (message) => {
             const arr = []
             for (let i = month; i <= 11; i++) arr.push(months[i])
             for (let i = month - 1; i >= 0; i--) arr.unshift(months[i])
+            console.log('arr', arr)
             return arr
-        }) : Object.entries(summary).sort((a, b) => b[1] - a[1]).map((k) => k[0])
+        } : Object.entries(summary).sort((a, b) => b[1] - a[1]).map((k) => k[0])
 
         console.log('labels', labels)
 
