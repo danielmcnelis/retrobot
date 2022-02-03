@@ -1181,7 +1181,21 @@ client.on('messageCreate', async (message) => {
 
         console.log('matches.length', matches.length)
 
-        const summary = {}
+        const summary = {
+            'Jan': 0,
+            'Feb': 0,
+            'Mar': 0,
+            'Apr': 0,
+            'May': 0,
+            'Jun': 0,
+            'Jul': 0,
+            'Aug': 0,
+            'Sep': 0,
+            'Oct': 0,
+            'Nov': 0,
+            'Dec': 0,
+        }
+        
         if (format) {
             for (let i = 0; i < matches.length; i++) {
                 const match = matches[i]
