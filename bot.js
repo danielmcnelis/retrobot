@@ -1182,24 +1182,24 @@ client.on('messageCreate', async (message) => {
         console.log('matches.length', matches.length)
 
         const summary = {
-            'Jan': 0,
-            'Feb': 0,
-            'Mar': 0,
-            'Apr': 0,
-            'May': 0,
-            'Jun': 0,
-            'Jul': 0,
-            'Aug': 0,
-            'Sep': 0,
-            'Oct': 0,
-            'Nov': 0,
-            'Dec': 0,
+            '01': 0,
+            '02': 0,
+            '03': 0,
+            '04': 0,
+            '05': 0,
+            '06': 0,
+            '07': 0,
+            '08': 0,
+            '09': 0,
+            '10': 0,
+            '11': 0,
+            '12': 0,
         }
         
         if (format) {
             for (let i = 0; i < matches.length; i++) {
                 const match = matches[i]
-                const month = match.createdAt.toISOString().slice(0, 7)
+                const month = match.createdAt.getMonth() + 1
                 summary[month] ? summary[month]++ : summary[month] = 1
             }
         } else {
@@ -1219,22 +1219,12 @@ client.on('messageCreate', async (message) => {
 
         console.log('summary', summary)
 
-        const labels = format ? Object.keys(summary).sort((a, b) => b - a).map((k) => {
-            const m = k.slice(-2)
-            const month = m === '01' ? 'Jan' :
-            m === '02' ? 'Feb' :
-            m === '03' ? 'Mar' :
-            m === '04' ? 'Apr' :
-            m === '05' ? 'May' :
-            m === '06' ? 'Jun' :
-            m === '07' ? 'Jul' :
-            m === '08' ? 'Aug' :
-            m === '09' ? 'Sep' :
-            m === '10' ? 'Oct' :
-            m === '11' ? 'Nov' :
-            'Dec'
-
-            return month
+        const labels = format ? (() => {
+            const month = new Date.getMonth()
+            const arr = []
+            for (let i = month; i <= 11; i++) arr.push(i)
+            for (let i = month - 1; i >= 0; i--) arr.unshift(i)
+            return arr
         }) : Object.entries(summary).sort((a, b) => b[1] - a[1]).map((k) => k[0])
 
         console.log('labels', labels)
