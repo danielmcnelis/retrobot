@@ -59,6 +59,7 @@ client.on('guildMemberRemove', member => client.channels.cache.get(welcomeChanne
 
 //COMMANDS
 client.on('messageCreate', async (message) => {
+try {
     if (
 		//no commands in DMs
 		!message.guild || 
@@ -1890,4 +1891,6 @@ client.on('messageCreate', async (message) => {
 
         return message.channel.send({ content: `Recalculation complete!`})
     }
-})
+} catch (err) {
+    console.log(err)
+}})
