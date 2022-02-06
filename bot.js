@@ -42,21 +42,31 @@ client.on('ready', async() => {
 
 //WELCOME
 client.on('guildMemberAdd', async (member) => {
-    const channel = client.channels.cache.get(welcomeChannel)
-    const guild = client.guilds.cache.get('414551319031054346')
-    if (await isNewUser(member.user.id)) await createPlayer(member) 
-    if (await isNewMember(guild.id, member.user.id)) {
-        await createMembership(guild, member)
-        return channel.send({ content: `${member}, Welcome to the FormatLibrary.com ${FL} discord server. ${legend}`})
-    } else {
-        await assignRoles(guild, member)
-        return channel.send({ content: `${member}, Welcome back to the FormatLibrary.com ${FL} discord server! We missed you. ${soldier}`})
+    try {
+        const channel = client.channels.cache.get(welcomeChannel)
+        const guild = client.guilds.cache.get('414551319031054346')
+        if (await isNewUser(member.user.id)) await createPlayer(member) 
+        if (await isNewMember(guild.id, member.user.id)) {
+            await createMembership(guild, member)
+            return channel.send({ content: `${member}, Welcome to the FormatLibrary.com ${FL} discord server. ${legend}`})
+        } else {
+            await assignRoles(guild, member)
+            return channel.send({ content: `${member}, Welcome back to the FormatLibrary.com ${FL} discord server! We missed you. ${soldier}`})
+        }
+    } catch (err) {
+        console.log(err)
     }
 })
     
 //GOODBYE
-client.on('guildMemberRemove', member => client.channels.cache.get(welcomeChannel).send({ content: `Oh dear. ${member.user.username} has left the server. ${sad}`}))
-
+client.on('guildMemberRemove', member => {
+    try {
+        client.channels.cache.get(welcomeChannel).send({ content: `Oh dear. ${member.user.username} has left the server. ${sad}`})
+    } catch (err) {
+        console.log(err)
+    }
+})
+ 
 //COMMANDS
 client.on('messageCreate', async (message) => {
 try {
