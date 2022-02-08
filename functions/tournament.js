@@ -14,7 +14,7 @@ const { saveYDK } = require('./deck.js')
 const { capitalize, clearStatus, convertArrayToObject, shuffleArray } = require('./utility.js')
 
 // STATIC IMPORTS
-const { legend } = require('../static/emojis.json')
+const { legend, mad } = require('../static/emojis.json')
 const formats = require('../static/formats.json')
 const { tourRole } = require('../static/roles.json')
 const { challongeAPIKey } = require('../secrets.json')
