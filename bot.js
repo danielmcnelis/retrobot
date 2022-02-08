@@ -76,7 +76,7 @@ try {
 		//no commands from bots
 		message.author.bot ||
 		//do not allow users to parrot @everyone or @here with the bot
-		//message.content.includes('@everyone') || message.content.includes('@here')
+		message.content.includes('@everyone') || message.content.includes('@here')
 		//only allow commands starting with ! or including {}
 		(!message.content.startsWith("!") && !message.content.includes("{") && message.mentions.users.size && message.mentions.roles.size && message.mentions.everyone)
 	) return
@@ -103,15 +103,20 @@ try {
     if (await isNewUser(maid)) await createPlayer(message.member)
     if (await isNewMember(mgid, maid)) await createMembership(message.guild, message.member)
 
-    if (message.mentions.users.size || message.mentions.roles.size || message.mentions.everyone) {
-        const users = [...message.mentions.users.values()].map((u) => u.username)
-        const roles = [...message.mentions.roles.values()].map((r) => r.name)
-        const everyone = message.mentions.everyone ? ['@everyone / @here'] : []
-        const list = [...users, ...roles, ...everyone].filter((e) => !!e)
-        const channel = client.channels.cache.get('932527779763851314')
-        const authorName = message.author.username
-        channel.send({ content: `${authorName} tagged: ${list.join(', ')} in <#${message.channel.id}>.`})
-    }
+    // COMMAND LOG
+    const logChannel = client.channels.cache.get('940499806126759966')
+    logChannel.send({ content: `${message.author.username} used **${cmd}** in <#${message.channel.id}>.`}).catch((err) => console.log(err))
+
+    // TAG LOG
+    // if (message.mentions.users.size || message.mentions.roles.size || message.mentions.everyone) {
+    //     const users = [...message.mentions.users.values()].map((u) => u.username)
+    //     const roles = [...message.mentions.roles.values()].map((r) => r.name)
+    //     const everyone = message.mentions.everyone ? ['@everyone / @here'] : []
+    //     const list = [...users, ...roles, ...everyone].filter((e) => !!e)
+    //     const channel = client.channels.cache.get('932527779763851314')
+    //     const authorName = message.author.username
+    //     channel.send({ content: `${authorName} tagged: ${list.join(', ')} in <#${message.channel.id}>.`})
+    // }
 
     //CARD SEARCH USING CURLY BRACKETS
     if (!message.content.startsWith("!") && message.content.includes(`{`) && message.content.includes(`}`)) { 
@@ -131,42 +136,10 @@ try {
     //SEED 
     if (cmd === `!seed`) return message.channel.send({ content: '🌱'})
 
-    // DATA 
-    if (cmd === `!data`) {
-        if (isProgrammer(message.member)) {
-            const folder = './decks/PumpkingOfGames'
-            const files = fs.readdirSync(folder)
-            const data = { types: {}, cats: {} }
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i]
-                const player = { tag: file.slice(0, -4) }
-                const deckType = await getDeckType(player, 'edison', 'PumpkingOfGames')
-                const deckCategory = getDeckCategory(deckType)
-                data.types[deckType] ? data.types[deckType]++ : data.types[deckType] = 1
-                data.cats[deckCategory] ? data.cats[deckCategory]++ : data.cats[deckCategory] = 1
-            }
-
-            const types = Object.entries(data.types).sort().map((e) => `${capitalize(e[0], eachWord = true)}: ${e[1]}`)
-            const cats = Object.entries(data.cats).sort().map((e) => `${capitalize(e[0])}: ${e[1]}`)
-            
-            return message.channel.send({ content: 
-                `Deck Types:\n${types.join('\n')}` +
-                `\n\nDeck Categories:\n${cats.join('\n')}`
-            })
-        } else {
-            return message.channel.send({ content: `📊`})
-        }
-    }
-
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            console.log('GOTTEM')
-            const channel = client.channels.cache.get('414575168174948372')
-            console.log('channel', channel)
-            for (let i = 0; i < 1; i++) {
-                channel.send(`🧪`)
-            }
+            return message.channel.send({ content: `🧪`})
         } else {
             return message.channel.send({ content: `🧪`})
         }
