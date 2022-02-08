@@ -11,7 +11,7 @@ const { Entry, Player, Stats }  = require('../db/index.js')
 
 //FUNCTION IMPORTS
 const { saveYDK } = require('./deck.js')
-const { capitalize, convertArrayToObject, shuffleArray } = require('./utility.js')
+const { capitalize, clearStatus, convertArrayToObject, shuffleArray } = require('./utility.js')
 
 // STATIC IMPORTS
 const { legend } = require('../static/emojis.json')
@@ -38,7 +38,7 @@ const askForDBName = async (member, player, override = false, error = false, att
         const dbName = collected.first().content
         if (dbName.includes("duelingbook.com/deck") || dbName.includes("imgur.com")) {
             if (attempt >= 3) {
-                member.send({ content: `Sorry, time's up. Go back to the server and try again.`})
+                member.send({ content: `Sorry, time's up. Go back to the server and try again.`}).catch((err) => console.log(err))
                 return false
             } else {
                 return askForDBName(member, player, override, true, attempt++)
@@ -47,12 +47,12 @@ const askForDBName = async (member, player, override = false, error = false, att
             await player.update({
                 duelingBook: dbName
             })
-            member.send({ content: `Thanks! I saved ${pronoun} DuelingBook name as: ${dbName}. If that's wrong, go back to the server and type **!db name**.`})
+            member.send({ content: `Thanks! I saved ${pronoun} DuelingBook name as: ${dbName}. If that's wrong, go back to the server and type **!db name**.`}).catch((err) => console.log(err))
             return dbName
         }
     }).catch((err) => {
         console.log(err)
-        member.send({ content: `Sorry, time's up. Go back to the server and try again.`})
+        member.send({ content: `Sorry, time's up. Go back to the server and try again.`}).catch((err) => console.log(err))
         return false
     })
 }
@@ -70,39 +70,55 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
     }).then(async (collected) => {
         const url = collected.first().content
         if (url.includes("duelingbook.com/deck")) {		
-            member.send({ content: 'Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.'})
+            member.send({ content: 'Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.'}).catch((err) => console.log(err))
             const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
-
+            console.log('issues', issues)
+            if (!issues) return false
+            const { illegalCards, forbiddenCards, limitedCards, semiLimitedCards } = issues
+            console.log('illegalCards', illegalCards)
+            console.log('forbiddenCards', forbiddenCards)
+            console.log('limitedCards', limitedCards)
+            console.log('semiLimitedCards', semiLimitedCards)
+            console.log('unrecognizedCards', unrecognizedCards)
+            if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return false
+                
             if (override) {
-                member.send({ content: `Thanks, ${member.user.username}, I saved a copy of ${pronoun} deck. ${legend}`})
+                member.send({ content: `Thanks, ${member.user.username}, I saved a copy of ${pronoun} deck. ${legend}`}).catch((err) => console.log(err))
                 return url
-            } else if (issues['illegalCards'].length || issues['forbiddenCards'].length || issues['limitedCards'].length || issues['semiLimitedCards'].length) {
-                let response = `I'm sorry, ${member.user.username}, ${pronoun} deck is not legal. ${legend}`
-                if (issues['illegalCards'].length) response += `\n\nThe following cards are not in this game:\n${issues['illegalCards'].join('\n')}`
-                if (issues['forbiddenCards'].length) response += `\n\nThe following cards are forbidden:\n${issues['forbiddenCards'].join('\n')}`
-                if (issues['limitedCards'].length) response += `\n\nThe following cards are limited:\n${issues['limitedCards'].join('\n')}`
-                if (issues['semiLimitedCards'].length) response += `\n\nThe following cards are semi-limited:\n${issues['semiLimitedCards'].join('\n')}`
-                response += `\n\nPlease edit ${pronoun} deck and try again once it's legal. If you believe this message is in error, contact the Tournament Organizer.`
+            } else if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
+                let response = `I'm sorry, ${member.user.username}, ${pronoun} deck is not legal. ${mad}`
+                if (illegalCards.length) response += `\n\nThe following cards are not included in this format:\n${illegalCards.join('\n')}`
+                if (forbiddenCards.length) response += `\n\nThe following cards are forbidden:\n${forbiddenCards.join('\n')}`
+                if (limitedCards.length) response += `\n\nThe following cards are limited:\n${limitedCards.join('\n')}`
+                if (semiLimitedCards.length) response += `\n\nThe following cards are semi-limited:\n${semiLimitedCards.join('\n')}`
+                    
+                for (let i = 0; i < response.length; i += 50) {
+                    if (response[i+50] && response[i+50].startsWith("\n")) {
+                        member.send({ content: response.slice(i, i+51).join('\n').toString()}).catch((err) => console.log(err))
+                        i++
+                    } else {
+                        member.send({ content: response.slice(i, i+50).join('\n').toString()}).catch((err) => console.log(err))
+                    }
+                }
             
-                member.send({ content: response.toString() })
                 return false
-            } else if (issues['unrecognizedCards'].length) {
-                let response = `I'm sorry, ${member.user.username}, the following card IDs were not found in our database:\n${issues['unrecognizedCards'].join('\n')}`
+            } else if (unrecognizedCards.length) {
+                let response = `I'm sorry, ${member.user.username}, the following card IDs were not found in our database:\n${unrecognizedCards.join('\n')}`
                 response += `\n\nThese cards are either alternate artwork, new to the TCG, OCG only, or incorrect in our database. Please contact the Tournament Organizer or the Admin if you can't resolve this.`
                 
-                member.send({ content: response.toString() })
+                member.send({ content: response.toString() }).catch((err) => console.log(err))
                 return false
              } else {
-                member.send({ content: `Thanks, ${member.user.username}, ${pronoun} deck is perfectly legal. ${legend}`})
+                member.send({ content: `Thanks, ${member.user.username}, ${pronoun} deck is perfectly legal. ${legend}`}).catch((err) => console.log(err))
                 return url
             }
         } else {
-            member.send({ content: "Sorry, I only accept duelingbook.com/deck links."})
+            member.send({ content: "Sorry, I only accept duelingbook.com/deck links."}).catch((err) => console.log(err))
             return false
         }
     }).catch((err) => {
         console.log(err)
-        member.send({ content: `Sorry, time's up. Go back to the server and try again.`})
+        member.send({ content: `Sorry, time's up. Go back to the server and try again.`}).catch((err) => console.log(err))
         return false
     })
 }
@@ -122,7 +138,7 @@ const getDeckName = async (member, player, override = false) => {
         return response
     }).catch(err => {    
         console.log(err)
-        member.send({ content: `Sorry, time's up.`})
+        member.send({ content: `Sorry, time's up.`}).catch((err) => console.log(err))
         return false
     })
 }

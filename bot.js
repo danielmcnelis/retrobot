@@ -621,8 +621,8 @@ try {
             })
 
             if (!new_entry) return message.channel.send({ content: `Error: Could not access database.`})
-            message.member.roles.add(tourRole)
-            message.author.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament!`})
+            message.member.roles.add(tourRole).catch((err) => console.log(err))
+            message.author.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament!`}).catch((err) => console.log(err))
             return client.channels.cache.get(formats[tournament.format].channel).send({ content: `<@${player.id}> is now registered for ${tournament.name}!`})
         } else {
             await entry.update({
@@ -632,7 +632,7 @@ try {
                 deck_category: deckCategory
             })
     
-            message.author.send({ content: `Thanks! I have your updated deck list for the tournament.`})
+            message.author.send({ content: `Thanks! I have your updated deck list for the tournament.`}).catch((err) => console.log(err))
             return client.channels.cache.get(formats[tournament.format].channel).send({ content: `<@${player.id}> resubmitted their deck list for ${tournament.name}!`})
         }
     }
@@ -683,8 +683,8 @@ try {
             })
 
             if (!new_entry) return message.channel.send({ content: `Error: Could not access database.`})
-            mentioned.roles.add(tourRole)
-            message.author.send({ content: `Thanks! I have all the information we need for ${player.name}!`})
+            mentioned.roles.add(tourRole).catch((err) => console.log(err))
+            message.author.send({ content: `Thanks! I have all the information we need for ${player.name}!`}).catch((err) => console.log(err))
             return client.channels.cache.get(formats[tournament.format].channel).send({ content: `<@${player.id}> is now registered for ${tournament.name}!`})
         } else {
             await entry.update({
@@ -694,7 +694,7 @@ try {
                 deck_category: deckCategory
             })
     
-            message.author.send({ content: `Thanks! I have ${player.name}'s updated deck list for the tournament.`})
+            message.author.send({ content: `Thanks! I have ${player.name}'s updated deck list for the tournament.`}).catch((err) => console.log(err))
             return client.channels.cache.get(formats[tournament.format].channel).send({ content: `A moderator resubmitted <@${player.id}>'s deck list for ${tournament.name}!`})
         }
     }
@@ -738,7 +738,7 @@ try {
 
     //ROLE
     if (rolecom.includes(cmd)) {
-        if (!formatRole) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!formatRole) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const membership = await Membership.findOne({ where: { playerId: maid, guildId: mgid } })
         if (!membership) return message.channel.send({ content: `You are not in the database.`})
         if (!message.member.roles.cache.some(role => role.id === formatRole)) {
@@ -764,7 +764,7 @@ try {
 
     //LEGAL
     if (legalcom.includes(cmd)) {
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const player = await Player.findOne({ where: { id: maid } })
         if (!player) return message.channel.send({ content: `Sorry.`})
 
@@ -774,30 +774,50 @@ try {
         } else {
             info.status = 'occupied'
             await info.save()
-            message.channel.send({ content: `Please check your DMs.` });
+            message.channel.send({ content: `Please check your DMs.` })
         }
         
         const issues = await checkDeckList(message.member, player, formatDate, formatEmoji, formatList, formatName)
+        console.log('issues', issues)
         if (!issues) return clearStatus('firefox')
+        const { illegalCards, forbiddenCards, limitedCards, semiLimitedCards, unrecognizedCards } = issues
+        console.log('illegalCards', illegalCards)
+        console.log('forbiddenCards', forbiddenCards)
+        console.log('limitedCards', limitedCards)
+        console.log('semiLimitedCards', semiLimitedCards)
+        console.log('unrecognizedCards', unrecognizedCards)
+        if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return clearStatus('firefox')
 
-        if (issues.illegalCards.length || issues.forbiddenCards.length || issues.limitedCards.length || issues.semiLimitedCards.length) {
+        if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
             let response = `I'm sorry, ${player.name}, your deck is not legal for ${formatName} Format. ${formatEmoji}`
-            if (issues.illegalCards.length) response += `\n\nThe following cards are not included in this format:\n${issues.illegalCards.join('\n')}`
-            if (issues.forbiddenCards.length) response += `\n\nThe following cards are forbidden:\n${issues.forbiddenCards.join('\n')}`
-            if (issues.limitedCards.length) response += `\n\nThe following cards are limited:\n${issues.limitedCards.join('\n')}`
-            if (issues.semiLimitedCards.length) response += `\n\nThe following cards are semi-limited:\n${issues.semiLimitedCards.join('\n')}`
-            return message.author.send({ content: response.toString() })
+            if (illegalCards.length) response += `\n\nThe following cards are not included in this format:\n${illegalCards.join('\n')}`
+            if (forbiddenCards.length) response += `\n\nThe following cards are forbidden:\n${forbiddenCards.join('\n')}`
+            if (limitedCards.length) response += `\n\nThe following cards are limited:\n${limitedCards.join('\n')}`
+            if (semiLimitedCards.length) response += `\n\nThe following cards are semi-limited:\n${semiLimitedCards.join('\n')}`
+                
+            for (let i = 0; i < response.length; i += 50) {
+                if (response[i+50] && response[i+50].startsWith("\n")) {
+                    message.author.send({ content: response.slice(i, i+51).join('\n').toString()}).catch((err) => console.log(err))
+                    i++
+                } else {
+                    message.author.send({ content: response.slice(i, i+50).join('\n').toString()}).catch((err) => console.log(err))
+                }
+            }
+        } else if (unrecognizedCards.length) {
+            let response = `I'm sorry, ${member.user.username}, the following card IDs were not found in our database:\n${unrecognizedCards.join('\n')}`
+            response += `\n\nThese cards are either alternate artwork, new to the TCG, OCG only, or incorrect in our database. Please contact the Tournament Organizer or the Admin if you can't resolve this.`
+            return message.author.send({ content: response.toString() }).catch((err) => console.log(err))
         } else {
-            return message.author.send({ content: `Congrats, your ${formatName} Format deck is perfectly legal! ${formatEmoji}`})
+            return message.author.send({ content: `Congrats, your ${formatName} Format deck is perfectly legal! ${formatEmoji}`}).catch((err) => console.log(err))
         }
     }
 
     //BANLIST
     if (banscom.includes(cmd)) {
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
-        const forbidden = [...await Status.findAll({ where: { [formatList]: 'forbidden' }, order: [["name", "ASC"]] })].map((s) => s.name)
-        const limited = [...await Status.findAll({ where: { [formatList]: 'limited' }, order: [["name", "ASC"]] })].map((s) => s.name)
-        const semilimited = [...await Status.findAll({ where: { [formatList]: 'semi-limited' }, order: [["name", "ASC"]] })].map((s) => s.name)
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        const forbidden = [...await Status.findAll({ where: { [formatList]: 'forbidden' }, order: [["name", "ASC"]] })].map((s) => s.name) || []
+        const limited = [...await Status.findAll({ where: { [formatList]: 'limited' }, order: [["name", "ASC"]] })].map((s) => s.name) || []
+        const semilimited = [...await Status.findAll({ where: { [formatList]: 'semi-limited' }, order: [["name", "ASC"]] })].map((s) => s.name) || []
 
         if (!forbidden.length) forbidden.push(`N/A`)
         if (!limited.length) limited.push(`N/A`)
@@ -815,10 +835,10 @@ try {
 
         for (let i = 0; i < banlist.length; i += 50) {
             if (banlist[i+50] && banlist[i+50].startsWith("\n")) {
-                message.author.send({ content: banlist.slice(i, i+51).join('\n').toString()})
+                message.author.send({ content: banlist.slice(i, i+51).join('\n').toString()}).catch((err) => console.log(err))
                 i++
             } else {
-                message.author.send({ content: banlist.slice(i, i+50).join('\n').toString()})
+                message.author.send({ content: banlist.slice(i, i+50).join('\n').toString()}).catch((err) => console.log(err))
             }
         }
 
@@ -840,7 +860,7 @@ try {
         	.addField('Tournament Commands', '\n!join - Register for an upcoming tournament.\n!resubmit - Resubmit your deck list for a tournament. \n!drop - Drop from a tournament. \n!bracket - Post the bracket link(s) for the current tournament(s).')
         	.addField('Server Commands', '\n!db - Set your DuelingBook username. \n!prof - (blank or @user) - Post a player’s profile. \n!medals - (blank or @user) - Post a player’s best medals. \n!formats - View a list of supported Retro Formats. \n!bot - View the RetroBot User Guide. \n!mod - View the Moderator Guide.');
 
-        message.author.send({ embeds: [botEmbed] })
+        message.author.send({ embeds: [botEmbed] }).catch((err) => console.log(err))
         return message.channel.send({ content: "I messaged you the RetroBot User Guide."})
     }
 
@@ -863,7 +883,7 @@ try {
             .addField('Mod Discipline Commands', '\n!mute - (@user) - Mute a user.\n!unmute - (@user) - Unmute a user.')
             .addField('Mod Server Commands', '\n!census - Update the information of all players in the database.\n!recalc - Recaluate all player stats for a specific format.\n!quit - (app) - Quit an app the bot is using');
 
-        message.author.send({ embeds: [botEmbed] })
+        message.author.send({ embeds: [botEmbed] }).catch((err) => console.log(err))
         return message.channel.send({ content: "I messaged you the Mod-Only Guide."})
     }
 
@@ -881,7 +901,7 @@ try {
             .addField('VRAINS Formats', 'Link Zoo - August 2017 \nQuick-Fix - November 2017 \nTough - January 2018 \nMagician - April 2018 \nGouki - June 2018 \nDanger - November 2018 \nSky Striker - March 2019 \nThunder Dragon - June 2019 \nLunalight Orcust - October 2019 \nStriker Orcust - January 2020')
             .addField('Current Formats', 'Current \nTraditional \nNova - by Jazz \nRebirth - by MMF')
         
-        message.author.send({ embeds: [formatsEmbed] })
+        message.author.send({ embeds: [formatsEmbed] }).catch((err) => console.log(err))
         return message.channel.send({ content: "I messaged you the list of suppported Yu-Gi-Oh! Formats."})
     }
 
@@ -964,7 +984,7 @@ try {
 
     //STATS
     if (statscom.includes(cmd)) {
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : args[0] ? args[0] : maid	
         const player = await Player.findOne({ where: { id: playerId } })
         if (!player) return message.channel.send({ content: "That user is not in the database."})
@@ -1015,7 +1035,7 @@ try {
 
     //HIST
     if (histcom.includes(cmd)) {
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         let x = message.mentions.users.first() ? parseInt(args[1]) || 250 : parseInt(args[0]) || 250
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
         if (x > 2500 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 2500."})
@@ -1180,7 +1200,7 @@ try {
 
     //ACTIVITY
     if (activitycom.includes(cmd)) {
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})  
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})  
         const today = new Date()
         console.log('today', today)
         const cutoff = new Date(
@@ -1286,7 +1306,7 @@ try {
 
     //RANK
     if (rankcom.includes(cmd)) {
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const x = parseInt(args[0]) || 10
         if (x < 1) return message.channel.send({ content: "Please provide a number greater than 0."})
         if (x > 100 || isNaN(x)) return message.channel.send({ content: "Please provide a number less than or equal to 100."})
@@ -1319,7 +1339,7 @@ try {
 
     //LOSS
     if (losscom.includes(cmd)) {
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const opid = message.mentions.users.first() ? message.mentions.users.first().id : null	
         if (!opid) return message.channel.send({ content: `No player specified.`})
         if (opid === maid) return message.channel.send({ content: `You cannot lose a match to yourself.`})
@@ -1453,7 +1473,7 @@ try {
     //MANUAL
     if (manualcom.includes(cmd)) {
         if (!isMod(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const usersMap = message.mentions.users
         const userIds = [...usersMap.keys()]	
         const winnerId = message.mentions.users.first() ? message.mentions.users.first().id : args.length > 0 ? args[0] : null
@@ -1636,7 +1656,7 @@ try {
 
     //H2H
     if (h2hcom.includes(cmd)) {
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const usersMap = message.mentions.users
         const userIds = [...usersMap.keys()]
         const player1Id = message.mentions.users.first() ? message.mentions.users.first().id : null	
@@ -1665,7 +1685,7 @@ try {
 
     //UNDO
     if (undocom.includes(cmd)) {
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const allMatches = await Match.findAll({ where: { format }})
         const lastMatch = allMatches.slice(-1)[0]
         const winnerId = lastMatch.winnerId
@@ -1845,7 +1865,7 @@ try {
     // It's also required after using the !combine command, but the bot will remind you to do it.
     if (recalccom.includes(cmd)) { 
         if (!isMod(message.member)) return message.channel.send({ content: "You do not have permission to do that."})
-        if (!format) return message.channel.send({ content: `Try using **!${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const all_stats = await Stats.findAll({ where: { format } })
 
         for (let i = 0; i < all_stats.length; i++) {

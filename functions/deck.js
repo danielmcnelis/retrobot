@@ -156,7 +156,7 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
 const checkDeckList = async (member, player, formatDate, formatEmoji, formatList, formatName, tournamentName = 'other') => {  
     const filter = m => m.author.id === member.user.id
     const message = await member.send({ content: `Please provide a duelingbook.com/deck link for the ${formatName} Format ${formatEmoji} deck you would like to check.`}).catch((err) => console.log(err))
-    if (!message || !message.channel) return false
+    if (!message || !message.channel) return {}
     return await message.channel.awaitMessages({
         filter,
         max: 1,
@@ -164,17 +164,18 @@ const checkDeckList = async (member, player, formatDate, formatEmoji, formatList
     }).then(async collected => {
         const url = collected.first().content
         if (url.includes("www.duelingbook.com/deck")) {		
-            member.send({ content: 'Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.'})
+            member.send({ content: 'Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.'}).catch((err) => console.log(err))
             const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
-            return issues
+            if (!issues) return {}
+            return issues 
         } else {
-            member.send({ content: "Sorry, I only accept duelingbook.com/deck links."})    
-            return false  
+            member.send({ content: "Sorry, I only accept duelingbook.com/deck links."}).catch((err) => console.log(err))    
+            return {}  
         }
     }).catch(err => {
         console.log(err)
-        member.send({ content: `Sorry, time's up. Go back to the server and try again.`})
-        return false
+        member.send({ content: `Sorry, time's up. Go back to the server and try again.`}).catch((err) => console.log(err))
+        return {}
     })
 }
 
