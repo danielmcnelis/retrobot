@@ -234,10 +234,10 @@ try {
         if(message.member.roles.cache.some(role => role.id === bfpRole)) {
             return message.channel.send({ content: `You do not have permission to do that.`})
         } else if (!message.member.roles.cache.some(role => role.id === politicsRole)) {
-			message.member.roles.add(politicsRole)
+			message.member.roles.add(politicsRole).catch((err) => console.log(err))
             return message.channel.send({ content: `You now have the Politics role.`})
         } else {
-            message.member.roles.remove(politicsRole)
+            message.member.roles.remove(politicsRole).catch((err) => console.log(err))
             return message.channel.send({ content: `You no longer have the Politics role.`})
         }
     }
@@ -264,8 +264,8 @@ try {
 
             const politics = await Role.findOne({ where: { membershipId: membership.id, roleId: politicsRole } })
             if (politics) await politics.destroy()
-            member.roles.add(muteRole)
-            member.roles.remove(politicsRole)   
+            member.roles.add(muteRole).catch((err) => console.log(err))
+            member.roles.remove(politicsRole).catch((err) => console.log(err))   
             return message.channel.send({ content: `${member.user.username} now has the Mute role.`})
         } else {
             return message.channel.send({ content: `That user is already muted.`})
@@ -285,7 +285,7 @@ try {
         if (member.roles.cache.some(role => role.id === muteRole)) {
             const role = await Role.findOne({ where: { membershipId: membership.id, roleId: muteRole } })
             if (role) await role.destroy()
-            member.roles.remove(muteRole)
+            member.roles.remove(muteRole).catch((err) => console.log(err))
             return message.channel.send({ content: `${member.user.username} no longer has the Mute role.`})
         } else {
             return message.channel.send({ content: `That user was not muted.`})
@@ -431,7 +431,7 @@ try {
                     } else { 
                         const member = message.guild.members.cache.get(playerId)
                         if (!member) continue
-                        member.roles.remove(tourRole)
+                        member.roles.remove(tourRole).catch((err) => console.log(err))
                     }
                 }
         
@@ -509,7 +509,7 @@ try {
                     } else { 
                         const member = message.guild.members.cache.get(playerId)
                         if (!member) continue
-                        member.roles.remove(tourRole)
+                        member.roles.remove(tourRole).catch((err) => console.log(err))
                     }
                 }
     
@@ -750,14 +750,14 @@ try {
                     roleName: `${formatName} Players`
                 })
             }
-			message.member.roles.add(formatRole)
+			message.member.roles.add(formatRole).catch((err) => console.log(err))
             return message.channel.send({ content: `You now have the ${formatName} Players role.`})
         } else {
             const role = await Role.findOne({ where: { membershipId: membership.id, roleId: formatRole } })
             if (role) {
                 await role.destroy()
             } 
-            message.member.roles.remove(formatRole)
+            message.member.roles.remove(formatRole).catch((err) => console.log(err))
             return message.channel.send({ content: `You no longer have the ${formatName} Players role.`})
         }
     }

@@ -519,7 +519,7 @@ const processMatchResult = async (message, winningPlayer, losingPlayer, tourname
         const entries = await Entry.count({ where: { playerId: losingPlayer.id } })
         if (entries === 1) {
             const member = message.guild.members.cache.get(losingEntry.playerId)
-            if (member) member.roles.remove(tourRole)
+            if (member) member.roles.remove(tourRole).catch((err) => console.log(err))
         }
         await losingEntry.destroy()
     }
