@@ -87,10 +87,10 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
                 return url
             } else if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
                 let response = [`I'm sorry, ${member.user.username}, your deck is not legal. ${mad}`]
-                if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format`, ...illegalCards]
-                if (forbiddenCards.length) response = [...response, `\nThe following cards are forbidden`, ...forbiddenCards]
-                if (limitedCards.length) response = [...response, `\nThe following cards are limited`, ...limitedCards]
-                if (semiLimitedCards.length) response = [...response, `\nThe following cards are semi-limited`, ...semiLimitedCards]
+                if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format:`, ...illegalCards]
+                if (forbiddenCards.length) response = [...response, `\nThe following cards are forbidden:`, ...forbiddenCards]
+                if (limitedCards.length) response = [...response, `\nThe following cards are limited:`, ...limitedCards]
+                if (semiLimitedCards.length) response = [...response, `\nThe following cards are semi-limited:`, ...semiLimitedCards]
             
                 for (let i = 0; i < response.length; i += 50) {
                     if (response[i+50] && response[i+50].startsWith("\n")) {

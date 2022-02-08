@@ -790,10 +790,10 @@ try {
 
         if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {      
             let response = [`I'm sorry, ${player.name}, your deck is not legal for ${formatName} Format. ${formatEmoji}`]
-            if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format`, ...illegalCards]
-            if (forbiddenCards.length) response = [...response, `\nThe following cards are forbidden`, ...forbiddenCards]
-            if (limitedCards.length) response = [...response, `\nThe following cards are limited`, ...limitedCards]
-            if (semiLimitedCards.length) response = [...response, `\nThe following cards are semi-limited`, ...semiLimitedCards]
+            if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format:`, ...illegalCards]
+            if (forbiddenCards.length) response = [...response, `\nThe following cards are forbidden:`, ...forbiddenCards]
+            if (limitedCards.length) response = [...response, `\nThe following cards are limited:`, ...limitedCards]
+            if (semiLimitedCards.length) response = [...response, `\nThe following cards are semi-limited:`, ...semiLimitedCards]
             
             for (let i = 0; i < response.length; i += 50) {
                 if (response[i+50] && response[i+50].startsWith("\n")) {
