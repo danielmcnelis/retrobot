@@ -74,7 +74,7 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
             const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
             console.log('issues', issues)
             if (!issues) return false
-            const { illegalCards, forbiddenCards, limitedCards, semiLimitedCards } = issues
+            const { illegalCards, forbiddenCards, limitedCards, semiLimitedCards, unrecognizedCards } = issues
             console.log('illegalCards', illegalCards)
             console.log('forbiddenCards', forbiddenCards)
             console.log('limitedCards', limitedCards)
