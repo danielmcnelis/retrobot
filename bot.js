@@ -788,13 +788,13 @@ try {
         console.log('unrecognizedCards', unrecognizedCards)
         if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return clearStatus('firefox')
 
-        if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
-            let response = `I'm sorry, ${player.name}, your deck is not legal for ${formatName} Format. ${formatEmoji}`
-            if (illegalCards.length) response += `\n\nThe following cards are not included in this format:\n${illegalCards.join('\n')}`
-            if (forbiddenCards.length) response += `\n\nThe following cards are forbidden:\n${forbiddenCards.join('\n')}`
-            if (limitedCards.length) response += `\n\nThe following cards are limited:\n${limitedCards.join('\n')}`
-            if (semiLimitedCards.length) response += `\n\nThe following cards are semi-limited:\n${semiLimitedCards.join('\n')}`
-                
+        if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {      
+            let response = [`I'm sorry, ${player.name}, your deck is not legal for ${formatName} Format. ${formatEmoji}`]
+            if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format`, ...illegalCards]
+            if (forbiddenCards.length) response = [...response, `\nThe following cards are forbidden`, ...forbiddenCards]
+            if (limitedCards.length) response = [...response, `\nThe following cards are limited`, ...limitedCards]
+            if (semiLimitedCards.length) response = [...response, `\nThe following cards are semi-limited`, ...semiLimitedCards]
+            
             for (let i = 0; i < response.length; i += 50) {
                 if (response[i+50] && response[i+50].startsWith("\n")) {
                     message.author.send({ content: response.slice(i, i+51).join('\n').toString()}).catch((err) => console.log(err))

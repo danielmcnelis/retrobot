@@ -86,12 +86,12 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
                 member.send({ content: `Thanks, ${member.user.username}, I saved a copy of ${pronoun} deck. ${legend}`}).catch((err) => console.log(err))
                 return url
             } else if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
-                let response = `I'm sorry, ${member.user.username}, ${pronoun} deck is not legal. ${mad}`
-                if (illegalCards.length) response += `\n\nThe following cards are not included in this format:\n${illegalCards.join('\n')}`
-                if (forbiddenCards.length) response += `\n\nThe following cards are forbidden:\n${forbiddenCards.join('\n')}`
-                if (limitedCards.length) response += `\n\nThe following cards are limited:\n${limitedCards.join('\n')}`
-                if (semiLimitedCards.length) response += `\n\nThe following cards are semi-limited:\n${semiLimitedCards.join('\n')}`
-                    
+                let response = [`I'm sorry, ${member.user.username}, your deck is not legal. ${mad}`]
+                if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format`, ...illegalCards]
+                if (forbiddenCards.length) response = [...response, `\nThe following cards are forbidden`, ...forbiddenCards]
+                if (limitedCards.length) response = [...response, `\nThe following cards are limited`, ...limitedCards]
+                if (semiLimitedCards.length) response = [...response, `\nThe following cards are semi-limited`, ...semiLimitedCards]
+            
                 for (let i = 0; i < response.length; i += 50) {
                     if (response[i+50] && response[i+50].startsWith("\n")) {
                         member.send({ content: response.slice(i, i+51).join('\n').toString()}).catch((err) => console.log(err))
