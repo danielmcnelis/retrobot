@@ -72,14 +72,8 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
         if (url.includes("duelingbook.com/deck")) {		
             member.send({ content: 'Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.'}).catch((err) => console.log(err))
             const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
-            console.log('issues', issues)
             if (!issues) return false
             const { illegalCards, forbiddenCards, limitedCards, semiLimitedCards, unrecognizedCards } = issues
-            console.log('illegalCards', illegalCards)
-            console.log('forbiddenCards', forbiddenCards)
-            console.log('limitedCards', limitedCards)
-            console.log('semiLimitedCards', semiLimitedCards)
-            console.log('unrecognizedCards', unrecognizedCards)
             if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return false
                 
             if (override) {
