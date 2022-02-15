@@ -751,14 +751,8 @@ try {
         }
         
         const issues = await checkDeckList(message.member, player, formatDate, formatEmoji, formatList, formatName)
-        console.log('issues', issues)
         if (!issues) return clearStatus('firefox')
         const { illegalCards, forbiddenCards, limitedCards, semiLimitedCards, unrecognizedCards } = issues
-        console.log('illegalCards', illegalCards)
-        console.log('forbiddenCards', forbiddenCards)
-        console.log('limitedCards', limitedCards)
-        console.log('semiLimitedCards', semiLimitedCards)
-        console.log('unrecognizedCards', unrecognizedCards)
         if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return clearStatus('firefox')
 
         if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {      
