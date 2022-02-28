@@ -17,6 +17,7 @@
     "noshowcom": ["!noshow", "!late", "!n"],
     "pfpcom": ["!pfp", "!avatar"],
     "profcom": ["!profile", "!prof", "!p"],
+    "queuecom": ["!q", "!queue"],
     "rankcom": ["!rankings", "!t", "!top",  "!ranks", "!ladder", "!leaderboard", "!leaders"],
     "recalccom": ["!recalc", "!recalculate"],
     "rolecom": ["!role",  "!r", "!goatrole", "!goatplayers", "!ranked", "!rankedrole", "!rankedplayers"],

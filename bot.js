@@ -26,9 +26,9 @@ const { botSpamChannel, welcomeChannel } = require('./static/channels.json')
 const { client } = require('./static/clients.js')
 const {
     activitycom, botcom, bracketcom, dbcom, dropcom, h2hcom, ironcom, joincom, legalcom, banscom, histcom, losscom, manualcom, medalscom,
-    noshowcom, pfpcom, profcom, rankcom, recalccom, rolecom, signupcom, startcom, statscom, undocom, yescom
+    noshowcom, queuecom, pfpcom, profcom, rankcom, recalccom, rolecom, signupcom, startcom, statscom, undocom, yescom
 } = require('./static/commands.json')
-const { FL, legend, lmfao, mad, mlady, sad, soldier } = require('./static/emojis.json')
+const { FL, iron, legend, lmfao, mad, mlady, sad, soldier } = require('./static/emojis.json')
 const formats = require('./static/formats.json')
 const { bfpRole, muteRole, tourRole, politicsRole } = require('./static/roles.json')
 const { challongeAPIKey } = require('./secrets.json')
