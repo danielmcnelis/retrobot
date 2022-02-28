@@ -34,6 +34,9 @@ const { bfpRole, muteRole, tourRole, politicsRole } = require('./static/roles.js
 const { challongeAPIKey } = require('./secrets.json')
 const fuzzyCards = FuzzySet([], false)
 
+console.log('Role', Role)
+console.log('Iron', Iron)
+
 //READY
 client.on('ready', async() => {
   console.log('RetroBot is online!')

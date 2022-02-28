@@ -39,9 +39,6 @@ const Iron = db.define('iron', {
         type: Sequelize.BOOLEAN,   
         defaultValue: false,    
         allowNull: false
-    },
-    playerId: {
-        type: Sequelize.STRING
     }
 })
 
