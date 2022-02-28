@@ -11,7 +11,7 @@ const FuzzySet = require('fuzzyset')
 const QuickChart = require('quickchart-js');
 
 //DATABASE IMPORTS
-const { Info, Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
+const { Info, Iron, Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
 
 //FUNCTION IMPORTS
 const { checkDeckList, getDeckType } = require('./functions/deck.js')
