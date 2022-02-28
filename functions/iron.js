@@ -200,7 +200,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         filter,
 		max: 1,
 		time: 15000
-	}).then((collected) => {
+	}).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
         const index = response.includes('1') ? 0 :
             response.includes('2') ? 1 :
@@ -269,7 +269,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
         filter,
 		max: 1,
 		time: time
-	}).then((collected) => {
+	}).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
         const index = response.includes('1') ? 0 :
             response.includes('2') ? 1 :
@@ -296,7 +296,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
             channel.send({ content: `${captain.name} selected ${ironPerson.name} to go ${word}!`})
             return setTimeout(() => chooseOrder(captain, channel, format), 2000)
         }
-	}).catch((err) => {
+	}).catch(async (err) => {
 		console.log(err)
         const index = Math.floor(Math.random() * 4)
         const selection = players[index]
