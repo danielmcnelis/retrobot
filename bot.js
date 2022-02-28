@@ -1691,12 +1691,14 @@ try {
     //IRON
     if(ironcom.includes(cmd)) {
         if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
-        const hasStarted = Iron.count({ 
+        const hasStarted = await Iron.count({ 
             where: {
                 format: format,
                 paired: true
             }
         })
+
+        console.log('hasStarted', hasStarted)
 
         if (hasStarted) return message.channel.send({ content: `Sorry, the ${formatName} ${formatEmoji} Iron already started. ${iron}`})
 
