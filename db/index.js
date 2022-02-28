@@ -45,6 +45,7 @@ module.exports = {
   Card,
   Entry,
   Info,
+  Iron,
   Match,
   Matchup,
   Membership,
