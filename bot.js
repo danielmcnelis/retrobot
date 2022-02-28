@@ -1730,7 +1730,7 @@ try {
         if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const queue = [...await Iron.findAll({ where: { format: format }})].map((i) => i.name)
         if (!queue.length) return message.channel.send({ content: `The ${formatName} ${formatEmoji} Iron queue is empty. ${iron}`})
-        return message.channel.send({ content: queue.join('\n').toString() })
+        return message.channel.send({ content: `${formatName} ${formatEmoji} Iron Queue:\n` + queue.join('\n').toString() })
     }
 
     //COMBINE
