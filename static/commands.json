@@ -7,6 +7,7 @@
     "dropcom": ["!drop", "!quit", "!out", "!leave", "!exit"],
     "h2hcom": ["!h2h", "!head2head", "!headtohead"],
     "histcom": ["!hist","!h", "!history", "!chart", "!graph"],
+    "ironcom": ["!iron", "!i", "!fe"],
     "joincom": ["!join", "!j", "!enter", "!play", "!in", "!resubmit"],
     "legalcom": ["!legal", "!check", "!checklegal", "!legalcheck", "!checkdeck", "!deckcheck"],
     "losscom": ["!loss", "!l", "!lose", "!lost", "!lossvs", "!lossto", "!lossat", "!losevs", "!loseto", "!loseat", "!lostvs", "!lostto", "!lostat"],

@@ -16,6 +16,7 @@ const { Info, Entry, Match, Matchup, Membership, Player, Role, Stats, Status, To
 //FUNCTION IMPORTS
 const { checkDeckList, getDeckType } = require('./functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
+const { confirmIron, endIron, postStory, resetIron } = require('./functions/iron.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
 const { assignRoles, capitalize, clearStatus, createMembership, createPlayer, fetchCardNames, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats, killFirefox } = require('./functions/utility.js')
@@ -24,7 +25,7 @@ const { assignRoles, capitalize, clearStatus, createMembership, createPlayer, fe
 const { botSpamChannel, welcomeChannel } = require('./static/channels.json')
 const { client } = require('./static/clients.js')
 const {
-    activitycom, botcom, bracketcom, dbcom, dropcom, h2hcom, joincom, legalcom, banscom, histcom, losscom, manualcom, medalscom,
+    activitycom, botcom, bracketcom, dbcom, dropcom, h2hcom, ironcom, joincom, legalcom, banscom, histcom, losscom, manualcom, medalscom,
     noshowcom, pfpcom, profcom, rankcom, recalccom, rolecom, signupcom, startcom, statscom, undocom, yescom
 } = require('./static/commands.json')
 const { FL, legend, lmfao, mad, mlady, sad, soldier } = require('./static/emojis.json')
