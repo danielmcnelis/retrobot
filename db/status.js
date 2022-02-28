@@ -2,7 +2,7 @@
 const Sequelize = require('sequelize')
 const { db } = require('./db')
 
-const Status = db.define('status', {
+const Status = db.define('statuses', {
   name: {
     type: Sequelize.TEXT,
     allowNull: false

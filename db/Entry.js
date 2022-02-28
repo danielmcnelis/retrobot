@@ -2,7 +2,7 @@
 const Sequelize = require('sequelize')
 const { db } = require('./db')
 
-const Entry = db.define('entry', {
+const Entry = db.define('entries', {
     pilot: {
         type: Sequelize.STRING,   
         allowNull: false

@@ -2,7 +2,7 @@
 const Sequelize = require('sequelize')
 const { db } = require('./db')
 
-const Tournament = db.define('tournament', {
+const Tournament = db.define('tournaments', {
     id: {
         primaryKey: true,
         type: Sequelize.STRING,   

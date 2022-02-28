@@ -9,7 +9,7 @@ const fs = require('fs')
 const { Op } = require('sequelize')
 const FuzzySet = require('fuzzyset')
 const QuickChart = require('quickchart-js');
-
+ 
 //DATABASE IMPORTS
 const { Info, Iron, Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
 
@@ -21,7 +21,7 @@ const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functi
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
 const { assignRoles, capitalize, clearStatus, createMembership, createPlayer, fetchCardNames, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats, killFirefox } = require('./functions/utility.js')
 
-// STATIC IMPORTS
+// STATIC IMPORTS 
 const { botSpamChannel, welcomeChannel } = require('./static/channels.json')
 const { client } = require('./static/clients.js')
 const {
