@@ -1684,6 +1684,49 @@ try {
         return message.channel.send({ content: `The last ${formatName} match in which ${winningPlayer.name} defeated ${losingPlayer.name} has been erased. ${formatEmoji}`})
     }
 
+    //IRON
+    if(ironcom.includes(cmd)) {
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        const hasStarted = Iron.count({ 
+            where: {
+                format: format,
+                paired: true
+            }
+        })
+
+        if (hasStarted) return message.channel.send({ content: `Sorry, the ${formatName} ${formatEmoji} Iron already started. ${iron}`})
+
+        const alreadyIn = await Iron.count({ 
+            where: { 
+                format: format,
+                playerId: maid
+            } 
+        })
+        
+        if (!alreadyIn) {
+            const count = await Iron.count({ where: { format: format }})
+            if (count >= 8) return message.channel.send({ content: `Sorry, ${message.author.username}, the ${formatName} ${formatEmoji} Iron is full.`})
+
+            await Iron.create({ 
+                name: message.author.username,
+                playerId: maid
+            })
+            message.channel.send({ content: `You joined the Iron queue. ${iron}`})
+            
+            if (count === 7) return confirmIron()
+        } else {
+            return message.channel.send({ content: `You were already in the Iron queue. ${iron}`})
+        }
+    } 
+
+    //QUEUE
+    if(queuecom.includes(cmd)) {
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        const queue = [...await Iron.findAll({ where: { format: format }})].map((i) => i.name)
+        if (!queue.length) return message.channel.send({ content: `The ${formatName} ${formatEmoji} Iron queue is empty. ${iron}`})
+        return message.channel.send({ content: queue.join('\n').toString() })
+    }
+
     //COMBINE
     // Use this command to combine two Discord accounts into one.
     // Arguments required: @Old_User, @New_User

@@ -3,6 +3,7 @@ const { db } = require('./db')
 const Card = require('./Card')
 const Entry = require('./Entry')
 const Info = require('./Info')
+const Iron = require('./Iron')
 const Match = require('./Match')
 const Matchup = require('./Matchup')
 const Membership = require('./Membership')
@@ -20,6 +21,9 @@ Player.hasMany(Membership)
 
 Role.belongsTo(Membership)
 Membership.hasMany(Role)
+
+Iron.belongsTo(Player)
+Player.hasMany(Iron)
 
 Entry.belongsTo(Player)
 Player.hasMany(Entry)
