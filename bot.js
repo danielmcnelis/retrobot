@@ -1712,7 +1712,8 @@ try {
 
             await Iron.create({ 
                 name: message.author.username,
-                playerId: maid
+                playerId: maid,
+                format: format
             })
             message.channel.send({ content: `You joined the Iron queue. ${iron}`})
             
@@ -1720,6 +1721,7 @@ try {
         } else {
             const ironPerson = await Iron.findOne({ 
                 name: message.author.username,
+                format: format,
                 playerId: maid
             })
 
