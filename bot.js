@@ -34,9 +34,6 @@ const { bfpRole, ironRole, muteRole, tourRole, politicsRole } = require('./stati
 const { challongeAPIKey } = require('./secrets.json')
 const fuzzyCards = FuzzySet([], false)
 
-console.log('Role', Role)
-console.log('Iron', Iron)
-
 //READY
 client.on('ready', async() => {
   console.log('RetroBot is online!')
@@ -1721,7 +1718,14 @@ try {
             
             if (count === 7) return confirmIron()
         } else {
-            return message.channel.send({ content: `You were already in the Iron queue. ${iron}`})
+            const ironPerson = await Iron.findOne({ 
+                name: message.author.username,
+                playerId: maid
+            })
+
+            if (!ironPerson) return
+            await ironPerson.destroy()
+            return message.channel.send({ content: `You left the Iron queue. ${iron}`})
         }
     } 
 
