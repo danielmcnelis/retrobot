@@ -30,7 +30,7 @@ const {
 } = require('./static/commands.json')
 const { FL, iron, legend, lmfao, mad, mlady, sad, soldier } = require('./static/emojis.json')
 const formats = require('./static/formats.json')
-const { bfpRole, muteRole, tourRole, politicsRole } = require('./static/roles.json')
+const { bfpRole, ironRole, muteRole, tourRole, politicsRole } = require('./static/roles.json')
 const { challongeAPIKey } = require('./secrets.json')
 const fuzzyCards = FuzzySet([], false)
 
