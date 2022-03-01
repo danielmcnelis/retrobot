@@ -1720,9 +1720,11 @@ try {
             if (count === 7) return confirmIron()
         } else {
             const ironPerson = await Iron.findOne({ 
-                name: message.author.username,
-                format: format,
-                playerId: maid
+                where: {
+                    name: message.author.username,
+                    format: format,
+                    playerId: maid
+                }
             })
 
             if (!ironPerson) return
