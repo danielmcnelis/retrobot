@@ -205,7 +205,6 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         return
     } else if (ironPeople.length === 1) {
         const ironPerson = ironPeople[0]
-        console.log('!!ironPerson', !!ironPerson)
         ironPerson.team = team
         await ironPerson.save()
         channel.send({ content: `<@${ironPerson.playerId}> has been assigned to Team ${team}!`})
@@ -235,8 +234,6 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         } else {
             const selection = players[index]
             const name = selection.slice(selection.indexOf(`) - `) + 4)
-            console.log('name', name)
-            console.log('format', format)
             const ironPerson = await Iron.findOne({
                 where: {
                     name: name,
@@ -245,16 +242,29 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
                 }
             })
 
-            console.log('!!ironPerson', !!ironPerson)
             ironPerson.team = team
             await ironPerson.save()
             channel.send({ content: `${captain.name} selected <@${ironPerson.playerId}>!`})
-            return setTimeout(() => draftTeams(pick++, captainA, captainB, channel, format), 2000)
+            return setTimeout(() => draftTeams(pick + 1, captainA, captainB, channel, format), 2000)
         }
 	}).catch((err) => {
 		console.log(err)
-        channel.send({ content: `Sorry, time's up. Try again for beta testing.`})
-        return setTimeout(() => draftTeams(pick, captainA, captainB, channel, format), 2000)
+        channel.send({ content: `Sorry, time's up.`})
+        const index = Math.floor(Math.random() * players.length)
+        const selection = players[index]
+        const name = selection.slice(selection.indexOf(`) - `) + 4)
+        const ironPerson = await Iron.findOne({
+            where: {
+                name: name,
+                format: format,
+                team: null
+            }
+        })
+
+        ironPerson.team = team
+        await ironPerson.save()
+        channel.send({ content: `<@${ironPerson.playerId}> was randomly assigned to Team ${team}!`})
+        return setTimeout(() => draftTeams(pick + 1, captainA, captainB, channel, format), 2000)
 	})
 }
 
