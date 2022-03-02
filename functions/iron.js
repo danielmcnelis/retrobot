@@ -187,19 +187,32 @@ const assignCaptains = async (entries, channel, format) => {
 
 //DRAFT TEAMS
 const draftTeams = async (pick, captainA, captainB, channel, format) => {
+    console.log('pick', pick)
     const captain = (pick === 1 || pick === 4 || pick === 5) ? captainB : captainA
     const team = captain === captainA ? 'A' : 'B'
     const filter = m => m.author.id === captain.playerId
-    const players = [...await Iron.findAll({ where: {
+    const ironPeople = [...await Iron.findAll({ where: {
         format: format,
+        captain: null,
         team: null
-    }})].map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
+    }})]
 
-    if (!players.length) {
+    const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
+
+    if (!ironPeople.length) {
         chooseOrder(captainA, channel, format)
         chooseOrder(captainB, channel, format)
         return
-    } 
+    } else if (ironPeople.length === 1) {
+        const ironPerson = ironPeople[0]
+        console.log('!!ironPerson', !!ironPerson)
+        ironPerson.team = team
+        await ironPerson.save()
+        channel.send({ content: `<@${ironPerson.playerId}> has been assigned to Team ${team}!`})
+        chooseOrder(captainA, channel, format)
+        chooseOrder(captainB, channel, format)
+        return
+    }
 
 	channel.send({ content: `<@${captain.playerId}>, Please select a player:\n${players.join('\n')}`})
 	return await channel.awaitMessages({ 
@@ -235,7 +248,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
             console.log('!!ironPerson', !!ironPerson)
             ironPerson.team = team
             await ironPerson.save()
-            channel.send({ content: `${captain.name} selected <@${ironPerson.playedId}>!`})
+            channel.send({ content: `${captain.name} selected <@${ironPerson.playerId}>!`})
             return setTimeout(() => draftTeams(pick++, captainA, captainB, channel, format), 2000)
         }
 	}).catch((err) => {
