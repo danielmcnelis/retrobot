@@ -189,7 +189,6 @@ const assignCaptains = async (entries, channel, format) => {
 
 //DRAFT TEAMS
 const draftTeams = async (pick, captainA, captainB, channel, format) => {
-    console.log('pick', pick)
     const captain = (pick === 1 || pick === 4 || pick === 5) ? captainB : captainA
     const team = captain === captainA ? 'A' : 'B'
     const filter = m => m.author.id === captain.playerId
@@ -230,7 +229,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
             response.includes('6') ? 5 :
             false
 
-        if (!index || (index + 1) > players.length) {
+        if (index === false || (index + 1) > players.length) {
             channel.send({ content: `Invalid selection.`})
             return setTimeout(() => draftTeams(pick, captainA, captainB, channel, format), 1000)
         } else {
@@ -332,13 +331,10 @@ const chooseOrder = async (captain = {}, channel, format) => {
         }
 	}).catch(async (err) => {
 		console.log(err)
-        const index = Math.floor(Math.random() * players.length)
-        const selection = players[index]
-        const name = selection.slice(selection.indexOf(`(${index + 1}) - `))
         const ironPerson = await Iron.findOne({
             where: {
-                name: name,
                 format: format,
+                position: null,
                 team: team
             }
         })
