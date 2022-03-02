@@ -271,6 +271,11 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
 
 //CHOOSE ORDER
 const chooseOrder = async (captain = {}, channel, format) => {
+    const guild = client.guilds.cache.get("414551319031054346")
+    const playerId = captain.playerId
+    const member = guild.members.cache.get(playerId)
+    if (!member) return channel.send(`Unable to message ${captain.name}.`)
+    
     const team = captain.team
     const ironPeople = [...await Iron.findAll({ where: {
         format: format,
@@ -295,7 +300,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
         const ironPerson = ironPeople[0]
         ironPerson.position = position
         await ironPerson.save()
-        message.channel.send({ content: `${ironPerson.name} will go ${word}.`})
+        member.send({ content: `${ironPerson.name} will go ${word}.`})
         const count = await Iron.count({ 
             where: {
                 format: format,
@@ -313,10 +318,6 @@ const chooseOrder = async (captain = {}, channel, format) => {
     }
 
     const time = 15000 * players.length
-    const guild = client.guilds.cache.get("414551319031054346")
-    const playerId = captain.playerId
-    const member = guild.members.cache.get(playerId)
-    if (!member) return channel.send(`Unable to message ${captain.name}.`)
     const filter = m => m.author.id === playerId
 	const message = await member.send({ content: `${captain.name}, You have ${time / 1000}s to choose who will go ${word} for Team ${team}:\n${players.join('\n')}`})
 	return await message.channel.awaitMessages({ 
