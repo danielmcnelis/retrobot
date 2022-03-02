@@ -1,7 +1,7 @@
 
 const { Info, Iron, Player, Stats } = require('../db')
 const { yescom } = require('../static/commands.json')
-const { iron, vincent } = require('../static/emojis.json')
+const { cavebob, iron, vincent } = require('../static/emojis.json')
 const { ironRole } = require('../static/roles.json')
 const { client } = require('../static/clients.js')
 
