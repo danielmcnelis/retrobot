@@ -330,7 +330,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
         }
 	}).catch(async (err) => {
 		console.log(err)
-        const index = Math.floor(Math.random() * 4)
+        const index = Math.floor(Math.random() * players.length)
         const selection = players[index]
         const name = selection.slice(selection.indexOf(`(${index + 1}) - `))
         const ironPerson = await Iron.findOne({
