@@ -169,6 +169,7 @@ const assignCaptains = async (entries, channel, format) => {
     })
 
     captainA.captain = true
+    captainA.team = 'A'
     await captainA.save()
 
     const captainB = await Iron.findOne({ 
@@ -179,6 +180,7 @@ const assignCaptains = async (entries, channel, format) => {
     })
 
     captainB.captain = true
+    captainB.team = 'B'
     await captainB.save()
 
     channel.send({ content: `<@${captainA.playerId}> and <@${captainB.playerId}> are captains. You have 30 seconds to make each pick.`})
@@ -296,7 +298,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
     const member = guild.members.cache.get(playerId)
     if (!member) return channel.send(`Unable to message ${captain.name}.`)
     const filter = m => m.author.id === playerId
-	const message = await member.send({ content: `${captain.name}, You have ${time / 1000}s to choose who will go ${word} for Team ${team}:${players.join('\n')}`})
+	const message = await member.send({ content: `${captain.name}, You have ${time / 1000}s to choose who will go ${word} for Team ${team}:\n${players.join('\n')}`})
 	return await message.channel.awaitMessages({ 
         filter,
 		max: 1,
