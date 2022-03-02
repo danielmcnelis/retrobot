@@ -4,6 +4,7 @@ const { yescom } = require('../static/commands.json')
 const { cavebob, iron, vincent } = require('../static/emojis.json')
 const { ironRole } = require('../static/roles.json')
 const { client } = require('../static/clients.js')
+const formats = require('../static/formats.json')
 
 //CONFIRM IRON
 const confirmIron = async (channel, format) => {
@@ -102,7 +103,7 @@ const getIronConfirmation = async (entry, channel, format) => {
     const member = guild.members.cache.get(playerId)
     if (!member || playerId !== member.user.id) return channel.send({ content: `${entry.name} cannot be sent DMs.` })
     const filter = m => m.author.id === playerId
-	const message = await member.send({ content: `Do you still wish to play in the ${format} Iron?`}).catch((err) => console.log(err))
+	const message = await member.send({ content: `Do you still wish to play in the ${formats[format].name} Iron? ${formats[format].emoji} ${iron}`}).catch((err) => console.log(err))
     if (!message || !message.channel) return false
 	await message.channel.awaitMessages({ 
         filter,
@@ -122,7 +123,7 @@ const getIronConfirmation = async (entry, channel, format) => {
             entry.confirmed = true
             await entry.save()
             member.send({ content: `Thanks! Please wait to see if everyone confirms.`})
-            return channel.send({ content: `${member.user.username} confirmed their participation in the Iron!`})
+            return channel.send({ content: `${member.user.username} confirmed their participation in the ${formats[format].name} Iron ${formats[format].emoji} ${iron}!`})
         }
 	}).catch((err) => {
 		console.log(err)
@@ -156,10 +157,8 @@ const assignCaptains = async (entries, channel, format) => {
     }
 
     statsArr.sort((a, b) => b[1] - a[1])
-    console.log('statsArr', statsArr)
     const index = Math.floor(Math.random() * 6)
     const captains = statsArr.slice(index, index + 2).map((a) => a[0])
-    console.log('captains', captains)
 
     const captainA = await Iron.findOne({ 
         where: {
@@ -208,7 +207,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         const ironPerson = ironPeople[0]
         ironPerson.team = team
         await ironPerson.save()
-        channel.send({ content: `<@${ironPerson.playerId}> has been assigned to Team ${team}!`})
+        channel.send({ content: `<@${ironPerson.playerId}> has been assigned to ${captain.name}'s Team!`})
         chooseOrder(captainA, channel, format)
         chooseOrder(captainB, channel, format)
         return
@@ -264,7 +263,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
 
         ironPerson.team = team
         await ironPerson.save()
-        channel.send({ content: `<@${ironPerson.playerId}> was randomly assigned to Team ${team}!`})
+        channel.send({ content: `<@${ironPerson.playerId}> was randomly assigned to ${captain.name}'s Team!`})
         return setTimeout(() => draftTeams(pick + 1, captainA, captainB, channel, format), 2000)
 	})
 }
@@ -309,7 +308,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
         })
 
         if (!count) {
-            return postPairing(channel, format)
+            return postStory(channel, format)
         } else {
             return
         }
@@ -348,7 +347,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
 
             ironPerson.position = position
             await ironPerson.save()
-            channel.send({ content: `${captain.name} selected ${ironPerson.name} to go ${word}!`})
+            message.channel.send({ content: `You selected ${ironPerson.name} to go ${word}!`})
             return setTimeout(() => chooseOrder(captain, channel, format), 2000)
         }
 	}).catch(async (err) => {
@@ -395,7 +394,7 @@ const postPairing = async (channel, format) => {
 
     return channel.send({ content:
         `${iron} --- Iron Match #${matchNo} --- ${iron}` + 
-        `<@${teamA[0].playerId}> vs <@${teamB[1].playerId}>`
+        `\n<@${teamA[0].playerId}> vs <@${teamB[1].playerId}>`
     })
 }
 
@@ -418,11 +417,11 @@ const postStory = async (channel, format) => {
     })].map((p) =>  p.eliminated ? `~~${p.name}~~ ${vincent}` : `${p.name}`)
 
     channel.send({ content:
-        `${iron} - Iron Summary - ${iron}` +
-        `**Team A**` +
-        `${teamA.join('\n')}` +
+        `${iron}  ${formats[format].emoji} - ${formats[format].name} Iron Story -  ${formats[format].emoji} ${iron}` +
+        `\n**Team A**` +
+        `\n${teamA.join('\n')}` +
         `\n\n**Team B**` +
-        `${teamB.join('\n')}`
+        `\n${teamB.join('\n')}`
     })
 
     return setTimeout(() => postPairing(channel, format), 5000)
