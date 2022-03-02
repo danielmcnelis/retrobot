@@ -158,7 +158,7 @@ const assignCaptains = async (entries, channel, format) => {
     statsArr.sort((a, b) => b[1] - a[1])
     console.log('statsArr', statsArr)
     const index = Math.floor(Math.random() * 6)
-    const captains = statsArr.slice(index, index + 1).map((a) => a[0])
+    const captains = statsArr.slice(index, index + 2).map((a) => a[0])
     console.log('captains', captains)
 
     const captainA = await Iron.findOne({ 
