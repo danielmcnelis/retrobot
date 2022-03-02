@@ -7,6 +7,10 @@ const { client } = require('../static/clients.js')
 
 //CONFIRM IRON
 const confirmIron = async (channel, format) => {
+    const info = await Info.findOne({ where: { element: 'iron' }})
+    info.status = 'confirming'
+    await info.save()
+
     channel.send({ content: `Iron players, please check your DMs!`})
     const entries = await Iron.findAll({ 
         where: {
@@ -61,6 +65,9 @@ const confirmIron = async (channel, format) => {
         } })
 
         if (count !== 8 && !active) {
+            info.status = 'pending'
+            await info.save()
+
             const missingEntries = await Iron.findAll({ 
                 where: { 
                     format: format,
@@ -76,7 +83,7 @@ const confirmIron = async (channel, format) => {
                 const entry = missingArenaEntries[i]
                 await entry.destroy()
             }
-            
+
             return channel.send({ content: `Unfortunately, The Iron cannot begin without 8 players.\n\nThe following players have been removed from the queue:\n${missingNames.sort().join("\n")}`})
         } else if (count === 8 && !active) {
             info.status = 'active'
