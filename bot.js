@@ -16,12 +16,12 @@ const { Info, Iron, Entry, Match, Matchup, Membership, Player, Role, Stats, Stat
 //FUNCTION IMPORTS
 const { checkDeckList, getDeckType } = require('./functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
-const { confirmIron, endIron, postStory, resetIron } = require('./functions/iron.js')
+const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
-const { assignRoles, capitalize, clearStatus, createMembership, createPlayer, fetchCardNames, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats, killFirefox } = require('./functions/utility.js')
+const { assignRoles, capitalize, clearStatus, createMembership, createPlayer, fetchCardNames, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats, killFirefox } = require('./functions/utility.js')
 
-// STATIC IMPORTS 
+// STATIC IMPORTS
 const { botSpamChannel, welcomeChannel } = require('./static/channels.json')
 const { client } = require('./static/clients.js')
 const {
@@ -1335,6 +1335,11 @@ try {
         let losingEntry
         let tournament
 
+        const loserHasIronRole = isIronPlayer(message.member)
+        const winnerHasIronRole = isIronPlayer(winner)
+        const activeIron = await Info.count({ where: { element: 'iron', status: 'active' }})
+        let isIronMatch
+        
         if (loserHasTourRole && winnerHasTourRole && activeTournament) {
             const loserEntries = await Entry.findAll({ where: { playerId: losingPlayer.id }, include: Tournament })
             const winnerEntries = await Entry.findAll({ where: { playerId: winningPlayer.id }, include: Tournament })
@@ -1395,6 +1400,41 @@ try {
                     }
                 }
             }
+        } else if (loserHasIronRole && winnerHasIronRole && activeIron) {
+            const teamA = [...await Iron.findAll({ 
+                where: {
+                    format: format,
+                    team: 'A',
+                    eliminated: false
+                },
+                order: [["position", "ASC"]]
+            })]
+        
+            const teamB = [...await Iron.findAll({ 
+                where: {
+                    format: format,
+                    team: 'B',
+                    eliminated: false
+                },
+                order: [["position", "ASC"]]
+            })]
+                    
+            const ironPersonA = teamA[0]
+            const ironPersonB = teamB[0]
+
+            if (winningPlayer.id === ironPersonA.playerId && losingPlayer.id === ironPersonB.playerId) {
+                isIronMatch = true
+                ironPersonB.eliminated = true
+                await ironPersonB.save()
+                setTimeout(() => postStory(message.channel, format), 5000)
+            } else if (winningPlayer.id === ironPersonB.playerId && losingPlayer.id === ironPersonA.playerId) {
+                isIronMatch = true
+                ironPersonA.eliminated = true
+                await ironPersonA.save()
+                setTimeout(() => postStory(message.channel, format), 5000)
+            } else {
+                return message.channel.send({ content: `Sorry, ${winningPlayer.name} is not your ${formatName} Iron opponent. ${formatEmoji} ${iron}`})
+            }
         }
             
         const origEloWinner = winnerStats.elo || 500.00
@@ -1435,7 +1475,7 @@ try {
             })
         }
 
-        return message.channel.send({ content: `${losingPlayer.name}, your ${formatName} Format ${formatEmoji} ${isTournamentMatch ? 'Tournament ' : ''}loss to ${winningPlayer.name} has been recorded.`})
+        return message.channel.send({ content: `${losingPlayer.name}, your ${formatName} Format ${formatEmoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${iron}` : ''}loss to ${winningPlayer.name} has been recorded.`})
     }
 
     //MANUAL
@@ -1478,6 +1518,11 @@ try {
         let winningEntry
         let losingEntry
         let tournament
+
+        const loserHasIronRole = isIronPlayer(message.member)
+        const winnerHasIronRole = isIronPlayer(winner)
+        const activeIron = await Info.count({ where: { element: 'iron', status: 'active' }})
+        let isIronMatch
 
         if (loserHasTourRole && winnerHasTourRole && activeTournament) {
             const loserEntries = await Entry.findAll({ where: { playerId: losingPlayer.id }, include: Tournament })
@@ -1539,6 +1584,41 @@ try {
                     }
                 }
             }
+        } else if (loserHasIronRole && winnerHasIronRole && activeIron) {
+            const teamA = [...await Iron.findAll({ 
+                where: {
+                    format: format,
+                    team: 'A',
+                    eliminated: false
+                },
+                order: [["position", "ASC"]]
+            })]
+        
+            const teamB = [...await Iron.findAll({ 
+                where: {
+                    format: format,
+                    team: 'B',
+                    eliminated: false
+                },
+                order: [["position", "ASC"]]
+            })]
+                    
+            const ironPersonA = teamA[0]
+            const ironPersonB = teamB[0]
+
+            if (winningPlayer.id === ironPersonA.playerId && losingPlayer.id === ironPersonB.playerId) {
+                isIronMatch = true
+                ironPersonB.eliminated = true
+                await ironPersonB.save()
+                setTimeout(() => postStory(message.channel, format), 5000)
+            } else if (winningPlayer.id === ironPersonB.playerId && losingPlayer.id === ironPersonA.playerId) {
+                isIronMatch = true
+                ironPersonA.eliminated = true
+                await ironPersonA.save()
+                setTimeout(() => postStory(message.channel, format), 5000)
+            } else {
+                return message.channel.send({ content: `Sorry, ${winningPlayer.name} is not ${losingPlayer.name}'s ${formatName} Iron opponent. ${formatEmoji} ${iron}`})
+            }
         }
             
         const origEloWinner = winnerStats.elo || 500.00
@@ -1579,7 +1659,7 @@ try {
             })
         }
 
-        return message.channel.send({ content: `A manual ${formatName} Format ${formatEmoji} ${isTournamentMatch ? 'Tournament ' : ''}loss by ${losingPlayer.name} to ${winningPlayer.name} has been recorded.`})		
+        return message.channel.send({ content: `A manual ${formatName} Format ${formatEmoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${iron}` : ''}loss by ${losingPlayer.name} to ${winningPlayer.name} has been recorded.`})		
     }
 
     //NO SHOW
@@ -1683,6 +1763,13 @@ try {
 
         await lastMatch.destroy()
         return message.channel.send({ content: `The last ${formatName} match in which ${winningPlayer.name} defeated ${losingPlayer.name} has been erased. ${formatEmoji}`})
+    }
+
+    //RESET
+    if (cmd === `!reset`) {
+        if (!isMod(message.member)) return message.channel.send({ content: "You do not have permission to do that."})
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        return resetIron(message.channel, format)
     }
 
     //IRON

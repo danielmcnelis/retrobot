@@ -19,7 +19,7 @@ const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend,
     WingedBeast, Wyrm, Zombie, forbidden, limited, semi
  } = require('../static/emojis.json')
 const formats = require('../static/formats.json')
-const { adminRole, modRole, tourRole } = require('../static/roles.json')
+const { adminRole, ironRole, modRole, tourRole } = require('../static/roles.json')
 
 //CLEAR STATUS
 const clearStatus = async (element) => {
@@ -384,6 +384,9 @@ const getRandomSubset = (arr, n) => {
 //IS ADMIN?
 const isAdmin = (member) => member && member.roles.cache.some(role => role.id === adminRole)
 
+//IS IRON PLAYER?
+const isIronPlayer = (member) => member && member.roles.cache.some(role => role.id === ironRole)
+
 //IS MOD?
 const isMod = (member) => member && member.roles.cache.some(role => role.id === modRole)
 
@@ -444,6 +447,7 @@ module.exports = {
     getRandomElement,
     getRandomSubset,
     isAdmin,
+    isIronPlayer,
     isMod,
     isNewMember,
     isNewUser,

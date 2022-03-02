@@ -11,14 +11,8 @@ const confirmIron = async (channel, format) => {
     const info = await Info.findOne({ where: { element: 'iron' }})
     info.status = 'confirming'
     await info.save()
-
     channel.send({ content: `Iron players, please check your DMs!`})
-    const entries = await Iron.findAll({ 
-        where: {
-            format: format
-        }
-     })
-    
+    const entries = await Iron.findAll({ where: { format: format }})
     getIronConfirmation(entries[0], channel, format)
     getIronConfirmation(entries[1], channel, format)
     getIronConfirmation(entries[2], channel, format)
@@ -76,14 +70,24 @@ const confirmIron = async (channel, format) => {
             })
 
             const missingNames = missingEntries.map((entry) => entry.player.name)
-            await resetIron(info, entries)
-
             for (let i = 0; i < missingEntries.length; i++) {
                 const entry = missingEntries[i]
                 await entry.destroy()
             }
 
-            return channel.send({ content: `Unfortunately, The Iron cannot begin without 8 players.\n\nThe following players have been removed from the queue:\n${missingNames.sort().join("\n")}`})
+            const remainingEntries = await Iron.findAll({ where: { format: format }})
+            for (let i = 0; i < remainingEntries.length; i++) {
+                const entry = remainingEntries[i]
+                entry.team = null
+                entry.captain = null
+                entry.position = null
+                entry.paired = false
+                entry.confirmed = false
+                entry.eliminated = false
+                await entry.save()
+            }
+            
+            return channel.send({ content: `Unfortunately, The ${formats[format].name} Iron cannot begin without 8 players. ${formats[format].emoji} ${iron}\n\nThe following players have been removed from the queue:\n${missingNames.sort().join("\n")}`})
         } else if (count === 8 && !active) {
             info.status = 'active'
             await info.save()
@@ -427,17 +431,21 @@ const postStory = async (channel, format) => {
     return setTimeout(() => postPairing(channel, format), 5000)
 }
 
-//END IRON
-const endIron = async () => {
-}
-
 //RESET IRON
-const resetIron = async () => {
+const resetIron = async (channel, format) => {
+    const entries = await Iron.findAll({ where: { format: format }})
+    for (let i = 0; i < entries.length; i++) {
+        await entry.destroy()
+    }
+
+    const info = await Info.findOne({ where: { element: 'iron' }})
+    info.status = 'pending'
+    await info.save()
+    return channel.send({ content: `The ${formats[format].name} Iron has been reset. ${formats[format].emoji} ${iron}` })
 }
 
 module.exports = {
     confirmIron,
-    endIron,
     postStory,
     resetIron
 }
