@@ -337,7 +337,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
             return setTimeout(() => chooseOrder(captain, channel, format), 1000)
         } else {
             const selection = players[index]
-            const name = selection.slice(selection.indexOf(`) - ` + 4))
+            const name = selection.slice(selection.indexOf(`) - `) + 4)
             const ironPerson = await Iron.findOne({
                 where: {
                     name: name,
@@ -376,7 +376,7 @@ const postPairing = async (channel, format) => {
             team: 'A',
             eliminated: false
         },
-        order: ["position", "ASC"]
+        order: [["position", "ASC"]]
     })]
 
     const teamB = [...await Iron.findAll({ 
@@ -385,7 +385,7 @@ const postPairing = async (channel, format) => {
             team: 'B',
             eliminated: false
         },
-        order: ["position", "ASC"]
+        order: [["position", "ASC"]]
     })]
     
     if (!teamA.length) return channel.send({ content: `Team B has emerged victorious!!!`})
