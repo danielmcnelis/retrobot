@@ -221,14 +221,14 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
             return setTimeout(() => draftTeams(pick, captainA, captainB, channel, format), 1000)
         } else {
             const selection = players[index]
-            const name = selection.slice(selection.indexOf(`(${index + 1}) - `))
+            const name = selection.slice(selection.indexOf(`) - `) + 4)
             console.log('name', name)
             console.log('format', format)
             const ironPerson = await Iron.findOne({
                 where: {
                     name: name,
                     format: format,
-                    team: NULL
+                    team: null
                 }
             })
 
