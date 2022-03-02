@@ -1695,8 +1695,6 @@ try {
             }
         })
 
-        console.log('hasStarted', hasStarted)
-
         if (hasStarted) return message.channel.send({ content: `Sorry, the ${formatName} ${formatEmoji} Iron already started. ${iron}`})
 
         const alreadyIn = await Iron.count({ 
@@ -1717,7 +1715,7 @@ try {
             })
             message.channel.send({ content: `You joined the Iron queue. ${iron}`})
             
-            if (count === 7) return confirmIron()
+            if (count === 7) return confirmIron(message.channel, format)
         } else {
             const ironPerson = await Iron.findOne({ 
                 where: {

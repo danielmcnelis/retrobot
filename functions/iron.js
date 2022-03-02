@@ -7,7 +7,7 @@ const { client } = require('../static/clients.js')
 
 //CONFIRM IRON
 const confirmIron = async (channel, format) => {
-    channel.send({ content: `Arena players, please check your DMs!`})
+    channel.send({ content: `Iron players, please check your DMs!`})
     const entries = await Iron.findAll({ 
         where: {
             format: format
@@ -95,7 +95,7 @@ const getIronConfirmation = async (entry, channel) => {
     const guild = client.guilds.cache.get("414551319031054346")
     const playerId = entry.playerId
     const member = guild.members.cache.get(playerId)
-    if (!member || playerId !== member.user.id) return
+    if (!member || playerId !== member.user.id) return channel.send({ content: `${entry.name} cannot be sent DMs.` })
     const filter = m => m.author.id === playerId
 	const message = await member.send({ content: `Do you still wish to play in the ${format} Iron?`}).catch((err) => console.log(err))
     if (!message || !message.channel) return false
