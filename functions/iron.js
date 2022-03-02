@@ -271,16 +271,6 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
 
 //CHOOSE ORDER
 const chooseOrder = async (captain = {}, channel, format) => {
-    const team = captain.team
-    const players = [...await Iron.findAll({ where: {
-        format: format,
-        team: team,
-        position: null
-    }})].map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
-
-    if (!players.length) return postPairing(channel, format)
-    if (!players.length > 4) return channel.send({ content: `Error: too many players on ${captain.name}'s team.`})
-    
     const word = players.length === 4 ? 'first' :
         players.length === 3 ? 'second' :
         players.length === 2 ? 'third' :
@@ -290,6 +280,37 @@ const chooseOrder = async (captain = {}, channel, format) => {
         players.length === 3 ? 2 :
         players.length === 2 ? 3 :
         4
+
+    const team = captain.team
+    const ironPeople = [...await Iron.findAll({ where: {
+        format: format,
+        team: team,
+        position: null
+    }})]
+    const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
+
+    if (!ironPeople.length) {
+        return
+    } else if (ironPeople.length === 1) {
+        const ironPerson = ironPeople[0]
+        ironPerson.position = position
+        await ironPerson.save()
+        message.channel.send({ content: `${ironPerson.name} will go ${word}.`})
+        const count = await Iron.count({ 
+            where: {
+                format: format,
+                position: null
+            }
+        })
+
+        if (!count) {
+            return postPairing(channel, format)
+        } else {
+            return
+        }
+    } else if (!ironPeople.length > 4) {
+        return channel.send({ content: `Error: too many players on ${captain.name}'s team.`})
+    }
 
     const time = 15000 * players.length
     const guild = client.guilds.cache.get("414551319031054346")
@@ -310,12 +331,12 @@ const chooseOrder = async (captain = {}, channel, format) => {
             response.includes('4') ? 3 :
             false
 
-        if (!index || (index + 1) > players.length) {
+        if (index === false || (index + 1) > players.length) {
             message.channel.send({ content: `Invalid selection.`})
             return setTimeout(() => chooseOrder(captain, channel, format), 1000)
         } else {
             const selection = players[index]
-            const name = selection.slice(selection.indexOf(`(${index + 1}) - `))
+            const name = selection.slice(selection.indexOf(`) - ` + 4))
             const ironPerson = await Iron.findOne({
                 where: {
                     name: name,
