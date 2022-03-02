@@ -120,6 +120,7 @@ const getIronConfirmation = async (entry, channel, format) => {
 
         if (yescom.includes(response)) {
             entry.confirmed = true
+            await entry.save()
             member.send({ content: `Thanks! Please wait to see if everyone confirms.`})
             return channel.send({ content: `${member.user.username} confirmed their participation in the Iron!`})
         }
