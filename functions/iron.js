@@ -27,8 +27,6 @@ const confirmIron = async (channel, format) => {
     getIronConfirmation(entries[6], channel, format)
     getIronConfirmation(entries[7], channel, format)
 
-    const info = await Info.findOne({ where: { element: 'iron' }})
-
     for (let i = 1; i < 12; i ++) {
         setTimeout(async () => {
             const count = await Iron.count({ where: {
