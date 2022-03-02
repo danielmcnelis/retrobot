@@ -91,7 +91,7 @@ const confirmIron = async (channel, format) => {
 }
 
 //GET IRON CONFIRMATION
-const getIronConfirmation = async (entry, channel) => {
+const getIronConfirmation = async (entry, channel, format) => {
     const guild = client.guilds.cache.get("414551319031054346")
     const playerId = entry.playerId
     const member = guild.members.cache.get(playerId)
