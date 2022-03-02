@@ -181,7 +181,7 @@ const assignCaptains = async (entries, channel, format) => {
     captainB.captain = true
     await captainB.save()
 
-    channel.send({ content: `<@${captainA.playerId}> and <@${captainB.playerId}> are captains. You have 15 seconds to make each pick.`})
+    channel.send({ content: `<@${captainA.playerId}> and <@${captainB.playerId}> are captains. You have 30 seconds to make each pick.`})
     draftTeams(1, captainA, captainB, channel, format)
 }
 
@@ -201,11 +201,11 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         return
     } 
 
-	channel.send({ content: `<@${captain.playerId}>, Please select a player:${players.join('\n')}`})
+	channel.send({ content: `<@${captain.playerId}>, Please select a player:\n${players.join('\n')}`})
 	return await channel.awaitMessages({ 
         filter,
 		max: 1,
-		time: 15000
+		time: 30000
 	}).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
         const index = response.includes('1') ? 0 :
@@ -222,14 +222,17 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         } else {
             const selection = players[index]
             const name = selection.slice(selection.indexOf(`(${index + 1}) - `))
+            console.log('name', name)
+            console.log('format', format)
             const ironPerson = await Iron.findOne({
                 where: {
                     name: name,
                     format: format,
-                    team: null
+                    team: NULL
                 }
             })
 
+            console.log('!!ironPerson', !!ironPerson)
             ironPerson.team = team
             await ironPerson.save()
             channel.send({ content: `${captain.name} selected <@${ironPerson.playedId}>!`})
@@ -237,8 +240,8 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         }
 	}).catch((err) => {
 		console.log(err)
-        channel.send({ content: `Sorry, time's up.`})
-        return false
+        channel.send({ content: `Sorry, time's up. Try again for beta testing.`})
+        return setTimeout(() => draftTeams(pick, captainA, captainB, channel, format), 2000)
 	})
 }
 
