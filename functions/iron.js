@@ -435,6 +435,7 @@ const postStory = async (channel, format) => {
 const resetIron = async (channel, format) => {
     const entries = await Iron.findAll({ where: { format: format }})
     for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i]
         await entry.destroy()
     }
 
