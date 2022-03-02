@@ -247,7 +247,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
             channel.send({ content: `${captain.name} selected <@${ironPerson.playerId}>!`})
             return setTimeout(() => draftTeams(pick + 1, captainA, captainB, channel, format), 2000)
         }
-	}).catch((err) => {
+	}).catch(async (err) => {
 		console.log(err)
         channel.send({ content: `Sorry, time's up.`})
         const index = Math.floor(Math.random() * players.length)
