@@ -271,6 +271,14 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
 
 //CHOOSE ORDER
 const chooseOrder = async (captain = {}, channel, format) => {
+    const team = captain.team
+    const ironPeople = [...await Iron.findAll({ where: {
+        format: format,
+        team: team,
+        position: null
+    }})]
+    const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
+    
     const word = players.length === 4 ? 'first' :
         players.length === 3 ? 'second' :
         players.length === 2 ? 'third' :
@@ -280,15 +288,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
         players.length === 3 ? 2 :
         players.length === 2 ? 3 :
         4
-
-    const team = captain.team
-    const ironPeople = [...await Iron.findAll({ where: {
-        format: format,
-        team: team,
-        position: null
-    }})]
-    const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
-
+        
     if (!ironPeople.length) {
         return
     } else if (ironPeople.length === 1) {
