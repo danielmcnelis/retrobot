@@ -80,7 +80,7 @@ const confirmIron = async (channel, format) => {
             await resetIron(info, entries)
 
             for (let i = 0; i < missingEntries.length; i++) {
-                const entry = missingArenaEntries[i]
+                const entry = missingEntries[i]
                 await entry.destroy()
             }
 
