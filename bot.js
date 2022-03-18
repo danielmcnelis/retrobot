@@ -144,15 +144,7 @@ try {
         message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
 
         await killFirefox()
-        return setTimeout(() => {
-            exec('killall node\ncd ~/code\n./run_bots.sh', (err) => {
-                if (err) {
-                    console.log('exec error: ' + err)
-                } else {
-                    console.log('rebooting bots...')
-                }
-            })
-        }, 2000)
+        return exec('cd ~/code\n./run_bots.sh')
     }
 
     // TEST 
