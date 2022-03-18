@@ -141,7 +141,7 @@ try {
     //REBOOT
     if (cmd === `!reboot`) {
         if (!isMod(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
-        message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 15 seconds.`})
+        message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
 
         await killFirefox()
         return setTimeout(() => {
