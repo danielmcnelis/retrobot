@@ -141,14 +141,18 @@ try {
     //REBOOT
     if (cmd === `!reboot`) {
         if (!isMod(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
-        message.channel.send({ content: `Resetting bots, please wait a few seconds.`})
-        exec('killall node\ncd ~/code\n./run_bots.sh', (err) => {
-            if (err) {
-                console.log('exec error: ' + err)
-            } else {
-                console.log('rebooting bots...')
-            }
-        })
+        message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 15 seconds.`})
+
+        await killFirefox()
+        return setTimeout(() => {
+            exec('killall node\ncd ~/code\n./run_bots.sh', (err) => {
+                if (err) {
+                    console.log('exec error: ' + err)
+                } else {
+                    console.log('rebooting bots...')
+                }
+            })
+        }, 2000)
     }
 
     // TEST 
