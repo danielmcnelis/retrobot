@@ -19,7 +19,7 @@ const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend,
     WingedBeast, Wyrm, Zombie, forbidden, limited, semi
  } = require('../static/emojis.json')
 const formats = require('../static/formats.json')
-const { adminRole, ironRole, modRole, tourRole } = require('../static/roles.json')
+const { adminRole, ambassadorRole, ironRole, modRole, tourRole } = require('../static/roles.json')
 
 //CLEAR STATUS
 const clearStatus = async (element) => {
@@ -381,23 +381,26 @@ const getRandomSubset = (arr, n) => {
     return shuffledArr.slice(0, n)
 }
 
+//IS PROGRAMMER?
+const isProgrammer = (member) => member && member.user.id === '194147938786738176'
+
 //IS ADMIN?
 const isAdmin = (member) => member && member.roles.cache.some(role => role.id === adminRole)
 
+//IS MOD?
+const isMod = (member) => member && member.roles.cache.some(role => role.id === modRole || role.id === adminRole)
+
+//IS AMBASSADOR?
+const isAmbassador = (member) => member && member.roles.cache.some(role => role.id === ambassadorRole || role.id === modRole || role.id === adminRole)
+
 //IS IRON PLAYER?
 const isIronPlayer = (member) => member && member.roles.cache.some(role => role.id === ironRole)
-
-//IS MOD?
-const isMod = (member) => member && member.roles.cache.some(role => role.id === modRole)
 
 //IS NEW MEMBER?
 const isNewMember = async (guildId, playerId) => !await Membership.count({ where: { guildId, playerId } })
 
 //IS NEW USER?
 const isNewUser = async (id) => !await Player.count({ where: { id } })
-
-//IS PROGRAMMER?
-const isProgrammer = (member) => member && member.user.id === '194147938786738176'
 
 //IS TOURNAMENT PLAYER?
 const isTourPlayer = (member) => member && member.roles.cache.some(role => role.id === tourRole)
@@ -447,6 +450,7 @@ module.exports = {
     getRandomElement,
     getRandomSubset,
     isAdmin,
+    isAmbassador,
     isIronPlayer,
     isMod,
     isNewMember,

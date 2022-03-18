@@ -20,7 +20,7 @@ const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
 const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
-const { assignRoles, capitalize, clearStatus, createMembership, createPlayer, fetchCardNames, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats, killFirefox } = require('./functions/utility.js')
+const { assignRoles, capitalize, clearStatus, createMembership, createPlayer, fetchCardNames, getDeckCategory, getMedal, generateRandomString, getFormat, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats, killFirefox, isAmbassador } = require('./functions/utility.js')
 
 // STATIC IMPORTS
 const { botSpamChannel, welcomeChannel } = require('./static/channels.json')
@@ -140,7 +140,7 @@ try {
 
     //REBOOT
     if (cmd === `!reboot`) {
-        if (!isMod(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
+        if (!isAmbassador(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
         message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
 
         exec('cd ~/code\n./run_bots.sh')
