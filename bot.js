@@ -8,7 +8,8 @@ const Discord = require('discord.js')
 const fs = require('fs')
 const { Op } = require('sequelize')
 const FuzzySet = require('fuzzyset')
-const QuickChart = require('quickchart-js');
+const QuickChart = require('quickchart-js')
+const { exec } = require('child_process')
  
 //DATABASE IMPORTS
 const { Info, Iron, Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
