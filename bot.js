@@ -137,6 +137,18 @@ try {
     //SEED 
     if (cmd === `!seed`) return message.channel.send({ content: '🌱'})
 
+    //REBOOT
+    if (cmd === `!reboot`) {
+        if (!isMod(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
+        exec('killall node\ncd ~/code\n./run_bots.sh', (err) => {
+            if (err) {
+                console.log('exec error: ' + err)
+            } else {
+                console.log('rebooting bots...')
+            }
+        })
+    }
+
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {

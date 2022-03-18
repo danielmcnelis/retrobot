@@ -195,11 +195,13 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
     const captain = (pick === 1 || pick === 4 || pick === 5) ? captainB : captainA
     const team = captain === captainA ? 'A' : 'B'
     const filter = m => m.author.id === captain.playerId
-    const ironPeople = [...await Iron.findAll({ where: {
-        format: format,
-        captain: null,
-        team: null
-    }})]
+    const ironPeople = [...await Iron.findAll({ 
+        where: {
+            format: format,
+            captain: null,
+            team: null
+        }
+    })]
 
     const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
 
