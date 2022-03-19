@@ -12,7 +12,7 @@ const { Op } = require('sequelize')
 const { Card, Status } = require('../db')
 
 //FUNCTION IMPORTS
-const { clearStatus, convertArrayToObject, killFirefox } = require('./utility.js')
+const { clearStatus, convertArrayToObject } = require('./utility.js')
 
 //STATIC IMPORTS
 const { 
@@ -32,6 +32,7 @@ const {
     tomato, tooncannon, toonelf, tradein, treeborn, trio, trunade, tsuk, tuningware, turtle, underdog, valhalla, vayu, vrocket, 
     whirlwind, wicked, wmc, worl, wyvern, xhead, ygadget, zanji, zombyra, zorc
 } = require('../static/cards.json')
+const { exec } = require('child_process')
 
 //SAVE YDK
 const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'other') => {
@@ -45,7 +46,6 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
         driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build()
     } catch (err) {
         console.log(err)
-        await killFirefox()
         await clearStatus('firefox')
     }
     
@@ -88,12 +88,14 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
         console.log(err)
         await driver.quit()
         console.log('driver quit')
-        await killFirefox()
+        exec('killall firefox').catch((err) => console.log(err))
+        exec('killall /usr/lib/firefox/firefox').catch((err) => console.log(err))
         await clearStatus('firefox')
     } finally {
         await driver.quit()
         console.log('driver quit')
-        await killFirefox()
+        exec('killall firefox').catch((err) => console.log(err))
+        exec('killall /usr/lib/firefox/firefox').catch((err) => console.log(err))
         await clearStatus('firefox')
     }
 
