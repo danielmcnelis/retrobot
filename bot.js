@@ -37,15 +37,9 @@ const fuzzyCards = FuzzySet([], false)
 
 //READY
 client.on('ready', async() => {
-  console.log('RetroBot is online!')
-  try {
+    console.log('RetroBot is online!')
     const names = await fetchCardNames()
     names.forEach((card) => fuzzyCards.add(card))
-    await killFirefox()
-    await clearStatus('firefox')
-  } catch (err) {
-    console.log(err)
-  }
 })
 
 //WELCOME
@@ -539,7 +533,7 @@ try {
 
     // QUIT
     if (cmd === '!quit') {
-        if (!isMod(message.member)) return message.channel.send({ content: "You do not have permission to do that.", })
+        if (!isAmbassador(message.member)) return message.channel.send({ content: "You do not have permission to do that.", })
         const element = marr.slice(1, marr.length).join(" ").toLowerCase()
         if (!element) return message.channel.send({ content: `Please specify the application you wish to quit.` })
         
