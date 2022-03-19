@@ -534,24 +534,19 @@ try {
     // QUIT
     if (cmd === '!quit') {
         if (!isAmbassador(message.member)) return message.channel.send({ content: "You do not have permission to do that.", })
-        const element = marr.slice(1, marr.length).join(" ").toLowerCase()
-        if (!element) return message.channel.send({ content: `Please specify the application you wish to quit.` })
-        
-        if (element === 'firefox') {
-            try {
-                await killFirefox()
-            } catch (err) {
-                console.log(err)
-                return message.channel.send({ content: `Failed to quit ${capitalize(element)}. ${emoji}`})
-            }
+       
+        try {
+            await killFirefox()
+        } catch (err) {
+            console.log(err)
+            return message.channel.send({ content: `Failed to quit FireFox. 🦊`})
         }
 
-        const emoji = element === 'firefox' ? '🦊' : ''
-        const cleared = await clearStatus(element)
+        const cleared = await clearStatus('firefox')
         if (cleared) {
-            return message.channel.send({content: `You force quit ${capitalize(element)}. ${emoji}`})
+            return message.channel.send({content: `You force quit FireFox. 🦊`})
         } else {
-            return message.channel.send({ content: `Failed to quit ${capitalize(element)}. ${emoji}`})
+            return message.channel.send({ content: `Failed to quit FireFox. 🦊`})
         }
     }
     
