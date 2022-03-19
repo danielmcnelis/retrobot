@@ -40,6 +40,8 @@ client.on('ready', async() => {
   console.log('RetroBot is online!')
   const names = await fetchCardNames()
   names.forEach((card) => fuzzyCards.add(card))
+  await killFirefox()
+  await clearStatus('firefox')
 })
 
 //WELCOME
@@ -141,12 +143,8 @@ try {
     //REBOOT
     if (cmd === `!reboot`) {
         if (!isAmbassador(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
-        message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
-
-        await killFirefox()
-        await clearStatus('firefox')
-        exec('cd ~/code\n./run_bots.sh')
-        return
+        await message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
+        return exec('cd ~/code\n./run_bots.sh')
     }
 
     // TEST 
