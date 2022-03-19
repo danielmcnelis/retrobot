@@ -144,7 +144,7 @@ try {
         message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
 
         await killFirefox()
-        await clearStatus(element)
+        await clearStatus('firefox')
         exec('cd ~/code\n./run_bots.sh')
         return
     }
