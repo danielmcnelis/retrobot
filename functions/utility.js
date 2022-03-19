@@ -48,6 +48,8 @@ const killFirefox = async () => {
             console.log('killed all firefox processes from /usr/lib/')
         }
     })
+
+    return
 }
 
 //FETCH CARD NAMES
