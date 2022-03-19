@@ -49,7 +49,7 @@ const killFirefox = async () => {
         }
     })
 
-    return
+    return true
 }
 
 //FETCH CARD NAMES

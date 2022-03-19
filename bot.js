@@ -537,15 +537,14 @@ try {
        
         try {
             await killFirefox()
+            const cleared = await clearStatus('firefox')
+            if (cleared) {
+                return message.channel.send({content: `You force quit FireFox. 🦊`})
+            } else {
+                return message.channel.send({ content: `Failed to quit FireFox. 🦊`})
+            }
         } catch (err) {
             console.log(err)
-            return message.channel.send({ content: `Failed to quit FireFox. 🦊`})
-        }
-
-        const cleared = await clearStatus('firefox')
-        if (cleared) {
-            return message.channel.send({content: `You force quit FireFox. 🦊`})
-        } else {
             return message.channel.send({ content: `Failed to quit FireFox. 🦊`})
         }
     }
