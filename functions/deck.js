@@ -185,12 +185,12 @@ const checkDeckList = async (member, player, formatDate, formatEmoji, formatList
             return issues 
         } else {
             member.send({ content: "Sorry, I only accept duelingbook.com/deck links."}).catch((err) => console.log(err))    
-            return {}  
+            return false  
         }
     }).catch(err => {
         console.log(err)
         member.send({ content: `Sorry, time's up. Go back to the server and try again.`}).catch((err) => console.log(err))
-        return {}
+        return false
     })
 }
 
