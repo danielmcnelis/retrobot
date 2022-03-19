@@ -88,14 +88,14 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
         console.log(err)
         await driver.quit()
         console.log('driver quit')
-        exec('killall firefox').catch((err) => console.log(err))
-        exec('killall /usr/lib/firefox/firefox').catch((err) => console.log(err))
+        exec('killall firefox')
+        exec('killall /usr/lib/firefox/firefox')
         await clearStatus('firefox')
     } finally {
         await driver.quit()
         console.log('driver quit')
-        exec('killall firefox').catch((err) => console.log(err))
-        exec('killall /usr/lib/firefox/firefox').catch((err) => console.log(err))
+        exec('killall firefox')
+        exec('killall /usr/lib/firefox/firefox')
         await clearStatus('firefox')
     }
 
