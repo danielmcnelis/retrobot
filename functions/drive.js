@@ -40,19 +40,21 @@ const checkExpiryDate = async () => {
 }
 
 const uploadDeckFolder = async (tournamentName) => {
+  console.log('line 43')
   const oAuth2Client = new google.auth.OAuth2(
     client_id, 
     client_secret, 
     redirect_uris[0], 
     access_token, 
-    refresh_token,
-    scope,
-    token_type,
-    expiry_date
+    refresh_token
   )
 
+  console.log('!!oAuth2Client', !!oAuth2Client)
+
   oAuth2Client.setCredentials(token)
+  console.log('line 55')
   const drive = google.drive({ version: 'v3', auth: oAuth2Client})
+  console.log('!!drive', !!drive)
 
   const fileMetadata = {
     'name': `${tournamentName} Decks`,
