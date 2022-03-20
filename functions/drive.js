@@ -16,6 +16,8 @@ const generateNewToken = async (currentTime) => {
         "grant_type": "refresh_token"
      })
 
+  console.log('data', data)
+  
   const regeneratedToken = {
     access_token: data.access_token,
     refresh_token: refresh_token,
@@ -33,7 +35,7 @@ const checkExpiryDate = async () => {
   const currentTime = Date.now()
   if (currentTime > expiry_date) {
     console.log('generating new token')
-    await generateNewToken(currentTime) 
+    await generateNewToken(currentTime)
   } else {
     console.log('access token has not expired')
   }

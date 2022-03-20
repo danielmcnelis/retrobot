@@ -172,7 +172,7 @@ try {
             const { name } = tournament
 
             try {
-                //await checkExpiryDate()
+                await checkExpiryDate()
                 await uploadDeckFolder(name)
                 return message.channel.send({ content: `Your tournament files have been uploaded! ${FL}` })
             } catch (err) {
