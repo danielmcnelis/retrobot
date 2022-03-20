@@ -170,16 +170,16 @@ try {
             const tournament = await selectTournament(message, tournaments, maid)
             if (!tournament) return message.channel.send({ content: `There are no tournaments.` })
             const { name } = tournament
-            console.log('name', name)
 
             try {
-                await checkExpiryDate()
+                //await checkExpiryDate()
                 await uploadDeckFolder(name)
+                return message.channel.send({ content: `Your tournament files have been uploaded! ${FL}` })
             } catch (err) {
                 console.log(err)
             }
 
-            return message.channel.send({ content: `Your tournament files have been uploaded! ${FL}` })
+            return message.channel.send({ content: `🛠️` })
         } else {
             return message.channel.send({ content: `🛠️` })
         }
