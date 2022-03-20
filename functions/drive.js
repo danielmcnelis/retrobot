@@ -8,36 +8,32 @@ const { client_secret, client_id, redirect_uris } = installed
 const fs = require('fs')            
 const axios = require('axios')
 
-const generateNewToken = async (currentTime) => {
-  const { data } = await axios.post('https://www.googleapis.com/oauth2/v4/token', {
-        "client_id": client_id,
-        "client_secret": client_secret,
-        "refresh_token": refresh_token,
-        "grant_type": "refresh_token"
-     })
+const generateNewToken = async () => {
+  try {
+    const { data } = await axios.post('https://www.googleapis.com/oauth2/v4/token', {
+      "client_id": client_id,
+      "client_secret": client_secret,
+      "refresh_token": refresh_token,
+      "grant_type": "refresh_token"
+    })
 
-  console.log('data', data)
-
-  const regeneratedToken = {
-    access_token: data.access_token,
-    refresh_token: refresh_token,
-    scope: data.scope,
-    token_type: data.token_type,
-    expiry_date: currentTime + data.expires_in
+    console.log('data', data)
+    return data.access_token
+  } catch (err) {
+    console.log(err)
+    return false
   }
-
-  console.log('regeneratedToken', regeneratedToken)
-  const tokenString = JSON.stringify(regeneratedToken);
-  fs.writeFileSync('../token.json', tokenString);
 }
 
 const checkExpiryDate = async () => {
   const currentTime = Date.now()
   if (currentTime > expiry_date) {
     console.log('generating new token')
-    await generateNewToken(currentTime)
+    const newAccessToken = await generateNewToken()
+    return newAccessToken
   } else {
     console.log('access token has not expired')
+    return access_token
   }
 }
 

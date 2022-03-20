@@ -177,14 +177,15 @@ try {
             const { name } = tournament
 
             try {
-                await checkExpiryDate()
-                await uploadDeckFolder(name)
+                const token = await checkExpiryDate()
+                await uploadDeckFolder(name, token)
                 return message.channel.send({ content: `Your tournament files have been uploaded! ${FL}` })
             } catch (err) {
                 console.log(err)
+                const programmer = message.guild.members.cache.get('194147938786738176');
+                programmer.send({ content: `Error uploading data for ${name} on Google Drive.` }).catch((err) => console.log(err))
+                return message.channel.send({ content: `🛠️` })
             }
-
-            return message.channel.send({ content: `🛠️` })
         } else {
             return message.channel.send({ content: `🛠️` })
         }
