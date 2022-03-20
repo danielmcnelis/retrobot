@@ -49,12 +49,12 @@ const uploadDeckFolder = async (tournamentName) => {
     refresh_token
   )
 
-  console.log('!!oAuth2Client', !!oAuth2Client)
+  console.log('oAuth2Client', oAuth2Client)
 
   oAuth2Client.setCredentials(token)
   console.log('line 55')
   const drive = google.drive({ version: 'v3', auth: oAuth2Client})
-  console.log('!!drive', !!drive)
+  console.log('drive', drive)
 
   const fileMetadata = {
     'name': `${tournamentName} Decks`,
