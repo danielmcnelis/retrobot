@@ -2,7 +2,7 @@
 
 const { google } = require('googleapis')
 const token = require('../token.json')
-const { access_token, refresh_token, expiry_date } = token
+const { access_token, refresh_token, expiry_date, scope, token_type } = token
 const { installed } = require('../credentials.json')
 const { client_secret, client_id, redirect_uris } = installed
 const fs = require('fs')            
@@ -45,7 +45,10 @@ const uploadDeckFolder = async (tournamentName) => {
     client_secret, 
     redirect_uris[0], 
     access_token, 
-    refresh_token
+    refresh_token,
+    scope,
+    token_type,
+    expiry_date
   )
 
   oAuth2Client.setCredentials(token)
