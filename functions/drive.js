@@ -70,7 +70,7 @@ const uploadDeckFolder = async (tournamentName) => {
       fields: 'id'
     }, function (err, file) {
       if (err) {
-        console.error(err)
+        console.error('line 73 error:\n', err)
       } else {
         const folderId = file.data.id
         console.log(`Created folder with id: ${folderId}.`)
