@@ -17,7 +17,7 @@ const generateNewToken = async (currentTime) => {
      })
 
   console.log('data', data)
-  
+
   const regeneratedToken = {
     access_token: data.access_token,
     refresh_token: refresh_token,
@@ -116,5 +116,6 @@ const saveFile = async (drive, fileMetadata, media, i) => {
 
 module.exports = {
   checkExpiryDate,
+  generateNewToken,
   uploadDeckFolder
 }
