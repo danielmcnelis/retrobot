@@ -16,7 +16,7 @@ const { Info, Iron, Entry, Match, Matchup, Membership, Player, Role, Stats, Stat
 
 //FUNCTION IMPORTS
 const { checkDeckList, getDeckType } = require('./functions/deck.js')
-const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
+const { checkExpiryDate, generateNewToken, uploadDeckFolder } = require('./functions/drive.js')
 const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getDeckName, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
@@ -29,7 +29,7 @@ const {
     activitycom, botcom, bracketcom, dbcom, dropcom, h2hcom, ironcom, joincom, legalcom, banscom, histcom, losscom, manualcom, medalscom,
     noshowcom, queuecom, pfpcom, profcom, rankcom, recalccom, rolecom, signupcom, startcom, statscom, undocom, yescom
 } = require('./static/commands.json')
-const { FL, iron, legend, lmfao, mad, mlady, sad, soldier } = require('./static/emojis.json')
+const { FL, iron, legend, lmfao, mad, mlady, sad, soldier, yellow } = require('./static/emojis.json')
 const formats = require('./static/formats.json')
 const { bfpRole, ironRole, muteRole, tourRole, politicsRole } = require('./static/roles.json')
 const { challongeAPIKey } = require('./secrets.json')
@@ -148,7 +148,12 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            return message.channel.send({ content: `🧪`})
+            try {
+                await generateNewToken()
+            } catch (err) {
+                console.log(err)
+            }
+            return message.channel.send({ content: `${yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
         }
