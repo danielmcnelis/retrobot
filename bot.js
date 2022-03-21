@@ -143,7 +143,7 @@ try {
         if (!isAmbassador(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
         await message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
         await clearStatus('firefox')
-        return execFileSync('~/code/run_bots.sh')
+        return execFile('~/code/run_bots.sh')
     }
 
     // TEST 
