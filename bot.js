@@ -9,7 +9,7 @@ const fs = require('fs')
 const { Op } = require('sequelize')
 const FuzzySet = require('fuzzyset')
 const QuickChart = require('quickchart-js')
-const { exec, execSync } = require('child_process')
+const { exec, execFile, execFileSync, execSync } = require('child_process')
  
 //DATABASE IMPORTS
 const { Info, Iron, Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
@@ -143,7 +143,7 @@ try {
         if (!isAmbassador(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
         await message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
         await clearStatus('firefox')
-        return execSync('cd ~/code\n./run_bots.sh')
+        return execFileSync('cd ~/code/run_bots.sh')
     }
 
     // TEST 
@@ -543,8 +543,8 @@ try {
         if (!isAmbassador(message.member)) return message.channel.send({ content: "You do not have permission to do that.", })
        
         try {
-            execSync('killall firefox')
-            execSync('killall /usr/lib/firefox/firefox')
+            exec('killall firefox')
+            exec('killall /usr/lib/firefox/firefox')
             const cleared = await clearStatus('firefox')
             if (cleared) {
                 return message.channel.send({content: `You force quit FireFox. 🦊`})
