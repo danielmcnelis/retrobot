@@ -144,10 +144,7 @@ try {
         try {
             await message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
             await clearStatus('firefox')
-            console.log('cleared')
-		    spawn('~/code/run_bots.sh', [], {shell: true})
-    		console.log('???')
-	    	return
+	    	return spawn('~/code/run_bots.sh', [], {shell: true})
         } catch (err) {
             console.log(err)
         }
