@@ -9,7 +9,7 @@ const fs = require('fs')
 const { Op } = require('sequelize')
 const FuzzySet = require('fuzzyset')
 const QuickChart = require('quickchart-js')
-const { exec, execFile } = require('child_process')
+const { exec, spawn } = require('child_process')
  
 //DATABASE IMPORTS
 const { Info, Iron, Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
@@ -144,7 +144,10 @@ try {
         try {
             await message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
             await clearStatus('firefox')
-            return execFile('~/code/run_bots.sh')
+            console.log('cleared')
+		    spawn('~/code/run_bots.sh', [], {shell: true})
+    		console.log('???')
+	    	return
         } catch (err) {
             console.log(err)
         }
