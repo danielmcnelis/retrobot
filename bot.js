@@ -9,7 +9,7 @@ const fs = require('fs')
 const { Op } = require('sequelize')
 const FuzzySet = require('fuzzyset')
 const QuickChart = require('quickchart-js')
-const { exec, execFile, execFileSync, execSync } = require('child_process')
+const { exec, execFile } = require('child_process')
  
 //DATABASE IMPORTS
 const { Info, Iron, Entry, Match, Matchup, Membership, Player, Role, Stats, Status, Tournament }  = require('./db/index.js')
@@ -141,9 +141,13 @@ try {
     //REBOOT
     if (cmd === `!reboot`) {
         if (!isAmbassador(message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
-        await message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
-        await clearStatus('firefox')
-        return execFile('~/code/run_bots.sh')
+        try {
+            await message.channel.send({ content: `Rebooting RetroBot, GoatBot, EdisonBot, and MerchBot. This should take about 30 seconds.`})
+            await clearStatus('firefox')
+            return execFile('~/code/run_bots.sh')
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     // TEST 
@@ -545,12 +549,8 @@ try {
         try {
             exec('killall firefox')
             exec('killall /usr/lib/firefox/firefox')
-            const cleared = await clearStatus('firefox')
-            if (cleared) {
-                return message.channel.send({content: `You force quit FireFox. 🦊`})
-            } else {
-                return message.channel.send({ content: `Failed to quit FireFox. 🦊`})
-            }
+            await clearStatus('firefox')
+            return message.channel.send({ content: `You force quit FireFox. 🦊`})
         } catch (err) {
             console.log(err)
             return message.channel.send({ content: `Failed to quit FireFox. 🦊`})
@@ -580,9 +580,21 @@ try {
         
         const entry = await Entry.findOne({ where: { playerId: maid, tournamentId: tournament.id } })
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player)
-        if (!dbName) return clearStatus('firefox')
+        if (!dbName) {
+            try {
+                return clearStatus('firefox')
+            } catch (err) {
+                console.log(err)
+            }
+        }
         const deckListUrl = await getDeckList(message.member, player, formats[tournament.format].date, formats[tournament.format].list, tournament.name)
-        if (!deckListUrl) return clearStatus('firefox')
+        if (!deckListUrl) {
+            try {
+                return clearStatus('firefox')
+            } catch (err) {
+                console.log(err)
+            }
+        }
         const deckName = await getDeckName(message.member, player)
         const deckType = await getDeckType(player, tournament.format, tournament.name)
         if (!deckType) return
@@ -762,9 +774,21 @@ try {
         }
         
         const issues = await checkDeckList(message.member, player, formatDate, formatEmoji, formatList, formatName)
-        if (!issues) return clearStatus('firefox')
+        if (!issues) {
+            try {
+                return clearStatus('firefox')
+            } catch (err) {
+                console.log(err)
+            }
+        }
         const { illegalCards, forbiddenCards, limitedCards, semiLimitedCards, unrecognizedCards } = issues
-        if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return clearStatus('firefox')
+        if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) {
+            try {
+                return clearStatus('firefox')
+            } catch (err) {
+                console.log(err)
+            }
+        }
 
         if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {      
             let response = [`I'm sorry, ${player.name}, your deck is not legal for ${formatName} Format. ${formatEmoji}`]

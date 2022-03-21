@@ -46,7 +46,11 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
         driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build()
     } catch (err) {
         console.log(err)
-        await clearStatus('firefox')
+        try {
+            return clearStatus('firefox')
+        } catch (err) {
+            console.log(err)
+        }
     }
     
     const get_deck = `
@@ -86,17 +90,25 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
         console.log('driver executed script')
     } catch (err) {
         console.log(err)
-        await driver.quit()
-        console.log('driver quit')
-        exec('killall firefox')
-        exec('killall /usr/lib/firefox/firefox')
-        await clearStatus('firefox')
+        try {
+            await driver.quit()
+            console.log('driver quit')
+            exec('killall firefox')
+            exec('killall /usr/lib/firefox/firefox')
+            await clearStatus('firefox')
+        } catch (err) {
+            console.log(err)
+        }
     } finally {
-        await driver.quit()
-        console.log('driver quit')
-        exec('killall firefox')
-        exec('killall /usr/lib/firefox/firefox')
-        await clearStatus('firefox')
+        try {
+            await driver.quit()
+            console.log('driver quit')
+            exec('killall firefox')
+            exec('killall /usr/lib/firefox/firefox')
+            await clearStatus('firefox')
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     if (!deck_arr.length) return false
