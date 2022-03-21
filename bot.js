@@ -543,8 +543,8 @@ try {
         if (!isAmbassador(message.member)) return message.channel.send({ content: "You do not have permission to do that.", })
        
         try {
-            exec('killall firefox')
-            exec('killall /usr/lib/firefox/firefox')
+            execSync('killall firefox')
+            execSync('killall /usr/lib/firefox/firefox')
             const cleared = await clearStatus('firefox')
             if (cleared) {
                 return message.channel.send({content: `You force quit FireFox. 🦊`})
