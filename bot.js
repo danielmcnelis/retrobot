@@ -446,9 +446,16 @@ try {
 
     //START
     if (startcom.includes(cmd)) {
-        console.log(1234)
         if (!isMod(message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
-        const tournaments = await Tournament.findAll({ where: { state: 'pending', guildId: mgid }, order: [['createdAt', 'ASC']] })
+        const tournaments = await Tournament.findAll({ 
+            where: { 
+                state: {
+                    [Op.or]: ['pending', 'standby']
+                },
+                guildId: mgid
+            }, 
+            order: [['createdAt', 'ASC']] 
+        })
 		const tournament = await selectTournament(message, tournaments, maid)
 		if (!tournament) return message.channel.send({ content: `There are no pending tournaments.`})
         const { name, id, url } = tournament
@@ -551,7 +558,6 @@ try {
     // QUIT
     if (cmd === '!quit') {
         if (!isAmbassador(message.member)) return message.channel.send({ content: "You do not have permission to do that.", })
-       
         try {
             exec('killall firefox')
             exec('killall /usr/lib/firefox/firefox')
@@ -563,6 +569,42 @@ try {
         }
     }
     
+    // CLOSE
+    if (cmd === '!close') {
+        if (!isMod(message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
+        const tournaments = await Tournament.findAll({ 
+            where: { 
+                state: 'pending',
+                guildId: mgid
+            }, 
+            order: [['createdAt', 'ASC']] 
+        })
+
+		const tournament = await selectTournament(message, tournaments, maid)
+		if (!tournament) return message.channel.send({ content: `There are no pending tournaments.`})
+        tournament.status = 'standby'
+        await tournament.save()
+        return message.channel.send({ content: `Deck submissions for ${tournament.name} ${formats[tournament.format].emoji} are now closed.`})
+    }
+
+    // OPEN
+    if (cmd === '!open') {
+        if (!isMod(message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
+        const tournaments = await Tournament.findAll({ 
+            where: { 
+                state: 'standby',
+                guildId: mgid
+            }, 
+            order: [['createdAt', 'ASC']] 
+        })
+        
+		const tournament = await selectTournament(message, tournaments, maid)
+		if (!tournament) return message.channel.send({ content: `There are no closed tournaments.`})
+        tournament.status = 'pending'
+        await tournament.save()
+        return message.channel.send({ content: `Deck submissions for ${tournament.name} ${formats[tournament.format].emoji} are now open.`})
+    }
+
     //JOIN
     if(joincom.includes(cmd)) {        
         const mention = message.mentions.members.first()
@@ -573,7 +615,7 @@ try {
         const count = await Tournament.count({ where: { state: 'underway', guildId: mgid } })
         const tournament = await selectTournament(message, tournaments, maid)
         if (!tournament && count) return message.channel.send({ content: `Sorry, the tournament already started.`})
-        if (!tournament && !count) return message.channel.send({ content: `There is no active tournament.`})
+        if (!tournament && !count) return message.channel.send({ content: `There is no open tournament.`})
             
         const info = await Info.findOne({ where: { element: 'firefox' }})
         if (!info || info.status !== 'free') {
