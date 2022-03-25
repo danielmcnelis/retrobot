@@ -38,8 +38,15 @@ const fuzzyCards = FuzzySet([], false)
 //READY
 client.on('ready', async() => {
     console.log('RetroBot is online!')
-    const names = await fetchCardNames()
-    names.forEach((card) => fuzzyCards.add(card))
+    try {
+        const names = await fetchCardNames()
+        names.forEach((card) => fuzzyCards.add(card))
+        const info = await Info.findOne({ where: { element: 'firefox' }})
+        info.status = 'free'
+        await info.save()
+    } catch (err) {
+        console.log(err)
+    }
 })
 
 //WELCOME
