@@ -611,12 +611,14 @@ try {
         if (isMod(message.member) && mention) return message.channel.send({ content: `Please type **!signup @user** to register someone else for the tournament.`})
         const player = await Player.findOne({ where: { id: maid }})
         if (!player) return message.channel.send({ content: `You are not in the database.`})
-        const tournaments = await Tournament.findAll({ where: { state: 'pending', guildId: mgid }, order: [['createdAt', 'ASC']] })
+        const tournaments = await Tournament.findAll({ where: { state: {[Op.or]: ['pending', 'standby']}, guildId: mgid }, order: [['createdAt', 'ASC']] })
         const count = await Tournament.count({ where: { state: 'underway', guildId: mgid } })
         const tournament = await selectTournament(message, tournaments, maid)
         if (!tournament && count) return message.channel.send({ content: `Sorry, the tournament already started.`})
-        if (!tournament && !count) return message.channel.send({ content: `There is no open tournament.`})
-            
+        if (!tournament && !count) return message.channel.send({ content: `There is no pending tournament.`})
+        const entry = await Entry.findOne({ where: { playerId: maid, tournamentId: tournament.id } })
+        if (tournament.state === 'standby' && !entry) return message.channel.send({ content: `Sorry, sign-ups for ${tournament.name} are currently closed.`})
+
         const info = await Info.findOne({ where: { element: 'firefox' }})
         if (!info || info.status !== 'free') {
             return message.channel.send(`Another user is submitting their deck. Please wait a bit and try **!join** again.`)
@@ -626,7 +628,6 @@ try {
             message.channel.send({ content: `Please check your DMs.` });
         }
         
-        const entry = await Entry.findOne({ where: { playerId: maid, tournamentId: tournament.id } })
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player)
         if (!dbName) {
             try {
@@ -688,7 +689,7 @@ try {
         if (!mentioned) return message.channel.send({ content: `Could not find user in the server.`})
         const player = await Player.findOne({ where: { id: mentioned.user.id }})
         if (!player) return message.channel.send({ content: `${mentioned.user.username} is not in the database.`})
-        const tournaments = await Tournament.findAll({ where: { state: 'pending', guildId: mgid }, order: [['createdAt', 'ASC']] })
+        const tournaments = await Tournament.findAll({ where: { state: {[Op.or]: ['pending', 'standby']}, guildId: mgid }, order: [['createdAt', 'ASC']] })
         const tournament = await selectTournament(message, tournaments, maid)
         const count = await Tournament.count({ where: { state: 'underway', guildId: mgid } })
         if (!tournament && count) return message.channel.send({ content: `Sorry, the tournament already started.`})
