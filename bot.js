@@ -582,7 +582,7 @@ try {
 
 		const tournament = await selectTournament(message, tournaments, maid)
 		if (!tournament) return message.channel.send({ content: `There are no pending tournaments.`})
-        tournament.status = 'standby'
+        tournament.state = 'standby'
         await tournament.save()
         return message.channel.send({ content: `Deck submissions for ${tournament.name} ${formats[tournament.format].emoji} are now closed.`})
     }
@@ -600,7 +600,7 @@ try {
         
 		const tournament = await selectTournament(message, tournaments, maid)
 		if (!tournament) return message.channel.send({ content: `There are no closed tournaments.`})
-        tournament.status = 'pending'
+        tournament.state = 'pending'
         await tournament.save()
         return message.channel.send({ content: `Deck submissions for ${tournament.name} ${formats[tournament.format].emoji} are now open.`})
     }
