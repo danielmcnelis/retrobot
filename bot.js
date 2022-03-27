@@ -171,6 +171,7 @@ try {
     }
 
     if (cmd === '!story') {
+        console.log('story')
         postStory(message.channel, format)
     }
  
