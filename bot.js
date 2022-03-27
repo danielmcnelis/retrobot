@@ -170,6 +170,10 @@ try {
         }
     }
 
+    if (cmd === '!story') {
+        postStory()
+    }
+ 
     // FIX
     if (cmd === `!fix`) {
         if (isProgrammer(message.member)) {
