@@ -400,7 +400,7 @@ const postPairing = async (channel, format) => {
 
     return channel.send({ content:
         `${iron} --- Iron Match #${matchNo} --- ${iron}` + 
-        `\n<@${teamA[0].playerId}> vs <@${teamB[1].playerId}>`
+        `\n<@${teamA[0].playerId}> vs <@${teamB[0].playerId}>`
     })
 }
 
