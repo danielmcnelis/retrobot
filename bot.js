@@ -171,7 +171,7 @@ try {
     }
 
     if (cmd === '!story') {
-        postStory()
+        postStory(message.channel, format)
     }
  
     // FIX
