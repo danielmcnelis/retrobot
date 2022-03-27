@@ -411,7 +411,7 @@ const postStory = async (channel, format) => {
             format: format,
             team: 'A'
         },
-        order: ["position", "ASC"]
+        order: [["position", "ASC"]]
     })].map((p) =>  p.eliminated ? `~~${p.name}~~ ${vincent}` : `${p.name}`)
 
     const teamB = [...await Iron.findAll({ 
@@ -419,7 +419,7 @@ const postStory = async (channel, format) => {
             format: format,
             team: 'B'
         },
-        order: ["position", "ASC"]
+        order: [["position", "ASC"]]
     })].map((p) =>  p.eliminated ? `~~${p.name}~~ ${vincent}` : `${p.name}`)
 
     channel.send({ content:
