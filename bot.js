@@ -177,13 +177,16 @@ try {
 
     if (cmd === '!pfps') {
         let count = 0
-        
+
         try {
             const membersMap = await message.guild.members.fetch()
-            const memberIds = [...membersMap.keys()].filter((m) => m.user.avatar)
+            const memberIds = [...membersMap.keys()]
             console.log('memberIds.length', memberIds.length)
             for (let i = 0; i < memberIds.length; i++) {
                 const memberId = memberIds[i]
+                const avatar = membersMap[memberId].avatar
+                if (!avatar) continue
+
                 const player = await Player.findOne({
                     where: {
                         id: memberId,
@@ -192,7 +195,7 @@ try {
                 })
 
                 if (!player) continue
-                player.avatar = membersMap[memberId].avatar
+                player.avatar = avatar
                 await player.save()
                 count++
             }
