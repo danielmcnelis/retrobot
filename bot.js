@@ -184,7 +184,7 @@ try {
             console.log('memberIds.length', memberIds.length)
             for (let i = 0; i < memberIds.length; i++) {
                 const memberId = memberIds[i]
-                const avatar = membersMap[memberId].avatar
+                const avatar = membersMap[memberId].user.avatar
                 if (!avatar) continue
 
                 const player = await Player.findOne({
