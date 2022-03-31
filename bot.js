@@ -174,6 +174,26 @@ try {
         console.log('story')
         postStory(message.channel, format)
     }
+
+    if (cmd === '!pfps') {
+        try {
+            const usersMap = await message.guild.users.fetch()
+            console.log('(181) usersMap', usersMap)
+            const userIds = [...usersMap.keys()]
+            return console.log('(183) userIds', userIds)
+        } catch (err) {
+            console.log(err)
+        }
+
+        try {
+            const usersMap = client.users.cache
+            console.log('(190) usersMap', usersMap)
+            const userIds = [...usersMap.keys()]
+            return console.log('(192) userIds', userIds)
+        } catch (err) {
+            console.log(err)
+        }
+    }
  
     // FIX
     if (cmd === `!fix`) {
