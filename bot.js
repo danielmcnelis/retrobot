@@ -175,9 +175,10 @@ try {
         postStory(message.channel, format)
     }
 
+    //pfps
     if (cmd === '!pfps') {
+        if (!isProgrammer(message.member)) return
         let count = 0
-
         try {
             const membersMap = await message.guild.members.fetch()
             const memberIds = [...membersMap.keys()]
