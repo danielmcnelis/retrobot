@@ -177,10 +177,10 @@ try {
 
     if (cmd === '!pfps') {
         try {
-            const usersMap = await message.guild.users.fetch()
-            console.log('(181) usersMap', usersMap)
-            const userIds = [...usersMap.keys()]
-            return console.log('(183) userIds', userIds)
+            const membersMap = await message.guild.members.fetch()
+            console.log('(181) membersMap', membersMap)
+            const memberIds = [...membersMap.keys()]
+            return console.log('(183) memberIds', memberIds)
         } catch (err) {
             console.log(err)
         }
