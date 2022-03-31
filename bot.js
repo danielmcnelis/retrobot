@@ -176,23 +176,31 @@ try {
     }
 
     if (cmd === '!pfps') {
+        let count = 0
+        
         try {
             const membersMap = await message.guild.members.fetch()
-            console.log('(181) membersMap', membersMap)
-            const memberIds = [...membersMap.keys()]
-            return console.log('(183) memberIds', memberIds)
+            const memberIds = [...membersMap.keys()].filter((m) => m.user.avatar)
+            console.log('memberIds.length', memberIds.length)
+            for (let i = 0; i < memberIds.length; i++) {
+                const memberId = memberIds[i]
+                const player = await Player.findOne({
+                    where: {
+                        id: memberId,
+                        avatar: null
+                    }
+                })
+
+                if (!player) continue
+                player.avatar = membersMap[memberId].avatar
+                await player.save()
+                count++
+            }
         } catch (err) {
             console.log(err)
         }
 
-        try {
-            const usersMap = client.users.cache
-            console.log('(190) usersMap', usersMap)
-            const userIds = [...usersMap.keys()]
-            return console.log('(192) userIds', userIds)
-        } catch (err) {
-            console.log(err)
-        }
+        return console.log(`added ${count} avatars`)
     }
  
     // FIX
