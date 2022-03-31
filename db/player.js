@@ -23,6 +23,10 @@ const Player = db.define('players', {
     password: {
         type: Sequelize.STRING,
         allowNull: true
+    },
+    avatar: {
+        type: Sequelize.STRING,
+        allowNull: true
     }
 })
 
