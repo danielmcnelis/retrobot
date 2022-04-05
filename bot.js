@@ -190,8 +190,7 @@ try {
 
                 const player = await Player.findOne({
                     where: {
-                        id: memberId,
-                        avatar: null
+                        id: memberId
                     }
                 })
 
