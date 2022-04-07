@@ -134,7 +134,7 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 			''
 	
 	const attachment = fs.existsSync(`../formatlibrary/public/images/cards/${card.ypdId}.png`) ?
-		new Discord.MessageAttachment(`../formatlibrary/public/images/cards/${card.ypdId}.png`, card.ypdId.png) :
+		new Discord.MessageAttachment(`../formatlibrary/public/images/cards/${card.ypdId}.png`, `${card.ypdId}.png`) :
 		false
 
 	const thumbnail = attachment ? `attachment://${card.ypdId}.png` : `https://ygoprodeck.com/pics/${card.ypdId}.png`    
