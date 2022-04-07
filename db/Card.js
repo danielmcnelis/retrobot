@@ -5,22 +5,23 @@ const { db } = require('./db')
 const Card = db.define('cards', {
   name: {
     type: Sequelize.TEXT,
+    unique: true,
     allowNull: false
   },
-  konami_code: {
+  konamiCode: {
     type: Sequelize.TEXT,
     allowNull: true
   },
-  tcg_legal: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
-  },
-  ocg_legal: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
-  },
-  image_file: {
+  ypdId: {
     type: Sequelize.TEXT,
+    allowNull: true
+  },
+  tcgLegal: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  ocgLegal: {
+    type: Sequelize.BOOLEAN,
     allowNull: true
   },
   category: {
@@ -112,27 +113,39 @@ const Card = db.define('cards', {
     allowNull: true
   },
   atk: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.TEXT,
     allowNull: true
   },
   def: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.TEXT,
     allowNull: true
   },
   description: {
     type: Sequelize.TEXT,
     allowNull: true
   },
-  tcg_date: {
+  tcgDate: {
     type: Sequelize.TEXT,
     allowNull: true
   },
-  ocg_date: {
+  ocgDate: {
     type: Sequelize.TEXT,
+    allowNull: true
+  },
+  color: {
+    type: Sequelize.TEXT,
+    allowNull: true
+  },
+  extraDeck: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  sortPriority: {
+    type: Sequelize.INTEGER,
     allowNull: true
   }
 })
 
-
 module.exports = Card
+
 

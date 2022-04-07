@@ -17,8 +17,8 @@ const createCards = async () => {
 
   for (let i = 0; i < card_data.length; i++) {
     const card = card_data[i]
-    let konami_code = card.image.slice(0, -4)
-    while (konami_code.length < 8) konami_code = '0' + konami_code
+    let konamiCode = card.image.slice(0, -4)
+    while (konamiCode.length < 8) konamiCode = '0' + konamiCode
     const icon = card.card === 'Spell' || card.card === 'Trap' ? card.category : null
     const normal = card.card === 'Monster' && (card.category === 'Normal' || card.class === 'Normal' || card.subclass === 'Normal')
     const effect = !normal && card.card === 'Monster'
@@ -39,10 +39,10 @@ const createCards = async () => {
   
     await Card.create({
       name: card.name,
-      konami_code: konami_code,
-      tcg_legal: true,
-      ocg_legal: true,
-      image_file: card.image,
+      konamiCode: konamiCode,
+      tcgLegal: true,
+      ocgLegal: true,
+      ypdId: card.image,
       category: card.card,
       icon: icon,
       normal: normal,
@@ -68,8 +68,8 @@ const createCards = async () => {
       atk: card.atk,
       def: card.def,
       description: card.description,
-      tcg_date: card.date,
-      ocg_date: null
+      tcgDate: card.date,
+      ocgDate: null
     })
   }
   

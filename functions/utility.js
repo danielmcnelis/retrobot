@@ -88,7 +88,7 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
         position === 'limited' ? limited :
         position === 'forbidden' ? forbidden :
         ''
-    const legal = card.tcg_date && (card.tcg_date <= formatDate)
+    const legal = card.tcgDate && (card.tcgDate <= formatDate)
 	const color = card.category === "Spell" ? "#42f578" :
 		card.category === "Trap" ? "#e624ed" :
 		card.category === "Monster" && card.fusion ? "#a930ff" :
@@ -120,12 +120,12 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 	const labels = card.category === "Monster" ? 
 		`Attribute: ${card.attribute} ${eval(card.attribute)}` + 
 		`\n${card.xyz ? `Rank: ${card.level} ${Rank}` : card.link ? `Link Rating: ${card.rating} ${Link}` : `Level: ${card.level} ${Star}`}` +
-		`\nRelease Date: ${card.tcg_date || 'OCG Only'}` +
+		`\nRelease Date: ${card.tcgDate || 'OCG Only'}` +
         `${formatName ? `\n${formatName} ${formatEmoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}` +
 		`\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**` :
 		`Card: ${card.category} ${eval(card.category)}` +
         `\nCategory: ${card.icon} ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
-		`\nRelease Date: ${card.tcg_date || 'OCG Only'}` +
+		`\nRelease Date: ${card.tcgDate || 'OCG Only'}` +
         `${formatName ? `\n${formatName} ${formatEmoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}`
 	
 	const stats = card.category === "Monster" ? 
@@ -133,11 +133,11 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 			` ${!card.link ? `DEF: ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
 			''
 	
-	const attachment = fs.existsSync(`../formatlibrary/public/images/cards/${card.image_file}`) ?
-		new Discord.MessageAttachment(`../formatlibrary/public/images/cards/${card.image_file}`, card.image_file) :
+	const attachment = fs.existsSync(`../formatlibrary/public/images/cards/${card.ypdId}.png`) ?
+		new Discord.MessageAttachment(`../formatlibrary/public/images/cards/${card.ypdId}.png`, card.ypdId.png) :
 		false
 
-	const thumbnail = attachment ? `attachment://${card.image_file}` : `https://ygoprodeck.com/pics/${card.image_file}`    
+	const thumbnail = attachment ? `attachment://${card.ypdId}.png` : `https://ygoprodeck.com/pics/${card.ypdId}.png`    
     const cardEmbed = new Discord.MessageEmbed()
 	cardEmbed.setColor(color)
 	cardEmbed.setTitle(card.name)
