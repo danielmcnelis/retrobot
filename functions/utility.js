@@ -133,8 +133,8 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 			` ${!card.link ? `DEF: ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
 			''
 	
-	const attachment = fs.existsSync(`../merchbot2/public/card_images/${card.image_file}`) ?
-		new Discord.MessageAttachment(`../merchbot2/public/card_images/${card.image_file}`, card.image_file) :
+	const attachment = fs.existsSync(`../formatlibrary/public/images/cards/${card.image_file}`) ?
+		new Discord.MessageAttachment(`../formatlibrary/public/images/cards/${card.image_file}`, card.image_file) :
 		false
 
 	const thumbnail = attachment ? `attachment://${card.image_file}` : `https://ygoprodeck.com/pics/${card.image_file}`    
