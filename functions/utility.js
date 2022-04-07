@@ -133,11 +133,11 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 			` ${!card.link ? `DEF: ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
 			''
 	
-	const attachment = fs.existsSync(`../formatlibrary/public/images/cards/${card.ypdId}.png`) ?
-		new Discord.MessageAttachment(`../formatlibrary/public/images/cards/${card.ypdId}.png`, `${card.ypdId}.png`) :
+	const attachment = fs.existsSync(`../formatlibrary/public/images/cards/${card.ypdId}.jpg`) ?
+		new Discord.MessageAttachment(`../formatlibrary/public/images/cards/${card.ypdId}.jpg`, `${card.ypdId}.jpg`) :
 		false
 
-	const thumbnail = attachment ? `attachment://${card.ypdId}.png` : `https://ygoprodeck.com/pics/${card.ypdId}.png`    
+	const thumbnail = attachment ? `attachment://${card.ypdId}.jpg` : `https://ygoprodeck.com/pics/${card.ypdId}.jpg`    
     const cardEmbed = new Discord.MessageEmbed()
 	cardEmbed.setColor(color)
 	cardEmbed.setTitle(card.name)
