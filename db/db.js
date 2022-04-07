@@ -1,4 +1,5 @@
 
+
 const Sequelize = require('sequelize')
 const { pgPassword } = require('../secrets.json')
 
