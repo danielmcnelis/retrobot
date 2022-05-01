@@ -54,11 +54,12 @@ client.on('guildMemberAdd', async (member) => {
         const guild = member.guild
         const server = await Server.findOne({ where: { id: guild.id }}) || await Server.create({ id: guild.id, name: message.guild.name })
         if (!server || !hasPartnerAccess(server)) return
+        const format = await Format.findOne({ where: { name: {[Op.iLike]: server.format }}})
         const channel = guild.channels.cache.get(channels[guild.name].welcomeChannel)
         if (await isNewUser(server, member.user.id)) await createPlayer(member) 
         if (await isNewMember(server, guild.id, member.user.id)) {
             await createMembership(guild, member)
-            return channel.send({ content: `${member}, Welcome to the ${guild.name} ${emojis[guild.name]} discord server. ${emojis.legend}`})
+            return channel.send({ content: `${member}, Welcome to the ${guild.name} ${emojis[guild.name]} discord server. ${format ? format.emoji : emojis.legend}`})
         } else {
             await assignRoles(guild, member)
             return channel.send({ content: `${member}, Welcome back to the ${guild.name} ${emojis[guild.name]} discord server! We missed you. ${emojis.soldier}`})
