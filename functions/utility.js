@@ -72,7 +72,7 @@ const search = async (query, fuzzyCards, format) => {
         }
     })
 
-    const position = status && format ? status[format.banlist] : 'unlimited'
+    const position = status && format ? status[format.banlist] || 'unlimited' : 'unlimited'
     const indicator = position === 'semi-limited' ? semi :
         position === 'limited' ? limited :
         position === 'forbidden' ? forbidden :
