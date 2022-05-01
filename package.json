@@ -42,7 +42,6 @@
     "googleapis": "^92.0.0",
     "pg": "^8.7.1",
     "quickchart-js": "^2.0.3",
-    "selenium-webdriver": "^4.1.0",
     "sequelize": "^6.12.5"
   },
   "deprecated": false,
@@ -60,9 +59,7 @@
     "url": "git+https://github.com/substack/node-mkdirp.git"
   },
   "scripts": {
-    "test": "tap test/*.js",
-    "seed": "node ./bin/seed",
-    "cards": "node ./bin/cards"
+    "test": "tap test/*.js"
   },
   "version": "0.5.1"
 }

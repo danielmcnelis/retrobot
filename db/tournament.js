@@ -78,6 +78,16 @@ const Tournament = db.define('tournaments', {
         defaultValue: 'Format Library',   
         allowNull: true
     },
+    emoji: {
+        type: Sequelize.STRING,   
+        defaultValue: 'legend',
+        allowNull: true
+    },
+    formatEmoji: {
+        type: Sequelize.STRING,   
+        defaultValue: '<:bluesheep:646866933605466131>',
+        allowNull: true
+    },
     channelId: {
         type: Sequelize.STRING,   
         allowNull: true

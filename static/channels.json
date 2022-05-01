@@ -1,4 +1,20 @@
 {
-    "botSpamChannel":"932376327917539439",
-    "welcomeChannel":"833572393212444712"
+  "Format Library": {
+    "botSpamChannel": "932376327917539439",
+    "welcomeChannel": "833572393212444712"
+  },
+  "GoatFormat.com": {
+    "botSpamChannel": "512406081079607334",
+    "welcomeChannel": "459826576536764428"
+  },
+  "EdisonFormat.com": {
+    "botSpamChannel": "930627105102893086",
+    "contactChannel": "908016756864467004",
+    "signupChannel": "907992801545945109",
+    "welcomeChannel": "711565398075768915"
+  },
+  "Lab": {
+    "botSpamChannel": "967192987031441419",
+    "welcomeChannel": "894337583155413043"
+  }
 }

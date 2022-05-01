@@ -1,6 +1,7 @@
 
-const { discordBotToken} = require('../secrets.json')
+const { discordBotToken} = require('../secrets')
 const { Client } = require('discord.js')
+
 const client = new Client({ 
     intents: [ 
         'GUILDS', 
@@ -19,10 +20,5 @@ const client = new Client({
     ]
 })
 
-setTimeout(() => {
-    client.login(discordBotToken)
-}, 16000)
-
-module.exports = {
-    client
-}
+client.login(discordBotToken)
+module.exports = { client }

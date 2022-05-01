@@ -11,21 +11,6 @@ const Entry = db.define('entries', {
         type: Sequelize.STRING,      
         allowNull: false
     },
-    deck_name: {
-        type: Sequelize.TEXT,   
-        defaultValue: 'other',    
-        allowNull: false
-    },
-    deck_type: {
-        type: Sequelize.STRING,   
-        defaultValue: 'other',   
-        allowNull: false
-    },
-    deck_category: {
-        type: Sequelize.STRING,      
-        defaultValue: 'other',
-        allowNull: false
-    },
     wins: {
         type: Sequelize.INTEGER,
         defaultValue: 0
@@ -39,10 +24,12 @@ const Entry = db.define('entries', {
         allowNull: false
     },
     playerId: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
     },
     tournamentId: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
     }
 })
 

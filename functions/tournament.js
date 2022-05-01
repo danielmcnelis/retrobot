@@ -1,23 +1,20 @@
 
-
 //TOURNAMENT FUNCTIONS
 
 //MODULE IMPORTS
 const axios = require('axios')
-const fs = require('fs')
 
 //DATABASE IMPORTS
-const { Entry, Player, Stats }  = require('../db/index.js')
+const { Entry, Format, Player, Stats }  = require('../db/index.js')
 
 //FUNCTION IMPORTS
-const { saveYDK } = require('./deck.js')
-const { capitalize, clearStatus, convertArrayToObject, shuffleArray } = require('./utility.js')
+const { getIssues, saveYDK } = require('./deck.js')
+const { capitalize, shuffleArray } = require('./utility.js')
 
 // STATIC IMPORTS
-const { legend, mad } = require('../static/emojis.json')
-const formats = require('../static/formats.json')
-const { tourRole } = require('../static/roles.json')
-const { challongeAPIKey } = require('../secrets.json')
+const { legend, mad } = require('../static/emojis')
+const { tourRole } = require('../static/roles')
+const { challongeAPIKeys } = require('../secrets.json')
 
 ////// TOURNAMENT REGISTRATION FUNCTIONS ///////
 
@@ -57,8 +54,8 @@ const askForDBName = async (member, player, override = false, error = false, att
     })
 }
 
-//GET DECK LIST TOURNAMENT
-const getDeckList = async (member, player, formatDate, formatList, tournamentName, override = false) => {            
+//GET DECK LIST
+const getDeckList = async (member, player, format, tournamentName, override = false) => {            
     const filter = m => m.author.id === member.user.id
     const pronoun = override ? `${player.name}'s` : 'your'
     const message = await member.send({ content: `Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`}).catch((err) => console.log(err))
@@ -66,17 +63,27 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
     return await message.channel.awaitMessages({
         filter,
         max: 1,
-        time: 30000
+        time: 180000
     }).then(async (collected) => {
         const url = collected.first().content
-        if (url.includes("duelingbook.com/deck")) {		
-            member.send({ content: 'Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.'}).catch((err) => console.log(err))
-            const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
+        if (url.includes('duelingbook.com/deck?id=')) {		
+            member.send({ content: 'Thanks. Please wait while I download the .YDK file.'})
+            const id = url.slice(url.indexOf('?id=') + 4)
+            const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${id}`)
+            if (!data) return false
+            const main = data.main.map((e) => e.serial_number)
+            const side = data.side.map((e) => e.serial_number)
+            const extra = data.extra.map((e) => e.serial_number)
+            const ydk = ['created by...', '#main', ...main, '#extra', ...extra, '!side', ...side, ''].join('\n')
+            const deckArr = [...main, ...extra, ...side,]
+            const issues = await getIssues(deckArr, format)
             if (!issues) return false
+
             const { illegalCards, forbiddenCards, limitedCards, semiLimitedCards, unrecognizedCards } = issues
             if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return false
                 
             if (override) {
+                saveYDK(player, ydk, tournamentName)
                 member.send({ content: `Thanks, ${member.user.username}, I saved a copy of ${pronoun} deck. ${legend}`}).catch((err) => console.log(err))
                 return url
             } else if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
@@ -103,36 +110,17 @@ const getDeckList = async (member, player, formatDate, formatList, tournamentNam
                 member.send({ content: response.toString() }).catch((err) => console.log(err))
                 return false
              } else {
+                saveYDK(player, ydk, tournamentName)
                 member.send({ content: `Thanks, ${member.user.username}, ${pronoun} deck is perfectly legal. ${legend}`}).catch((err) => console.log(err))
                 return url
             }
         } else {
-            member.send({ content: "Sorry, I only accept duelingbook.com/deck links."}).catch((err) => console.log(err))
-            return false
+            member.send({ content: "Sorry, I only accept duelingbook.com/deck links."}).catch((err) => console.log(err))    
+            return false  
         }
     }).catch((err) => {
         console.log(err)
         member.send({ content: `Sorry, time's up. Go back to the server and try again.`}).catch((err) => console.log(err))
-        return false
-    })
-}
-
-//GET DECK NAME
-const getDeckName = async (member, player, override = false) => {
-    const pronoun = override ? `${player.name}'s` : 'your'
-    const filter = m => m.author.id === member.user.id
-	const message = await member.send({ content: `Please provide the common name for ${pronoun} deck (i.e. Chaos Control, Chaos Turbo, Warrior, etc.).`}).catch((err) => console.log(err))
-    if (!message || !message.channel) return false
-    return await message.channel.awaitMessages({
-        filter,
-		max: 1,
-        time: 15000
-    }).then(async collected => {
-        const response = collected.first().content.toLowerCase()
-        return response
-    }).catch(err => {    
-        console.log(err)
-        member.send({ content: `Sorry, time's up.`}).catch((err) => console.log(err))
         return false
     })
 }
@@ -160,7 +148,6 @@ const selectTournament = async (message, tournaments, playerId) => {
         return null
     })
 }
-
 
 ////// TOURNAMENT HOST FUNCTIONS ///////
 
@@ -216,31 +203,57 @@ const getTournamentType = async (message) => {
 	})
 }
 
-// GET TOURNAMENT FORMAT
-const getTournamentFormat = async (message) => {
-    const filter = m => m.author.id === message.author.id
-	message.channel.send({ content: `What format will be played in this tournament?`})
-	return await message.channel.awaitMessages({
+// GET TOURNAMENT CHANNEL
+const getTournamentChannel = async (server, format, message) => {
+    if (server.name === 'Format Library') return format.channel
+    const filter = (m) => m.author.id === message.author.id
+    message.channel.send({ content: `Please provide a **#link** to the channel that will be used to report match results.` })
+    return await message.channel.awaitMessages({
         filter,
-		max: 1,
-		time: 15000
-	}).then(collected => {
-        const response = collected.first().content.toLowerCase().replace(/ /g,"_")
-        if(formats[response]) return response
-        else return false
-	}).catch(err => {
-		console.log(err)
-        message.channel.send({ content: `Sorry, time's up.`})
+        max: 1,
+        time: 15000,
+    }).then((collected) => {
+        return collected.first().content.toLowerCase().replace(/[\\<>@#&!]/g, "")
+    }).catch((err) => {
+        console.log(err)
+        message.channel.send({ content: `Sorry, time's up.` })
         return false
-	})
+    })
+}
+
+// GET TOURNAMENT FORMAT
+const getTournamentFormat = async (server, message) => {
+    if (server.format) {
+        const format = await Format.findOne({ where: { name: {[Op.iLike]: server.format } }})
+        return format
+    } else {
+        const filter = m => m.author.id === message.author.id
+        message.channel.send({ content: `What format will be played in this tournament?`})
+        return await message.channel.awaitMessages({
+            filter,
+            max: 1,
+            time: 15000
+        }).then(async collected => {
+            const response = collected.first().content.toLowerCase()
+            const format = await Format.findOne({ where: { name: {[Op.iLike]: response } }})
+            return format
+        }).catch(err => {
+            console.log(err)
+            message.channel.send({ content: `Sorry, time's up.`})
+            return false
+        })
+    }
 }
 
 //REMOVE PARTICIPANT
-const removeParticipant = async (message, member, entry, tournament, drop = false) => {    
+const removeParticipant = async (server, message, member, entry, tournament, drop = false) => {    
     try {
         const success = await axios({
             method: 'delete',
-            url: `https://formatlibrary:${challongeAPIKey}@api.challonge.com/v1/tournaments/${tournament.id}/participants/${entry.participantId}.json`,
+            url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/${entry.participantId}.json`,
+            data: {
+                api_key: challongeAPIKeys[server.name]
+            }
         })
 
         if (success) {
@@ -268,7 +281,7 @@ const removeParticipant = async (message, member, entry, tournament, drop = fals
 }
 
 //SEED
-const seed = async (message, tournament) => {
+const seed = async (server, message, tournament) => {
     message.channel.send({ content: `Seeding in progress, please wait.`})
     const format = tournament.format
     const entries = await Entry.findAll({ where: { tournamentId: tournament.id } })    
@@ -296,14 +309,15 @@ const seed = async (message, tournament) => {
         try {
             await axios({
                 method: 'put',
-                url: `https://formatlibrary:${challongeAPIKey}@api.challonge.com/v1/tournaments/${tournament.id}/participants/${participantId}.json`,
+                url: `https://@api.challonge.com/v1/tournaments/${tournament.id}/participants/${participantId}.json`,
                 data: {
+                    api_key: challongeAPIKeys[server.name],
                     participant: {
                         seed: i+1
                     }
                 }
             })
-
+            
             results.push(`${name} is now the ${i+1} seed.`)
             count++
         } catch (err) {
@@ -318,7 +332,7 @@ const seed = async (message, tournament) => {
 
 ////// TOURNAMENT MANAGEMENT FUNCTIONS ///////
 
-//CHECK CHALLONGE PAIRING
+//CHECK PAIRING
 const checkPairing = (match, p1, p2) => (match.player1_id === p1 && match.player2_id === p2) || (match.player1_id === p2 && match.player2_id === p1)
 
 //FIND NEXT MATCH
@@ -398,11 +412,16 @@ const findOtherPreReqMatch = (matchesArr = [], nextMatchId, completedMatchId) =>
 }
 
 //GET MATCHES
-const getMatches = async (tournamentId) => {
+const getMatches = async (server, tournamentId) => {
     try {
-        const { data } = await axios.get(
-            `https://formatlibrary:${challongeAPIKey}@api.challonge.com/v1/tournaments/${tournamentId}/matches.json`
-        )
+        const { data } = await axios({
+            method: 'get',
+            url: `https://api.challonge.com/v1/tournaments/${tournamentId}/matches.json`,
+            data: {
+                api_key: challongeAPIKeys[server.name]
+            }
+        })
+
         return data
     } catch (err) {
         console.log(err)
@@ -432,12 +451,13 @@ const getPairing = (matchesArr = [], matchId) => {
 }
 
 //POST PARTICIPANT
-const postParticipant = async (tournament, player) => {
+const postParticipant = async (server, tournament, player) => {
     try {
         const { data } = await axios({
             method: 'post',
-            url: `https://formatlibrary:${challongeAPIKey}@api.challonge.com/v1/tournaments/${tournament.id}/participants.json`,
+            url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json`,
             data: {
+                api_key: challongeAPIKeys[server.name],
                 participant: {
                     name: player.name
                 }
@@ -450,7 +470,7 @@ const postParticipant = async (tournament, player) => {
 }
 
 //PROCESS MATCH RESULT
-const processMatchResult = async (message, winningPlayer, losingPlayer, tournament, noshow = false) => {
+const processMatchResult = async (server, message, winningPlayer, losingPlayer, tournament, noshow = false) => {
     const losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
     const winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
     if (!losingEntry || !winningEntry) {
@@ -458,7 +478,7 @@ const processMatchResult = async (message, winningPlayer, losingPlayer, tourname
         return false
     } 
 
-    const matchesArr = await getMatches(tournament.id) || []
+    const matchesArr = await getMatches(server, tournament.id) || []
     let matchId = false
     let scores = false
     for (let i = 0; i < matchesArr.length; i++) {
@@ -476,8 +496,9 @@ const processMatchResult = async (message, winningPlayer, losingPlayer, tourname
     try {
         success = await axios({
             method: 'put',
-            url: `https://formatlibrary:${challongeAPIKey}@api.challonge.com/v1/tournaments/${tournament.id}/matches/${matchId}.json`,
+            url: `https://api.challonge.com/v1/tournaments/${tournament.id}/matches/${matchId}.json`,
             data: {
+                api_key: challongeAPIKeys[server.name],
                 match: {
                     winner_id: winningEntry.participantId,
                     scores_csv: scores
@@ -498,7 +519,7 @@ const processMatchResult = async (message, winningPlayer, losingPlayer, tourname
     
     winningEntry.wins++
     await winningEntry.save()
-    const updatedMatchesArr = await getMatches(tournament.id) || []
+    const updatedMatchesArr = await getMatches(server, tournament.id) || []
     const winnerNextMatch = findNextMatch(updatedMatchesArr, matchId, winningEntry.participantId)
     const winnerNextOpponent = winnerNextMatch ? await findNextOpponent(tournament.id, updatedMatchesArr, winnerNextMatch, winningEntry.participantId) : null
     const winnerMatchWaitingOn = winnerNextOpponent ? null : findOtherPreReqMatch(updatedMatchesArr, winnerNextMatch, matchId) 
@@ -556,8 +577,8 @@ module.exports = {
     findNoShowOpponent,
     findOtherPreReqMatch,
     getDeckList,
-    getDeckName,
     getPairing,
+    getTournamentChannel,
     getTournamentFormat,
     getTournamentType,
     getMatches,

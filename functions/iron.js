@@ -1,10 +1,9 @@
 
 const { Info, Iron, Player, Stats } = require('../db')
-const { yescom } = require('../static/commands.json')
-const { cavebob, iron, vincent } = require('../static/emojis.json')
-const { ironRole } = require('../static/roles.json')
+const { yescom } = require('../static/commands')
+const { cavebob, iron, vincent } = require('../static/emojis')
+const { ironRole } = require('../static/roles')
 const { client } = require('../static/clients.js')
-const formats = require('../static/formats.json')
 
 //CONFIRM IRON
 const confirmIron = async (channel, format) => {
@@ -87,7 +86,7 @@ const confirmIron = async (channel, format) => {
                 await entry.save()
             }
             
-            return channel.send({ content: `Unfortunately, The ${formats[format].name} Iron cannot begin without 8 players. ${formats[format].emoji} ${iron}\n\nThe following players have been removed from the queue:\n${missingNames.sort().join("\n")}`})
+            return channel.send({ content: `Unfortunately, The ${format.name} Iron cannot begin without 8 players. ${format.emoji} ${iron}\n\nThe following players have been removed from the queue:\n${missingNames.sort().join("\n")}`})
         } else if (count === 8 && !active) {
             info.status = 'active'
             await info.save()
@@ -107,7 +106,7 @@ const getIronConfirmation = async (entry, channel, format) => {
     const member = guild.members.cache.get(playerId)
     if (!member || playerId !== member.user.id) return channel.send({ content: `${entry.name} cannot be sent DMs.` })
     const filter = m => m.author.id === playerId
-	const message = await member.send({ content: `Do you still wish to play in the ${formats[format].name} Iron? ${formats[format].emoji} ${iron}`}).catch((err) => console.log(err))
+	const message = await member.send({ content: `Do you still wish to play in the ${format.name} Iron? ${format.emoji} ${iron}`}).catch((err) => console.log(err))
     if (!message || !message.channel) return false
 	await message.channel.awaitMessages({ 
         filter,
@@ -127,7 +126,7 @@ const getIronConfirmation = async (entry, channel, format) => {
             entry.confirmed = true
             await entry.save()
             member.send({ content: `Thanks! Please wait to see if everyone confirms.`})
-            return channel.send({ content: `${member.user.username} confirmed their participation in the ${formats[format].name} Iron ${formats[format].emoji} ${iron}!`})
+            return channel.send({ content: `${member.user.username} confirmed their participation in the ${format.name} Iron ${format.emoji} ${iron}!`})
         }
 	}).catch((err) => {
 		console.log(err)
@@ -423,7 +422,7 @@ const postStory = async (channel, format) => {
     })].map((p) =>  p.eliminated ? `~~${p.name}~~ ${vincent}` : `${p.name}`)
 
     channel.send({ content:
-        `${iron}  ${formats[format].emoji} - ${formats[format].name} Iron Story -  ${formats[format].emoji} ${iron}` +
+        `${iron}  ${format.emoji} - ${format.name} Iron Story -  ${format.emoji} ${iron}` +
         `\n**Team A**` +
         `\n${teamA.join('\n')}` +
         `\n\n**Team B**` +
@@ -444,7 +443,7 @@ const resetIron = async (channel, format) => {
     const info = await Info.findOne({ where: { element: 'iron' }})
     info.status = 'pending'
     await info.save()
-    return channel.send({ content: `The ${formats[format].name} Iron has been reset. ${formats[format].emoji} ${iron}` })
+    return channel.send({ content: `The ${format.name} Iron has been reset. ${format.emoji} ${iron}` })
 }
 
 module.exports = {

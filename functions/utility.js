@@ -5,7 +5,6 @@
 const fs = require('fs')
 const Discord = require('discord.js')
 const { Op } = require('sequelize')
-const { exec } = require('child_process')
 
 //DATABASE IMPORTS
 const { Card, Info, Membership, Player, Role, Stats, Status } = require('../db/index.js')
@@ -17,17 +16,8 @@ const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend,
     Insect, Link, Machine, Normal, Plant, Psychic, Pyro, QuickPlay, Rank, Reptile, 
     Ritual, Rock, Scale, SeaSerpent, Spell, Spellcaster, Star, Thunder, Trap, Warrior, 
     WingedBeast, Wyrm, Zombie, forbidden, limited, semi
- } = require('../static/emojis.json')
-const formats = require('../static/formats.json')
-const { adminRole, ambassadorRole, ironRole, modRole, tourRole } = require('../static/roles.json')
-
-//CLEAR STATUS
-const clearStatus = async (element) => {
-    const info = await Info.findOne({ where: { element } })
-    if (!info) throw new Error(`Could not find Info where element = ${element}`)
-    info.status = 'free'
-    await info.save()
-}
+ } = require('../static/emojis')
+const roles = require('../static/roles.json')
 
 //FETCH CARD NAMES
 const fetchCardNames = async () => {
@@ -60,7 +50,7 @@ const findCard = async (query, fuzzyCards) => {
 }
 
 //SEARCH
-const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, formatList) => {
+const search = async (query, fuzzyCards, format) => {
 	const card_name = await findCard(query, fuzzyCards)
 	if (!card_name) return false
 
@@ -82,13 +72,13 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
         }
     })
 
-    const position = status ? status[formatList] : 'unlimited'
-    const indicator = position === 'unlimited' ? '' :
-        position === 'semi-limited' ? semi :
+    const position = status && format ? status[format.banlist] : 'unlimited'
+    const indicator = position === 'semi-limited' ? semi :
         position === 'limited' ? limited :
         position === 'forbidden' ? forbidden :
         ''
-    const legal = card.tcgDate && (card.tcgDate <= formatDate)
+
+    const legal = format && card.tcgDate && (card.tcgDate <= format.date)
 	const color = card.category === "Spell" ? "#42f578" :
 		card.category === "Trap" ? "#e624ed" :
 		card.category === "Monster" && card.fusion ? "#a930ff" :
@@ -121,17 +111,17 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 		`Attribute: ${card.attribute} ${eval(card.attribute)}` + 
 		`\n${card.xyz ? `Rank: ${card.level} ${Rank}` : card.link ? `Link Rating: ${card.rating} ${Link}` : `Level: ${card.level} ${Star}`}` +
 		`\nRelease Date: ${card.tcgDate || 'OCG Only'}` +
-        `${formatName ? `\n${formatName} ${formatEmoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}` +
+        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}` +
 		`\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**` :
 		`Card: ${card.category} ${eval(card.category)}` +
         `\nCategory: ${card.icon} ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
 		`\nRelease Date: ${card.tcgDate || 'OCG Only'}` +
-        `${formatName ? `\n${formatName} ${formatEmoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}`
+        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}`
 	
 	const stats = card.category === "Monster" ? 
 			`ATK: ${card.atk === null ? '?' : card.atk} ${ATK}` + 
 			` ${!card.link ? `DEF: ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
-			''
+			null
 	
 	const attachment = fs.existsSync(`../formatlibrary/public/images/cards/${card.ypdId}.jpg`) ?
 		new Discord.MessageAttachment(`../formatlibrary/public/images/cards/${card.ypdId}.jpg`, `${card.ypdId}.jpg`) :
@@ -142,7 +132,7 @@ const search = async (query, fuzzyCards, formatName, formatEmoji, formatDate, fo
 	cardEmbed.setColor(color)
 	cardEmbed.setTitle(card.name)
 	cardEmbed.setThumbnail(thumbnail)
-	cardEmbed.setDescription(`${labels}\n\n${card.description}\n\n${stats}`)
+	cardEmbed.setDescription(`${labels}\n\n${card.description}${stats ? `\n\n${stats}` : ''}\n\nhttps://formatlibrary.com/cards/${card.name.replace(/ /g, '%20')}`)
 	return { cardEmbed, attachment }
 }
 
@@ -214,83 +204,6 @@ const generateRandomString = (length, chars) => {
     return result
 }
 
-//GET DECK CATEGORY
-const getDeckCategory = (deckType) => {
-    return (deckType === 'aggro bomb' ||
-        deckType === 'bazoo return' ||
-        deckType === 'blackwing' ||
-        deckType === 'canceller stun' ||
-        deckType === 'chaos recruiter' ||
-        deckType === 'chaos return' ||
-        deckType === 'chaos warrior' ||
-        deckType === 'dark scorpion' ||
-        deckType === 'drain beatdown' ||
-        deckType === 'earth beatdown' ||
-        deckType === 'emissary beatdown' ||
-        deckType === 'gladiator beast' ||
-        deckType === 'gearfried' ||
-        deckType === 'gravekeeper' ||
-        deckType === 'hero beatdown' ||
-        deckType === 'light beatdown' ||
-        deckType === 'quickdraw plant' ||
-        deckType === 'machina' ||
-        deckType === 'machine' ||
-        deckType === 'six samurai' ||
-        deckType === 'strike ninja' ||
-        deckType === 'tiger stun' ||
-        deckType === 'vanilla beatdown' ||
-        deckType === 'warrior' ||
-        deckType === 'zombie') ? 'aggro'
-        : (deckType === 'counter fairy' ||
-        deckType === 'drain burn' ||
-        deckType === 'final countdown' ||
-        deckType === 'goat burn' ||
-        deckType === 'pacman' ||
-        deckType === 'stall burn' ||
-        deckType === 'stall deckout') ? 'lockdown'
-        : (deckType === 'ben kei otk' ||
-        deckType === 'cat otk' ||
-        deckType === 'chain burn' ||
-        deckType === 'dimension fusion turbo' ||
-        deckType === 'dragon turbo' ||
-        deckType === 'economics ftk' ||
-        deckType === 'empty jar' ||
-        deckType === 'exodia' ||
-        deckType === 'fairy turbo' ||
-        deckType === 'fish otk' ||
-        deckType === 'fusion gate turbo' ||
-        deckType === 'horus turbo' ||
-        deckType === 'last turn' ||
-        deckType === 'library ftk' ||
-        deckType === 'reasoning gate turbo' ||
-        deckType === 'speed burn' ||
-        deckType === 'stein cat otk' ||
-        deckType === 'stein gate turbo' ||
-        deckType === 'stein otk' ||
-        deckType === 'x-saber') ? 'combo'
-        : (deckType === 'cat control' || 
-        deckType === 'chaos control' ||
-        deckType === 'chaos turbo' ||
-        deckType === 'diva frog' ||
-        deckType === 'diva hero' ||
-        deckType === 'emissary control' ||
-        deckType === 'fairy control' ||
-        deckType === 'flip control' ||
-        deckType === 'frog monarch' ||
-        deckType === 'goat control' ||
-        deckType === 'heavy slump' ||
-        deckType === 'horus control' ||
-        deckType === 'monarch' ||
-        deckType === 'quickdraw plant' ||
-        deckType === 'quickdraw zombie' ||
-        deckType === 'relinquished' ||
-        deckType === 'soul control' ||
-        deckType === 'vayu turbo' ||
-        deckType === 'volcanic quickdraw' ||
-        deckType === 'zorc') ? 'control'
-        : 'other'
-}
-
 //GET MEDAL
 const getMedal = (stats, title = false) => {
     if (title) {
@@ -322,21 +235,6 @@ const getMedal = (stats, title = false) => {
     }
 }
 
-//GET FORMAT
-const getFormat = (mcid) => {
-    let format
-    const keys = Object.keys(formats)
-    for (let i = 0; i < keys.length; i++) {
-        const key = keys[i]
-        if (formats[key].channel === mcid) {
-            format = key
-            break
-        }
-    }
-
-    return format
-}
-
 //GET RANDOM ELEMENT
 const getRandomElement = (arr) => {
     const index = Math.floor((arr.length) * Math.random())
@@ -360,29 +258,35 @@ const getRandomSubset = (arr, n) => {
     return shuffledArr.slice(0, n)
 }
 
+//HAS LIMITED ACCESS?
+const hasLimitedAccess = (server) => server && (server.access === 'limited' || server.access === 'partner' || server.access === 'full')
+
+//HAS PARTNER ACCESS?
+const hasPartnerAccess = (server) => server && (server.access === 'partner' || server.access === 'full')
+
+//HAS FULL ACCESS?
+const hasFullAccess = (server) => server && server.access === 'full'
+
 //IS PROGRAMMER?
 const isProgrammer = (member) => member && member.user.id === '194147938786738176'
 
 //IS ADMIN?
-const isAdmin = (member) => member && member.roles.cache.some(role => role.id === adminRole)
+const isAdmin = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].adminRole)
 
 //IS MOD?
-const isMod = (member) => member && member.roles.cache.some(role => role.id === modRole || role.id === adminRole)
-
-//IS AMBASSADOR?
-const isAmbassador = (member) => member && member.roles.cache.some(role => role.id === ambassadorRole || role.id === modRole || role.id === adminRole)
+const isMod = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].modRole || role.id === roles[server.name].adminRole)
 
 //IS IRON PLAYER?
-const isIronPlayer = (member) => member && member.roles.cache.some(role => role.id === ironRole)
+const isIronPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].ironRole)
 
 //IS NEW MEMBER?
-const isNewMember = async (guildId, playerId) => !await Membership.count({ where: { guildId, playerId } })
+const isNewMember = async (server, guildId, playerId) => server.access !== 'limited' && !await Membership.count({ where: { guildId, playerId } })
 
 //IS NEW USER?
-const isNewUser = async (id) => !await Player.count({ where: { id } })
+const isNewUser = async (server, id) => server.access !== 'limited' && !await Player.count({ where: { id } })
 
 //IS TOURNAMENT PLAYER?
-const isTourPlayer = (member) => member && member.roles.cache.some(role => role.id === tourRole)
+const isTourPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].tourRole)
 
 //SHUFFLE ARRAY
 const shuffleArray = (arr) => {
@@ -418,24 +322,23 @@ module.exports = {
     assignRoles,
     capitalize,
     convertArrayToObject,
-    clearStatus,
     createMembership,
     createPlayer,
     fetchCardNames,
     generateRandomString,
-    getDeckCategory,
-    getFormat,
     getMedal,
     getRandomElement,
     getRandomSubset,
     isAdmin,
-    isAmbassador,
     isIronPlayer,
     isMod,
     isNewMember,
     isNewUser,
     isProgrammer,
     isTourPlayer,
+    hasLimitedAccess,
+    hasPartnerAccess,
+    hasFullAccess,
     search,
     shuffleArray,
     trackStats

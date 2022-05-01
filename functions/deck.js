@@ -3,16 +3,15 @@
 //DECK FUNCTIONS
 
 //MODULE IMPORTS
+const axios = require('axios')
 const fs = require('fs')
-const { Builder, By, until } = require('selenium-webdriver')
-const firefox = require('selenium-webdriver/firefox')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Card, Status } = require('../db')
+const { Card, Format, Status } = require('../db')
 
 //FUNCTION IMPORTS
-const { clearStatus, convertArrayToObject } = require('./utility.js')
+const { convertArrayToObject } = require('./utility.js')
 
 //STATIC IMPORTS
 const { 
@@ -31,150 +30,106 @@ const {
     spy, ssunited, stein, storm, strike, susa, swap, swapfrog, taiyou, tdrag, tethys, thanksgiving, thestalos, tiger, 
     tomato, tooncannon, toonelf, tradein, treeborn, trio, trunade, tsuk, tuningware, turtle, underdog, valhalla, vayu, vrocket, 
     whirlwind, wicked, wmc, worl, wyvern, xhead, ygadget, zanji, zombyra, zorc
-} = require('../static/cards.json')
-const { exec } = require('child_process')
+} = require('../static/cards')
+
+
+// GET DECK FORMAT
+const getDeckFormat = async (server, message, mcid) => {
+    let format = await Format.findOne({ 
+        where: { 
+            [Op.or]: {
+                name: { [Op.iLike]: server.format },
+                channel: mcid
+            }
+        }
+    })
+
+    if (format) return format
+    const filter = m => m.author.id === message.author.id
+    message.channel.send({ content: `What format would you like to check?`})
+    return await message.channel.awaitMessages({
+        filter,
+        max: 1,
+        time: 15000
+    }).then(async collected => {
+        const response = collected.first().content.toLowerCase()
+        const format = await Format.findOne({ where: { name: {[Op.iLike]: response } } })
+        if (!format) message.channel.send({ content: `Sorry, I do not recognize that format.`})
+        return format
+    }).catch(err => {
+        console.log(err)
+        message.channel.send({ content: `Sorry, time's up.`})
+        return false
+    })
+}
+
+// GET ISSUES
+const getIssues = async (deckArr, format) => {
+    const deck = convertArrayToObject(deckArr)        
+    const cardIds = [...await Card.findAll({ where: { tcgDate: { [Op.lte]: format.date } }})].map(c => c.konamiCode)
+    const forbiddenIds = [...await Status.findAll({ where: { [format.banlist]: 'forbidden' }, include: Card })].map(s => s.card.konamiCode)
+    const limitedIds = [...await Status.findAll({ where: { [format.banlist]: 'limited' }, include: Card })].map(s => s.card.konamiCode)
+    const semiIds = [...await Status.findAll({ where: { [format.banlist]: 'semi-limited' }, include: Card })].map(s => s.card.konamiCode)
+
+    const illegalCards = []
+    const forbiddenCards = []
+    const limitedCards = []
+    const semiLimitedCards = []
+    const unrecognizedCards = []
+
+    const keys = Object.keys(deck)
+    for (let i = 0; i < keys.length; i++) {
+        let konamiCode = keys[i]
+        while (konamiCode.length < 8) konamiCode = '0' + konamiCode 
+        if (!cardIds.includes(konamiCode)) {
+            const card = await Card.findOne({ where: { konamiCode: konamiCode } })
+            if (card) {
+                illegalCards.push(card.name)
+            } else {
+                unrecognizedCards.push(konamiCode)
+            }
+        } else if (forbiddenIds.includes(konamiCode)) {
+            const card = await Card.findOne({ where: { konamiCode: konamiCode } })
+            if (card) forbiddenCards.push(card.name)
+        } else if (limitedIds.includes(konamiCode) && deck[konamiCode] > 1) {
+            const card = await Card.findOne({ where: { konamiCode: konamiCode } })
+            if (card) limitedCards.push(card.name)
+        } else if (semiIds.includes(konamiCode) && deck[konamiCode] > 2) {
+            const card = await Card.findOne({ where: { konamiCode: konamiCode } })
+            if (card) semiLimitedCards.push(card.name)
+        }
+    }
+    
+    illegalCards.sort()
+    forbiddenCards.sort()
+    limitedCards.sort()
+    semiLimitedCards.sort()
+    unrecognizedCards.sort()
+
+    const issues = {
+        illegalCards,
+        forbiddenCards,
+        limitedCards,
+        semiLimitedCards,
+        unrecognizedCards
+    }
+
+    return issues
+}
 
 //SAVE YDK
-const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'other') => {
-    let deck_arr = []
-    const options = new firefox.Options()
-    options.addArguments("-headless")
-    let driver
-    
-    try {      
-        console.log(`building new driver...`)
-        driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build()
-    } catch (err) {
-        console.log(err)
-        try {
-            return clearStatus('firefox')
-        } catch (err) {
-            console.log(err)
-        }
-    }
-    
-    const get_deck = `
-        deck_arr = ["#created by ...", "#main"]
-
-        for (let i = 0; i < deck_filled_arr.length; i++) {
-            if (~~deck_filled_arr[i].data("serial_number") > 0) {
-                deck_arr.push(deck_filled_arr[i].data("serial_number"))
-            }
-        }
-
-        deck_arr.push("#extra")
-        for (i = 0; i < extra_filled_arr.length; i++) {
-            if (~~extra_filled_arr[i].data("serial_number") > 0) {
-                deck_arr.push(extra_filled_arr[i].data("serial_number"))   
-            }
-        }
-
-        deck_arr.push("!side")
-        for (i = 0; i < side_filled_arr.length; i++) {
-            if (~~side_filled_arr[i].data("serial_number") > 0) {
-                deck_arr.push(side_filled_arr[i].data("serial_number"))
-            }
-        }
-
-        deck_arr.push("")
-        return deck_arr
-    `
-
-    try {      
-        console.log(`Loading ${player.tag}'s deck at ${url}...`)
-        await driver.get(url)
-        console.log('driver got Url')
-        await driver.wait(until.elementLocated(By.id('deck_card1')), 30000)
-        console.log('driver found deck_card1')
-        deck_arr = await driver.executeScript(get_deck)
-        console.log('driver executed script')
-    } catch (err) {
-        console.log(err)
-        try {
-            await driver.quit()
-            console.log('driver quit')
-            exec('killall firefox')
-            exec('killall /usr/lib/firefox/firefox')
-            await clearStatus('firefox')
-        } catch (err) {
-            console.log(err)
-        }
-    } finally {
-        try {
-            await driver.quit()
-            console.log('driver quit')
-            exec('killall firefox')
-            exec('killall /usr/lib/firefox/firefox')
-            await clearStatus('firefox')
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-    if (!deck_arr.length) return false
-
+const saveYDK = async (player, ydk, tournamentName = 'other') => {
     try {
-        const file = deck_arr.join('\n')
-        const cards_arr = deck_arr.filter(el => el.charAt(0) !== '#' && el.charAt(0) !== '!' && el !== '').sort()
-        const cards_obj = convertArrayToObject(cards_arr)        
-        const card_ids = [...await Card.findAll({ where: { tcgDate: { [Op.lte]: formatDate } }})].map(c => c.konamiCode)
-        const forbidden_card_ids = [...await Status.findAll({ where: { [formatList]: 'forbidden' }, include: Card })].map(s => s.card.konamiCode)
-        const limited_card_ids = [...await Status.findAll({ where: { [formatList]: 'limited' }, include: Card })].map(s => s.card.konamiCode)
-        const semi_limited_card_ids = [...await Status.findAll({ where: { [formatList]: 'semi-limited' }, include: Card })].map(s => s.card.konamiCode)
-    
-        const illegalCards = []
-        const forbiddenCards = []
-        const limitedCards = []
-        const semiLimitedCards = []
-        const unrecognizedCards = []
-    
-        const keys = Object.keys(cards_obj)
-        for (let i = 0; i < keys.length; i++) {
-            let konamiCode = keys[i]
-            while (konamiCode.length < 8) konamiCode = '0' + konamiCode 
-            if (!card_ids.includes(konamiCode)) {
-                const card = await Card.findOne({ where: { konamiCode: konamiCode } })
-                if (card) {
-                    illegalCards.push(card.name)
-                } else {
-                    unrecognizedCards.push(konamiCode)
-                }
-            } else if (forbidden_card_ids.includes(konamiCode)) {
-                const card = await Card.findOne({ where: { konamiCode: konamiCode } })
-                if (card) forbiddenCards.push(card.name)
-            } else if (limited_card_ids.includes(konamiCode) && cards_obj[konamiCode] > 1) {
-                const card = await Card.findOne({ where: { konamiCode: konamiCode } })
-                if (card) limitedCards.push(card.name)
-            } else if (semi_limited_card_ids.includes(konamiCode) && cards_obj[konamiCode] > 2) {
-                const card = await Card.findOne({ where: { konamiCode: konamiCode } })
-                if (card) semiLimitedCards.push(card.name)
-            }
-        }
-    
         const tag = player.tag.replace(/[^\ws]/gi, "_").replace(/ /g,'')
-        fs.writeFile(`./decks/${tournamentName}/${tag}.ydk`, file, (err) => {
-            if(err) {
-                return console.log(err)
+        fs.writeFile(`./decks/${tournamentName}/${tag}.ydk`, ydk, (err) => {
+            if (err) {
+                console.log(err)
             } else {
                 console.log(`${player.tag}'s deck was saved!`)
             }
         })
         
-        illegalCards.sort()
-        forbiddenCards.sort()
-        limitedCards.sort()
-        semiLimitedCards.sort()
-        unrecognizedCards.sort()
-    
-        const issues = {
-            illegalCards,
-            forbiddenCards,
-            limitedCards,
-            semiLimitedCards,
-            unrecognizedCards
-        }
-    
-        return issues
+        return true
     } catch (err) {
         console.log(err)
         return false
@@ -182,21 +137,26 @@ const saveYDK = async (player, url, formatDate, formatList, tournamentName = 'ot
 }
 
 //CHECK DECK LIST
-const checkDeckList = async (member, player, formatDate, formatEmoji, formatList, formatName, tournamentName = 'other') => {  
+const checkDeckList = async (member, format) => {  
     const filter = m => m.author.id === member.user.id
-    const message = await member.send({ content: `Please provide a duelingbook.com/deck link for the ${formatName} Format ${formatEmoji} deck you would like to check.`}).catch((err) => console.log(err))
+    const message = await member.send({ content: `Please provide a duelingbook.com/deck link for the ${format.name} Format ${format.emoji} deck you would like to check.`}).catch((err) => console.log(err))
     if (!message || !message.channel) return {}
     return await message.channel.awaitMessages({
         filter,
         max: 1,
         time: 30000
     }).then(async collected => {
-        const url = collected.first().content
-        if (url.includes("www.duelingbook.com/deck")) {		
-            member.send({ content: 'Thanks. Please wait while I download the .YDK file. This can take up to 30 seconds.'}).catch((err) => console.log(err))
-            const issues = await saveYDK(player, url, formatDate, formatList, tournamentName)
-            if (!issues) return {}
-            return issues 
+        const response = collected.first().content
+        if (response.includes('duelingbook.com/deck?id=')) {		
+            const id = response.slice(response.indexOf('?id=') + 4)
+            const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${id}`)
+            if (!data) return {}
+            const main = data.main.map((e) => e.serial_number)
+            const side = data.side.map((e) => e.serial_number)
+            const extra = data.extra.map((e) => e.serial_number)
+            const deckArr = [...main, ...side, ...extra]
+            const issues = await getIssues(deckArr, format)
+            return issues
         } else {
             member.send({ content: "Sorry, I only accept duelingbook.com/deck links."}).catch((err) => console.log(err))    
             return false  
@@ -318,12 +278,13 @@ const getDeckType = async (player, format, tournamentName = 'other') => {
             'other' 
         ) : 'other'
 
-    console.log(file, 'is', deckType)
     return deckType
 }
 
 module.exports = {
     checkDeckList,
+    getDeckFormat,
     getDeckType,
+    getIssues,
     saveYDK
 }

@@ -1,11 +1,11 @@
 
 
 const Sequelize = require('sequelize')
-const { pgPassword } = require('../secrets.json')
+const { pgPassword, pgUsername } = require('../secrets')
 
 const db = new Sequelize(
   'formatlibrary',
-  'ubuntu',
+  pgUsername,
   pgPassword,
   { 
     host: 'localhost',
