@@ -307,8 +307,10 @@ const seed = async (server, message, tournament) => {
             await axios({
                 method: 'put',
                 url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/${participantId}.json?api_key=${challongeAPIKeys[server.name]}`,
-                participant: {
-                    seed: i+1
+                data: {
+                    participant: {
+                        seed: i+1
+                    }
                 }
             })
             
@@ -447,8 +449,10 @@ const postParticipant = async (server, tournament, player) => {
         const { data } = await axios({
             method: 'post',
             url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${challongeAPIKeys[server.name]}`,
-            participant: {
-                name: player.name
+            data: {
+                participant: {
+                    name: player.name
+                }
             }
         })
         return data
@@ -485,9 +489,11 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
         success = await axios({
             method: 'put',
             url: `https://api.challonge.com/v1/tournaments/${tournament.id}/matches/${matchId}.json?api_key=${challongeAPIKeys[server.name]}`,
-            match: {
-                winner_id: winningEntry.participantId,
-                scores_csv: scores
+            data: {
+                match: {
+                    winner_id: winningEntry.participantId,
+                    scores_csv: scores
+                }
             }
         })
     } catch (err) {

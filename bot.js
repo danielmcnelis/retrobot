@@ -256,11 +256,13 @@ try {
             const { status, data } = await axios({
                 method: 'post',
                 url: `https://api.challonge.com/v1/tournaments.json?api_key=${challongeAPIKeys[server.name]}`,
-                tournament: {
-                    name: name,
-                    url: name,
-                    tournament_type: tournament_type,
-                    gameName: 'Yu-Gi-Oh!'
+                data: {
+                    tournament: {
+                        name: name,
+                        url: name,
+                        tournament_type: tournament_type,
+                        gameName: 'Yu-Gi-Oh!'
+                    }
                 }
             })
             
@@ -300,11 +302,13 @@ try {
                 const { status, data } = await axios({
                     method: 'post',
                     url: `https://api.challonge.com/v1/tournaments.json?api_key=${challongeAPIKeys[server.name]}`,
-                    tournament: {
-                        name: name,
-                        url: str,
-                        tournament_type: tournament_type,
-                        gameName: 'Yu-Gi-Oh!',
+                    data: {
+                        tournament: {
+                            name: name,
+                            url: str,
+                            tournament_type: tournament_type,
+                            gameName: 'Yu-Gi-Oh!',
+                        }
                     }
                 })
                 
