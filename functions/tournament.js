@@ -13,7 +13,7 @@ const { capitalize, shuffleArray } = require('./utility.js')
 
 // STATIC IMPORTS
 const { legend, mad } = require('../static/emojis')
-const { tourRole } = require('../static/roles')
+const roles = require('../static/roles')
 const { challongeAPIKeys } = require('../secrets.json')
 
 ////// TOURNAMENT REGISTRATION FUNCTIONS ///////
@@ -255,7 +255,7 @@ const removeParticipant = async (server, message, member, entry, tournament, dro
 
         if (success) {
             await entry.destroy()
-            member.roles.remove(tourRole).catch((err) => console.log(err))
+            member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
         
             if (drop) {
                 return message.channel.send({ content: `I removed you from the tournament. Better luck next time!`})
@@ -525,7 +525,7 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
         const entries = await Entry.count({ where: { playerId: losingPlayer.id } })
         if (entries === 1) {
             const member = message.guild.members.cache.get(losingEntry.playerId)
-            if (member) member.roles.remove(tourRole).catch((err) => console.log(err))
+            if (member) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
         }
         await losingEntry.destroy()
     }
