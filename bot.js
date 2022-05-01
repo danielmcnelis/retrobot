@@ -1567,12 +1567,15 @@ try {
         if (!winningPlayer || !winnerStats) return message.channel.send({ content: `Sorry, <@${winnerId}> is not in the database.`})
 
         const loserHasTourRole = await isTourPlayer(server, loser)
+        console.log('loserHasTourRole', loserHasTourRole)
         const winnerHasTourRole = await isTourPlayer(server, winner)
+        console.log('winnerHasTourRole', winnerHasTourRole)
         const activeTournament = await Tournament.count({ where: { state: 'underway', guildId: mgid } }) 
         let isTournamentMatch
         let winningEntry
         let losingEntry
         let tournament
+        console.log('activeTournament', activeTournament)
 
         const loserHasIronRole = isIronPlayer(server, message.member)
         const winnerHasIronRole = isIronPlayer(server, winner)
@@ -1580,6 +1583,7 @@ try {
         let isIronMatch
 
         if (loserHasTourRole && winnerHasTourRole && activeTournament) {
+            console.log('loserHasTourRole && winnerHasTourRole && activeTournament')
             const loserEntries = await Entry.findAll({ where: { playerId: losingPlayer.id }, include: Tournament })
             const winnerEntries = await Entry.findAll({ where: { playerId: winningPlayer.id }, include: Tournament })
             if (loserEntries.length && winnerEntries.length) {
@@ -1605,6 +1609,7 @@ try {
                     }
                 }
                 
+                console.log('common_tournament_ids', common_tournament_ids)
                 if (common_tournament_ids.length) {
                     for (let i = 0; i < common_tournament_ids.length; i++) {
                         const id = common_tournament_ids[i]
@@ -1626,6 +1631,7 @@ try {
                     }
                 }
                     
+                console.log('tournaments.length', tournaments.length)
                 if (tournaments.length) {
                     const tournament = await selectTournament(message, tournaments, message.member.user.id)
                     if (tournament) {
@@ -1700,6 +1706,7 @@ try {
             delta: delta
         })
 
+        console.log('isTournamentMatch', isTournamentMatch)
         if (isTournamentMatch && winningEntry && losingEntry && tournament && match) {
             await Matchup.create({
                 winning_deck_name: winningEntry.deck_name,
