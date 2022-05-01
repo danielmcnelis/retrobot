@@ -255,8 +255,7 @@ try {
         try {
             const { status, data } = await axios({
                 method: 'post',
-                url: 'https://@api.challonge.com/v1/tournaments.json',
-                api_key: challongeAPIKeys[server.name],
+                url: `https://api.challonge.com/v1/tournaments.json?api_key=${challongeAPIKeys[server.name]}`,
                 tournament: {
                     name: name,
                     url: name,
@@ -300,8 +299,7 @@ try {
             try {
                 const { status, data } = await axios({
                     method: 'post',
-                    url: 'https://@api.challonge.com/v1/tournaments.json',
-                    api_key: challongeAPIKeys[server.name],
+                    url: `https://api.challonge.com/v1/tournaments.json?api_key=${challongeAPIKeys[server.name]}`,
                     tournament: {
                         name: name,
                         url: str,
@@ -362,8 +360,7 @@ try {
         try {
             const { status } = await axios({
                 method: 'delete',
-                url: `https://@api.challonge.com/v1/tournaments/${tournament.id}.json`,
-                api_key: challongeAPIKeys[server.name]
+                url: `https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${challongeAPIKeys[server.name]}`
             })
         
             if (status && status === 200) {
@@ -419,8 +416,7 @@ try {
 
 		const { status } = await axios({
 			method: 'post',
-			url: `https://@api.challonge.com/v1/tournaments/${tournament.id}/start.json`,
-            api_key: challongeAPIKeys[server.name]
+			url: `https://api.challonge.com/v1/tournaments/${tournament.id}/start.json?api_key=${challongeAPIKeys[server.name]}`
 		})
 
 		if (status && status === 200) { 
@@ -452,8 +448,7 @@ try {
         try {
             const { status } = await axios({
                 method: 'post',
-                url: `https://@api.challonge.com/v1/tournaments/${tournament.id}/finalize.json`,
-                api_key: challongeAPIKeys[server.name]
+                url: `https://api.challonge.com/v1/tournaments/${tournament.id}/finalize.json?api_key=${challongeAPIKeys[server.name]}`
             })
     
             if (status && status === 200) {
