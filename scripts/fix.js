@@ -7,33 +7,39 @@ const fixFormats = async () => {
     let b = 0
     let c = 0
     const formats = await Format.findAll()
+    console.log(`formats.length`, formats.length)
     for (let i = 0; i < formats.length; i++) {
         const f = formats[i]
         const name = f.name.replace(' ', '_').replace('-', '_')
-        const stats = await Stats.findAll({
-            where: {
-                format: {[Op.iLike]: name }
+        console.log(`name`, name)
+        try {
+            const stats = await Stats.findAll({
+                where: {
+                    format: {[Op.iLike]: name }
+                }
+            }) || []
+    
+            for (let j = 0; j < stats.length; j++) {
+                const s = stats[j]
+                s.format = f.name
+                await s.save()
+                b++
             }
-        }) || []
-
-        for (let j = 0; j < stats.length; j++) {
-            const s = stats[j]
-            s.format = f.name
-            await s.save()
-            b++
-        }
-
-        const matches = await Match.findAll({
-            where: {
-                format: {[Op.iLike]: name }
+    
+            const matches = await Match.findAll({
+                where: {
+                    format: {[Op.iLike]: name }
+                }
+            }) || []
+    
+            for (let j = 0; j < matches.length; j++) {
+                const m = matches[j]
+                m.format = f.name
+                await m.save()
+                c++
             }
-        }) || []
-
-        for (let j = 0; j < matches.length; j++) {
-            const m = matches[j]
-            m.format = f.name
-            await m.save()
-            c++
+        } catch (err) {
+            console.log(err)
         }
     }
 
@@ -59,4 +65,4 @@ const erasePasswords = async () => {
 }
 
 fixFormats()
-erasePasswords()
+// erasePasswords()
