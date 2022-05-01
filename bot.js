@@ -53,10 +53,10 @@ client.on('guildMemberAdd', async (member) => {
     try {
         const guild = member.guild
         const server = await Server.findOne({ where: { id: guild.id }}) || await Server.create({ id: guild.id, name: message.guild.name })
-        if (!hasPartnerAccess(server)) return
+        if (!server || !hasPartnerAccess(server)) return
         const channel = guild.channels.cache.get(channels[guild.name].welcomeChannel)
         if (await isNewUser(server, member.user.id)) await createPlayer(member) 
-        if (await isNewMember(guild.id, member.user.id)) {
+        if (await isNewMember(server, guild.id, member.user.id)) {
             await createMembership(guild, member)
             return channel.send({ content: `${member}, Welcome to the ${guild.name} ${emojis[guild.name]} discord server. ${emojis.legend}`})
         } else {
