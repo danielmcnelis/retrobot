@@ -209,18 +209,19 @@ try {
         const query = marr.length > 1 ? marr.slice(1, marr.length).join(' ') : null
         const member = message.mentions.members.first() || null
         const id = member ? member.user.id : null
-        const queriedPlayer = await Player.findOne({ 
+        const players = [...await Player.findAll({ 
             where: { 
                 [Op.or]: {
                     id: id,
                     name: { [Op.iLike]: query }
                 }
-            }
-        })
+            },
+            order: [['updatedAt', 'DESC']]
+        })]
 
-        console.log('queriedPlayer', queriedPlayer)
+        const queriedPlayer = players[0]
 
-        const queryIsAuthor = queriedPlayer.id === maid
+        const queryIsAuthor = queriedPlayer && queriedPlayer.id === maid
         if (!queryIsAuthor && queriedPlayer && queriedPlayer.duelingBook) return message.channel.send({ content: `${queriedPlayer.name}'s DuelingBook username is: ${queriedPlayer.duelingBook}.`})
         if (!queryIsAuthor && queriedPlayer && !queriedPlayer.duelingBook) return message.channel.send({ content: `${queriedPlayer.name} does not have a DuelingBook username in our database.`})
 
