@@ -218,10 +218,11 @@ try {
             }
         })
 
-        if (queriedPlayer && queriedPlayer.duelingBook) return message.channel.send({ content: `${queriedPlayer.name}'s DuelingBook username is: ${queriedPlayer.duelingBook}.`})
-        if (queriedPlayer && !queriedPlayer.duelingBook) return message.channel.send({ content: `${queriedPlayer.name} does not have a DuelingBook username in our database.`})
+        const queryIsAuthor = queriedPlayer.id === maid
+        if (!queryIsAuthor && queriedPlayer && queriedPlayer.duelingBook) return message.channel.send({ content: `${queriedPlayer.name}'s DuelingBook username is: ${queriedPlayer.duelingBook}.`})
+        if (!queryIsAuthor && queriedPlayer && !queriedPlayer.duelingBook) return message.channel.send({ content: `${queriedPlayer.name} does not have a DuelingBook username in our database.`})
 
-        const player = await Player.findOne({ where: { id: maid } })
+        const player = queryIsAuthor ? queriedPlayer : await Player.findOne({ where: { id: maid } })
 
         if (query) {
             player.duelingBook = query
