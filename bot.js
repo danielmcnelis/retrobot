@@ -193,13 +193,13 @@ try {
     }
 
     // DICE
-    if(dicecom.includes(cmd)) {
+    if(cmd === `!dice`) {
         const result = Math.floor((Math.random() * 6) + 1)
         return message.channel.send({ content: `You rolled a **${result}** with a 6-sided die.`})
     }
 
     // FLIP
-    if(flipcom.includes(cmd)) {
+    if(cmd === `!flip`) {
         const coin = Math.floor((Math.random() * 2)) === 0 ? 'Heads' : 'Tails'
         return message.channel.send({ content: `Your coin flip landed on: **${coin}**!`})
     }
