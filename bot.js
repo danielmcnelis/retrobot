@@ -218,6 +218,8 @@ try {
             }
         })
 
+        console.log('queriedPlayer', queriedPlayer)
+
         const queryIsAuthor = queriedPlayer.id === maid
         if (!queryIsAuthor && queriedPlayer && queriedPlayer.duelingBook) return message.channel.send({ content: `${queriedPlayer.name}'s DuelingBook username is: ${queriedPlayer.duelingBook}.`})
         if (!queryIsAuthor && queriedPlayer && !queriedPlayer.duelingBook) return message.channel.send({ content: `${queriedPlayer.name} does not have a DuelingBook username in our database.`})
