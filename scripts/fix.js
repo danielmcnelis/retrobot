@@ -77,15 +77,13 @@ const createNewStatues = async () => {
         console.log('keys.length', keys.length)
         for (let j = 0; j < keys.length; j++) {
             const key = keys[j]
-            console.log('key', key)
-            console.log('s.key', s.key)
-            if (s.key && key !== 'id' && key !== 'name' && key !== 'createdAt' && key !== 'updatedAt' && key !== 'cardId') {
+            if (s[key] && key !== 'id' && key !== 'name' && key !== 'createdAt' && key !== 'updatedAt' && key !== 'cardId') {
                 console.log('name, key, s.key, cardId', name, key, s.key, cardId)
                 try {
                     await Status.create({
                         name: name,
                         banlist: key,
-                        restriction: s.key,
+                        restriction: s[key],
                         cardId: cardId
                     })
                     b++
