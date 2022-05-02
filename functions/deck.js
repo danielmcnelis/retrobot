@@ -67,9 +67,9 @@ const getDeckFormat = async (server, message, mcid) => {
 const getIssues = async (deckArr, format) => {
     const deck = convertArrayToObject(deckArr)        
     const cardIds = [...await Card.findAll({ where: { tcgDate: { [Op.lte]: format.date } }})].map(c => c.konamiCode)
-    const forbiddenIds = [...await Status.findAll({ where: { [format.banlist]: 'forbidden' }, include: Card })].map(s => s.card.konamiCode)
-    const limitedIds = [...await Status.findAll({ where: { [format.banlist]: 'limited' }, include: Card })].map(s => s.card.konamiCode)
-    const semiIds = [...await Status.findAll({ where: { [format.banlist]: 'semi-limited' }, include: Card })].map(s => s.card.konamiCode)
+    const forbiddenIds = [...await Status.findAll({ where: { banlist: [format.banlist], restriction: 'forbidden' }, include: Card })].map(s => s.card.konamiCode)
+    const limitedIds = [...await Status.findAll({ where: { banlist: [format.banlist], restriction: 'limited' }, include: Card })].map(s => s.card.konamiCode)
+    const semiIds = [...await Status.findAll({ where: { banlist: [format.banlist], restriction: 'semi-limited' }, include: Card })].map(s => s.card.konamiCode)
 
     const illegalCards = []
     const forbiddenCards = []

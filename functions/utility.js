@@ -64,21 +64,25 @@ const search = async (query, fuzzyCards, format) => {
 
 	if (!card) return false
 
-    const status = await Status.findOne({ 
+    const status = format ? await Status.findOne({ 
         where: { 
+            banlist: format.banlist,
             name: {
                 [Op.iLike]: card_name
-            } 
+            }
         }
-    })
+    }) : null
 
-    const position = status && format ? status[format.banlist] || 'unlimited' : 'unlimited'
+    const legal = format && card.tcgDate && (card.tcgDate <= format.date)
+    const position = legal && status ? status.restriction :
+        legal && !status ? 'unlimited' :
+        'not legal'
+
     const indicator = position === 'semi-limited' ? semi :
         position === 'limited' ? limited :
         position === 'forbidden' ? forbidden :
         ''
 
-    const legal = format && card.tcgDate && (card.tcgDate <= format.date)
 	const color = card.category === "Spell" ? "#42f578" :
 		card.category === "Trap" ? "#e624ed" :
 		card.category === "Monster" && card.fusion ? "#a930ff" :
@@ -116,7 +120,7 @@ const search = async (query, fuzzyCards, format) => {
 		`Card: ${card.category} ${eval(card.category)}` +
         `\nCategory: ${card.icon} ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
 		`\nRelease Date: ${card.tcgDate || 'OCG Only'}` +
-        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}`
+        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${capitalize(position, true)} ${indicator}` : ''}`
 	
 	const stats = card.category === "Monster" ? 
 			`ATK: ${card.atk === null ? '?' : card.atk} ${ATK}` + 

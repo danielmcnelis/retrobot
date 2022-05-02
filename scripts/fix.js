@@ -1,17 +1,18 @@
 
 
 const { Op } = require('sequelize')
-const { Match, Stats, Format, Player } = require('../db')
+const { Match, Stats, Status, Format, Player } = require('../db')
+const statuses = require('../static/statuses.json')
 
 const fixFormats = async () => {
     let b = 0
     let c = 0
     const formats = await Format.findAll()
-    console.log(`formats.length`, formats.length)
+
     for (let i = 0; i < formats.length; i++) {
         const f = formats[i]
         const name = f.name.replace(' ', '_').replace('-', '_')
-        console.log(`name`, name)
+
         try {
             const stats = await Stats.findAll({
                 where: {
@@ -64,5 +65,37 @@ const erasePasswords = async () => {
     return console.log(`erased the passwords for ${b} players`)
 }
 
-fixFormats()
+const createNewStatues = async () => {
+    let b = 0
+    let e = 0
+    for (let i = 0; i < statuses.length; i++) {
+        const s = statuses[i]
+        const name = s.name
+        const cardId = s.cardId
+        const keys = Object.keys(s)
+        for (let j = 0; j < keys.length; j++) {
+            const key = keys[j]
+            if (key === 'id' || key === 'name' || key === 'createdAt' || key === 'updatedAt' || key === 'cardId') continue
+            if (s.key) {
+                try {
+                    await Status.create({
+                        name: name,
+                        banlist: key,
+                        restriction: s.key,
+                        cardId: cardId
+                    })
+                    b++
+                } catch (err) {
+                    e++
+                    console.log(err)
+                }
+            }
+        }
+    }
+
+    return console.log(`created ${b} new statuses for ${statuses.length} cards, encountered ${e} errors`)
+}
+
+// fixFormats()
 // erasePasswords()
+createNewStatues()

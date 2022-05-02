@@ -842,9 +842,9 @@ try {
     if (commands.banscom.includes(cmd)) {
         const format = await getDeckFormat(server, message, mcid)
         if (!format) return
-        const forbidden = [...await Status.findAll({ where: { [format.banlist]: 'forbidden' }, order: [["name", "ASC"]] })].map((s) => s.name) || []
-        const limited = [...await Status.findAll({ where: { [format.banlist]: 'limited' }, order: [["name", "ASC"]] })].map((s) => s.name) || []
-        const semilimited = [...await Status.findAll({ where: { [format.banlist]: 'semi-limited' }, order: [["name", "ASC"]] })].map((s) => s.name) || []
+        const forbidden = [...await Status.findAll({ where: { banlist: [format.banlist], restriction: 'forbidden' }, include: Card, order: [[Card, 'sortPriority', 'ASC'], ['name', 'ASC']]})].map((s) => s.name) || []
+        const limited = [...await Status.findAll({ where: { banlist: [format.banlist], restriction: 'limited' }, include: Card, order: [[Card, 'sortPriority', 'ASC'], ['name', 'ASC']]})].map((s) => s.name) || []
+        const semilimited = [...await Status.findAll({ where: { banlist: [format.banlist], restriction: 'semi-limited' }, include: Card, order: [[Card, 'sortPriority', 'ASC'], ['name', 'ASC']]})].map((s) => s.name) || []
 
         if (!forbidden.length) forbidden.push(`N/A`)
         if (!limited.length) limited.push(`N/A`)
