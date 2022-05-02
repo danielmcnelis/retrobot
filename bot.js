@@ -10,7 +10,7 @@ const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
  
 // DATABASE IMPORTS
-const { Entry, Format, Info, Iron, Match, Matchup, Membership, Player, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
+const { Card, Entry, Format, Info, Iron, Match, Matchup, Membership, Player, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
 // FUNCTION IMPORTS
 const { conductCensus, getMidnightCountdown, updateAvatars, purgeEntries } = require('./functions/chron.js')
