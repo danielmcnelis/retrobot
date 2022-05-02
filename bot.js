@@ -1324,7 +1324,7 @@ try {
         top_stats.length === 1 ? results[0] = `${format.emoji} --- The Best ${format.name} Player --- ${format.emoji}`
         : results[0] = `${format.emoji} --- Top ${top_stats.length} ${format.name} Players --- ${format.emoji}`
         for (let i = 0; i < top_stats.length; i++) results[i+1] = `${(i+1)}. ${getMedal(top_stats[i].elo)} ${top_stats[i].player.name}`
-        results.push(`\nhttps://formatlibrary.com/leaderboards/${format.name}`)
+        results.push(`\nFull Leaderboard: https://formatlibrary.com/leaderboards/${format.name}`)
         for (let i = 0; i < results.length; i += 30) message.channel.send({ content: results.slice(i, i+30).join('\n').toString() })
         return
     }
