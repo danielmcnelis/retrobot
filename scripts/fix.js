@@ -78,8 +78,7 @@ const createNewStatues = async () => {
         for (let j = 0; j < keys.length; j++) {
             const key = keys[j]
             console.log('key', key)
-            if (key === 'id' || key === 'name' || key === 'createdAt' || key === 'updatedAt' || key === 'cardId') continue
-            if (s.key) {
+            if (s.key && key !== 'id' && key !== 'name' && key !== 'createdAt' && key !== 'updatedAt' && key !== 'cardId') {
                 console.log('name, key, s.key, cardId', name, key, s.key, cardId)
                 try {
                     await Status.create({
