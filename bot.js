@@ -19,7 +19,7 @@ const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
 const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getTournamentChannel, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
-const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats } = require('./functions/utility.js')
+const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasAffiliateAccess, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats } = require('./functions/utility.js')
 
 // STATIC IMPORTS
 const channels = require('./static/channels.json')
@@ -109,8 +109,8 @@ try {
     const mgid = message.guild.id
     
     const server = await Server.findOne({ where: { id: mgid }}) || await Server.create({ id: mgid, name: message.guild.name })
-    if (hasPartnerAccess(server) && await isNewUser(server, maid)) await createPlayer(message.member)
-    if (hasPartnerAccess(server) && await isNewMember(server, mgid, maid)) await createMembership(message.guild, message.member)
+    if (hasAffiliateAccess(server) && await isNewUser(server, maid)) await createPlayer(message.member)
+    if (hasAffiliateAccess(server) && await isNewMember(server, mgid, maid)) await createMembership(message.guild, message.member)
 
     // CARD SEARCH USING CURLY BRACKETS
     if (!message.content.startsWith("!") && message.content.includes(`{`) && message.content.includes(`}`)) { 
@@ -731,7 +731,7 @@ try {
 
     // ROLE
     if (commands.rolecom.includes(cmd)) {
-        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         const format = await Format.findOne({
             where: {
                 [Op.or]: {
@@ -833,7 +833,8 @@ try {
             `\n**The following cards are limited:**`,
             ...limited,
             `\n**The following cards are semi-limited:**`,
-            ...semilimited
+            ...semilimited,
+            `\nhttps://formatlibrary.com/banlists/${format.banlist}`
         ]
 
         for (let i = 0; i < banlist.length; i += 50) {
@@ -853,7 +854,7 @@ try {
         const botEmbed = new Discord.MessageEmbed()
 	        .setColor('#38C368')
         	.setTitle('RetroBot User Guide')
-	        .setDescription('A Rankings and Tournament Bot powered by FormatLibrary.com.\n' )
+	        .setDescription('A Yu-Gi-Oh! Bot powered by FormatLibrary.com.\n' )
 	        .setURL('https://discord.com/invite/formatlibrary')
 	        .setAuthor({ name: 'Jazz#2704', iconURL: 'https://i.imgur.com/wz5TqmR.png', url: 'https://discord.com/invite/formatlibrary' })
             .setThumbnail('https://formatlibrary.com/images/logos/FL.png')
@@ -869,7 +870,7 @@ try {
 
     // MODERATOR GUIDE
     if (cmd === `!mod`) {
-        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         if (!isMod(server, message.member)) return message.channel.send({ content: "You do not have permission to do that."})
 
         const botEmbed = new Discord.MessageEmbed()
@@ -945,7 +946,7 @@ try {
 
     // STATS
     if (commands.statscom.includes(cmd)) {
-        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         const format = await Format.findOne({
             where: {
                 [Op.or]: {
@@ -1006,7 +1007,7 @@ try {
 
     // HISTORY
     if (commands.histcom.includes(cmd)) {
-        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         const format = await Format.findOne({
             where: {
                 [Op.or]: {
@@ -1015,7 +1016,6 @@ try {
                 }
             }
         })
-        console.log(!!format)
 
         if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         let x = message.mentions.users.first() ? parseInt(args[1]) || 250 : parseInt(args[0]) || 250
@@ -1181,7 +1181,7 @@ try {
 
     // ACTIVITY
     if (commands.activitycom.includes(cmd)) {
-        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         const format = await Format.findOne({
             where: {
                 [Op.or]: {
@@ -1288,7 +1288,7 @@ try {
 
     // RANK
     if (commands.rankcom.includes(cmd)) {
-        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         const format = await Format.findOne({
             where: {
                 [Op.or]: {
@@ -1323,15 +1323,15 @@ try {
         const results = []
         top_stats.length === 1 ? results[0] = `${format.emoji} --- The Best ${format.name} Player --- ${format.emoji}`
         : results[0] = `${format.emoji} --- Top ${top_stats.length} ${format.name} Players --- ${format.emoji}`
-
         for (let i = 0; i < top_stats.length; i++) results[i+1] = `${(i+1)}. ${getMedal(top_stats[i].elo)} ${top_stats[i].player.name}`
+        results.push(`\nhttps://formatlibrary.com/leaderboards/${format.name}`)
         for (let i = 0; i < results.length; i += 30) message.channel.send({ content: results.slice(i, i+30).join('\n').toString() })
         return
     }
 
     // LOSS
     if (commands.losscom.includes(cmd)) {
-        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         const format = await Format.findOne({
             where: {
                 [Op.or]: {
@@ -1521,7 +1521,7 @@ try {
 
     // MANUAL
     if (commands.manualcom.includes(cmd)) {
-        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         if (!isMod(server, message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
         const format = await Format.findOne({
             where: {
@@ -1763,7 +1763,7 @@ try {
 
     // H2H
     if (commands.h2hcom.includes(cmd)) {
-        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         const format = await Format.findOne({
             where: {
                 [Op.or]: {
@@ -1802,7 +1802,7 @@ try {
 
     // UNDO
     if (commands.undocom.includes(cmd)) {
-        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         const format = await Format.findOne({
             where: {
                 [Op.or]: {

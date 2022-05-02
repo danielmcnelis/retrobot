@@ -258,8 +258,8 @@ const getRandomSubset = (arr, n) => {
     return shuffledArr.slice(0, n)
 }
 
-//HAS LIMITED ACCESS?
-const hasLimitedAccess = (server) => server && (server.access === 'limited' || server.access === 'partner' || server.access === 'full')
+//HAS AFFILIATE ACCESS?
+const hasAffiliateAccess = (server) => server && (server.access === 'affiliate' || server.access === 'partner' || server.access === 'full')
 
 //HAS PARTNER ACCESS?
 const hasPartnerAccess = (server) => server && (server.access === 'partner' || server.access === 'full')
@@ -336,7 +336,7 @@ module.exports = {
     isNewUser,
     isProgrammer,
     isTourPlayer,
-    hasLimitedAccess,
+    hasAffiliateAccess,
     hasPartnerAccess,
     hasFullAccess,
     search,

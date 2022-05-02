@@ -18,7 +18,7 @@ const Server = db.define('servers', {
     },
     access: {
         type: Sequelize.STRING,   
-        defaultValue: 'limited',       
+        defaultValue: 'free',       
         allowNull: true
     }
 })
