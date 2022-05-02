@@ -1013,7 +1013,7 @@ try {
         const memberIds = [...membersMap.keys()]
         const filtered_stats = all_stats.filter((s) => memberIds.includes(s.playerId))
         const index = filtered_stats.length ? filtered_stats.findIndex((s) => s.playerId === playerId) : null
-        const rank = stats && (stats.wins > 5 || stats.losses > 5) ? `#${index + 1} out of ${filtered_stats.length}` : `N/A`
+        const rank = stats && index >= 0 ? `#${index + 1} out of ${filtered_stats.length}` : `N/A`
         const elo = stats ? stats.elo.toFixed(2) : `500.00`
         const medal = getMedal(elo, title = true)
         const wins = stats ? stats.wins : 0
