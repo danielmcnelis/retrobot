@@ -77,6 +77,7 @@ const createNewStatues = async () => {
         console.log('keys.length', keys.length)
         for (let j = 0; j < keys.length; j++) {
             const key = keys[j]
+            console.log('key', key)
             if (key === 'id' || key === 'name' || key === 'createdAt' || key === 'updatedAt' || key === 'cardId') continue
             if (s.key) {
                 console.log('name, key, s.key, cardId', name, key, s.key, cardId)
