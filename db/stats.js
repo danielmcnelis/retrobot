@@ -4,8 +4,7 @@ const { db } = require('./db')
 
 const Stats = db.define('stats', {
     format: {
-        type: Sequelize.STRING,  
-        defaultValue: 'goat',          
+        type: Sequelize.STRING,         
         allowNull: false
     },
     elo: {

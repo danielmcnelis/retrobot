@@ -16,7 +16,7 @@ const Tournament = db.define('tournaments', {
     },
     format: {
         type: Sequelize.STRING,  
-        defaultValue: 'goat',  
+        defaultValue: 'Goat',  
         allowNull: false
     },
     url: {
