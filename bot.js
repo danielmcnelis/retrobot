@@ -184,6 +184,26 @@ try {
         return message.channel.send({ content: user.displayAvatarURL() })
     }
 
+    // RNG
+    if(cmd === `!rng`) {
+        const num = parseInt(args[0])
+        if(isNaN(num) || num < 1) return message.channel.send({ content: `Please specify an upper limit.`})
+        const result = Math.floor((Math.random() * num) + 1)
+        return message.channel.send({ content: `You rolled a **${result}** with a ${num}-sided die.`})
+    }
+
+    // DICE
+    if(dicecom.includes(cmd)) {
+        const result = Math.floor((Math.random() * 6) + 1)
+        return message.channel.send({ content: `You rolled a **${result}** with a 6-sided die.`})
+    }
+
+    // FLIP
+    if(flipcom.includes(cmd)) {
+        const coin = Math.floor((Math.random() * 2)) === 0 ? 'Heads' : 'Tails'
+        return message.channel.send({ content: `Your coin flip landed on: **${coin}**!`})
+    }
+
     // DUELINGBOOK NAME
     if (commands.dbcom.includes(cmd)) {
         const query = marr.length > 1 ? marr.slice(1, marr.length).join(' ') : null
@@ -859,12 +879,12 @@ try {
 	        .setAuthor({ name: 'Jazz#2704', iconURL: 'https://i.imgur.com/wz5TqmR.png', url: 'https://discord.com/invite/formatlibrary' })
             .setThumbnail('https://formatlibrary.com/images/logos/FL.png')
             .addField('How to Use This Bot', '\nThe following commands can be used for any format in the appropriate server or channels.')
-        	.addField('Cards', '\n{ Card Name } - Look up a card (ex. { Dark Magician }). \n')
+        	.addField('Cards', '\n{ Card Name } - Look up a card. For example, { Dark Magician }. \n')
         	.addField('Ranked Play', '\n!stats - (blank or @user) - Post a player\'s stats. \n!loss - (@user) - Report a loss to another player. \n!top - (n) - Post the top rated players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a ranked play role. \n!undo - Undo the last report if you made a mistake. \n!hist - Post a graph of your Elo history. \n!act - Post a graph of dueling activity. \n')
         	.addField('Format Info', '\n!legal - Privately check if your deck is legal. \n!list - View the Forbidden and Limited list. \n')
         	.addField('Tournaments', '\n!join - Register for an upcoming tournament.\n!resubmit - Resubmit your deck list for a tournament. \n!drop - Drop from a tournament. \n!bracket - Post the bracket(s) for the current tournament(s).')
         	.addField('Ironmans', '\n!iron - Join an ironman queue.\n!q - Check an ironman queue. \n')
-        	.addField('Miscellaneous', '\n!db (name or @user) - Set or check a DuelingBook name. \n!prof - (blank or @user) - Post a player\'s profile. \n!medals - (blank or @user) - Post a player\'s best medals. \n!bot - View the RetroBot User Guide. \n!mod - View the RetroBot Moderator Guide.')
+        	.addField('Miscellaneous', '\n!db - (name or @user) - Set or check a DuelingBook name. \n!prof - (blank or @user) - Post a player\'s profile. \n!medals - (blank or @user) - Post a player\'s best medals. \n!rng (X) - Random number from 1 to X. \n!flip - Flip a coin. \n!dice - Roll a 6-sided die. \n!bot - View the RetroBot User Guide. \n!mod - View the RetroBot Moderator Guide.')
 
         message.author.send({ embeds: [botEmbed] }).catch((err) => console.log(err))
         return message.channel.send({ content: "I messaged you the RetroBot User Guide."})
@@ -883,7 +903,7 @@ try {
 	        .setAuthor({ name: 'Jazz#2704', iconURL: 'https://i.imgur.com/wz5TqmR.png', url: 'https://discord.com/invite/formatlibrary' })
         	.setThumbnail('https://formatlibrary.com/images/logos/FL.png')
         	.addField('Ranked Play', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
-            .addField('Tournaments', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Directly add a player to a bracket. \n!noshow - (@user) - Report a no-show. \n!deck - (@user) - Check a player\'s tournament deck. \n!remove - (@user) - Remove a player from a bracket. \n!start - Start a tournament. \n!end (tournament name) - End a tournament.')
+            .addField('Tournaments', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Directly add a player to a bracket. \n!noshow - (@user) - Report a no-show. \n!deck - (@user) - Check a player\'s tournament deck. \n!remove - (@user) - Remove a player from a bracket. \n!start - Start a tournament. \n!end - (tournament name) - End a tournament.')
 
         message.author.send({ embeds: [botEmbed] }).catch((err) => console.log(err))
         return message.channel.send({ content: "I messaged you the RetroBot Moderator Guide."})
