@@ -1002,11 +1002,8 @@ try {
 
         const all_stats = await Stats.findAll({ 
             where: {
-                format: {[Op.iLike]: format.name}, 
-                [Op.or]: [
-                    { wins: { [Op.gte]: 3 } }, 
-                    { losses: { [Op.gte]: 3 } }, 
-                ],
+                format: { [Op.iLike]: format.name }, 
+                games: { [Op.gte]: 3 },
                 serverId: serverId,
                 '$player.blacklisted$': false
             },
@@ -1338,10 +1335,7 @@ try {
         const all_stats = await Stats.findAll({ 
             where: {
                 format: {[Op.iLike]: format.name}, 
-                [Op.or]: [
-                    { wins: { [Op.gte]: 5 } }, 
-                    { losses: { [Op.gte]: 5 } }, 
-                ],
+                games: { [Op.gte]: 3 },
                 serverId: serverId,
                 '$player.blacklisted$': false
             },
