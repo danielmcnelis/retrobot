@@ -192,11 +192,24 @@ const fixMatches = async () => {
     }
 }
 
+const fixStatuses = async () => {
+    let b = 0
+    const statuses = await Status.findAll({ where: { restriction: 'unlimited' }})
+    for (let i = 0; i < statuses.length; i++) {
+        const s = statuses[i]
+        await s.destroy()
+        b++
+    }
+
+    return console.log(`destroyed ${b} statuses`)
+}
+
 // fixFormats()
 // erasePasswords()
 // createNewStatues()
-fixStats()
+// fixStats()
 // fixMatches()
 // fixDecks()
 // fixDeckTypes()
 // fixMatchups()
+fixStatuses()
