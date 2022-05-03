@@ -83,8 +83,7 @@ const search = async (query, fuzzyCards, format) => {
     })
 
     const firstPrint = print ? `${rarities[print.rarity]} ${print.set.setName}` : null 
-    console.log('firstPrint', firstPrint)
-
+    
     const legal = format && card.tcgDate && (card.tcgDate <= format.date)
     const position = legal && status ? status.restriction :
         legal && !status ? 'unlimited' :
@@ -133,6 +132,7 @@ const search = async (query, fuzzyCards, format) => {
 		`Card: ${card.category} ${eval(card.category)}` +
         `\nCategory: ${card.icon} ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
 		`\nRelease Date: ${card.tcgDate || 'OCG Only'}` +
+        `\nFirst Print: ${firstPrint || 'OCG Only'}` +
         `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${capitalize(position, true)} ${indicator}` : ''}`
 	
 	const stats = card.category === "Monster" ? 
