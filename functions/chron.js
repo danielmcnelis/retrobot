@@ -14,7 +14,7 @@ const getMidnightCountdown = () => {
 }
 
 // UPDATE AVATARS
-const updateAvatars = async () => {
+const updateAvatars = async (client) => {
     const servers = await Server.findAll()
     for (let s = 0; s < servers.length; s++) {
         try {
@@ -50,11 +50,11 @@ const updateAvatars = async () => {
         }
     }
 
-    return setTimeout(() => updateAvatars(), (24 * 60 * 60 * 1000))
+    return setTimeout(() => updateAvatars(client), (24 * 60 * 60 * 1000))
 }
 
 // CONDUCT CENSUS
-const conductCensus = async () => {
+const conductCensus = async (client) => {
     // Update every player's username and tag to match their Discord account.
     // It also creates new players if they are not in the database (i.e. they joined while bot was down).
     const servers = await Server.findAll()
@@ -116,7 +116,7 @@ const conductCensus = async () => {
         )    
     }
 
-    return setTimeout(() => conductCensus(), (24 * 60 * 60 * 1000))
+    return setTimeout(() => conductCensus(client), (24 * 60 * 60 * 1000))
 }
 
 // PURGE ENTRIES
