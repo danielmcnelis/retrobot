@@ -145,7 +145,7 @@ try {
             setTimeout(() => conductCensus(client), 1000)
             setTimeout(() => updateAvatars(client), (3 * 60 * 1000))
             setTimeout(() => purgeEntries(), (6 * 60 * 1000))
-            return message.channel.send({ content: `${yellow}`})
+            return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
         }
