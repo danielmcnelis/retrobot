@@ -124,7 +124,7 @@ const search = async (query, fuzzyCards, format) => {
 		`Attribute: ${card.attribute} ${eval(card.attribute)}` + 
 		`\n${card.xyz ? `Rank: ${card.level} ${Rank}` : card.link ? `Link Rating: ${card.rating} ${Link}` : `Level: ${card.level} ${Star}`}` +
 		`\nRelease Date: ${card.tcgDate || 'OCG Only'}` +
-		`\nFirst Print: ${print ? rarities[print.rarity] || '' + print.set.setName : 'OCG Only'}` +
+		`\nFirst Print: ${print ? (rarities[print.rarity] || '') + print.set.setName : 'OCG Only'}` +
         `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}` +
 		`\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**` :
 		`Card: ${card.category} ${eval(card.category)}` +
