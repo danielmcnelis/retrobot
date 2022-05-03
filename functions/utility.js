@@ -82,6 +82,8 @@ const search = async (query, fuzzyCards, format) => {
         order: [[Set, 'tcgDate', 'ASC']]
     })
 
+    console.log('print', print)
+
     const legal = format && card.tcgDate && (card.tcgDate <= format.date)
     const position = legal && status ? status.restriction :
         legal && !status ? 'unlimited' :
