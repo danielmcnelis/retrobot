@@ -74,7 +74,7 @@ const search = async (query, fuzzyCards, format) => {
         }
     }) : null
 
-    const firstPrint = await Print.findOne({
+    const print = await Print.findOne({
         where: {
             cardId: card.id
         },
