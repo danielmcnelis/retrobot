@@ -160,10 +160,9 @@ const search = async (query, fuzzyCards, format) => {
 	if (card.effect) classes.push("Effect")
 
     let labels = [
-        `\n${card.xyz ? `Rank: ${card.level} ${Rank}` : card.link ? `Link Rating: ${card.rating} ${Link}` : `Level: ${card.level} ${Star}`}`,
 		`\nRelease Date: ${dateToVerbose(card.tcgDate) || 'OCG Only'}`,
 		`\nFirst Print: ${firstPrint || 'OCG Only'}`,
-        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}`
+        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${capitalize(position, true)} ${indicator}` : ''}`
     ]
 
     if (card.category === 'Monster') {

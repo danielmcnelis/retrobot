@@ -317,7 +317,7 @@ try {
                     `You created a new tournament:` + 
                     `\nName: ${data.tournament.name} ${emoji}` + 
                     `\nFormat: ${format.name} ${format.emoji}` + 
-                    `\nType: ${capitalize(data.tournament.tournament_type)}` +
+                    `\nType: ${capitalize(data.tournament.tournament_type, true)}` +
                     `\nBracket: https://challonge.com/${data.tournament.url}`
                 })
             } 
@@ -364,7 +364,7 @@ try {
                         `You created a new tournament:` + 
                         `\nName: ${data.tournament.name} ${emoji}` + 
                         `\nFormat: ${format.name} ${format.emoji}` + 
-                        `\nType: ${capitalize(data.tournament.tournament_type)}` +
+                        `\nType: ${capitalize(data.tournament.tournament_type, true)}` +
                         `\nBracket: https://challonge.com/${data.tournament.url}`
                     })
                 } 
@@ -520,7 +520,7 @@ try {
         for (let i = 0; i < tournaments.length; i++) {
             const tournament = tournaments[i]
             results.push(`Name: ${tournament.name} ${tournament.emoji}` +
-                `\nType: ${capitalize(tournament.type)}` +
+                `\nType: ${capitalize(tournament.type, true)}` +
                 `\nFormat: ${tournament.format} ${tournament.formatEmoji}` + 
                 `\nBracket: <https://challonge.com/${tournament.url}>`
             )
@@ -1172,7 +1172,7 @@ try {
                     options: {
                         title: {
                             display: true,
-                            text: `${player.name}'s ${server.internalLadder ? 'Internal ' : ''}${capitalize(format)} Elo History - Matches ${i} - ${i + xAxisLength}`,
+                            text: `${player.name}'s ${server.internalLadder ? 'Internal ' : ''}${capitalize(format, true)} Elo History - Matches ${i} - ${i + xAxisLength}`,
                         },
                         legend: {
                             display: false
