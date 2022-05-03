@@ -1024,7 +1024,7 @@ try {
 
         return message.channel.send({ content: 
             `${format.emoji} --- ${format.name} Stats --- ${format.emoji}`
-            + server.internalLadder ? `\nServer: ${server.name}` : ''
+            + `${server.internalLadder ? `\nServer: ${server.name}` : ''}`
             + `\nName: ${player.name}`
             + `\nMedal: ${medal}`
             + `\nRanking: ${rank}`
