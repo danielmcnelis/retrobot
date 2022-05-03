@@ -118,10 +118,12 @@ const getIssues = async (deckArr, format) => {
 }
 
 //SAVE YDK
-const saveYDK = async (player, ydk, tournamentName = 'other') => {
+const saveYDK = async (server, player, ydk, tournamentName = 'other') => {
     try {
+        const folderName = `./decks/${server.name}`
+        if (!fs.existsSync(folderName)) fs.mkdirSync(folderName)
         const tag = player.tag.replace(/[^\ws]/gi, "_").replace(/ /g,'')
-        fs.writeFile(`./decks/${tournamentName}/${tag}.ydk`, ydk, (err) => {
+        fs.writeFile(`./decks/${server.name}/${tournamentName}/${tag}.ydk`, ydk, (err) => {
             if (err) {
                 console.log(err)
             } else {
@@ -169,8 +171,8 @@ const checkDeckList = async (member, format) => {
 }
 
 //GET DECK TYPE
-const getDeckType = async (player, format, tournamentName = 'other') => {
-    const file = `./decks/${tournamentName}/${player.tag.replace(/[^\ws]/gi, "_").replace(/ /g,'')}.ydk`
+const getDeckType = async (server, player, format, tournamentName = 'other') => {
+    const file = `./decks/${server.name}/${tournamentName}/${player.tag.replace(/[^\ws]/gi, "_").replace(/ /g,'')}.ydk`
     const raw = fs.readFileSync(file, 'utf8')
     if (!raw) return
     const main = raw.split('#extra')[0]

@@ -305,11 +305,11 @@ try {
                     guildId: mgid
                 })
             
-                fs.mkdir(`./decks/${name}`, (err) => {
+                fs.mkdir(`./decks/${server.name}/${name}`, (err) => {
                     if (err) {
                         return console.error(err)
                     }
-                    console.log(`made new directory: ./decks/${name}`)
+                    console.log(`made new directory: ./decks/${server.name}/${name}`)
                 })
 
                 return message.channel.send({ content: 
@@ -351,11 +351,11 @@ try {
                         guildId: mgid
                     })
                     
-                    fs.mkdir(`./decks/${name}`, (err) => {
+                    fs.mkdir(`./decks/${server.name}/${name}`, (err) => {
                         if (err) {
                             return console.error(err)
                         }
-                        console.log(`made new directory: ./decks/${name}`)
+                        console.log(`made new directory: ./decks/${server.name}/${name}`)
                     })
                     
                     return message.channel.send({ content: 
@@ -455,7 +455,7 @@ try {
 			const spreadsheetId = await makeSheet(sheets, `${name} Deck Lists`, sheet1Data)
 			await addSheet(sheets, oAuth2Client, spreadsheetId, 'Summary')
 			await writeToSheet(sheets, spreadsheetId, 'Summary', 'RAW', sheet2Data)
-            await uploadDeckFolder(name)
+            await uploadDeckFolder(server, name)
 			return message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
 		} else {
 			return message.channel.send({ content: `Error connecting to Challonge account.`})
@@ -585,7 +585,7 @@ try {
         
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player)
         if (!dbName) return
-        const deckListUrl = await getDeckList(message.member, player, format, tournament.name)
+        const deckListUrl = await getDeckList(server, message.member, player, format, tournament.name)
         if (!deckListUrl) return
 
         if (!entry) {  
@@ -646,7 +646,7 @@ try {
 
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player, true)
         if (!dbName) return
-        const deckListUrl = await getDeckList(message.member, player, format, tournament.name, true)
+        const deckListUrl = await getDeckList(server, message.member, player, format, tournament.name, true)
         if (!deckListUrl) return         
 
         if (!entry) {       

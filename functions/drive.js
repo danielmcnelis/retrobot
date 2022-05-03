@@ -37,7 +37,7 @@ const checkExpiryDate = async () => {
   }
 }
 
-const uploadDeckFolder = async (tournamentName) => {
+const uploadDeckFolder = async (server, tournamentName) => {
   console.log('line 43')
   const oAuth2Client = new google.auth.OAuth2(
     client_id, 
@@ -59,7 +59,7 @@ const uploadDeckFolder = async (tournamentName) => {
     'mimeType': 'application/vnd.google-apps.folder'
   }
 
-  const folder = `./decks/${tournamentName}`
+  const folder = `./decks/${server.name}/${tournamentName}`
   const extensions = fs.readdirSync(folder)
 
   try {
@@ -82,7 +82,7 @@ const uploadDeckFolder = async (tournamentName) => {
 
             const media = {
               mimeType: 'application/json',
-              body: fs.createReadStream(`./decks/${tournamentName}/${extension}`)
+              body: fs.createReadStream(`./decks/${server.name}/${tournamentName}/${extension}`)
             }
 
             saveFile(drive, fileMetadata, media, i) 

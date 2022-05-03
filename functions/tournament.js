@@ -56,7 +56,7 @@ const askForDBName = async (member, player, override = false, error = false, att
 }
 
 //GET DECK LIST
-const getDeckList = async (member, player, format, tournamentName, override = false) => {            
+const getDeckList = async (server, member, player, format, tournamentName, override = false) => {            
     const filter = m => m.author.id === member.user.id
     const pronoun = override ? `${player.name}'s` : 'your'
     const message = await member.send({ content: `Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`}).catch((err) => console.log(err))
@@ -84,7 +84,7 @@ const getDeckList = async (member, player, format, tournamentName, override = fa
             if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return false
                 
             if (override) {
-                saveYDK(player, ydk, tournamentName)
+                saveYDK(server, player, ydk, tournamentName)
                 member.send({ content: `Thanks, ${member.user.username}, I saved a copy of ${pronoun} deck. ${legend}`}).catch((err) => console.log(err))
                 return url
             } else if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
@@ -111,7 +111,7 @@ const getDeckList = async (member, player, format, tournamentName, override = fa
                 member.send({ content: response.toString() }).catch((err) => console.log(err))
                 return false
              } else {
-                saveYDK(player, ydk, tournamentName)
+                saveYDK(server, player, ydk, tournamentName)
                 member.send({ content: `Thanks, ${member.user.username}, ${pronoun} deck is perfectly legal. ${legend}`}).catch((err) => console.log(err))
                 return url
             }
