@@ -90,7 +90,7 @@ const conductCensus = async (client) => {
                 const membership = await Membership.count({ where: { playerId: member.user.id, guildId: guild.id } })
                 if (!membership) {
                     memberCount++
-                    await createMembership(message.guild, member)
+                    await createMembership(guild, member)
                 }
 
                 for (let j = 0; j < member._roles.length; j ++) {
