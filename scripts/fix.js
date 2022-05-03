@@ -176,8 +176,8 @@ const fixStats = async () => {
     const stats = await Stats.findAll()
     for (let i = 0; i < stats.length; i++) {
         const s = stats[i]
-        s.serverId = '414551319031054346'
-        s.internal = false
+        const games = s.wins + s.losses
+        s.games = games
         await s.save()
     }
 }
@@ -196,7 +196,7 @@ const fixMatches = async () => {
 // erasePasswords()
 // createNewStatues()
 fixStats()
-fixMatches()
-fixDecks()
-fixDeckTypes()
-fixMatchups()
+// fixMatches()
+// fixDecks()
+// fixDeckTypes()
+// fixMatchups()

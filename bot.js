@@ -1511,11 +1511,13 @@ try {
         winnerStats.elo = origEloWinner + delta
         winnerStats.backupElo = origEloWinner
         winnerStats.wins++
+        winnerStats.games++
         await winnerStats.save()
 
         loserStats.elo = origEloLoser - delta
         loserStats.backupElo = origEloLoser
         loserStats.losses++
+        loserStats.games++
         await loserStats.save()
 
         const match = await Match.create({
@@ -1707,11 +1709,13 @@ try {
         winnerStats.elo = origEloWinner + delta
         winnerStats.backupElo = origEloWinner
         winnerStats.wins++
+        winnerStats.games++
         await winnerStats.save()
 
         loserStats.elo = origEloLoser - delta
         loserStats.backupElo = origEloLoser
         loserStats.losses++
+        loserStats.games++
         await loserStats.save()
 
         const match = await Match.create({
@@ -1856,11 +1860,13 @@ try {
         winnerStats.elo = winnerStats.backupElo
         winnerStats.backupElo = null
         winnerStats.wins--
+        winnerStats.games--
         await winnerStats.save()
 
         loserStats.elo = loserStats.backupElo
         loserStats.backupElo = null
         loserStats.losses--
+        loserStats.games--
         await loserStats.save()
 
         await lastMatch.destroy()
@@ -2065,6 +2071,7 @@ try {
             stats.backupElo = null
             stats.wins = 0
             stats.losses = 0
+            stats.games = 0
             await stats.save()
         }
         
@@ -2098,11 +2105,13 @@ try {
             winnerStats.elo = origEloWinner + delta
             winnerStats.backupElo = origEloWinner
             winnerStats.wins++
+            winnerStats.games++
             await winnerStats.save()
     
             loserStats.elo = origEloLoser - delta
             loserStats.backupElo = origEloLoser
             loserStats.losses++
+            loserStats.games++
             await loserStats.save()
 
             match.delta = delta

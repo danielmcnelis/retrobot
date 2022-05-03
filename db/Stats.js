@@ -27,6 +27,11 @@ const Stats = db.define('stats', {
         defaultValue: 0,          
         allowNull: false
     },
+    games: {
+        type: Sequelize.INTEGER,  
+        defaultValue: 0,          
+        allowNull: false
+    },
     internal: {
         type: Sequelize.BOOLEAN,        
         allowNull: true
