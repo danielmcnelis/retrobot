@@ -59,6 +59,8 @@ const conductCensus = async (client) => {
     // It also creates new players if they are not in the database (i.e. they joined while bot was down).
     const servers = await Server.findAll()
     for (let s = 0; s < servers.length; s++) {
+        try {
+            
         const guild = client.guilds.cache.get(s.id)
         const membersMap = await guild.members.fetch()
         const members = [...membersMap.values()]
@@ -113,7 +115,10 @@ const conductCensus = async (client) => {
             `\n- ${memberCount} new ${memberCount === 1 ? 'member' : 'members'}` +
             `\n- ${updateCount} updated ${updateCount === 1 ? 'player' : 'players'}` +
             `\n- ${roleCount} updated ${roleCount === 1 ? 'role' : 'roles'}`
-        )    
+        )
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     return setTimeout(() => conductCensus(client), (24 * 60 * 60 * 1000))
