@@ -317,7 +317,8 @@ const trackStats = async (id, format) => {
     } else {
         await Stats.create({
             playerId: id,
-            format
+            format,
+            serverId: '414551319031054346'
         })
     }
 }

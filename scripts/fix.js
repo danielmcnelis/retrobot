@@ -1,8 +1,9 @@
 
 
 const { Op } = require('sequelize')
-const { Match, Stats, Status, Format, Player } = require('../db')
+const { Deck, DeckType, Match, Matchup, Stats, Status, Format, Player } = require('../db')
 const statuses = require('../static/statuses.json')
+const { capitalize } = require('../functions/utility')
 
 const fixFormats = async () => {
     let b = 0
@@ -45,6 +46,79 @@ const fixFormats = async () => {
     }
 
     return console.log(`fixed ${b} stats, ${c} matches`)
+}
+
+const fixDecks = async () => {
+    let b = 0
+    let e = 0
+    const decks = await Deck.findAll()
+
+    for (let i = 0; i < decks.length; i++) {
+        try {
+            const d = decks[i]
+            const name = capitalize(d.name, true)
+            const deckType = capitalize(d.deckType, true)
+            const deckCategory = capitalize(d.deckCategory, true)
+            const format = capitalize(d.format, true)
+            d.format = format
+            d.name = name
+            d.deckCategory = deckCategory
+            d.deckType = deckType
+            await d.save()
+            b++
+        } catch (err) {
+            e++
+            console.log(err)
+        }
+    }
+
+    return console.log(`fixed ${b} decks, encountered ${e} errors`)
+}
+
+const fixDeckTypes = async () => {
+    let b = 0
+    let e = 0
+    const decksTypes = await DeckType.findAll()
+
+    for (let i = 0; i < decksTypes.length; i++) {
+        try {
+            const d = decksTypes[i]
+            const name = capitalize(d.name, true)
+            const category = capitalize(d.category, true)
+            const format = capitalize(d.format, true)
+            d.format = format
+            d.name = name
+            d.category = category
+            await d.save()
+            b++
+        } catch (err) {
+            e++
+            console.log(err)
+        }
+    }
+
+    return console.log(`fixed ${b} deckTypes, encountered ${e} errors`)
+}
+
+const fixMatchups = async () => {
+    let b = 0
+    let e = 0
+    const matchups = await Matchup.findAll()
+
+    for (let i = 0; i < matchups.length; i++) {
+        try {
+            const m = matchups[i]
+            const format = capitalize(m.format, true).replace('_', '-')
+            m.format = format
+            await m.save()
+            b++
+        } catch (err) {
+            e++
+            console.log(err)
+        }
+    }
+
+    return console.log(`fixed ${b} matchups, encountered ${e} errors`)
 }
 
 const erasePasswords = async () => {
@@ -100,4 +174,7 @@ const createNewStatues = async () => {
 
 // fixFormats()
 // erasePasswords()
-createNewStatues()
+// createNewStatues()
+fixDecks()
+fixDeckTypes()
+fixMatchups()

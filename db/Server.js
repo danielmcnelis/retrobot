@@ -16,6 +16,10 @@ const Server = db.define('servers', {
         type: Sequelize.STRING,        
         allowNull: true
     },
+    internalLadder: {
+        type: Sequelize.BOOLEAN,        
+        allowNull: true
+    },
     access: {
         type: Sequelize.STRING,   
         defaultValue: 'free',       

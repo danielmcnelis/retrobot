@@ -152,7 +152,8 @@ const assignCaptains = async (entries, channel, format) => {
 
         const stats = await Stats.findOne({ where: {
             format: format,
-            playerId: playerId
+            playerId: playerId,
+            serverId: '414551319031054346'
         }})
 
         const elo = stats ? stats.elo : 500

@@ -288,7 +288,7 @@ const seed = async (server, message, tournament) => {
     for (let i = 0; i < entries.length; i++) {
         const entry = entries[i]
         const playerId = entry.playerId
-        const stats = await Stats.findOne({ where: { format, playerId } })
+        const stats = await Stats.findOne({ where: { format, playerId, serverId: '414551319031054346' } })
         if (stats) {
             expEntries.push([entry.participantId, entry.pilot, stats.elo])
         } else {

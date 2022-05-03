@@ -32,6 +32,10 @@ const Match = db.define('matches', {
     tournament: {
         type: Sequelize.BOOLEAN,   
         defaultValue: false
+    },
+    internal: {
+        type: Sequelize.BOOLEAN,        
+        allowNull: true
     }
 })
 
