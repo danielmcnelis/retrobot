@@ -177,6 +177,7 @@ const fixStats = async () => {
     for (let i = 0; i < stats.length; i++) {
         const s = stats[i]
         s.serverId = '414551319031054346'
+        s.internal = false
         await s.save()
     }
 }
@@ -186,6 +187,7 @@ const fixMatches = async () => {
     for (let i = 0; i < matches.length; i++) {
         const m = matches[i]
         m.serverId = '414551319031054346'
+        m.internal = false
         await m.save()
     }
 }
