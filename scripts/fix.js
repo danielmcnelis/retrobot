@@ -172,9 +172,29 @@ const createNewStatues = async () => {
     return console.log(`created ${b} new statuses for ${statuses.length} cards, encountered ${e} errors`)
 }
 
+const fixStats = async () => {
+    const stats = await Stats.findAll()
+    for (let i = 0; i < stats.length; i++) {
+        const s = stats[i]
+        s.serverId = '414551319031054346'
+        await s.save()
+    }
+}
+
+const fixMatches = async () => {
+    const matches = await Match.findAll()
+    for (let i = 0; i < matches.length; i++) {
+        const m = matches[i]
+        m.serverId = '414551319031054346'
+        await m.save()
+    }
+}
+
 // fixFormats()
 // erasePasswords()
 // createNewStatues()
+fixStats()
+fixMatches()
 fixDecks()
 fixDeckTypes()
 fixMatchups()
