@@ -116,7 +116,7 @@ const search = async (query, fuzzyCards, format) => {
             cardId: card.id
         },
         include: Set,
-        order: [[Set, 'tcgDate', 'ASC']]
+        order: [[Set, 'tcgDate', 'ASC'], ['marketPrice', 'DESC']]
     })
 
     const firstPrint = print ? `${rarities[print.rarity]} ${print.set.setName}` : null 
