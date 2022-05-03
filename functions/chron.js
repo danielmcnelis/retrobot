@@ -19,7 +19,8 @@ const updateAvatars = async (client) => {
     for (let s = 0; s < servers.length; s++) {
         try {
             let count = 0
-            const guild = client.guilds.cache.get(s.id)
+            const server = servers[s]
+            const guild = client.guilds.cache.get(server.id)
             const membersMap = await guild.members.fetch()
             const memberIds = [...membersMap.keys()]
             
@@ -44,7 +45,7 @@ const updateAvatars = async (client) => {
                 }
             }
 
-            console.log(`updated ${count} avatars for ${s.name}`)
+            console.log(`updated ${count} avatars for ${server.name}`)
         } catch (err) {
             console.log(err)
         }
@@ -60,62 +61,62 @@ const conductCensus = async (client) => {
     const servers = await Server.findAll()
     for (let s = 0; s < servers.length; s++) {
         try {
-            
-        const guild = client.guilds.cache.get(s.id)
-        const membersMap = await guild.members.fetch()
-        const members = [...membersMap.values()]
-        const rolesMap = guild.roles.cache
-        const roles = [...rolesMap.values()].reduce((a, v) => ({ ...a, [v.id]: v.name}), {})     
-        let updateCount = 0
-        let createCount = 0
-        let memberCount = 0
-        let roleCount = 0
+            const server = servers[s]
+            const guild = client.guilds.cache.get(server.id)
+            const membersMap = await guild.members.fetch()
+            const members = [...membersMap.values()]
+            const rolesMap = guild.roles.cache
+            const roles = [...rolesMap.values()].reduce((a, v) => ({ ...a, [v.id]: v.name}), {})     
+            let updateCount = 0
+            let createCount = 0
+            let memberCount = 0
+            let roleCount = 0
 
-        for (let i = 0; i < members.length; i++) {
-            const member = members[i]
-            if (member.user.bot) continue
-            const player = await Player.findOne({ where: { id: member.user.id } })
-            if (player && ( player.name !== member.user.username || player.tag !== member.user.tag )) {
-                updateCount++
-                await player.update({
-                    name: member.user.username,
-                    tag: member.user.tag
-                })
-            } else if (!player && !member.user.bot) {
-                createCount++
-                await createPlayer(member)
-            }
-
-            const membership = await Membership.count({ where: { playerId: member.user.id, guildId: mgid } })
-            if (!membership) {
-                memberCount++
-                await createMembership(message.guild, member)
-            }
-
-            for (let j = 0; j < member._roles.length; j ++) {
-                const roleId = member._roles[j]
-                const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: mgid } })
-                if (!membership) break
-                const count = await Role.count({ where: { membershipId: membership.id, roleId: roleId }})
-                if (!count) {
-                    await Role.create({
-                        membershipId: membership.id,
-                        roleId: roleId,
-                        roleName: roles[roleId]
+            for (let i = 0; i < members.length; i++) {
+                const member = members[i]
+                if (member.user.bot) continue
+                const player = await Player.findOne({ where: { id: member.user.id } })
+                if (player && ( player.name !== member.user.username || player.tag !== member.user.tag )) {
+                    updateCount++
+                    await player.update({
+                        name: member.user.username,
+                        tag: member.user.tag
                     })
+                } else if (!player && !member.user.bot) {
+                    createCount++
+                    await createPlayer(member)
+                }
 
-                    roleCount++
+                const membership = await Membership.count({ where: { playerId: member.user.id, guildId: mgid } })
+                if (!membership) {
+                    memberCount++
+                    await createMembership(message.guild, member)
+                }
+
+                for (let j = 0; j < member._roles.length; j ++) {
+                    const roleId = member._roles[j]
+                    const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: mgid } })
+                    if (!membership) break
+                    const count = await Role.count({ where: { membershipId: membership.id, roleId: roleId }})
+                    if (!count) {
+                        await Role.create({
+                            membershipId: membership.id,
+                            roleId: roleId,
+                            roleName: roles[roleId]
+                        })
+
+                        roleCount++
+                    }
                 }
             }
-        }
 
-        console.log( 
-            `Added the following to the database from ${s.name}:` +
-            `\n- ${createCount} new ${createCount === 1 ? 'player' : 'players'}` +
-            `\n- ${memberCount} new ${memberCount === 1 ? 'member' : 'members'}` +
-            `\n- ${updateCount} updated ${updateCount === 1 ? 'player' : 'players'}` +
-            `\n- ${roleCount} updated ${roleCount === 1 ? 'role' : 'roles'}`
-        )
+            console.log( 
+                `Added the following to the database from ${server.name}:` +
+                `\n- ${createCount} new ${createCount === 1 ? 'player' : 'players'}` +
+                `\n- ${memberCount} new ${memberCount === 1 ? 'member' : 'members'}` +
+                `\n- ${updateCount} updated ${updateCount === 1 ? 'player' : 'players'}` +
+                `\n- ${roleCount} updated ${roleCount === 1 ? 'role' : 'roles'}`
+            )
         } catch (err) {
             console.log(err)
         }
