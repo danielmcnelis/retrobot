@@ -160,7 +160,7 @@ const search = async (query, fuzzyCards, format) => {
 	if (card.effect) classes.push("Effect")
 
     let labels = [
-		`\nRelease Date: ${dateToVerbose(card.tcgDate) || 'OCG Only'}`,
+		`\nRelease Date: ${dateToVerbose(card.tcgDate, true, false, true) || 'OCG Only'}`,
 		`\nFirst Print: ${firstPrint || 'OCG Only'}`,
         `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${capitalize(position, true)} ${indicator}` : ''}`
     ]
