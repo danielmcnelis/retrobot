@@ -7,7 +7,7 @@ const Discord = require('discord.js')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Card, Info, Membership, Player, Role, Stats, Status } = require('../db/index.js')
+const { Card, Info, Membership, Player, Print, Role, Stats, Status } = require('../db/index.js')
 
 //STATIC IMPORTS
 const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend, god, ATK, DEF,
@@ -17,6 +17,7 @@ const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend,
     Ritual, Rock, Scale, SeaSerpent, Spell, Spellcaster, Star, Thunder, Trap, Warrior, 
     WingedBeast, Wyrm, Zombie, forbidden, limited, semi
  } = require('../static/emojis')
+const rarities = require('../static/rarities.json')
 const roles = require('../static/roles.json')
 
 //FETCH CARD NAMES
@@ -73,6 +74,14 @@ const search = async (query, fuzzyCards, format) => {
         }
     }) : null
 
+    const firstPrint = await Print.findOne({
+        where: {
+            cardId: card.id
+        },
+        include: Set,
+        order: [[Set, 'tcgDate', 'ASC']]
+    })
+
     const legal = format && card.tcgDate && (card.tcgDate <= format.date)
     const position = legal && status ? status.restriction :
         legal && !status ? 'unlimited' :
@@ -115,6 +124,7 @@ const search = async (query, fuzzyCards, format) => {
 		`Attribute: ${card.attribute} ${eval(card.attribute)}` + 
 		`\n${card.xyz ? `Rank: ${card.level} ${Rank}` : card.link ? `Link Rating: ${card.rating} ${Link}` : `Level: ${card.level} ${Star}`}` +
 		`\nRelease Date: ${card.tcgDate || 'OCG Only'}` +
+		`\nFirst Print: ${print ? rarities[print.rarity] || '' + print.set.setName : 'OCG Only'}` +
         `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}` +
 		`\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**` :
 		`Card: ${card.category} ${eval(card.category)}` +
