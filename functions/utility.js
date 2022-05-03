@@ -15,10 +15,32 @@ const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend,
     Counter, Cyberse, Dinosaur, DivineBeast, Dragon, Equip, Fairy, Field, Fiend, Fish, 
     Insect, Link, Machine, Normal, Plant, Psychic, Pyro, QuickPlay, Rank, Reptile, 
     Ritual, Rock, Scale, SeaSerpent, Spell, Spellcaster, Star, Thunder, Trap, Warrior, 
-    WingedBeast, Wyrm, Zombie, forbidden, limited, semi
+    WingedBeast, Wyrm, Zombie, forbidden, limited, semi, unlimited
  } = require('../static/emojis')
 const rarities = require('../static/rarities.json')
 const roles = require('../static/roles.json')
+
+//DATE TO SIMPLE
+const dateToSimple = (date) => {
+    const year = typeof date === 'string' ? date.slice(2, 4) : date.getFullYear().slice(2, 4)
+    const month = typeof date === 'string' ? parseInt(date.slice(5, 7), 10) : date.getMonth() + 1
+    const day = typeof date === 'string' ? parseInt(date.slice(8, 10), 10) : date.getDate()
+    const simple = `${month}/${day}/${year}`
+    return simple
+}
+
+//DATE TO VERBOSE
+const dateToVerbose = (date, long = true, ordinal = true, includeYear = true) => {
+    const year = typeof date === 'string' ? date.slice(0, 4) : date.getFullYear()
+    const longMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    const shortMonths = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
+    const month = typeof date === 'string' ? parseInt(date.slice(5, 7), 10) - 1 : date.getMonth()
+    const monthStr = long ? longMonths[month] : shortMonths[month]
+    const day = typeof date === 'string' ? parseInt(date.slice(8, 10), 10) : date.getDate()
+    const dayStr = ordinal ? ordinalize(day) : day
+    const verbose = includeYear ? `${monthStr} ${dayStr}, ${year}` :  `${monthStr} ${dayStr}`
+    return verbose
+}
 
 //FETCH CARD NAMES
 const fetchCardNames = async () => {
@@ -83,7 +105,7 @@ const search = async (query, fuzzyCards, format) => {
     })
 
     const firstPrint = print ? `${rarities[print.rarity]} ${print.set.setName}` : null 
-    
+
     const legal = format && card.tcgDate && (card.tcgDate <= format.date)
     const position = legal && status ? status.restriction :
         legal && !status ? 'unlimited' :
@@ -91,8 +113,8 @@ const search = async (query, fuzzyCards, format) => {
 
     const indicator = position === 'semi-limited' ? semi :
         position === 'limited' ? limited :
-        position === 'forbidden' ? forbidden :
-        ''
+        position === 'unlimited' ? unlimited :
+        forbidden
 
 	const color = card.category === "Spell" ? "#42f578" :
 		card.category === "Trap" ? "#e624ed" :
@@ -122,19 +144,28 @@ const search = async (query, fuzzyCards, format) => {
 	if (card.union) classes.push("Union")
 	if (card.effect) classes.push("Effect")
 
-	const labels = card.category === "Monster" ? 
-		`Attribute: ${card.attribute} ${eval(card.attribute)}` + 
-		`\n${card.xyz ? `Rank: ${card.level} ${Rank}` : card.link ? `Link Rating: ${card.rating} ${Link}` : `Level: ${card.level} ${Star}`}` +
-		`\nRelease Date: ${card.tcgDate || 'OCG Only'}` +
-		`\nFirst Print: ${firstPrint || 'OCG Only'}` +
-        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}` +
-		`\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**` :
-		`Card: ${card.category} ${eval(card.category)}` +
-        `\nCategory: ${card.icon} ${eval(card.icon.replace(/[^\ws]/gi, ""))}` +
-		`\nRelease Date: ${card.tcgDate || 'OCG Only'}` +
-        `\nFirst Print: ${firstPrint || 'OCG Only'}` +
-        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${capitalize(position, true)} ${indicator}` : ''}`
-	
+    let labels = [
+        `\n${card.xyz ? `Rank: ${card.level} ${Rank}` : card.link ? `Link Rating: ${card.rating} ${Link}` : `Level: ${card.level} ${Star}`}`,
+		`\nRelease Date: ${dateToVerbose(card.tcgDate) || 'OCG Only'}`,
+		`\nFirst Print: ${firstPrint || 'OCG Only'}`,
+        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${legal ? `${capitalize(position)} ${indicator}` : 'Not Legal'}` : ''}`
+    ]
+
+    if (card.category === 'Monster') {
+        labels = [
+            `Attribute: ${card.attribute} ${eval(card.attribute)}`,
+            `\n${card.xyz ? `Rank: ${card.level} ${Rank}` : card.link ? `Link Rating: ${card.rating} ${Link}` : `Level: ${card.level} ${Star}`}`,
+            ...labels,
+            `\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**`
+        ]
+    } else {
+        labels = [
+            `Card: ${card.category} ${eval(card.category)}`,
+            `\nCategory: ${card.icon} ${eval(card.icon.replace(/[^\ws]/gi, ""))}`,
+            ...labels
+        ]
+    }
+
 	const stats = card.category === "Monster" ? 
 			`ATK: ${card.atk === null ? '?' : card.atk} ${ATK}` + 
 			` ${!card.link ? `DEF: ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
@@ -149,7 +180,7 @@ const search = async (query, fuzzyCards, format) => {
 	cardEmbed.setColor(color)
 	cardEmbed.setTitle(card.name)
 	cardEmbed.setThumbnail(thumbnail)
-	cardEmbed.setDescription(`${labels}\n\n${card.description}${stats ? `\n\n${stats}` : ''}\n\nhttps://formatlibrary.com/cards/${card.name.replace(/ /g, '_')}`)
+	cardEmbed.setDescription(`${labels.join('')}\n\n${card.description}${stats ? `\n\n${stats}` : ''}\n\nhttps://formatlibrary.com/cards/${card.name.replace(/ /g, '_')}`)
 	return { cardEmbed, attachment }
 }
 
@@ -342,6 +373,8 @@ module.exports = {
     convertArrayToObject,
     createMembership,
     createPlayer,
+    dateToSimple,
+    dateToVerbose,
     fetchCardNames,
     generateRandomString,
     getMedal,
