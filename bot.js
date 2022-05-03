@@ -44,8 +44,8 @@ client.on('ready', async() => {
 
     const midnightCountdown = getMidnightCountdown()
 	setTimeout(() => conductCensus(client), midnightCountdown)
-	setTimeout(() => updateAvatars(client), midnightCountdown + (3 * 60 * 1000))
-	setTimeout(() => purgeEntries(), midnightCountdown + (6 * 60 * 1000))
+	setTimeout(() => updateAvatars(client), midnightCountdown + (1 * 60 * 1000))
+	setTimeout(() => purgeEntries(), midnightCountdown + (2 * 60 * 1000))
 })
 
 // WELCOME
