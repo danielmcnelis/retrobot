@@ -302,7 +302,8 @@ try {
                     formatEmoji: format.emoji,
                     url: data.tournament.url,
                     channelId: channelId,
-                    guildId: mgid
+                    guildId: mgid,
+                    community: server.name
                 })
             
                 fs.mkdir(`./decks/${server.name}/${name}`, (err) => {
@@ -348,7 +349,8 @@ try {
                         formatEmoji: format.emoji,
                         url: data.tournament.url,
                         channelId: channelId,
-                        guildId: mgid
+                        guildId: mgid,
+                        community: server.name
                     })
                     
                     fs.mkdir(`./decks/${server.name}/${name}`, (err) => {
