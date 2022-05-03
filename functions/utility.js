@@ -42,6 +42,21 @@ const dateToVerbose = (date, long = true, ordinal = true, includeYear = true) =>
     return verbose
 }
 
+const ordinalize = (int) => {
+    const suffixes = ["th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"]
+    switch (int % 100) {
+    case 11:
+    case 12:
+    case 13:
+        return int + "th"
+    default:
+        return int + suffixes[int % 10]
+    }
+}
+
+//URLIZE
+const urlize = (str) => str.replace(/[\s]/g, '-').toLowerCase()
+
 //FETCH CARD NAMES
 const fetchCardNames = async () => {
     const names = [...await Card.findAll()].map((card) => card.name)
@@ -390,7 +405,9 @@ module.exports = {
     hasAffiliateAccess,
     hasPartnerAccess,
     hasFullAccess,
+    ordinalize,
     search,
     shuffleArray,
-    trackStats
+    trackStats,
+    urlize
 }
