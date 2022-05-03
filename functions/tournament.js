@@ -3,6 +3,7 @@
 
 //MODULE IMPORTS
 const axios = require('axios')
+const {Op} = require('sequelize')
 
 //DATABASE IMPORTS
 const { Entry, Format, Player, Stats }  = require('../db/index.js')
