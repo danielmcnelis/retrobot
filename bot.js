@@ -52,17 +52,17 @@ client.on('ready', async() => {
 client.on('guildMemberAdd', async (member) => {    
     try {
         const guild = member.guild
-        const server = await Server.findOne({ where: { id: guild.id }}) || await Server.create({ id: guild.id, name: message.guild.name })
+        const server = await Server.findOne({ where: { id: guild.id }})
         if (!server || !hasPartnerAccess(server)) return
         const format = await Format.findOne({ where: { name: {[Op.iLike]: server.format }}})
         const channel = guild.channels.cache.get(channels[guild.name].welcomeChannel)
         if (await isNewUser(server, member.user.id)) await createPlayer(member) 
         if (await isNewMember(server, guild.id, member.user.id)) {
             await createMembership(guild, member)
-            return channel.send({ content: `${member}, Welcome to the ${guild.name} ${emojis[guild.name]} discord server. ${format ? format.emoji : emojis.legend}`})
+            return channel.send({ content: `${member}, Welcome to the ${guild.name} ${emojis[guild.name]} Discord server. ${format ? format.emoji : emojis.legend}`})
         } else {
             await assignRoles(guild, member)
-            return channel.send({ content: `${member}, Welcome back to the ${guild.name} ${emojis[guild.name]} discord server! We missed you. ${emojis.soldier}`})
+            return channel.send({ content: `${member}, Welcome back to the ${guild.name} ${emojis[guild.name]} Discord server! We missed you. ${emojis.soldier}`})
         }
     } catch (err) {
         console.log(err)
@@ -73,6 +73,8 @@ client.on('guildMemberAdd', async (member) => {
 client.on('guildMemberRemove', member => {
     try {
         const guild = member.guild
+        const server = await Server.findOne({ where: { id: guild.id }})
+        if (!server || !hasPartnerAccess(server)) return
         const channel = guild.channels.cache.get(channels[guild.name].welcomeChannel)
         channel.send({ content: `Oh dear. ${member.user.username} has left the server. ${emojis.sad}`})
     } catch (err) {
