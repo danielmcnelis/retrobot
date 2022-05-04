@@ -2080,19 +2080,20 @@ try {
             const match = allMatches[i]
             const winnerId = match.winnerId
             const loserId = match.loserId
+            console.log(`winnerId, loserId`, winnerId, loserId)
             const winningPlayer = await Player.findOne({ where: { id: winnerId }})
             const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format: format.name, serverId: '414551319031054346' } })
             const losingPlayer = await Player.findOne({ where: { id: loserId }})
             const loserStats = await Stats.findOne({ where: { playerId: loserId, format: format.name, serverId: '414551319031054346' } })
 
             if (!winningPlayer || !winnerStats) {
-                await trackStats(winnerId, format.name)
+                await trackStats(server, winnerId, format.name)
                 i--
                 continue
             }
 
             if (!losingPlayer || !loserStats) {
-                await trackStats(loserId, format.name)
+                await trackStats(server, loserId, format.name)
                 i--
                 continue
             }

@@ -367,15 +367,15 @@ const shuffleArray = (arr) => {
 }
 
 //TRACK STATS
-const trackStats = async (id, format) => {
-    if (await isNewUser(id)) {
-        const member = { user: { id } }
-        await createPlayer(member)
-        return trackStats(id, format)
+const trackStats = async (server, id, format) => {
+    if (await isNewUser(server, id)) {
+        const member = { user: { id: id } }
+        await createPlayer(server, member)
+        return trackStats(server, id, format)
     } else {
         await Stats.create({
             playerId: id,
-            format,
+            format: format,
             serverId: '414551319031054346'
         })
     }
