@@ -1,5 +1,5 @@
 
-const { Entry, Membership, Player, Role, Server } = require('../db')
+const { Entry, Tournament, Membership, Player, Role, Server } = require('../db')
 const { client } = require('../static/clients.js')
 const { createMembership, createPlayer } = require('./utility')
 const { Op } = require('sequelize')
