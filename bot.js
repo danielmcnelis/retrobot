@@ -43,9 +43,9 @@ client.on('ready', async() => {
     }
 
     const midnightCountdown = getMidnightCountdown()
-	setTimeout(() => conductCensus(client), midnightCountdown)
-	setTimeout(() => updateAvatars(client), midnightCountdown + (1 * 60 * 1000))
-	setTimeout(() => purgeEntries(), midnightCountdown + (2 * 60 * 1000))
+	setTimeout(() => purgeEntries(), midnightCountdown)
+	setTimeout(() => conductCensus(client), midnightCountdown + (1 * 60 * 1000))
+	setTimeout(() => updateAvatars(client), midnightCountdown + (6 * 60 * 1000))
 })
 
 // WELCOME
@@ -144,9 +144,6 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            // setTimeout(() => conductCensus(client), 1000)
-            setTimeout(() => purgeEntries(), 1000)
-            setTimeout(() => updateAvatars(client), 7000)
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
