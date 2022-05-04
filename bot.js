@@ -70,7 +70,7 @@ client.on('guildMemberAdd', async (member) => {
 })
     
 // GOODBYE
-client.on('guildMemberRemove', member => {
+client.on('guildMemberRemove', async (member) => {
     try {
         const guild = member.guild
         const server = await Server.findOne({ where: { id: guild.id }})
