@@ -1,7 +1,7 @@
 
 
 const { Op } = require('sequelize')
-const { Deck, DeckType, Match, Matchup, Stats, Status, Format, Player } = require('../db')
+const { Deck, DeckType, Match, Matchup, Stats, Status, Format, Player, Membership } = require('../db')
 const statuses = require('../static/statuses.json')
 const { capitalize } = require('../functions/utility')
 
@@ -204,6 +204,23 @@ const fixStatuses = async () => {
     return console.log(`destroyed ${b} statuses`)
 }
 
+const deleteMemberships = async () => {
+    let b = 0
+    const memberships = await Membership.findAll({
+        where: {
+            guildName: 'Discord Bots'
+        }
+    })
+
+    for (let i = 0; i < memberships.length; i++) {
+        const m = memberships[i]
+        await m.destroy()
+        b++
+    }
+
+    return console.log(`destroyed ${b} memberships`)
+}
+
 // fixFormats()
 // erasePasswords()
 // createNewStatues()
@@ -212,4 +229,5 @@ const fixStatuses = async () => {
 // fixDecks()
 // fixDeckTypes()
 // fixMatchups()
-fixStatuses()
+// fixStatuses()
+deleteMemberships()
