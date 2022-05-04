@@ -142,9 +142,9 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            setTimeout(() => conductCensus(client), 1000)
-            setTimeout(() => updateAvatars(client), (3 * 60 * 1000))
-            setTimeout(() => purgeEntries(), (6 * 60 * 1000))
+            // setTimeout(() => conductCensus(client), 1000)
+            setTimeout(() => purgeEntries(), 1000)
+            setTimeout(() => updateAvatars(client), 7000)
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
