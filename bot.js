@@ -2030,18 +2030,20 @@ try {
         if (!drops || !drops.length) return message.channel.send(`Please specify a valid number.`)
 
         let b = 0
+        const results = []
         for (let i = 0; i < drops.length; i++) {
             try {
                 const format = drops[i]
                 const oldRatedPool = await RatedPool.findOne({ where: { format: format, playerId: maid } })
                 await oldRatedPool.destroy()
+                results.push(format)
                 b++
             } catch (err) {
                 console.log(err)
             }
         }
 
-        return message.channel.send(`You left the Rated Pool for ${b} ${b === 1 ? 'format' : 'formats'}.`)
+        return message.channel.send({ content: `You left the Rated Pool for the following format(s):\n${results.join('\n').toString()}.`}).catch((err) => console.log(err))
     }
 
     // RESET
