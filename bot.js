@@ -1950,7 +1950,7 @@ try {
                 const tenMinutesAgo = new Date(now - (10 * 60 * 1000))
                 const threeHoursAgo = new Date(now - (3 * 60 * 60 * 1000))
     
-                const yourRecentOpponents = await Match.findAll({
+                const yourRecentOpponents = [...await Match.findAll({
                     where: {
                         [Op.or]: {
                             winnerId: maid,
@@ -1959,7 +1959,7 @@ try {
                         format: format.name,
                         createdAt: {[Op.gte]: threeHoursAgo }
                     }
-                }).map((m) => {
+                })].map((m) => {
                     if (maid === m.winnerId) {
                         return m.loserId
                     } else {
