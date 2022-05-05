@@ -118,12 +118,12 @@ const getIssues = async (deckArr, format) => {
 }
 
 //SAVE YDK
-const saveYDK = async (server, player, ydk, tournamentName = 'other') => {
+const saveYDK = async (serverName, player, ydk, subFolder = 'other') => {
     try {
-        const folderName = `./decks/${server.name}`
+        const folderName = `./decks/${serverName}`
         if (!fs.existsSync(folderName)) fs.mkdirSync(folderName)
         const tag = player.tag.replace(/[^\ws]/gi, "_").replace(/ /g,'')
-        fs.writeFile(`./decks/${server.name}/${tournamentName}/${tag}.ydk`, ydk, (err) => {
+        fs.writeFile(`./decks/${serverName}/${subFolder}/${tag}.ydk`, ydk, (err) => {
             if (err) {
                 console.log(err)
             } else {

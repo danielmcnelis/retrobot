@@ -13,6 +13,7 @@ const Matchup = require('./Matchup')
 const Membership = require('./Membership')
 const Player = require('./Player')
 const Print = require('./Print')
+const RatedPool = require('./RatedPool')
 const Role = require('./Role')
 const Server = require('./Server')
 const Set = require('./Set')
@@ -31,6 +32,9 @@ Player.hasMany(Membership)
 
 Role.belongsTo(Membership)
 Membership.hasMany(Role)
+
+RatedPool.belongsTo(Player)
+Player.hasMany(RatedPool)
 
 Iron.belongsTo(Player)
 Player.hasMany(Iron)
@@ -83,6 +87,7 @@ module.exports = {
   Membership,
   Player,
   Print,
+  RatedPool,
   Role,
   Server,
   Set,

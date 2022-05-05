@@ -10,13 +10,14 @@ const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
  
 // DATABASE IMPORTS
-const { Card, Entry, Format, Info, Iron, Match, Matchup, Membership, Player, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
+const { Card, Entry, Format, Info, Iron, Match, Matchup, Membership, Player, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
 // FUNCTION IMPORTS
 const { conductCensus, getMidnightCountdown, updateAvatars, purgeEntries } = require('./functions/chron.js')
 const { checkDeckList, getDeckFormat } = require( './functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
 const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
+const { getRatedDeck, getRatedFormat, getPotentialPairConfirmation } = require('./functions/rated.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getTournamentChannel, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
 const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasAffiliateAccess, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats } = require('./functions/utility.js')
@@ -77,6 +78,9 @@ client.on('guildMemberRemove', async (member) => {
         if (!server || !hasPartnerAccess(server)) return
         const channel = guild.channels.cache.get(channels[guild.name].welcomeChannel)
         channel.send({ content: `Oh dear. ${member.user.username} has left the server. ${emojis.sad}`})
+        const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: guild.id }})
+        membership.active = false
+        await membership.save()
     } catch (err) {
         console.log(err)
     }
@@ -86,8 +90,8 @@ client.on('guildMemberRemove', async (member) => {
 client.on('messageCreate', async (message) => {
 try {
     if (
-		//no commands in DMs
-		!message.guild || 
+		//no commands in DMs except !rated
+		(!message.guild && !message.content.startsWith("!rated")) || 
 		//no commands from bots
 		message.author.bot ||
 		//do not allow users to parrot @everyone or @here with the bot
@@ -108,9 +112,9 @@ try {
     const args = marr[1] ? marr.slice(1) : ''
     const maid = message.author.id
     const mcid = message.channel.id
-    const mgid = message.guild.id
+    const mgid = message.guild ? message.guild.id : null
     
-    const server = mgid === '110373943822540800' ? {} : await Server.findOne({ where: { id: mgid }}) || await Server.create({ id: mgid, name: message.guild.name })
+    const server = (!mgid || mgid === '110373943822540800') ? {} : await Server.findOne({ where: { id: mgid }}) || await Server.create({ id: mgid, name: message.guild.name })
     if (hasAffiliateAccess(server) && await isNewUser(server, maid)) await createPlayer(message.member)
     if (hasAffiliateAccess(server) && await isNewMember(server, mgid, maid)) await createMembership(message.guild, message.member)
 
@@ -1869,6 +1873,128 @@ try {
 
         await lastMatch.destroy()
         return message.channel.send({ content: `The last ${server.internalLadder ? 'Internal ' : ''}${format.name} match in which ${winningPlayer.name} defeated ${losingPlayer.name} has been erased. ${format.emoji}`})
+    }
+
+    // RATED PLAY
+    if (cmd === `!rated`) {
+        const player = await Player.findOne({ where: { id: maid } })
+        if (!player) return message.channel.send(`You are not in the database. Please join the Format Library Discord server to register.`)
+        const format = await getRatedFormat(message)
+        if (!format) return message.channel.send({ content: `Please specify a valid format.`})
+        
+        const yourGuildIds = await Membership.findAll({ 
+            where: { 
+                playerId: maid,
+                active: true,
+                '$server.access$': {[Op.or]: ['full', 'partner', 'affiliate']},
+                '$server.internalLadder$': false,
+                '$server.format$': {[Op.or]: [format.name, null]}
+            }, 
+            include: Server,
+            order: [[Server, 'createdAt', 'ASC']] 
+        }).map((m) => m.guildId) || []
+
+        if (!yourMemberships.length) return message.channel.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${format.emoji}`)
+        const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player)
+        if (!dbName) return
+        const deckListUrl = await getRatedDeck(message.member, player, format)
+        if (!deckListUrl) return
+        const newRatedPool = await RatedPool.create({
+            name: player.name,
+            format: format.name
+        })
+
+        if (!newRatedPool) return
+
+        try {
+            const potentialPairs = await RatedPool.findAll({ 
+                where: { 
+                    playerId: {[Op.not]: maid }, 
+                    format: format.name 
+                },
+                order: [['createdAt', 'ASC']]
+            }) || []
+    
+            if (!potentialPairs.length) return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+    
+            for (let i = 0; i < potentialPairs.length; i++) {
+                const potentialPair = potentialPairs[i]
+                const opponentsGuildIds = await Membership.findAll({ 
+                    where: { 
+                        playerId: maid,
+                        active: true,
+                        '$server.access$': {[Op.or]: ['full', 'partner']},
+                        '$server.internalLadder$': false,
+                        '$server.format$': {[Op.or]: [format.name, null]}
+                    },
+                    include: Server,
+                    order: [[Server, 'createdAt', 'ASC']]
+                }).map((m) => m.guildId) || []
+    
+                let commonGuildId
+                for (let j = 0; j < opponentsGuildIds.length; j++) {
+                    const guildId = opponentsGuildIds[j]
+                    if (yourGuildIds.includes(guildId)) {
+                        commonGuildId = guildId
+                        break
+                    }
+                }
+    
+                if (!commonGuildId) return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+                
+                const now = new Date()
+                const tenMinutesAgo = new Date(now - (10 * 60 * 1000))
+                const threeHoursAgo = new Date(now - (3 * 60 * 60 * 1000))
+    
+                const yourRecentOpponents = await Match.findAll({
+                    where: {
+                        [Op.or]: {
+                            winnerId: maid,
+                            loserId: maid
+                        },
+                        format: format.name,
+                        createdAt: {[Op.gte]: threeHoursAgo }
+                    }
+                }).map((m) => {
+                    if (maid === m.winnerId) {
+                        return m.loserId
+                    } else {
+                        return m.winnerId
+                    }
+                }) || []
+    
+                if (yourRecentOpponents.includes(potentialPair.playerId)) return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`) 
+    
+                if (potentialPair.createdAt < tenMinutesAgo) {
+                    getPotentialPairConfirmation(client, format, potentialPair, newRatedPool, commonGuildId)
+                    return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+                } else {
+                    const commonServer = await Server.findOne({ where: { id: commonGuildId }})
+                    if (!commonServer) return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+                    const channelId = commonServer.format ? channels[commonServer].ratedChannel : format.channel
+                    const guild = client.guilds.cache.get(commonGuildId)
+                    const channel = guild.channels.cache.get(channelId)
+                    const opponent = await Player.findOne({ where: { id: potentialPair.playerId }})
+                    const ratedPoolsToDestroy = await RatedPool.findAll({
+                        where: {
+                            playerId: {[Op.or]: [player.id, opponent.id]}
+                        }
+                    }) || []
+    
+                    for (let d = 0; d < ratedPoolsToDestroy.length; d++) {
+                        const rPTD = ratedPoolsToDestroy[d]
+                        await rPTD.destroy()
+                    }
+    
+                    return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
+                }
+            }
+        } catch (err) {
+            console.log(err)
+            return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+        }
+
+        return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
     }
 
     // RESET

@@ -5,13 +5,15 @@
   },
   "GoatFormat.com": {
     "botSpamChannel": "512406081079607334",
-    "welcomeChannel": "459826576536764428"
+    "welcomeChannel": "459826576536764428",
+    "ratedChannel": "837672282536148992"
   },
   "EdisonFormat.com": {
     "botSpamChannel": "930627105102893086",
     "contactChannel": "908016756864467004",
     "signupChannel": "907992801545945109",
-    "welcomeChannel": "711565398075768915"
+    "welcomeChannel": "711565398075768915",
+    "ratedChannel": "893556829286711307"
   },
   "Crows Nest": {
     "botSpamChannel": "964327328341696552",

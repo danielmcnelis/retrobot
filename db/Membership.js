@@ -12,6 +12,11 @@ const Membership = db.define('memberships', {
         type: Sequelize.STRING,  
         defaultValue: 'Format Library',          
         allowNull: false
+    },
+    active: {
+        type: Sequelize.BOOLEAN,  
+        defaultValue: true,          
+        allowNull: false
     }
 })
 

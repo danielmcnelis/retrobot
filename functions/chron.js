@@ -72,6 +72,8 @@ const conductCensus = async (client) => {
             let createCount = 0
             let memberCount = 0
             let roleCount = 0
+            let inactivatedCount = 0
+            let reactivatedCount = 0
 
             for (let i = 0; i < members.length; i++) {
                 const member = members[i]
@@ -111,10 +113,27 @@ const conductCensus = async (client) => {
                 }
             }
 
+            const memberIds = members.map((m) => m.user.id)
+            const memberships = await Membership.findAll({ guildId: guild.id }).map((m) => m.playerId) || []
+            for (let i = 0; i < memberships.length; i++) {
+                const m = memberships[i]
+                if (m.active === true && !memberIds.includes(m)) {
+                    m.active = false
+                    await m.save()
+                    inactivatedCount++
+                } else if (m.active === false && memberIds.includes(m)) {
+                    m.active = true
+                    await m.save()
+                    reactivatedCount++
+                }
+            }
+
             console.log( 
-                `Added the following to the database from ${server.name}:` +
+                `Updated the following in the database from ${server.name}:` +
                 `\n- ${createCount} new ${createCount === 1 ? 'player' : 'players'}` +
                 `\n- ${memberCount} new ${memberCount === 1 ? 'member' : 'members'}` +
+                `\n- ${inactivatedCount} inactivated ${inactivatedCount === 1 ? 'member' : 'members'}` +
+                `\n- ${reactivatedCount} reactivated ${reactivatedCount === 1 ? 'member' : 'members'}` +
                 `\n- ${updateCount} updated ${updateCount === 1 ? 'player' : 'players'}` +
                 `\n- ${roleCount} updated ${roleCount === 1 ? 'role' : 'roles'}`
             )

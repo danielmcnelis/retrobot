@@ -201,6 +201,8 @@ const search = async (query, fuzzyCards, format) => {
 //ASSIGN ROLES
 const assignRoles = async (guild, member) => {
     const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: guild.id }})
+    membership.active = true
+    await membership.save()
     if (!membership) return
     const roles = await Role.findAll({ where: { membershipId: membership.id } })
     roles.forEach(async (r) => { 
