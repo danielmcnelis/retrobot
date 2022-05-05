@@ -227,12 +227,18 @@ const fixMemberships = async () => {
 
     for (let i = 0; i < memberships.length; i++) {
         const m = memberships[i]
-        m.serverId = m.guildId
-        await m.save()
-        b++
+        try {
+            m.serverId = m.guildId
+            await m.save()
+            b++
+        } catch (err) {
+            console.log(err)
+            await m.destroy()
+            e++
+        }
     }
 
-    return console.log(`fixed ${b} memberships`)
+    return console.log(`fixed ${b} memberships, encountered ${e} errors and destroyed ${e} memberships`)
 }
 
 // fixFormats()
