@@ -1882,7 +1882,7 @@ try {
         const format = await getRatedFormat(message)
         if (!format) return message.channel.send({ content: `Please specify a valid format.`})
         
-        const yourGuildIds = await Membership.findAll({ 
+        const yourGuildIds = [...await Membership.findAll({ 
             where: { 
                 playerId: maid,
                 active: true,
@@ -1892,7 +1892,7 @@ try {
             }, 
             include: Server,
             order: [[Server, 'createdAt', 'ASC']] 
-        }).map((m) => m.guildId) || []
+        })].map((m) => m.guildId) || []
 
         if (!yourMemberships.length) return message.channel.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${format.emoji}`)
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player)
@@ -1919,7 +1919,7 @@ try {
     
             for (let i = 0; i < potentialPairs.length; i++) {
                 const potentialPair = potentialPairs[i]
-                const opponentsGuildIds = await Membership.findAll({ 
+                const opponentsGuildIds = [...await Membership.findAll({ 
                     where: { 
                         playerId: maid,
                         active: true,
@@ -1929,7 +1929,7 @@ try {
                     },
                     include: Server,
                     order: [[Server, 'createdAt', 'ASC']]
-                }).map((m) => m.guildId) || []
+                })].map((m) => m.guildId) || []
     
                 let commonGuildId
                 for (let j = 0; j < opponentsGuildIds.length; j++) {
