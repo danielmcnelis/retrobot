@@ -1915,7 +1915,8 @@ try {
         if (!ratedDeck || !ratedDeck.ydk) return
 
         const deckAttachments = await drawDeck(ratedDeck.ydk) || []
-        message.channel.send({content: `FYI, you will be using this deck if you are paired:` , files: [deckAttachments] })
+        console.log('deckAttachments.length', deckAttachments.length)
+        message.channel.send({content: `FYI, you will be using this deck if you are paired:` , files: [...deckAttachments] })
         
         const oldRatedPool = await RatedPool.findOne({
             where: {
