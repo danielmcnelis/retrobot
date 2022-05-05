@@ -1878,7 +1878,7 @@ try {
     // RATED PLAY
     if (cmd === `!rated`) {
         console.log('!!message', !!message)
-        console.log('!!message.member', !!message.member)
+        console.log('!!message.author', !!message.author)
         const player = await Player.findOne({ where: { id: maid } })
         if (!player) return message.channel.send(`You are not in the database. Please join the Format Library Discord server to register.`)
         const format = await getRatedFormat(message)
@@ -1897,9 +1897,9 @@ try {
         })].map((m) => m.guildId) || []
 
         if (!yourGuildIds.length) return message.channel.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${format.emoji}`)
-        const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player)
+        const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.author, player)
         if (!dbName) return
-        const deckListUrl = await getRatedDeck(message.member, player, format)
+        const deckListUrl = await getRatedDeck(message.author, player, format)
         if (!deckListUrl) return
         const newRatedPool = await RatedPool.create({
             name: player.name,
