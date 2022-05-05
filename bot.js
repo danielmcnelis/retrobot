@@ -1877,6 +1877,7 @@ try {
 
     // RATED PLAY
     if (cmd === `!rated`) {
+        if (mgid) return
         console.log('!!message', !!message)
         console.log('!!message.author', !!message.author)
         const player = await Player.findOne({ where: { id: maid } })
