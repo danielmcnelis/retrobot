@@ -60,7 +60,7 @@ client.on('guildMemberAdd', async (member) => {
         if (await isNewUser(server, member.user.id)) await createPlayer(member) 
         if (await isNewMember(server, guild.id, member.user.id)) {
             await createMembership(guild, member)
-            return channel.send({ content: `${member}, Welcome to the ${guild.name} ${emojis[guild.name]} Discord server. ${format ? format.emoji : emojis.legend}`})
+            return channel.send({ content: `${member}, Welcome to the ${guild.name} ${emojis[guild.name]} Discord server. ${server.formatEmoji ? server.formatEmoji : format ? format.emoji : emojis.legend}`})
         } else {
             await assignRoles(guild, member)
             return channel.send({ content: `${member}, Welcome back to the ${guild.name} ${emojis[guild.name]} Discord server! We missed you. ${emojis.soldier}`})
@@ -1031,7 +1031,7 @@ try {
         const winrate = wins || losses ? `${(100 * wins / (wins + losses)).toFixed(2)}%` : 'N/A'		
 
         return message.channel.send({ content: 
-            `${format.emoji} --- ${format.name} Stats --- ${format.emoji}`
+            `${server.formatEmoji || format.emoji} --- ${format.name} Stats --- ${server.formatEmoji || format.emoji}`
             + `${server.internalLadder ? `\nServer: ${server.name}` : ''}`
             + `\nName: ${player.name}`
             + `\nMedal: ${medal}`
@@ -1357,8 +1357,8 @@ try {
         const top_stats = all_stats.slice(0, x)
         if (!top_stats.length) return message.channel.send({ content: `I'm sorry, we don't have any ${format.name} players.`})
         const results = []
-        top_stats.length === 1 ? results[0] = `${format.emoji} --- The Best ${server.internalLadder ? 'Internal ' : ''}${format.name} Player --- ${format.emoji}`
-        : results[0] = `${format.emoji} --- Top ${top_stats.length} ${server.internalLadder ? 'Internal ' : ''}${format.name} Players --- ${format.emoji}`
+        top_stats.length === 1 ? results[0] = `${server.formatEmoji || format.emoji} --- The Best ${server.internalLadder ? 'Internal ' : ''}${format.name} Player --- ${server.formatEmoji || format.emoji}`
+        : results[0] = `${server.formatEmoji || format.emoji} --- Top ${top_stats.length} ${server.internalLadder ? 'Internal ' : ''}${format.name} Players --- ${server.formatEmoji || format.emoji}`
         for (let i = 0; i < top_stats.length; i++) results[i+1] = `${(i+1)}. ${getMedal(top_stats[i].elo)} ${top_stats[i].player.name}`
         if (!server.internalLadder) results.push(`\nFull Leaderboard: https://formatlibrary.com/leaderboards/${format.name}`)
         for (let i = 0; i < results.length; i += 30) message.channel.send({ content: results.slice(i, i+30).join('\n').toString() })
@@ -1550,7 +1550,7 @@ try {
             })
         }
 
-        return message.channel.send({ content: `${losingPlayer.name}, your ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss to ${winningPlayer.name} has been recorded.`})
+        return message.channel.send({ content: `${losingPlayer.name}, your ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${server.formatEmoji || format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss to ${winningPlayer.name} has been recorded.`})
     }
 
     // MANUAL
@@ -1748,7 +1748,7 @@ try {
             })
         }
 
-        return message.channel.send({ content: `A manual ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss by ${losingPlayer.name} to ${winningPlayer.name} has been recorded.`})		
+        return message.channel.send({ content: `A manual ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${server.formatEmoji || format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss by ${losingPlayer.name} to ${winningPlayer.name} has been recorded.`})		
     }
 
     // NO SHOW
@@ -1825,7 +1825,7 @@ try {
         const p2Wins = await Match.count({ where: { winnerId: player2Id, loserId: player1Id, format: format.name } })
         
         return message.channel.send({ content: 
-            `${format.emoji} --- H2H ${format.name} Results --- ${format.emoji}`+
+            `${server.formatEmoji || format.emoji} --- H2H ${format.name} Results --- ${server.formatEmoji || format.emoji}`+
             `\n${player1.name} has won ${p1Wins}x`+
             `\n${player2.name} has won ${p2Wins}x`
         })
@@ -1875,7 +1875,7 @@ try {
         await loserStats.save()
 
         await lastMatch.destroy()
-        return message.channel.send({ content: `The last ${server.internalLadder ? 'Internal ' : ''}${format.name} match in which ${winningPlayer.name} defeated ${losingPlayer.name} has been erased. ${format.emoji}`})
+        return message.channel.send({ content: `The last ${server.internalLadder ? 'Internal ' : ''}${format.name} match in which ${winningPlayer.name} defeated ${losingPlayer.name} has been erased. ${server.formatEmoji || format.emoji}`})
     }
 
     // RATED PLAY
@@ -2004,7 +2004,7 @@ try {
                         await rPTD.destroy()
                     }
     
-                    return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
+                    return channel.send({ content: `New Rated ${format.name} Format ${commonserver.formatEmoji || format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
                 }
             }
         } catch (err) {

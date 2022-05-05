@@ -24,6 +24,14 @@ const Server = db.define('servers', {
         type: Sequelize.STRING,   
         defaultValue: 'free',       
         allowNull: true
+    },
+    emoji: {
+        type: Sequelize.STRING,       
+        allowNull: true
+    },
+    formatEmoji: {
+        type: Sequelize.STRING,       
+        allowNull: true
     }
 })
 
