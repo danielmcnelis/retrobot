@@ -304,7 +304,7 @@ const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, card
     console.log(width, 'x', height, 'x', cardsPerRow)
     try {
         const rows = Math.ceil(cardsArr.length / cardsPerRow)
-        const canvas = Canvas.createCanvas(width * 10, height * rows)
+        const canvas = Canvas.createCanvas(width * cardsPerRow, height * rows)
         const context = canvas.getContext('2d')
 
         for (let i = 0; i < cardsArr.length; i++) {
