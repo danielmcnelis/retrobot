@@ -66,6 +66,9 @@ Server.hasMany(Stats)
 Match.belongsTo(Server)
 Server.hasMany(Match)
 
+Membership.belongsTo(Server)
+Server.hasMany(Membership)
+
 Player.hasMany(Deck)
 Deck.belongsTo(Player)
 

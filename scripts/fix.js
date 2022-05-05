@@ -221,6 +221,20 @@ const deleteMemberships = async () => {
     return console.log(`destroyed ${b} memberships`)
 }
 
+const fixMemberships = async () => {
+    let b = 0
+    const memberships = await Membership.findAll()
+
+    for (let i = 0; i < memberships.length; i++) {
+        const m = memberships[i]
+        m.serverId = m.guildId
+        await m.save()
+        b++
+    }
+
+    return console.log(`fixed ${b} memberships`)
+}
+
 // fixFormats()
 // erasePasswords()
 // createNewStatues()
@@ -230,4 +244,5 @@ const deleteMemberships = async () => {
 // fixDeckTypes()
 // fixMatchups()
 // fixStatuses()
-deleteMemberships()
+// deleteMemberships()
+fixMemberships()
