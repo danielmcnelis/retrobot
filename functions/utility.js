@@ -2,7 +2,7 @@
 //UTILITY FUNCTIONS
 
 //MODULE IMPORTS
-const Canvas = require(canvas)
+const Canvas = require('canvas')
 const fs = require('fs')
 const Discord = require('discord.js')
 const { Op } = require('sequelize')
