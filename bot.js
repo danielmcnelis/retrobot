@@ -1894,7 +1894,7 @@ try {
             order: [[Server, 'createdAt', 'ASC']] 
         })].map((m) => m.guildId) || []
 
-        if (!yourMemberships.length) return message.channel.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${format.emoji}`)
+        if (!yourGuildIds.length) return message.channel.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${format.emoji}`)
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player)
         if (!dbName) return
         const deckListUrl = await getRatedDeck(message.member, player, format)
