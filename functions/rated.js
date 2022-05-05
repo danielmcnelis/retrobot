@@ -77,7 +77,10 @@ const getRatedFormat = async (message) => {
 }
 
 //GET RATED DECK
-const getRatedDeck = async (member, player, format) => {            
+const getRatedDeck = async (member, player, format) => {   
+    console.log('!!member', member)         
+    console.log('!!player', player)
+    console.log('!!format', format)
     const filter = m => m.author.id === member.user.id
     const message = await member.send({ content: `Please provide a duelingbook.com/deck link for your rated deck.`}).catch((err) => console.log(err))
     if (!message || !message.channel) return false

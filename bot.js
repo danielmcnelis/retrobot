@@ -1877,6 +1877,8 @@ try {
 
     // RATED PLAY
     if (cmd === `!rated`) {
+        console.log('!!message', !!message)
+        console.log('!!message.member', !!message.member)
         const player = await Player.findOne({ where: { id: maid } })
         if (!player) return message.channel.send(`You are not in the database. Please join the Format Library Discord server to register.`)
         const format = await getRatedFormat(message)
