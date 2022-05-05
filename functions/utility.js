@@ -201,12 +201,16 @@ const search = async (query, fuzzyCards, format) => {
 }
 
 const drawDeck = async (ydk) => {
+    console.log('ydk', ydk)
     const mainArr = ydk.split('#extra')[0] || []
     const extraArr = ydk.split('#extra')[1].split('!side')[0] || []
     const sideArr = ydk.split('!side')[1] || []
     const main = []
     const side = []
     const extra = []
+    console.log('mainArr', mainArr)
+    console.log('extraArr', extraArr)
+    console.log('sideArr', sideArr)
     
     for (let i = 0; i < mainArr.length; i++) {
         const name = mainArr[i]
@@ -215,12 +219,15 @@ const drawDeck = async (ydk) => {
         main.push(card)
     }
 
+    console.log('main.length', main.length)
+
     for (let i = 0; i < sideArr.length; i++) {
         const name = sideArr[i]
         const card = await Card.findOne({ where: { name: name }})
         if (!card) continue
         side.push(card)
     }
+    console.log('side.length', side.length)
 
     for (let i = 0; i < extraArr.length; i++) {
         const name = extraArr[i]
@@ -228,6 +235,7 @@ const drawDeck = async (ydk) => {
         if (!card) continue
         extra.push(card)
     }
+    console.log('extra.length', extra.length)
 
     main.sort((a, b) => {
         if (a.sortPriority > b.sortPriority) {
@@ -275,6 +283,9 @@ const drawDeck = async (ydk) => {
     const extraAttachment = await makeCanvasAttachment(extra, 38, 53, 15, 'extra')
     const sideAttachment = await makeCanvasAttachment(side, 38, 53, 15, 'side')
 
+    console.log('!!mainAttachment', !!mainAttachment)
+    console.log('!!extraAttachment', !!extraAttachment)
+    console.log('!!sideAttachment', !!sideAttachment)
     return [
         mainAttachment,
         extraAttachment,
@@ -283,20 +294,29 @@ const drawDeck = async (ydk) => {
 }
 
 const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, cardsPerRow = 10, name = 'main') => {
+    console.log(name, 'cardsArr.length', cardsArr.length)
+    console.log(width, 'x', height, 'x', cardsPerRow)
     try {
         const rows = Math.ceil(cardsArr.length / cardsPerRow)
         const canvas = Canvas.createCanvas(width * 10, height * rows)
         const context = canvas.getContext('2d')
 
         for (let i = 0; i < cardsArr.length; i++) {
-            const card = cardsArr[i]
-            const row = Math.floor(i / cardsPerRow)
-            const col = i % cardsPerRow
-            const image = await Canvas.loadImage(`https://formatlibrary.com/cards/${card.ypdId}.jpg`)
-            context.drawImage(image, width * col, row * height, width, height)
+            try {
+                const card = cardsArr[i]
+                const row = Math.floor(i / cardsPerRow)
+                const col = i % cardsPerRow
+                const image = await Canvas.loadImage(`https://formatlibrary.com/cards/${card.ypdId}.jpg`)
+                console.log('!!image', !!image)
+                context.drawImage(image, width * col, row * height, width, height)
+            } catch (err) {
+                console.log(err)
+            }
         }
-        
+
+        console.log('!!canvas', !!canvas)
         const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `${name}Deck.png`)
+        console.log('!!attachment', !!attachment)
         return attachment
     } catch (err) {
         console.log(err)
