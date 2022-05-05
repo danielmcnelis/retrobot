@@ -6,7 +6,7 @@ const axios = require('axios')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Format, Player, RatedPool, Server } = require('../db/index.js')
+const { Format, Player, RatedDeck, RatedPool, Server } = require('../db/index.js')
 
 //STATIC IMPORTS
 const channels = require('../static/channels')
@@ -91,30 +91,6 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
     })   
 }
 
-// GET DUMP RARITY
-const getDumpRarity = async (message) => {
-    const filter = m => m.author.id === message.member.user.id
-	message.channel.send({ content: `What rarity would you like to bulk sell?\n(1) all\n(2) common\n(3) rare\n(4) super\n(5) ultra\n(6) secret`})
-    return await message.channel.awaitMessages({ filter,
-		max: 1,
-        time: 15000
-    }).then(async (collected) => {
-        const response = collected.first().content.toLowerCase()
-        const rarity = response.includes('all') || response.includes('any') || response.includes('1') ? 'all' :
-        response.includes('com') || response.includes('2') ? 'com' :
-        response.includes('rar') || response.includes('3') ? 'rar' :
-        response.includes('sup') || response.includes('4') ? 'sup' :
-        response.includes('ult') || response.includes('5') ? 'ult' :
-        response.includes('sec') || response.includes('scr') || response.includes('6') ? 'scr' :
-        'unrecognized'
-
-        return rarity
-    }).catch((err) => {
-		console.log(err)
-        message.channel.send({ content: `Sorry, time's up.`})
-        return false
-	})
-}
 
 // GET DROP FORMATS
 const getDropFormats = async (message, pools) => {
@@ -160,10 +136,38 @@ const getRatedFormat = async (message) => {
     })
 }
 
-//GET RATED DECK
-const getRatedDeck = async (user, player, format) => {   
+//GET PREVIOUS RATED DECK
+const getPreviousRatedDeck = async (user, yourRatedDecks, format) => {   
+    if (!yourRatedDecks || !yourRatedDecks.length) return false
+    const options = yourRatedDecks.map((yRD, index) => `(${index + 1}) - ${yRD.name} (${yRD.url})`)
+    options.push(`(${options.length + 1}) - Submit a New Deck`)
+
     const filter = m => m.author.id === user.id
-    const message = await user.send({ content: `Please provide a duelingbook.com/deck link for your rated deck.`}).catch((err) => console.log(err))
+    const message = await user.send({ content: `Which of your ${format.name} Format ${format.emoji} Rated deck(s) would you like to use?\n${options.join('\n')}`}).catch((err) => console.log(err))
+    if (!message || !message.channel) return false
+    return await message.channel.awaitMessages({
+        filter,
+        max: 1,
+        time: 20000
+    }).then(async (collected) => {
+        const response = collected.first().content.toLowerCase()
+        const index = isNaN(parseInt(response)) ? parseInt(response) - 1 : null
+        const previousRatedDeck = response.includes('new') || index === options.length ? false : 
+            index ? yourRatedDecks[index] :
+            false
+
+        return previousRatedDeck
+    }).catch((err) => {
+        console.log(err)
+        user.send({ content: `Sorry, time's up. Please try again.`}).catch((err) => console.log(err))
+        return false
+    })
+}
+
+//GET RATED DECK
+const getNewRatedDeck = async (user, player, format) => {   
+    const filter = m => m.author.id === user.id
+    const message = await user.send({ content: `Please provide a duelingbook.com/deck link for your Rated Deck.`}).catch((err) => console.log(err))
     if (!message || !message.channel) return false
     return await message.channel.awaitMessages({
         filter,
@@ -211,9 +215,18 @@ const getRatedDeck = async (user, player, format) => {
                 user.send({ content: response.toString() }).catch((err) => console.log(err))
                 return false
              } else {
-                saveYDK('Rated Play', player, ydk, format.name)
                 user.send({ content: `Thanks, ${user.username}, your deck is perfectly legal. ${emojis.legend}`}).catch((err) => console.log(err))
-                return url
+                const deckName = await askForDeckName(user, player) || 'Unnamed Deck'
+                const newRatedDeck = await RatedDeck.create({
+                    builder: player.name,
+                    format: format.name,
+                    name: deckName,
+                    url: `https://duelingbook.com/deck/${id}`,
+                    ydk: ydk,
+                    playerId: player.id
+                })
+
+                return newRatedDeck
             }
         } else {
             user.send({ content: "Sorry, I only accept duelingbook.com/deck links."}).catch((err) => console.log(err))    
@@ -226,9 +239,30 @@ const getRatedDeck = async (user, player, format) => {
     })
 }
 
+//ASK FOR DECK NAME
+const askForDeckName = async (member, player, override = false) => {
+    const filter = m => m.author.id === member.id || member.user.id
+    const pronoun = override ? `${player.name}'s` : 'your'
+    const message = await member.send({ content: `Please provide a nickname for ${pronoun} deck.` }).catch((err) => console.log(err))
+    if (!message || !message.channel) return false
+    return await message.channel.awaitMessages({
+        filter,
+		max: 1,
+        time: 15000
+    }).then(async (collected) => {
+        const response = collected.first().content
+        return response
+    }).catch((err) => {
+        console.log(err)
+        member.send({ content: `Okay, I'll save this as an "Unnamed Deck". You can always change it later.`}).catch((err) => console.log(err))
+        return 'Unnamed Deck'
+    })
+}
+
 module.exports = {
     getDropFormats,
+    getNewRatedDeck,
     getPotentialPairConfirmation,
-    getRatedDeck,
+    getPreviousRatedDeck,
     getRatedFormat
 }

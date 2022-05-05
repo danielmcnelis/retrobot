@@ -2,6 +2,7 @@
 //UTILITY FUNCTIONS
 
 //MODULE IMPORTS
+const Canvas = require(canvas)
 const fs = require('fs')
 const Discord = require('discord.js')
 const { Op } = require('sequelize')
@@ -199,6 +200,110 @@ const search = async (query, fuzzyCards, format) => {
 	return { cardEmbed, attachment }
 }
 
+const drawDeck = async (ydk) => {
+    const mainArr = ydk.split('#extra')[0] || []
+    const extraArr = ydk.split('#extra')[1].split('!side')[0] || []
+    const sideArr = ydk.split('!side')[1] || []
+    const main = []
+    const side = []
+    const extra = []
+    
+    for (let i = 0; i < mainArr.length; i++) {
+        const name = mainArr[i]
+        const card = await Card.findOne({ where: { name: name }})
+        if (!card) continue
+        main.push(card)
+    }
+
+    for (let i = 0; i < sideArr.length; i++) {
+        const name = sideArr[i]
+        const card = await Card.findOne({ where: { name: name }})
+        if (!card) continue
+        side.push(card)
+    }
+
+    for (let i = 0; i < extraArr.length; i++) {
+        const name = extraArr[i]
+        const card = await Card.findOne({ where: { name: name }})
+        if (!card) continue
+        extra.push(card)
+    }
+
+    main.sort((a, b) => {
+        if (a.sortPriority > b.sortPriority) {
+            return 1
+        } else if (b.sortPriority > a.sortPriority) {
+            return -1
+        } else if (a.name > b.name) {
+            return 1
+        } else if (b.name > a.name) {
+            return -1
+        } else {
+            return false
+        }
+    })
+
+    extra.sort((a, b) => {
+        if (a.sortPriority > b.sortPriority) {
+            return 1
+        } else if (b.sortPriority > a.sortPriority) {
+            return -1
+        } else if (a.name > b.name) {
+            return 1
+        } else if (b.name > a.name) {
+            return -1
+        } else {
+            return false
+        }
+    })
+
+    side.sort((a, b) => {
+        if (a.sortPriority > b.sortPriority) {
+            return 1
+        } else if (b.sortPriority > a.sortPriority) {
+            return -1
+        } else if (a.name > b.name) {
+            return 1
+        } else if (b.name > a.name) {
+            return -1
+        } else {
+            return false
+        }
+    })
+
+    const mainAttachment = await makeCanvasAttachment(main, 57, 80, 10, 'main')
+    const extraAttachment = await makeCanvasAttachment(extra, 38, 53, 15, 'extra')
+    const sideAttachment = await makeCanvasAttachment(side, 38, 53, 15, 'side')
+
+    return [
+        mainAttachment,
+        extraAttachment,
+        sideAttachment
+    ]
+}
+
+const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, cardsPerRow = 10, name = 'main') => {
+    try {
+        const rows = Math.ceil(cardsArr.length / cardsPerRow)
+        const canvas = Canvas.createCanvas(width * 10, height * rows)
+        const context = canvas.getContext('2d')
+
+        for (let i = 0; i < cardsArr.length; i++) {
+            const card = cardsArr[i]
+            const row = Math.floor(i / cardsPerRow)
+            const col = i % cardsPerRow
+            const image = await Canvas.loadImage(`https://formatlibrary.com/cards/${card.ypdId}.jpg`)
+            context.drawImage(image, width * col, row * height, width, height)
+        }
+        
+        const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `${name}Deck.png`)
+        return attachment
+    } catch (err) {
+        console.log(err)
+        return null
+    }
+}
+
 //ASSIGN ROLES
 const assignRoles = async (guild, member) => {
     const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: guild.id }})
@@ -392,6 +497,7 @@ module.exports = {
     createPlayer,
     dateToSimple,
     dateToVerbose,
+    drawDeck,
     fetchCardNames,
     generateRandomString,
     getMedal,

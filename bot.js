@@ -10,7 +10,7 @@ const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
  
 // DATABASE IMPORTS
-const { Card, Entry, Format, Info, Iron, Match, Matchup, Membership, Player, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
+const { Card, Entry, Format, Info, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
 // FUNCTION IMPORTS
 const { conductCensus, getMidnightCountdown, updateAvatars, purgeEntries } = require('./functions/chron.js')
@@ -20,7 +20,7 @@ const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
 const { getDropFormats, getRatedDeck, getRatedFormat, getPotentialPairConfirmation } = require('./functions/rated.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getTournamentChannel, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
-const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasAffiliateAccess, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats } = require('./functions/utility.js')
+const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasAffiliateAccess, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats, drawDeck } = require('./functions/utility.js')
 
 // STATIC IMPORTS
 const channels = require('./static/channels.json')
@@ -1901,9 +1901,22 @@ try {
         if (!yourGuildIds.length) return message.channel.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${format.emoji}`)
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.author, player)
         if (!dbName) return
-        const deckListUrl = await getRatedDeck(message.author, player, format)
-        if (!deckListUrl) return
 
+        const yourRatedDecks = await RatedDeck.findAll({
+            where: {
+                format: format.name,
+                playerId: maid
+            },
+            order: [['updatedAt', 'DESC']]
+        }) || []
+
+        let ratedDeck = await getPreviousRatedDeck(message.author, yourRatedDecks, format)
+        if (!ratedDeck) ratedDeck = await getNewRatedDeck(message.author, player, format)
+        if (!ratedDeck || !ratedDeck.ydk) return
+
+        const deckAttachments = await drawDeck(ratedDeck.ydk) || []
+        message.channel.send({content: `FYI, you will be using this deck if you are paired:` , files: [deckAttachments] })
+        
         const oldRatedPool = await RatedPool.findOne({
             where: {
                 name: player.name,
