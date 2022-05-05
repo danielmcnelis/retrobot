@@ -1952,7 +1952,7 @@ try {
     
             for (let i = 0; i < potentialPairs.length; i++) {
                 const potentialPair = potentialPairs[i]
-                const ppid = potentialPair.id
+                const ppid = potentialPair.playerId
                 const opponentsGuildIds = [...await Membership.findAll({ 
                     where: { 
                         playerId: ppid,
