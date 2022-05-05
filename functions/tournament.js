@@ -84,7 +84,7 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
             if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return false
                 
             if (override) {
-                saveYDK(server, player, ydk, tournamentName)
+                saveYDK(server.name, player, ydk, tournamentName)
                 member.send({ content: `Thanks, ${member.user.username}, I saved a copy of ${pronoun} deck. ${legend}`}).catch((err) => console.log(err))
                 return url
             } else if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
@@ -111,7 +111,7 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
                 member.send({ content: response.toString() }).catch((err) => console.log(err))
                 return false
              } else {
-                saveYDK(server, player, ydk, tournamentName)
+                saveYDK(server.name, player, ydk, tournamentName)
                 member.send({ content: `Thanks, ${member.user.username}, ${pronoun} deck is perfectly legal. ${legend}`}).catch((err) => console.log(err))
                 return url
             }
