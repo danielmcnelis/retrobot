@@ -19,6 +19,7 @@ const { getIssues, saveYDK } = require('./deck')
 const getPotentialPairConfirmation = async (client, format, potentialPair, newRatedPool, commonGuildId) => {
     const guild = client.guilds.cache.get(commonGuildId)
     const member = guild.members.fetch(potentialPair.playerId)
+    console.log('member', member)
     if (!member) return
 
     try {
@@ -30,7 +31,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
     }
 
     const filter = m => m.author.id === potentialPair.playerId
-    const message = await member.send({ content: `I've found a Rated ${format.name} Format ${format.emoji} opponent for you. Do you still wish to play?`})
+    const message = await member.user.send({ content: `I've found a Rated ${format.name} Format ${format.emoji} opponent for you. Do you still wish to play?`})
     if (!message) return
     return await message.channel.awaitMessages({
         filter,
@@ -45,7 +46,8 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             const player = await Player.findOne({ where: { id: potentialPair.playerId }})
             const opponent = await Player.findOne({ where: { id: newRatedPool.playerId }})
             const opposingMember = guild.members.fetch(opponent.id)
-            opposingMember.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${player.tag}\nOpponent's DuelingBook:${player.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
+            console.log('opposingMember', opposingMember)
+            opposingMember.user.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${player.tag}\nOpponent's DuelingBook:${player.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
             message.channel.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${opponent.tag}\nOpponent's DuelingBook:${opponent.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
             
             const ratedPoolsToDestroy = await RatedPool.findAll({
