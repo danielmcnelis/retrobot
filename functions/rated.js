@@ -44,6 +44,10 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             const channel = guild.channels.cache.get(channelId)
             const player = await Player.findOne({ where: { id: potentialPair.playerId }})
             const opponent = await Player.findOne({ where: { id: newRatedPool.playerId }})
+            const opposingMember = guild.members.cache.get(opponent.id)
+            opposingMember.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${player.tag}\nOpponent's DuelingBook:${player.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
+            message.channel.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${opponent.tag}\nOpponent's DuelingBook:${opponent.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
+            
             const ratedPoolsToDestroy = await RatedPool.findAll({
                 where: {
                     playerId: {[Op.or]: [player.id, opponent.id]}
@@ -55,7 +59,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
                 await rPTD.destroy()
             }
 
-            return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
+            return channel.send({ content: `New Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
         } else {
             await potentialPair.destroy()
             return message.channel.send(`Not a problem. I've removed you from the Rated ${format.name} Format ${format.emoji} player pool.`)

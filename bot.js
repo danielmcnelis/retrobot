@@ -2051,6 +2051,10 @@ try {
                     const guild = client.guilds.cache.get(commonGuildId)
                     const channel = guild.channels.cache.get(channelId)
                     const opponent = await Player.findOne({ where: { id: potentialPair.playerId }})
+                    const member = guild.members.cache.get(opponent.id)
+                    member.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${player.tag}\nOpponent's DuelingBook:${player.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
+                    message.channel.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${opponent.tag}\nOpponent's DuelingBook:${opponent.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
+                    
                     const ratedPoolsToDestroy = await RatedPool.findAll({
                         where: {
                             playerId: {[Op.or]: [player.id, opponent.id]}
@@ -2061,8 +2065,8 @@ try {
                         const rPTD = ratedPoolsToDestroy[d]
                         await rPTD.destroy()
                     }
-    
-                    return channel.send({ content: `New Rated ${format.name} Format ${commonserver.formatEmoji || format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
+
+                    return channel.send({ content: `New Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
                 }
             }
         } catch (err) {

@@ -74,15 +74,7 @@
   ],
   "ratedcom": ["!ranked", "!rated"],
   "recalccom": ["!recalc", "!recalculate"],
-  "rolecom": [
-    "!r",
-    "!role",
-    "!goatrole",
-    "!goatplayers",
-    "!ranked",
-    "!rankedrole",
-    "!rankedplayers"
-  ],
+  "rolecom": ["!r", "!role"],
   "signupcom": ["!signup", "!register", "!add"],
   "startcom": ["!start", "!begin", "!go"],
   "statscom": ["!s", "!stats", "!rank", "!ranking", "!rating", "!elo"],
