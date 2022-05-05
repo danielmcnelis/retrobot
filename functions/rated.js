@@ -77,12 +77,12 @@ const getRatedFormat = async (message) => {
 }
 
 //GET RATED DECK
-const getRatedDeck = async (member, player, format) => {   
-    console.log('!!member', !!member)         
+const getRatedDeck = async (user, player, format) => {   
+    console.log('!!user', !!user)         
     console.log('!!player', !!player)
     console.log('!!format', !!format)
-    const filter = m => m.author.id === member.user.id
-    const message = await member.send({ content: `Please provide a duelingbook.com/deck link for your rated deck.`}).catch((err) => console.log(err))
+    const filter = m => m.author.id === user.id
+    const message = await user.send({ content: `Please provide a duelingbook.com/deck link for your rated deck.`}).catch((err) => console.log(err))
     if (!message || !message.channel) return false
     return await message.channel.awaitMessages({
         filter,
@@ -91,7 +91,7 @@ const getRatedDeck = async (member, player, format) => {
     }).then(async (collected) => {
         const url = collected.first().content
         if (url.includes('duelingbook.com/deck?id=')) {		
-            member.send({ content: 'Thanks. Please wait while I download the .YDK file.'})
+            user.send({ content: 'Thanks. Please wait while I download the .YDK file.'})
             const id = url.slice(url.indexOf('?id=') + 4)
             const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${id}`)
             if (!data) return false
@@ -107,7 +107,7 @@ const getRatedDeck = async (member, player, format) => {
             if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return false
                 
             if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
-                let response = [`I'm sorry, ${member.user.username}, your deck is not legal. ${mad}`]
+                let response = [`I'm sorry, ${user.username}, your deck is not legal. ${mad}`]
                 if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format:`, ...illegalCards]
                 if (forbiddenCards.length) response = [...response, `\nThe following cards are forbidden:`, ...forbiddenCards]
                 if (limitedCards.length) response = [...response, `\nThe following cards are limited:`, ...limitedCards]
@@ -115,32 +115,32 @@ const getRatedDeck = async (member, player, format) => {
             
                 for (let i = 0; i < response.length; i += 50) {
                     if (response[i+50] && response[i+50].startsWith("\n")) {
-                        member.send({ content: response.slice(i, i+51).join('\n').toString()}).catch((err) => console.log(err))
+                        user.send({ content: response.slice(i, i+51).join('\n').toString()}).catch((err) => console.log(err))
                         i++
                     } else {
-                        member.send({ content: response.slice(i, i+50).join('\n').toString()}).catch((err) => console.log(err))
+                        user.send({ content: response.slice(i, i+50).join('\n').toString()}).catch((err) => console.log(err))
                     }
                 }
             
                 return false
             } else if (unrecognizedCards.length) {
-                let response = `I'm sorry, ${member.user.username}, the following card IDs were not found in our database:\n${unrecognizedCards.join('\n')}`
+                let response = `I'm sorry, ${user.username}, the following card IDs were not found in our database:\n${unrecognizedCards.join('\n')}`
                 response += `\n\nThese cards are either alternate artwork, new to the TCG, OCG only, or incorrect in our database. Please contact a Moderator or an Admin if you can't resolve this.`
                 
-                member.send({ content: response.toString() }).catch((err) => console.log(err))
+                user.send({ content: response.toString() }).catch((err) => console.log(err))
                 return false
              } else {
                 saveYDK('Rated Play', player, ydk, format.name)
-                member.send({ content: `Thanks, ${member.user.username}, ${pronoun} deck is perfectly legal. ${legend}`}).catch((err) => console.log(err))
+                user.send({ content: `Thanks, ${user.username}, ${pronoun} deck is perfectly legal. ${legend}`}).catch((err) => console.log(err))
                 return url
             }
         } else {
-            member.send({ content: "Sorry, I only accept duelingbook.com/deck links."}).catch((err) => console.log(err))    
+            user.send({ content: "Sorry, I only accept duelingbook.com/deck links."}).catch((err) => console.log(err))    
             return false  
         }
     }).catch((err) => {
         console.log(err)
-        member.send({ content: `Sorry, time's up. Please try again.`}).catch((err) => console.log(err))
+        user.send({ content: `Sorry, time's up. Please try again.`}).catch((err) => console.log(err))
         return false
     })
 }
