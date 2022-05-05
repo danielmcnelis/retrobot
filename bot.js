@@ -1902,6 +1902,17 @@ try {
         if (!dbName) return
         const deckListUrl = await getRatedDeck(message.author, player, format)
         if (!deckListUrl) return
+
+        const oldRatedPool = await RatedPool.findOne({
+            where: {
+                name: player.name,
+                format: format.name,
+                playerId: maid
+            }
+        })
+
+        if (oldRatedPool) await oldRatedPool.destroy()
+
         const newRatedPool = await RatedPool.create({
             name: player.name,
             format: format.name,
