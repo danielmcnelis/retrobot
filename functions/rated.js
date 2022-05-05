@@ -2,6 +2,7 @@
 //RATED FUNCTIONS
 
 //MODULE IMPORTS
+const axios = require('axios')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
