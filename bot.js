@@ -1952,9 +1952,10 @@ try {
     
             for (let i = 0; i < potentialPairs.length; i++) {
                 const potentialPair = potentialPairs[i]
+                const ppid = potentialPair.id
                 const opponentsGuildIds = [...await Membership.findAll({ 
                     where: { 
-                        playerId: maid,
+                        playerId: ppid,
                         active: true,
                         '$server.access$': {[Op.or]: ['full', 'partner']},
                         '$server.internalLadder$': false,
