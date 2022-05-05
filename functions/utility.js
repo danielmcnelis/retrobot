@@ -204,7 +204,7 @@ const drawDeck = async (ydk) => {
     console.log('ydk', ydk)
     const mainArr = ydk.split('#main')[1].split('#extra')[0].split('\n').filter((e) => e.length) || []
     const extraArr = ydk.split('#extra')[1].split('!side')[0].split('\n').filter((e) => e.length) || []
-    const sideArr = ydk.split('!side')[1].split('\n') || []
+    const sideArr = ydk.split('!side')[1].split('\n').split('\n').filter((e) => e.length) || []
     const main = []
     const side = []
     const extra = []
