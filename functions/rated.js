@@ -133,7 +133,7 @@ const getRatedDeck = async (user, player, format) => {
                 return false
              } else {
                 saveYDK('Rated Play', player, ydk, format.name)
-                user.send({ content: `Thanks, ${user.username}, ${pronoun} deck is perfectly legal. ${legend}`}).catch((err) => console.log(err))
+                user.send({ content: `Thanks, ${user.username}, your deck is perfectly legal. ${legend}`}).catch((err) => console.log(err))
                 return url
             }
         } else {
