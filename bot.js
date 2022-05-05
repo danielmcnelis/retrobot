@@ -2033,7 +2033,7 @@ try {
         for (let i = 0; i < drops.length; i++) {
             try {
                 const format = drops[i]
-                const oldRatedPool = await RatedPool.findAll({ where: { format: format, playerId: maid } })
+                const oldRatedPool = await RatedPool.findOne({ where: { format: format, playerId: maid } })
                 await oldRatedPool.destroy()
                 b++
             } catch (err) {
@@ -2041,7 +2041,7 @@ try {
             }
         }
 
-        return message.channel.send(`You left the Rated Pool for ${b} ${b > 1 ? 'formats' : 'format'}`)
+        return message.channel.send(`You left the Rated Pool for ${b} ${b === 1 ? 'format' : 'formats'}.`)
     }
 
     // RESET
