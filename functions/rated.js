@@ -152,10 +152,13 @@ const getPreviousRatedDeck = async (user, yourRatedDecks, format) => {
     }).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
         const index = isNaN(parseInt(response)) ? parseInt(response) - 1 : null
+        console.log('index', index)
+        console.log('yourRatedDecks.length', yourRatedDecks.length)
         const previousRatedDeck = response.includes('new') || index === options.length ? false : 
-            index ? yourRatedDecks[index] :
+            index && index >= 0 ? yourRatedDecks[index] :
             false
 
+        console.log('!!previousRatedDeck', previousRatedDeck)
         return previousRatedDeck
     }).catch((err) => {
         console.log(err)
