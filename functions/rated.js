@@ -10,11 +10,29 @@ const { Format, Player, RatedPool, Server } = require('../db/index.js')
 
 //STATIC IMPORTS
 const channels = require('../static/channels')
-const { legend, mad } = require('../static/emojis.json')
+const emojis = require('../static/emojis.json')
 const { yescom } = require('../static/commands.json')
 
 //FUNCTION IMPORTS
 const { getIssues, saveYDK } = require('./deck')
+
+const checkForPotentialPairs = async (client, format) => {
+    const ratedPools = await RatedPool.findAll({ 
+        where: {
+            format: format.name,
+            status: 'pending'
+        },
+        order: [['createdAt', 'ASC']],
+        limit: 2
+    }) || []
+
+    if (ratedPools.length < 2) return
+                
+    const now = new Date()
+    const tenMinutesAgo = new Date(now - (10 * 60 * 1000))
+    const potentialPair2 = ratedPools[1].createdAt > tenMinutesAgo ? ratedPools[0] : await getPotentialPairConfirmation(client, format, potentialPair, newRatedPool, commonGuildId)
+    return
+}
 
 const getPotentialPairConfirmation = async (client, format, potentialPair, newRatedPool, commonGuildId) => {
     const guild = client.guilds.cache.get(commonGuildId)
@@ -170,7 +188,7 @@ const getRatedDeck = async (user, player, format) => {
             if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return false
                 
             if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
-                let response = [`I'm sorry, ${user.username}, your deck is not legal. ${mad}`]
+                let response = [`I'm sorry, ${user.username}, your deck is not legal. ${emojis.mad}`]
                 if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format:`, ...illegalCards]
                 if (forbiddenCards.length) response = [...response, `\nThe following cards are forbidden:`, ...forbiddenCards]
                 if (limitedCards.length) response = [...response, `\nThe following cards are limited:`, ...limitedCards]
@@ -194,7 +212,7 @@ const getRatedDeck = async (user, player, format) => {
                 return false
              } else {
                 saveYDK('Rated Play', player, ydk, format.name)
-                user.send({ content: `Thanks, ${user.username}, your deck is perfectly legal. ${legend}`}).catch((err) => console.log(err))
+                user.send({ content: `Thanks, ${user.username}, your deck is perfectly legal. ${emojis.legend}`}).catch((err) => console.log(err))
                 return url
             }
         } else {
