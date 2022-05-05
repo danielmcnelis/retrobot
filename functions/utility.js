@@ -306,7 +306,7 @@ const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, card
                 const card = cardsArr[i]
                 const row = Math.floor(i / cardsPerRow)
                 const col = i % cardsPerRow
-                const image = await Canvas.loadImage(`https://formatlibrary.com/cards/${card.ypdId}.jpg`)
+                const image = await Canvas.loadImage(`https://formatlibrary.com/images/cards/${card.ypdId}.jpg`)
                 console.log('!!image', !!image)
                 context.drawImage(image, width * col, row * height, width, height)
             } catch (err) {
