@@ -202,19 +202,23 @@ const search = async (query, fuzzyCards, format) => {
 
 const drawDeck = async (ydk) => {
     console.log('ydk', ydk)
-    const mainArr = ydk.split('#extra')[0] || []
+    const mainArr = ydk.split('#main')[1].split('#extra')[0] || []
     const extraArr = ydk.split('#extra')[1].split('!side')[0] || []
     const sideArr = ydk.split('!side')[1] || []
     const main = []
     const side = []
     const extra = []
     console.log('mainArr', mainArr)
+    console.log('mainArr.length', mainArr.length)
     console.log('extraArr', extraArr)
+    console.log('extraArr.length', extraArr.length)
     console.log('sideArr', sideArr)
+    console.log('sideArr.length', sideArr.length)
     
     for (let i = 0; i < mainArr.length; i++) {
-        const name = mainArr[i]
-        const card = await Card.findOne({ where: { name: name }})
+        let konamiCode = mainArr[i]
+        while (konamiCode.length < 8) konamiCode = '0' + konamiCode
+        const card = await Card.findOne({ where: { konamiCode: konamiCode }})
         if (!card) continue
         main.push(card)
     }
@@ -222,16 +226,18 @@ const drawDeck = async (ydk) => {
     console.log('main.length', main.length)
 
     for (let i = 0; i < sideArr.length; i++) {
-        const name = sideArr[i]
-        const card = await Card.findOne({ where: { name: name }})
+        let konamiCode = sideArr[i]
+        while (konamiCode.length < 8) konamiCode = '0' + konamiCode
+        const card = await Card.findOne({ where: { konamiCode: konamiCode }})
         if (!card) continue
         side.push(card)
     }
     console.log('side.length', side.length)
 
     for (let i = 0; i < extraArr.length; i++) {
-        const name = extraArr[i]
-        const card = await Card.findOne({ where: { name: name }})
+        let konamiCode = extraArr[i]
+        while (konamiCode.length < 8) konamiCode = '0' + konamiCode
+        const card = await Card.findOne({ where: { konamiCode: konamiCode }})
         if (!card) continue
         extra.push(card)
     }
