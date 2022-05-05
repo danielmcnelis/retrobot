@@ -1939,7 +1939,7 @@ try {
                         const yGId = yourGuildIds[y]
                         const guild = client.guilds.cache.get(yGId)
                         const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                        const roleId = guild.id === '414551319031054346' ? format.role : channels[guild.name].ratedRole
+                        const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].ratedRole
                         const channel = guild.channels.cache.get(channelId)
                         channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
                     } catch (err) {
@@ -1979,7 +1979,7 @@ try {
                             const yGId = yourGuildIds[y]
                             const guild = client.guilds.cache.get(yGId)
                             const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                            const roleId = guild.id === '414551319031054346' ? format.role : channels[guild.name].ratedRole
+                            const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].ratedRole
                             const channel = guild.channels.cache.get(channelId)
                             channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
                         } catch (err) {
@@ -2017,7 +2017,7 @@ try {
                             const yGId = yourGuildIds[y]
                             const guild = client.guilds.cache.get(yGId)
                             const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                            const roleId = guild.id === '414551319031054346' ? format.role : channels[guild.name].ratedRole
+                            const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].ratedRole
                             const channel = guild.channels.cache.get(channelId)
                             channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
                         } catch (err) {
@@ -2035,7 +2035,7 @@ try {
                             const yGId = yourGuildIds[y]
                             const guild = client.guilds.cache.get(yGId)
                             const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                            const roleId = guild.id === '414551319031054346' ? format.role : channels[guild.name].ratedRole
+                            const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].ratedRole
                             const channel = guild.channels.cache.get(channelId)
                             channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
                         } catch (err) {
@@ -2072,7 +2072,7 @@ try {
                     const yGId = yourGuildIds[y]
                     const guild = client.guilds.cache.get(yGId)
                     const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                    const roleId = guild.id === '414551319031054346' ? format.role : channels[guild.name].ratedRole
+                    const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].ratedRole
                     const channel = guild.channels.cache.get(channelId)
                     channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
                 } catch (err) {
@@ -2088,7 +2088,7 @@ try {
                 const yGId = yourGuildIds[y]
                 const guild = client.guilds.cache.get(yGId)
                 const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                const roleId = guild.id === '414551319031054346' ? format.role : channels[guild.name].ratedRole
+                const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].ratedRole
                 const channel = guild.channels.cache.get(channelId)
                 channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
             } catch (err) {
