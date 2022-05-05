@@ -114,7 +114,7 @@ const conductCensus = async (client) => {
             }
 
             const memberIds = members.map((m) => m.user.id)
-            const memberships = await Membership.findAll({ guildId: guild.id }).map((m) => m.playerId) || []
+            const memberships = await Membership.findAll({ where: { guildId: guild.id } }).map((m) => m.playerId) || []
             for (let i = 0; i < memberships.length; i++) {
                 const m = memberships[i]
                 if (m.active === true && !memberIds.includes(m)) {
