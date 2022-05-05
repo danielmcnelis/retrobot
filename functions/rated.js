@@ -18,7 +18,7 @@ const { getIssues, saveYDK } = require('./deck')
 
 const getPotentialPairConfirmation = async (client, format, potentialPair, newRatedPool, commonGuildId) => {
     const guild = client.guilds.cache.get(commonGuildId)
-    const member = guild.members.cache.get(potentialPair.playerId)
+    const member = guild.members.fetch(potentialPair.playerId)
     if (!member) return
 
     try {
@@ -44,7 +44,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             const channel = guild.channels.cache.get(channelId)
             const player = await Player.findOne({ where: { id: potentialPair.playerId }})
             const opponent = await Player.findOne({ where: { id: newRatedPool.playerId }})
-            const opposingMember = guild.members.cache.get(opponent.id)
+            const opposingMember = guild.members.fetch(opponent.id)
             opposingMember.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${player.tag}\nOpponent's DuelingBook:${player.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
             message.channel.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${opponent.tag}\nOpponent's DuelingBook:${opponent.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
             
