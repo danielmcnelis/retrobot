@@ -10,6 +10,7 @@ const { Format, Player, RatedPool } = require('../db/index.js')
 
 //STATIC IMPORTS
 const channels = require('../static/channels')
+const { legend, mad } = require('../static/emojis.json')
 const { yescom } = require('../static/commands.json')
 
 //FUNCTION IMPORTS
