@@ -1877,7 +1877,7 @@ try {
 
     // RATED PLAY
     if (cmd === `!rated`) {
-        if (mgid) return
+        if (mgid) return message.channel.send(`Try using ${cmd} by DM'ing it to me.`)
         console.log('!!message', !!message)
         console.log('!!message.author', !!message.author)
         const player = await Player.findOne({ where: { id: maid } })
@@ -1904,7 +1904,8 @@ try {
         if (!deckListUrl) return
         const newRatedPool = await RatedPool.create({
             name: player.name,
-            format: format.name
+            format: format.name,
+            playerId: maid
         })
 
         if (!newRatedPool) return
