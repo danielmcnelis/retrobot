@@ -26,7 +26,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
         filter,
         max: 1,
         time: 5 * 60 * 1000
-    }).then(async collected => {
+    }).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
         if (yescom.includes(response)) {
             const commonServer = await Server.findOne({ where: { id: commonGuildId }})
@@ -50,7 +50,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             await potentialPair.destroy()
             return message.channel.send(`Not a problem. I've removed you from the Rated ${format.name} Format ${format.emoji} player pool.`)
         }
-    }).catch(err => {
+    }).catch(async (err) => {
         console.log(err)
         await potentialPair.destroy()
         return message.channel.send(`Sorry, time's up. I've removed you from the Rated ${newRatedPool.format} Format player pool.`)
@@ -65,11 +65,11 @@ const getRatedFormat = async (message) => {
         filter,
         max: 1,
         time: 15000
-    }).then(async collected => {
+    }).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
         const format = await Format.findOne({ where: { name: {[Op.iLike]: response } }})
         return format
-    }).catch(err => {
+    }).catch((err) => {
         console.log(err)
         message.channel.send({ content: `Sorry, time's up.`})
         return false
