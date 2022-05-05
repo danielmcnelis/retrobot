@@ -159,8 +159,9 @@ const search = async (query, fuzzyCards, format) => {
 	if (card.union) classes.push("Union")
 	if (card.effect) classes.push("Effect")
 
+    const releaseDate = card.tcgDate ? dateToVerbose(card.tcgDate, true, false, true) : 'OCG Only'
     let labels = [
-		`\nRelease Date: ${dateToVerbose(card.tcgDate, true, false, true) || 'OCG Only'}`,
+		`\nRelease Date: ${releaseDate}`,
 		`\nFirst Print: ${firstPrint || 'OCG Only'}`,
         `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${capitalize(position, true)} ${indicator}` : ''}`
     ]
