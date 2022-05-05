@@ -409,7 +409,7 @@ try {
                         const entry = entries[i]
                         const playerId = entry.playerId	
                         await entry.destroy()
-                        const member = message.guild.members.fetch(playerId)
+                        const member = await message.guild.members.fetch(playerId)
                         if (!member) continue
                         member.roles.remove(roles[server.name].tourRole)
                     } catch (err) {
@@ -497,7 +497,7 @@ try {
                         const entry = entries[i]
                         const playerId = entry.playerId	
                         await entry.destroy()
-                        const member = message.guild.members.fetch(playerId)
+                        const member = await message.guild.members.fetch(playerId)
                         if (!member) continue
                         member.roles.remove(roles[server.name].tourRole)
                     } catch (err) {
@@ -1382,7 +1382,7 @@ try {
         if (!opid) return message.channel.send({ content: `No player specified.`})
         if (opid === maid) return message.channel.send({ content: `You cannot lose a match to yourself.`})
         if (await isNewUser(server, opid)) await createPlayer(message.mentions.members.first())
-        const winner = message.guild.members.fetch(opid)
+        const winner = await message.guild.members.fetch(opid)
         const winningPlayer = await Player.findOne({ where: { id: opid } })
         const serverId = server.internalLadder ? server.id : '414551319031054346'
 
@@ -1574,8 +1574,8 @@ try {
         if (!winnerId || !loserId) return message.channel.send({ content: `Please specify 2 players.`})
         if (winnerId === loserId) return message.channel.send({ content: `Please specify 2 different players.`})
 
-        const winner = message.guild.members.fetch(winnerId)
-        const loser = message.guild.members.fetch(loserId)
+        const winner = await message.guild.members.fetch(winnerId)
+        const loser = await message.guild.members.fetch(loserId)
         if ((winner && winner.user.bot) ||  (loser && loser.user.bot)  ) return message.channel.send({ content: `Sorry, Bots do not play ${format.name} Format... *yet*.`})
 
         if (winner && await isNewUser(server, winnerId)) await createPlayer(winner)
@@ -1758,7 +1758,7 @@ try {
 
         const noShowId = message.mentions.users.first() ? message.mentions.users.first().id : args.length > 0 ? args[0]	: null
         if (!noShowId) return message.channel.send({ content: "Please specify a player."})
-        const noshow = message.guild.members.fetch(noShowId)
+        const noshow = await message.guild.members.fetch(noShowId)
         if ((noshow && noshow.user.bot)) return message.channel.send({ content: `Sorry, Bots do not play Goat Format... *yet*.`})
         if (noshow && await isNewUser(server, noShowId)) await createPlayer(noshow)
         const noShowPlayer = await Player.findOne({ where: { id: noShowId } })
@@ -2051,7 +2051,7 @@ try {
                     const guild = client.guilds.cache.get(commonGuildId)
                     const channel = guild.channels.cache.get(channelId)
                     const opponent = await Player.findOne({ where: { id: potentialPair.playerId }})
-                    const member = guild.members.fetch(opponent.id)
+                    const member = await guild.members.fetch(opponent.id)
                     member.user.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${player.tag}\nOpponent's DuelingBook:${player.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
                     message.channel.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${opponent.tag}\nOpponent's DuelingBook:${opponent.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
                     
