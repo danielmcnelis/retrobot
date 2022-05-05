@@ -21,7 +21,7 @@ const { challongeAPIKeys } = require('../secrets.json')
 
 //ASK FOR DB NAME
 const askForDBName = async (member, player, override = false, error = false, attempt = 1) => {
-    const filter = m => m.author.id === member.user.id
+    const filter = m => m.author.id === member.id || member.user.id
     const pronoun = override ? `${player.name}'s` : 'your'
     const greeting = override ? '' : 'Hi! '
     const prompt = error ? `I think you're getting ahead of yourself. First, I need ${pronoun} DuelingBook name.`
