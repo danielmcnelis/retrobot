@@ -117,6 +117,7 @@ const conductCensus = async (client) => {
             const memberships = await Membership.findAll({ where: { guildId: guild.id } }) || []
             for (let i = 0; i < memberships.length; i++) {
                 try {
+                    const m = memberships[i]
                     if (m.active === true && !memberIds.includes(m.playerId)) {
                         m.active = false
                         await m.save()
