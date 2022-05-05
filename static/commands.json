@@ -12,11 +12,12 @@
   ],
   "dbcom": ["!db", "!dbname", "!duelingbook"],
   "deckcom": ["!deck", "!decklist"],
-  "dropcom": ["!drop", "!quit", "!out", "!leave", "!exit"],
+  "dropcom": ["!drop", "!quit"],
+  "exitcom": ["!exit", "!leave", "!out"],
   "h2hcom": ["!h2h", "!head2head", "!headtohead"],
   "histcom": ["!h", "!hist", "!history"],
   "ironcom": ["!i", "!iron", "!fe"],
-  "joincom": ["!j", "!join", "!enter", "!play", "!in", "!resubmit"],
+  "joincom": ["!j", "!join", "!resubmit", "!in", "!play", "!enter"],
   "legalcom": [
     "!c",
     "!check",
@@ -71,6 +72,7 @@
     "!rankings",
     "!ranks"
   ],
+  "ratedcom": ["!ranked", "!rated"],
   "recalccom": ["!recalc", "!recalculate"],
   "rolecom": [
     "!r",

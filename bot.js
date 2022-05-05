@@ -91,7 +91,7 @@ client.on('messageCreate', async (message) => {
 try {
     if (
 		//no commands in DMs except !rated
-		(!message.guild && !message.content.startsWith("!rated")) || 
+		(!message.guild && !message.content.startsWith("!exit") && !message.content.startsWith("!leave") && !message.content.startsWith("!out") && !message.content.startsWith("!ranked") && !message.content.startsWith("!rated")) || 
 		//no commands from bots
 		message.author.bot ||
 		//do not allow users to parrot @everyone or @here with the bot
@@ -1876,10 +1876,8 @@ try {
     }
 
     // RATED PLAY
-    if (cmd === `!rated`) {
+    if (commands.ratedcom.includes(cmd)) {
         if (mgid) return message.channel.send(`Try using ${cmd} by DM'ing it to me.`)
-        console.log('!!message', !!message)
-        console.log('!!message.author', !!message.author)
         const player = await Player.findOne({ where: { id: maid } })
         if (!player) return message.channel.send(`You are not in the database. Please join the Format Library Discord server to register.`)
         const format = await getRatedFormat(message)
@@ -2012,6 +2010,35 @@ try {
         }
 
         return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+    }
+
+    // EXIT
+    if (commands.exitcom.includes(cmd)) {
+        if (mgid) return message.channel.send(`Try using ${cmd} by DM'ing it to me.`)
+        const player = await Player.findOne({ where: { id: maid } })
+        if (!player) return message.channel.send(`You are not in the database. Please join the Format Library Discord server to register.`)
+       
+        const oldRatedPools = await RatedPool.findAll({ where: {  playerId: maid } }) || []
+        if (!oldRatedPools.length) return message.channel.send(`You were not in any Rated Pools.`)
+
+        const pools = oldRatedPools.map((p) => p.format)
+
+        const drops = await getDropFormats(message, pools)
+        if (!drops || !drops.length) return message.channel.send(`Please specify a valid number.`)
+
+        let b = 0
+        for (let i = 0; i < drops.length; i++) {
+            try {
+                const format = drops[i]
+                const oldRatedPool = await RatedPool.findAll({ where: { format: format, playerId: maid } })
+                await oldRatedPool.destroy()
+                b++
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        return message.channel.send(`You left the Rated Pool for ${b} ${b > 1 ? 'formats' : 'format'}`)
     }
 
     // RESET
@@ -2222,7 +2249,6 @@ try {
             const match = allMatches[i]
             const winnerId = match.winnerId
             const loserId = match.loserId
-            console.log(`winnerId, loserId`, winnerId, loserId)
             const winningPlayer = await Player.findOne({ where: { id: winnerId }})
             const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format: format.name, serverId: '414551319031054346' } })
             const losingPlayer = await Player.findOne({ where: { id: loserId }})

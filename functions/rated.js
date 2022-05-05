@@ -67,6 +67,56 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
     })   
 }
 
+// GET DUMP RARITY
+const getDumpRarity = async (message) => {
+    const filter = m => m.author.id === message.member.user.id
+	message.channel.send({ content: `What rarity would you like to bulk sell?\n(1) all\n(2) common\n(3) rare\n(4) super\n(5) ultra\n(6) secret`})
+    return await message.channel.awaitMessages({ filter,
+		max: 1,
+        time: 15000
+    }).then(async (collected) => {
+        const response = collected.first().content.toLowerCase()
+        const rarity = response.includes('all') || response.includes('any') || response.includes('1') ? 'all' :
+        response.includes('com') || response.includes('2') ? 'com' :
+        response.includes('rar') || response.includes('3') ? 'rar' :
+        response.includes('sup') || response.includes('4') ? 'sup' :
+        response.includes('ult') || response.includes('5') ? 'ult' :
+        response.includes('sec') || response.includes('scr') || response.includes('6') ? 'scr' :
+        'unrecognized'
+
+        return rarity
+    }).catch((err) => {
+		console.log(err)
+        message.channel.send({ content: `Sorry, time's up.`})
+        return false
+	})
+}
+
+// GET DROP FORMATS
+const getDropFormats = async (message, pools) => {
+    if (pools.length === 1) return pools
+    const filter = m => m.author.id === message.author.id
+    message.channel.send({ content: `Which Rated Pool(s) do you want to leave?\n(1) all\n${pools.join('\n')}`})
+    return await message.channel.awaitMessages({
+        filter,
+        max: 1,
+        time: 30000
+    }).then(async (collected) => {
+        const response = collected.first().content.toLowerCase()
+        const index = isNaN(parseInt(response)) ? parseInt(response) - 1 : null
+        const poolsToLeave = response.includes('all') || index === 0 ? pools : 
+            index ? pools[index] :
+            false
+
+        return poolsToLeave
+    }).catch((err) => {
+        console.log(err)
+        message.channel.send({ content: `Sorry, time's up.`})
+        return false
+    })
+}
+
+
 // GET RATED FORMAT
 const getRatedFormat = async (message) => {
     const filter = m => m.author.id === message.author.id
@@ -88,9 +138,6 @@ const getRatedFormat = async (message) => {
 
 //GET RATED DECK
 const getRatedDeck = async (user, player, format) => {   
-    console.log('!!user', !!user)         
-    console.log('!!player', !!player)
-    console.log('!!format', !!format)
     const filter = m => m.author.id === user.id
     const message = await user.send({ content: `Please provide a duelingbook.com/deck link for your rated deck.`}).catch((err) => console.log(err))
     if (!message || !message.channel) return false
@@ -156,6 +203,7 @@ const getRatedDeck = async (user, player, format) => {
 }
 
 module.exports = {
+    getDropFormats,
     getPotentialPairConfirmation,
     getRatedDeck,
     getRatedFormat
