@@ -1905,6 +1905,7 @@ try {
         const newRatedPool = await RatedPool.create({
             name: player.name,
             format: format.name,
+            status: 'pending',
             playerId: maid
         })
 
@@ -1914,7 +1915,8 @@ try {
             const potentialPairs = await RatedPool.findAll({ 
                 where: { 
                     playerId: {[Op.not]: maid }, 
-                    format: format.name 
+                    status: 'pending',
+                    format: format.name
                 },
                 order: [['createdAt', 'ASC']]
             }) || []

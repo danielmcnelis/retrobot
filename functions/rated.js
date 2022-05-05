@@ -21,6 +21,14 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
     const member = guild.members.cache.get(potentialPair.playerId)
     if (!member) return
 
+    try {
+        potentialPair.status = 'confirming'
+        await potentialPair.save()
+    } catch (err) {
+        console.log(err)
+        return message.channel.send(`Sorry, something went wrong. I've removed you from the Rated ${newRatedPool.format} Format player pool.`)
+    }
+
     const filter = m => m.author.id === potentialPair.playerId
     const message = await member.send({ content: `I've found a Rated ${format.name} Format ${format.emoji} opponent for you. Do you still wish to play?`})
     if (!message) return

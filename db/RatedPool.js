@@ -11,6 +11,11 @@ const RatedPool = db.define('ratedPools', {
         type: Sequelize.STRING,      
         defaultValue: 'Goat',
         allowNull: false
+    },
+    status: {
+        type: Sequelize.STRING,      
+        defaultValue: 'pending',
+        allowNull: false
     }
 })
 
