@@ -1896,7 +1896,7 @@ try {
             }, 
             include: Server,
             order: [[Server, 'createdAt', 'ASC']] 
-        })].map((m) => m.guildId) || []
+        })].map((m) => m.serverId) || []
 
         if (!yourGuildIds.length) return message.channel.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${format.emoji}`)
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.author, player)
