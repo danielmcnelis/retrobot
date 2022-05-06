@@ -2019,7 +2019,7 @@ try {
                     },
                     include: Server,
                     order: [[Server, 'createdAt', 'ASC']]
-                })].map((m) => m.guildId) || []
+                })].map((m) => m.serverId) || []
     
                 let commonGuildId
                 for (let j = 0; j < opponentsGuildIds.length; j++) {
