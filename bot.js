@@ -1949,6 +1949,7 @@ try {
                     }
                 }
             } catch (err) {
+                console.log(err)
                 return message.channel.send(`Unable to process deck list. Please try again.`)
             }
         } else {
