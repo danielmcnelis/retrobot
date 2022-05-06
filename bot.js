@@ -1914,8 +1914,10 @@ try {
         if (ratedDeck) {
             try {
                 const id = ratedDeck.url.slice(ratedDeck.url.indexOf('?id=') + 4)
+                console.log('id', id)
                 const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${id}`)
                 if (data) {
+                    console.log('data', data)
                     const main = data.main.map((e) => e.serial_number)
                     const side = data.side.map((e) => e.serial_number)
                     const extra = data.extra.map((e) => e.serial_number)
