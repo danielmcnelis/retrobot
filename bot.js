@@ -2310,7 +2310,7 @@ try {
             max: 1,
             time: 15000
         }).then(async collected => {
-            if (yescom.includes(collected.first().content.toLowerCase())) {
+            if (commands.yescom.includes(collected.first().content.toLowerCase())) {
                 const matches = await Match.findAll({
                     where: {
                         [Op.or]: [
