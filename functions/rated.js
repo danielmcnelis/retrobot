@@ -37,7 +37,6 @@ const checkForPotentialPairs = async (client, format) => {
 const getPotentialPairConfirmation = async (client, format, potentialPair, newRatedPool, commonGuildId) => {
     const guild = client.guilds.cache.get(commonGuildId)
     const member = await guild.members.fetch(potentialPair.playerId)
-    console.log('member', member)
     if (!member) return
 
     try {
@@ -64,7 +63,6 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             const player = await Player.findOne({ where: { id: potentialPair.playerId }})
             const opponent = await Player.findOne({ where: { id: newRatedPool.playerId }})
             const opposingMember = await guild.members.fetch(opponent.id)
-            console.log('opposingMember', opposingMember)
             opposingMember.user.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${player.tag}\nOpponent's DuelingBook:${player.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
             message.channel.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${opponent.tag}\nOpponent's DuelingBook:${opponent.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
             
@@ -151,15 +149,11 @@ const getPreviousRatedDeck = async (user, yourRatedDecks, format) => {
         time: 20000
     }).then(async (collected) => {
         const response = collected.first().content
-        console.log('response', response)
         const index = !isNaN(parseInt(response)) ? parseInt(response) - 1 : null
-        console.log('index', index)
-        console.log('yourRatedDecks.length', yourRatedDecks.length)
         const previousRatedDeck = response.includes('new') || index === options.length ? false : 
             index && index >= 0 ? yourRatedDecks[index] :
             false
 
-        console.log('!!previousRatedDeck', previousRatedDeck)
         return previousRatedDeck
     }).catch((err) => {
         console.log(err)
