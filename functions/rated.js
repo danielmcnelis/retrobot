@@ -137,7 +137,7 @@ const getRatedFormat = async (message) => {
 //GET PREVIOUS RATED DECK
 const getPreviousRatedDeck = async (user, yourRatedDecks, format) => {   
     if (!yourRatedDecks || !yourRatedDecks.length) return false
-    const options = yourRatedDecks.map((yRD, index) => `(${index + 1}) - ${yRD.name} (${yRD.url})`)
+    const options = yourRatedDecks.map((yRD, index) => `(${index + 1}) - ${yRD.name} - <${yRD.url}>`)
     options.push(`(${options.length + 1}) - Submit a New Deck`)
 
     const filter = m => m.author.id === user.id

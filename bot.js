@@ -14,7 +14,7 @@ const { Card, Entry, Format, Info, Iron, Match, Matchup, Membership, Player, Rat
 
 // FUNCTION IMPORTS
 const { conductCensus, getMidnightCountdown, updateAvatars, purgeEntries } = require('./functions/chron.js')
-const { checkDeckList, getDeckFormat } = require( './functions/deck.js')
+const { checkDeckList, getDeckFormat, getIssues } = require( './functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
 const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
 const { getDropFormats, getNewRatedDeck, getPreviousRatedDeck, getRatedFormat, getPotentialPairConfirmation } = require('./functions/rated.js')
