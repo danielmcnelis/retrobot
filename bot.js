@@ -78,7 +78,7 @@ client.on('guildMemberRemove', async (member) => {
         if (!server || !hasPartnerAccess(server)) return
         const channel = guild.channels.cache.get(channels[guild.name].welcomeChannel)
         channel.send({ content: `Oh dear. ${member.user.username} has left the server. ${emojis.sad}`})
-        const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: guild.id }})
+        const membership = await Membership.findOne({ where: { playerId: member.user.id, serverId: guild.id }})
         membership.active = false
         await membership.save()
     } catch (err) {
@@ -785,7 +785,7 @@ try {
             server.name === 'Lab' ? 'Ranked Players' :
             ''
 
-        const membership = await Membership.findOne({ where: { playerId: maid, guildId: mgid } })
+        const membership = await Membership.findOne({ where: { playerId: maid, serverId: mgid } })
         if (!membership) return message.channel.send({ content: `You are not in the database.`})
         if (!message.member.roles.cache.some(role => role.id === roleId)) {
             try {

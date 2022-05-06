@@ -313,7 +313,7 @@ const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, card
 
 //ASSIGN ROLES
 const assignRoles = async (guild, member) => {
-    const membership = await Membership.findOne({ where: { playerId: member.user.id, guildId: guild.id }})
+    const membership = await Membership.findOne({ where: { playerId: member.user.id, serverId: guild.id }})
     membership.active = true
     await membership.save()
     if (!membership) return
@@ -457,10 +457,10 @@ const isMod = (server, member) => server && member && member.roles.cache.some(ro
 const isIronPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].ironRole)
 
 //IS NEW MEMBER?
-const isNewMember = async (server, guildId, playerId) => server.access !== 'limited' && !await Membership.count({ where: { guildId, playerId } })
+const isNewMember = async (server, serverId, playerId) => server && server.access !== 'limited' && !await Membership.count({ where: { serverId, playerId } })
 
 //IS NEW USER?
-const isNewUser = async (server, id) => server.access !== 'limited' && !await Player.count({ where: { id } })
+const isNewUser = async (server, id) => server && server.access !== 'limited' && !await Player.count({ where: { id } })
 
 //IS TOURNAMENT PLAYER?
 const isTourPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].tourRole)
