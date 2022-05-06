@@ -54,8 +54,8 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             const opponent = await Player.findOne({ where: { id: newRatedPool.playerId }})
             const opposingMember = await guild.members.fetch(opponent.id)
 
-            opposingMember.user.send(`New opponent for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nDiscord: ${player.tag}\nDuelingBook: ${player.duelingBook}\nServer: ${commonServer.name} ${emojis[commonServer.name]}`)
-            message.channel.send(`New opponent for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nDiscord: ${opponent.tag}\nDuelingBook: ${opponent.duelingBook}\nServer: ${commonServer.name} ${emojis[commonServer.name]}`)
+            opposingMember.user.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nServer: ${commonServer.name} ${emojis[commonServer.name]}\nDiscord: ${player.tag}\nDuelingBook: ${player.duelingBook}`)
+            message.channel.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nServer: ${commonServer.name} ${emojis[commonServer.name]}\nDiscord: ${opponent.tag}\nDuelingBook: ${opponent.duelingBook}`)
             
             const ratedPoolsToDestroy = await RatedPool.findAll({
                 where: {
