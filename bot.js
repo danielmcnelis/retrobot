@@ -1911,11 +1911,52 @@ try {
         }) || []
 
         let ratedDeck = await getPreviousRatedDeck(message.author, yourRatedDecks, format)
-        if (!ratedDeck) ratedDeck = await getNewRatedDeck(message.author, player, format)
+        if (ratedDeck) {
+            try {
+                const id = ratedDeck.url.slice(ratedDeck.url.indexOf('?id=') + 4)
+                const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${id}`)
+                if (data) {
+                    const main = data.main.map((e) => e.serial_number)
+                    const side = data.side.map((e) => e.serial_number)
+                    const extra = data.extra.map((e) => e.serial_number)
+                    const deckArr = [...main, ...side, ...extra]
+                    const issues = await getIssues(deckArr, format)
+                    const { illegalCards, forbiddenCards, limitedCards, semiLimitedCards, unrecognizedCards } = issues
+                    if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {      
+                        let response = [`I'm sorry, ${message.author.username}, your deck is not legal for ${format.name} Format. ${format.emoji}`]
+                        if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format:`, ...illegalCards]
+                        if (forbiddenCards.length) response = [...response, `\nThe following cards are forbidden:`, ...forbiddenCards]
+                        if (limitedCards.length) response = [...response, `\nThe following cards are limited:`, ...limitedCards]
+                        if (semiLimitedCards.length) response = [...response, `\nThe following cards are semi-limited:`, ...semiLimitedCards]
+                        
+                        for (let i = 0; i < response.length; i += 50) {
+                            if (response[i+50] && response[i+50].startsWith("\n")) {
+                                message.author.send({ content: response.slice(i, i+51).join('\n').toString()}).catch((err) => console.log(err))
+                                i++
+                            } else {
+                                message.author.send({ content: response.slice(i, i+50).join('\n').toString()}).catch((err) => console.log(err))
+                            }
+                        }
+                    } else if (unrecognizedCards.length) {
+                        let response = `I'm sorry, ${message.author.username}, the following card IDs were not found in our database:\n${unrecognizedCards.join('\n')}`
+                        response += `\n\nThese cards are either alternate artwork, new to the TCG, OCG only, or incorrect in our database. Please contact the Tournament Organizer or the Admin if you can't resolve this.`
+                        return message.author.send({ content: response.toString() }).catch((err) => console.log(err))
+                    } else {
+                        const ydk = ['created by...', '#main', ...main, '#extra', ...extra, '!side', ...side, ''].join('\n')
+                        ratedDeck.ydk = ydk
+                        await ratedDeck.save()
+                        console.log(`${player.name}'s rated deck was updated!`)
+                    }
+                }
+            } catch (err) {
+                return message.channel.send(`Unable to process deck list. Please try again.`)
+            }
+        } else {
+            ratedDeck = await getNewRatedDeck(message.author, player, format)
+        }
+        
         if (!ratedDeck || !ratedDeck.ydk) return
-
         const deckAttachments = await drawDeck(ratedDeck.ydk) || []
-        console.log('deckAttachments.length', deckAttachments.length)
         message.channel.send({content: `Okay, ${player.name}, you will be using this deck if you are paired:` , files: [...deckAttachments] })
         
         const oldRatedPool = await RatedPool.findOne({
