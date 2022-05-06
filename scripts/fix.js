@@ -229,8 +229,11 @@ const fixMemberships = async () => {
     for (let i = 0; i < memberships.length; i++) {
         const m = memberships[i]
         try {
-            m.serverId = m.guildId
+            const id = m.guildId
+            console.log('id', id)
+            m.serverId = id
             await m.save()
+            console.log('m.serverId', m.serverId)
             b++
         } catch (err) {
             console.log(err)
