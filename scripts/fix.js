@@ -224,7 +224,7 @@ const deleteMemberships = async () => {
 const fixMemberships = async () => {
     let b = 0
     let e = 0
-    const memberships = await Membership.findAll()
+    const memberships = await Membership.findAll({ where: { serverId: null }})
 
     for (let i = 0; i < memberships.length; i++) {
         const m = memberships[i]

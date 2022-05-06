@@ -201,19 +201,12 @@ const search = async (query, fuzzyCards, format) => {
 }
 
 const drawDeck = async (ydk) => {
-    console.log('ydk', ydk)
     const mainArr = ydk.split('#main')[1].split('#extra')[0].split('\n').filter((e) => e.length) || []
     const extraArr = ydk.split('#extra')[1].split('!side')[0].split('\n').filter((e) => e.length) || []
     const sideArr = ydk.split('!side')[1].split('\n').filter((e) => e.length) || []
     const main = []
     const side = []
     const extra = []
-    console.log('mainArr', mainArr)
-    console.log('mainArr.length', mainArr.length)
-    console.log('extraArr', extraArr)
-    console.log('extraArr.length', extraArr.length)
-    console.log('sideArr', sideArr)
-    console.log('sideArr.length', sideArr.length)
     
     for (let i = 0; i < mainArr.length; i++) {
         let konamiCode = mainArr[i]
@@ -223,8 +216,6 @@ const drawDeck = async (ydk) => {
         main.push(card)
     }
 
-    console.log('main.length', main.length)
-
     for (let i = 0; i < sideArr.length; i++) {
         let konamiCode = sideArr[i]
         while (konamiCode.length < 8) konamiCode = '0' + konamiCode
@@ -232,7 +223,6 @@ const drawDeck = async (ydk) => {
         if (!card) continue
         side.push(card)
     }
-    console.log('side.length', side.length)
 
     for (let i = 0; i < extraArr.length; i++) {
         let konamiCode = extraArr[i]
@@ -241,7 +231,6 @@ const drawDeck = async (ydk) => {
         if (!card) continue
         extra.push(card)
     }
-    console.log('extra.length', extra.length)
 
     main.sort((a, b) => {
         if (a.sortPriority > b.sortPriority) {
@@ -289,9 +278,6 @@ const drawDeck = async (ydk) => {
     const extraAttachment = await makeCanvasAttachment(extra, 38, 53, 15, 'extra')
     const sideAttachment = await makeCanvasAttachment(side, 38, 53, 15, 'side')
 
-    console.log('!!mainAttachment', !!mainAttachment)
-    console.log('!!extraAttachment', !!extraAttachment)
-    console.log('!!sideAttachment', !!sideAttachment)
     return [
         mainAttachment,
         extraAttachment,
@@ -300,8 +286,6 @@ const drawDeck = async (ydk) => {
 }
 
 const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, cardsPerRow = 10, name = 'main') => {
-    console.log(name, 'cardsArr.length', cardsArr.length)
-    console.log(width, 'x', height, 'x', cardsPerRow)
     try {
         const rows = Math.ceil(cardsArr.length / cardsPerRow)
         const canvas = Canvas.createCanvas(width * cardsPerRow, height * rows)
@@ -313,16 +297,13 @@ const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, card
                 const row = Math.floor(i / cardsPerRow)
                 const col = i % cardsPerRow
                 const image = await Canvas.loadImage(`https://formatlibrary.com/images/cards/${card.ypdId}.jpg`)
-                console.log('!!image', !!image)
                 context.drawImage(image, width * col, row * height, width, height)
             } catch (err) {
                 console.log(err)
             }
         }
 
-        console.log('!!canvas', !!canvas)
         const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `${name}Deck.png`)
-        console.log('!!attachment', !!attachment)
         return attachment
     } catch (err) {
         console.log(err)
@@ -382,9 +363,9 @@ const createPlayer = async (member) => {
 const createMembership = async (guild, member) => {
     try {
         await Membership.create({
-            guildId: guild.id,
             guildName: guild.name,
-            playerId: `${member.user.id}`
+            playerId: `${member.user.id}`,
+            serverId: guild.id
         })
     } catch (err) {
         console.log(err)
