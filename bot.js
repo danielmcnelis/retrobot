@@ -2005,6 +2005,8 @@ try {
 
                 return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
             }
+
+            let messageSent = false
     
             for (let i = 0; i < potentialPairs.length; i++) {
                 const potentialPair = potentialPairs[i]
@@ -2030,23 +2032,7 @@ try {
                     }
                 }
     
-                if (!commonGuildId) {        
-                    for (let y = 0; y < yourGuildIds.length; y++) {
-                        try {
-                            const yGId = yourGuildIds[y]
-                            const guild = client.guilds.cache.get(yGId)
-                            const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                            const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].rankedRole
-                            const channel = guild.channels.cache.get(channelId)
-                            channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
-                        } catch (err) {
-                            console.log(err)
-                        }
-                    }
-                    
-                    return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
-                }
-                
+                if (!commonGuildId) continue
                 const now = new Date()
                 const tenMinutesAgo = new Date(now - (10 * 60 * 1000))
                 const threeHoursAgo = new Date(now - (3 * 60 * 60 * 1000))
@@ -2068,42 +2054,14 @@ try {
                     }
                 }) || []
     
-                if (yourRecentOpponents.includes(potentialPair.playerId)) {
-                    for (let y = 0; y < yourGuildIds.length; y++) {
-                        try {
-                            const yGId = yourGuildIds[y]
-                            const guild = client.guilds.cache.get(yGId)
-                            const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                            const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].rankedRole
-                            const channel = guild.channels.cache.get(channelId)
-                            channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
-                        } catch (err) {
-                            console.log(err)
-                        }
-                    }
-                        
-                    return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
-                } 
+                if (yourRecentOpponents.includes(potentialPair.playerId)) continue
     
                 if (potentialPair.createdAt < tenMinutesAgo) {
                     getPotentialPairConfirmation(client, format, potentialPair, newRatedPool, commonGuildId)
-                    for (let y = 0; y < yourGuildIds.length; y++) {
-                        try {
-                            const yGId = yourGuildIds[y]
-                            const guild = client.guilds.cache.get(yGId)
-                            const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                            const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].rankedRole
-                            const channel = guild.channels.cache.get(channelId)
-                            channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
-                        } catch (err) {
-                            console.log(err)
-                        }
-                    }
-                    
-                    return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+                    continue
                 } else {
                     const commonServer = await Server.findOne({ where: { id: commonGuildId }})
-                    if (!commonServer) return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+                    if (!commonServer) continue
                     const channelId = commonServer.format ? channels[commonServer].ratedChannel : format.channel
                     const guild = client.guilds.cache.get(commonGuildId)
                     const channel = guild.channels.cache.get(channelId)
@@ -2127,21 +2085,7 @@ try {
                 }
             }
         } catch (err) {
-            console.log(err)
-            for (let y = 0; y < yourGuildIds.length; y++) {
-                try {
-                    const yGId = yourGuildIds[y]
-                    const guild = client.guilds.cache.get(yGId)
-                    const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                    const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].rankedRole
-                    const channel = guild.channels.cache.get(channelId)
-                    channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
-                } catch (err) {
-                    console.log(err)
-                }
-            }
-            
-            return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+            console.log(err)            
         }
 
         for (let y = 0; y < yourGuildIds.length; y++) {

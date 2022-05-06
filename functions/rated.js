@@ -14,25 +14,8 @@ const emojis = require('../static/emojis.json')
 const { yescom } = require('../static/commands.json')
 
 //FUNCTION IMPORTS
-const { getIssues, saveYDK } = require('./deck')
+const { getIssues } = require('./deck')
 
-const checkForPotentialPairs = async (client, format) => {
-    const ratedPools = await RatedPool.findAll({ 
-        where: {
-            format: format.name,
-            status: 'pending'
-        },
-        order: [['createdAt', 'ASC']],
-        limit: 2
-    }) || []
-
-    if (ratedPools.length < 2) return
-                
-    const now = new Date()
-    const tenMinutesAgo = new Date(now - (10 * 60 * 1000))
-    const potentialPair2 = ratedPools[1].createdAt > tenMinutesAgo ? ratedPools[0] : await getPotentialPairConfirmation(client, format, potentialPair, newRatedPool, commonGuildId)
-    return
-}
 
 const getPotentialPairConfirmation = async (client, format, potentialPair, newRatedPool, commonGuildId) => {
     const guild = client.guilds.cache.get(commonGuildId)
@@ -57,14 +40,22 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
     }).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
         if (yescom.includes(response)) {
+            const pairStillExists = await RatedPool.count({ where: { id: newRatedPool.id }})
+            if (!pairStillExists) {
+                potentialPair.status = 'pending'
+                await potentialPair.save()
+                return message.channel.send(`Sorry, your potential opponent found a match while waiting for you to confirm. I'll put you back in the Rated ${format.name} Format ${format.emoji} Pool.`)
+            }
+
             const commonServer = await Server.findOne({ where: { id: commonGuildId }})
             const channelId = commonServer.format ? channels[commonServer].ratedChannel : format.channel
             const channel = guild.channels.cache.get(channelId)
             const player = await Player.findOne({ where: { id: potentialPair.playerId }})
             const opponent = await Player.findOne({ where: { id: newRatedPool.playerId }})
             const opposingMember = await guild.members.fetch(opponent.id)
-            opposingMember.user.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${player.tag}\nOpponent's DuelingBook:${player.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
-            message.channel.send(`New pairing for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nOpponent's Discord:${opponent.tag}\nOpponent's DuelingBook:${opponent.duelingBook}\nHost Server: ${commonServer.name} ${emojis[commonServer.name]}`)
+
+            opposingMember.user.send(`New opponent for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nDiscord: ${player.tag}\nDuelingBook: ${player.duelingBook}\nServer: ${commonServer.name} ${emojis[commonServer.name]}`)
+            message.channel.send(`New opponent for Rated ${format.name} Format ${commonServer.formatEmoji || format.emoji}!\nDiscord: ${opponent.tag}\nDuelingBook: ${opponent.duelingBook}\nServer: ${commonServer.name} ${emojis[commonServer.name]}`)
             
             const ratedPoolsToDestroy = await RatedPool.findAll({
                 where: {
