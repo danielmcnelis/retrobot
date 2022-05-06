@@ -142,7 +142,7 @@ const getPreviousRatedDeck = async (user, yourRatedDecks, format) => {
         const response = collected.first().content
         const index = !isNaN(parseInt(response)) ? parseInt(response) - 1 : null
         const previousRatedDeck = response.includes('new') || index === options.length ? false : 
-            index && index >= 0 ? yourRatedDecks[index] :
+            index >= 0 ? yourRatedDecks[index] :
             false
 
         return previousRatedDeck
