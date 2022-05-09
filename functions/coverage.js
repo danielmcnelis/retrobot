@@ -10,11 +10,11 @@ const { challongeAPIKeys } = require('../secrets.json')
 // CREATE DECKS
 const createDecks = async (tournament, useTags = true) => {
     try {    
-        const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${challongeAPIKeys[community]}`)
+        const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${challongeAPIKeys[tournament.community]}`)
         if (!res) return
         const size = res.data.tournament.participants_count
         const startedAt = `${res.data.tournament.started_at.slice(0, 10)} ${res.data.tournament.started_at.slice(11, 26)}`
-        const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${challongeAPIKeys[community]}`)
+        const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${challongeAPIKeys[tournament.community]}`)
         if (!data) return
         const participants = data.map((d) => d.participant.name)
         const players = await Player.findAll({ where: { tag: {[Op.not]: null } }})
