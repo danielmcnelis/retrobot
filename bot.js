@@ -935,7 +935,7 @@ try {
 	        .setAuthor({ name: 'Jazz#2704', iconURL: 'https://i.imgur.com/wz5TqmR.png', url: 'https://discord.com/invite/formatlibrary' })
         	.setThumbnail('https://formatlibrary.com/images/logos/FL.png')
         	.addField('Ranked Play', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
-            .addField('Tournaments', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Directly add a player to a bracket. \n!noshow - (@user) - Report a no-show. \n!deck - (@user) - Check a player\'s tournament deck. \n!remove - (@user) - Remove a player from a bracket. \n!start - Start a tournament. \n!end - (tournament name) - End a tournament.')
+            .addField('Tournaments', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Directly add a player to a bracket. \n!noshow - (@user) - Report a no-show. \n!deck - (@user) - Check a player\'s tournament deck. \n!remove - (@user) - Remove a player from a bracket. \n!start - Start a tournament. \n!end - (tournament name) - End a tournament. \n!timer - (x) - Start a timer for X minutes.')
 
         message.author.send({ embeds: [botEmbed] }).catch((err) => console.log(err))
         return message.channel.send({ content: "I messaged you the RetroBot Moderator Guide."})
@@ -2251,11 +2251,9 @@ try {
         if (!tournament) return message.channel.send(`No tournament found.`)
         const coverageType = await selectCoverage(message)
         if (!coverageType) return
-        if (coverageType.includes('Create Deck')) return createDecks(server, tournament)
-        if (coverageType.includes('Thumbnail')) return composeThumbnails(event)
-        if (coverageType.includes('Preview')) return composePreview(event)
-        if (coverageType.includes('BlogPost')) return composeBlogPost(event)
-        return
+        if (coverageType.includes('Create Deck')) return createDecks(message, tournament)
+        if (coverageType.includes('Thumbnail')) return composeThumbnails(message, event)
+        if (coverageType.includes('BlogPost')) return composeBlogPost(message, event)
     }
 
     // COMBINE
