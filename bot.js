@@ -2240,7 +2240,7 @@ try {
         if (coverageType.includes('Create Deck')) return createDecks(server, tournament)
         if (coverageType.includes('Thumbnail')) return composeThumbnails(event)
         if (coverageType.includes('Preview')) return composePreview(event)
-        if (coverageType.includes('Congrats')) return composeCongratsPost(event)
+        if (coverageType.includes('BlogPost')) return composeBlogPost(event)
         return
     }
 

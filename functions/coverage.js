@@ -187,8 +187,8 @@ const createDecks = async (server, tournament, useTags = true) => {
     }
 } 
 
-// COMPOSE CONGRATS POST
-const composeCongratsPost = async (shortName) => {
+// COMPOSE BLOG POST
+const composeBlogPost = async (shortName) => {
     const tournament = await Tournament.findOne({ 
         where: { 
             shortName: shortName,
@@ -324,7 +324,7 @@ const composeCongratsPost = async (shortName) => {
 
         const buffer = canvas.toBuffer('image/png')
         fs.writeFileSync(`../formatlibrary/public/images/decks/previews/${deck.id}.png`, buffer)
-        return console.log('created congrats blogpost')
+        return console.log('created blogpost')
 }
 
 // COMPOSE PREVIEW
@@ -471,7 +471,7 @@ const selectCoverage = async (message) => {
 }
 
 module.exports = {
-    composeCongratsPost,
+    composeBlogPost,
     composePreview,
     composeThumbnails,
     createDecks,
