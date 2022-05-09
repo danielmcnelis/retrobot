@@ -5,10 +5,11 @@ const fs = require('fs')
 const { Op } = require('sequelize')
 const { BlogPost, Card, Deck, DeckType, Player, Tournament } = require('../db')
 const { capitalize, dateToVerbose } = require('./utility')
+const { getDeckType } = require('./deck')
 const { challongeAPIKeys } = require('../secrets.json')
 
 // CREATE DECKS
-const createDecks = async (tournament, useTags = true) => {
+const createDecks = async (server, tournament, useTags = true) => {
     try {    
         const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${challongeAPIKeys[tournament.community]}`)
         if (!res) return
@@ -136,7 +137,7 @@ const createDecks = async (tournament, useTags = true) => {
                                 const participant = data[j].participant
                                 const placement = parseInt(participant.final_rank, 10)
                                 const raw = fs.readFileSync(`./decks/${tournament.community}/${tournament.name}/${file}`, 'utf8')
-                                const dname = getDeckType(raw, tournament.format)
+                                const dname = getDeckType(server, player, raw, tournament.format)
                                 const deckType = await DeckType.findOne({ where: { name: dname }}) || { name: 'other', 'category': 'other' }
 
                                 const display = (size <= 8 && placement === 1) ||
