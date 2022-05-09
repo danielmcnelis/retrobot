@@ -12,8 +12,8 @@
     "botSpamChannel": "930627105102893086",
     "contactChannel": "908016756864467004",
     "signupChannel": "907992801545945109",
-    "welcomeChannel": "711565398075768915",
-    "ratedChannel": "893556829286711307"
+    "ratedChannel": "893556829286711307",
+    "welcomeChannel": "711565398075768915"
   },
   "Crows Nest": {
     "botSpamChannel": "964327328341696552",
@@ -21,7 +21,12 @@
   },
   "Goat Format War League": {
     "botSpamChannel": "945211380586381382",
-    "welcomeChannel": "940437964536819804",
-    "ratedChannel": "944257086735417394"
+    "ratedChannel": "944257086735417394",
+    "welcomeChannel": "940437964536819804"
+  },
+  "Vegas (April 2014) Format": {
+    "botSpamChannel": "968908222125723698",
+    "ratedChannel": "944507309651013632",
+    "welcomeChannel": "944344616654737408"
   }
 }

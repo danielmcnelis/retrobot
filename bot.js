@@ -114,7 +114,7 @@ try {
     const mcid = message.channel.id
     const mgid = message.guild ? message.guild.id : null
     
-    const server = (!mgid || mgid === '110373943822540800') ? {} : await Server.findOne({ where: { id: mgid }}) || await Server.create({ id: mgid, name: message.guild.name })
+    const server = (!mgid || mgid === '110373943822540800' || mgid === '333949691962195969') ? {} : await Server.findOne({ where: { id: mgid }}) || await Server.create({ id: mgid, name: message.guild.name })
     if (hasAffiliateAccess(server) && await isNewUser(server, maid)) await createPlayer(message.member)
     if (hasAffiliateAccess(server) && await isNewMember(server, mgid, maid)) await createMembership(message.guild, message.member)
 
