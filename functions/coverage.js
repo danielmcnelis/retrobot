@@ -290,7 +290,7 @@ const composeBlogPost = async (shortName) => {
                         `<p className="blogpost-date">${blogTitleDate}</p>` +
                     `</div>` +
                 `<div className="blogpost-title-emojis">` +
-                    `<img className="blogpost-format-icon" src="/images/emojis/${formats[capitalize(tournament.format, true)].logo.toLowerCase()}.png"/>` +
+                    `<img className="blogpost-format-icon" src="/images/emojis/${format.icon.toLowerCase()}.png"/>` +
                     `<img className="blogpost-event-icon" src="/images/emojis/event.png"/>` +
                 `</div>` +
             `</div>` +
