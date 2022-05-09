@@ -14,6 +14,7 @@ const { Card, Entry, Format, Info, Iron, Match, Matchup, Membership, Player, Rat
 
 // FUNCTION IMPORTS
 const { conductCensus, getMidnightCountdown, updateAvatars, purgeEntries } = require('./functions/chron.js')
+const { createDecks, composeCongratsPost, composePreview, composeThumbnails, selectCoverage } = require('./functions/coverage.js')
 const { checkDeckList, getDeckFormat, getIssues } = require( './functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
 const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
@@ -2226,6 +2227,21 @@ try {
         const queue = [...await Iron.findAll({ where: { format: format.name }})].map((i) => i.name)
         if (!queue.length) return message.channel.send({ content: `The ${format.name} ${format.emoji} Iron queue is empty. ${emojis.iron}`})
         return message.channel.send({ content: `${format.name} ${format.emoji} Iron Queue:\n` + queue.join('\n').toString() })
+    }
+
+    //COVERAGE
+    if (cmd === `!coverage`) {
+        if (!isProgrammer(message.member)) return message.channel.send({ content: "You do not have permission to do that."})
+        const event = args[0]
+        const tournament = await Tournament.findOne({ where: { shortName: event }})
+        if (!tournament) return message.channel.send(`No tournament found.`)
+        const coverageType = await selectCoverage(message)
+        if (!coverageType) return
+        if (coverageType.includes('Create Deck')) return createDecks(tournament)
+        if (coverageType.includes('Thumbnail')) return composeThumbnails(event)
+        if (coverageType.includes('Preview')) return composePreview(event)
+        if (coverageType.includes('Congrats')) return composeCongratsPost(event)
+        return
     }
 
     // COMBINE
