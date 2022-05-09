@@ -476,6 +476,8 @@ try {
 
     // TIMER
     if (cmd === `!timer`) {
+        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!isMod(server, message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
         const minutes = parseInt(args[0])
         if (!args[0] || isNaN(minutes)) return message.channel.send(`Please specify the number of minutes to set the timer.`)
         message.channel.send(`<@&${roles[server.name].tourRole}> The next round begins now! You have ${minutes} minutes to complete your match.`)
