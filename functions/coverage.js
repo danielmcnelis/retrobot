@@ -21,7 +21,7 @@ const createDecks = async (tournament, useTags = true) => {
         const shortenedTags = useTags ? players.map((p) => p.tag.replace(/\s/gi, '_').replace(/[^\w\s]/gi, '_')) :
                                         players.map((p) => p.name.replace(/[^-?|!.'$\w\s]/gi, '_'))
 
-        fs.readdir(`../decks/${tournament.community}/${tournament.name}/`, async (err, files) => {
+        fs.readdir(`./decks/${tournament.community}/${tournament.name}/`, async (err, files) => {
             if (err) {
                 console.log(err)
             } else {
@@ -135,7 +135,7 @@ const createDecks = async (tournament, useTags = true) => {
                             if (!count) {
                                 const participant = data[j].participant
                                 const placement = parseInt(participant.final_rank, 10)
-                                const raw = fs.readFileSync(`./public/decks/${tournament.communt}/${tournament.name}/${file}`, 'utf8')
+                                const raw = fs.readFileSync(`./decks/${tournament.community}/${tournament.name}/${file}`, 'utf8')
                                 const dname = getDeckType(raw, tournament.format)
                                 const deckType = await DeckType.findOne({ where: { name: dname }}) || { name: 'other', 'category': 'other' }
 
@@ -318,7 +318,7 @@ const composeCongratsPost = async (shortName) => {
         })
 
         const buffer = canvas.toBuffer('image/png')
-        fs.writeFileSync(`./public/images/decks/previews/${deck.id}.png`, buffer)
+        fs.writeFileSync(`../formatlibrary/public/images/decks/previews/${deck.id}.png`, buffer)
         return console.log('created congrats blogpost')
 }
 
