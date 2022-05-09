@@ -474,6 +474,17 @@ try {
 		}
     }
 
+    // TIMER
+    if (cmd === `!timer`) {
+        const minutes = parseInt(args[0])
+        if (!args[0] || isNaN(minutes)) return message.channel.send(`Please specify the number of minutes to set the timer.`)
+        message.channel.send(`<@&${roles[server.name].tourRole}> The next round begins now! You have ${minutes} minutes to complete your match.`)
+        
+        return setTimeout(() => {
+            return message.channel.send(`<@&${roles[server.name].tourRole}> Time is up in the round!`)
+        }, minutes * 60 * 1000)
+    }
+
     // END
     if (cmd === `!end`) {
         if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
@@ -793,7 +804,7 @@ try {
         if (!membership) return message.channel.send({ content: `You are not in the database.`})
         if (!message.member.roles.cache.some(role => role.id === roleId)) {
             try {
-                message.member.roles.add(roleId)
+                await message.member.roles.add(roleId)
                 const count = await Role.count({ where: { membershipId: membership.id, roleId: roleId } })
                 if (!count) {
                     await Role.create({ 
@@ -809,7 +820,7 @@ try {
             }
         } else {
             try {
-                message.member.roles.remove(roleId)
+                await message.member.roles.remove(roleId)
                 const role = await Role.findOne({ where: { membershipId: membership.id, roleId: roleId } })
                 await role.destroy()
                 return message.channel.send({ content: `You no longer have the ${roleName} role.`})

@@ -462,6 +462,36 @@ const postParticipant = async (server, tournament, player) => {
     }   
 }
 
+// GET GAME COUNT
+const getGameCount = async (message, tournament, noshow) => {
+    if (noshow) return [0, 0]
+    if (tournament.type === 'double elimination' || tournament.type === 'single elimination') return [1, 0]
+    
+    const filter = m => m.author.id === message.author.id
+    message.channel.send({ content: `What was the game count (i.e. 2-0, 2-1, etc.)?`})
+    return await message.channel.awaitMessages({
+        filter,
+        max: 1,
+        time: 15000
+    }).then(collected => {
+        const response = collected.first().content
+        const char1 = response.charAt(0)
+        const char2 = response.charAt(response.indexOf('-') + 1)
+        const num1 = parseInt(char1)
+        const num2 = parseInt(char2)
+        if (isNaN(num1) || isNaN(num2)) {
+            return false
+        } else if (num1 > num2) {
+            return [num1, num2]
+        } else {
+            return [num2, num1]
+        }
+    }).catch(err => {
+        console.log(err)
+        return false
+    })
+}
+
 //PROCESS MATCH RESULT
 const processMatchResult = async (server, message, winningPlayer, losingPlayer, tournament, noshow = false) => {
     const losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
@@ -471,6 +501,12 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
         return false
     } 
 
+    const gameCount = await getGameCount(message, tournament, noshow) || []
+    if (!gameCount || !gameCount.length) {
+        message.channel.send({ content: `Please specify a valid game count.`})
+        return false
+    }
+
     const matchesArr = await getMatches(server, tournament.id) || []
     let matchId = false
     let scores = false
@@ -479,7 +515,7 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
         if (match.state !== 'open') continue
         if (checkPairing(match, losingEntry.participantId, winningEntry.participantId)) {
             matchId = match.id    
-            scores = noshow ? "0-0" : match.player1_id === winningEntry.participantId ? "1-0" : "0-1"
+            scores = match.player1_id === winningEntry.participantId ? `${gameCount[0]}-${gameCount[1]}` : `${gameCount[1]}-${gameCount[0]}`
             break
         }
     }
@@ -504,59 +540,62 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
     if (!success) {
         message.channel.send({ content: `Error: could not update bracket for ${tournament.name}.`})
         return false
-    } 
+    }
  
     losingEntry.losses++
     await losingEntry.save()
     
     winningEntry.wins++
     await winningEntry.save()
-    const updatedMatchesArr = await getMatches(server, tournament.id) || []
-    const winnerNextMatch = findNextMatch(updatedMatchesArr, matchId, winningEntry.participantId)
-    const winnerNextOpponent = winnerNextMatch ? await findNextOpponent(tournament.id, updatedMatchesArr, winnerNextMatch, winningEntry.participantId) : null
-    const winnerMatchWaitingOn = winnerNextOpponent ? null : findOtherPreReqMatch(updatedMatchesArr, winnerNextMatch, matchId) 
-    const winnerWaitingOnP1 = winnerMatchWaitingOn && winnerMatchWaitingOn.p1 && winnerMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: winnerMatchWaitingOn.p1 }, include: Player }) : null
-    const winnerWaitingOnP2 = winnerMatchWaitingOn && winnerMatchWaitingOn.p1 && winnerMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: winnerMatchWaitingOn.p2 }, include: Player }) : null
-
-    const loserEliminated = tournament.type === 'single elimination' ? true :
-        tournament.type === 'double elimination' && losingEntry.losses >= 2 ? true :
-        false
-
-    if (loserEliminated) {
-        const entries = await Entry.count({ where: { playerId: losingPlayer.id } })
-        if (entries === 1) {
-            const member = message.guild.members.cache.get(losingEntry.playerId)
-            if (member) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
-        }
-        await losingEntry.destroy()
-    }
-
-    const loserNextMatch = loserEliminated ? null : findNextMatch(updatedMatchesArr, matchId, losingEntry.participantId)
-    const loserNextOpponent = loserNextMatch ? await findNextOpponent(tournament.id, updatedMatchesArr, loserNextMatch, losingEntry.participantId) : null
-    const loserMatchWaitingOn = loserNextOpponent ? null : findOtherPreReqMatch(updatedMatchesArr, loserNextMatch, matchId) 
-    const loserWaitingOnP1 = loserMatchWaitingOn && loserMatchWaitingOn.p1 && loserMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: loserMatchWaitingOn.p1 }, include: Player }) : null
-    const loserWaitingOnP2 = loserMatchWaitingOn && loserMatchWaitingOn.p1 && loserMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: loserMatchWaitingOn.p2 }, include: Player }) : null
-
-    setTimeout(() => {
-        if (loserEliminated) return message.channel.send({ content: `${losingPlayer.name}, You are eliminated from the tournament. Better luck next time!`})
-        else if (loserNextOpponent) return message.channel.send({ content: `New Match: <@${losingPlayer.id}> (DB: ${losingPlayer.duelingBook}) vs. <@${loserNextOpponent.playerId}> (DB: ${loserNextOpponent.player.duelingBook}). Good luck to both duelists.`})
-        else if (loserMatchWaitingOn && loserWaitingOnP1 && loserWaitingOnP2) {
-            return message.channel.send({ content: `${losingPlayer.name}, You are waiting for the result of ${loserWaitingOnP1.player.name} (DB: ${loserWaitingOnP1.player.duelingBook}) vs ${loserWaitingOnP2.player.name} (DB: ${loserWaitingOnP2.player.duelingBook}).`})
-        }
-        else return message.channel.send({ content: `${losingPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`})
-    }, 2000)
     
-    if (!winnerNextMatch || (winnerNextMatch && loserNextMatch !== winnerNextMatch)) {
-        setTimeout(() => {
-            if (!winnerNextMatch) return message.channel.send({ content: `<@${winningPlayer.id}>, You won the tournament! Congratulations on your stellar performance! ${legend}`})
-            else if (winnerNextOpponent) return message.channel.send({ content: `New Match: <@${winningPlayer.id}> (DB: ${winningPlayer.duelingBook}) vs. <@${winnerNextOpponent.playerId}> (DB: ${winnerNextOpponent.player.duelingBook}). Good luck to both duelists.`})
-            else if (winnerMatchWaitingOn && winnerWaitingOnP1 && winnerWaitingOnP2) {
-                return message.channel.send({ content: `${winningPlayer.name}, You are waiting for the result of ${winnerWaitingOnP1.player.name} (DB: ${winnerWaitingOnP1.player.duelingBook}) vs ${winnerWaitingOnP2.player.name} (DB: ${winnerWaitingOnP2.player.duelingBook}).`})
-            }
-            else return message.channel.send({ content: `${winningPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`})
-        }, 4000)
-    }
+    if (tournament.type === 'single elimination' || tournament.type === 'double elimination') {
+        const updatedMatchesArr = await getMatches(server, tournament.id) || []
+        const winnerNextMatch = findNextMatch(updatedMatchesArr, matchId, winningEntry.participantId)
+        const winnerNextOpponent = winnerNextMatch ? await findNextOpponent(tournament.id, updatedMatchesArr, winnerNextMatch, winningEntry.participantId) : null
+        const winnerMatchWaitingOn = winnerNextOpponent ? null : findOtherPreReqMatch(updatedMatchesArr, winnerNextMatch, matchId) 
+        const winnerWaitingOnP1 = winnerMatchWaitingOn && winnerMatchWaitingOn.p1 && winnerMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: winnerMatchWaitingOn.p1 }, include: Player }) : null
+        const winnerWaitingOnP2 = winnerMatchWaitingOn && winnerMatchWaitingOn.p1 && winnerMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: winnerMatchWaitingOn.p2 }, include: Player }) : null
 
+        const loserEliminated = tournament.type === 'single elimination' ? true :
+            tournament.type === 'double elimination' && losingEntry.losses >= 2 ? true :
+            false
+
+        if (loserEliminated) {
+            const entries = await Entry.count({ where: { playerId: losingPlayer.id } })
+            if (entries === 1) {
+                const member = message.guild.members.cache.get(losingEntry.playerId)
+                if (member) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
+            }
+            await losingEntry.destroy()
+        }
+
+        const loserNextMatch = loserEliminated ? null : findNextMatch(updatedMatchesArr, matchId, losingEntry.participantId)
+        const loserNextOpponent = loserNextMatch ? await findNextOpponent(tournament.id, updatedMatchesArr, loserNextMatch, losingEntry.participantId) : null
+        const loserMatchWaitingOn = loserNextOpponent ? null : findOtherPreReqMatch(updatedMatchesArr, loserNextMatch, matchId) 
+        const loserWaitingOnP1 = loserMatchWaitingOn && loserMatchWaitingOn.p1 && loserMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: loserMatchWaitingOn.p1 }, include: Player }) : null
+        const loserWaitingOnP2 = loserMatchWaitingOn && loserMatchWaitingOn.p1 && loserMatchWaitingOn.p2 ? await Entry.findOne({ where: { tournamentId: tournament.id, participantId: loserMatchWaitingOn.p2 }, include: Player }) : null
+
+        setTimeout(() => {
+            if (loserEliminated) return message.channel.send({ content: `${losingPlayer.name}, You are eliminated from the tournament. Better luck next time!`})
+            else if (loserNextOpponent) return message.channel.send({ content: `New Match: <@${losingPlayer.id}> (DB: ${losingPlayer.duelingBook}) vs. <@${loserNextOpponent.playerId}> (DB: ${loserNextOpponent.player.duelingBook}). Good luck to both duelists.`})
+            else if (loserMatchWaitingOn && loserWaitingOnP1 && loserWaitingOnP2) {
+                return message.channel.send({ content: `${losingPlayer.name}, You are waiting for the result of ${loserWaitingOnP1.player.name} (DB: ${loserWaitingOnP1.player.duelingBook}) vs ${loserWaitingOnP2.player.name} (DB: ${loserWaitingOnP2.player.duelingBook}).`})
+            }
+            else return message.channel.send({ content: `${losingPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`})
+        }, 2000)
+        
+        if (!winnerNextMatch || (winnerNextMatch && loserNextMatch !== winnerNextMatch)) {
+            setTimeout(() => {
+                if (!winnerNextMatch) return message.channel.send({ content: `<@${winningPlayer.id}>, You won the tournament! Congratulations on your stellar performance! ${legend}`})
+                else if (winnerNextOpponent) return message.channel.send({ content: `New Match: <@${winningPlayer.id}> (DB: ${winningPlayer.duelingBook}) vs. <@${winnerNextOpponent.playerId}> (DB: ${winnerNextOpponent.player.duelingBook}). Good luck to both duelists.`})
+                else if (winnerMatchWaitingOn && winnerWaitingOnP1 && winnerWaitingOnP2) {
+                    return message.channel.send({ content: `${winningPlayer.name}, You are waiting for the result of ${winnerWaitingOnP1.player.name} (DB: ${winnerWaitingOnP1.player.duelingBook}) vs ${winnerWaitingOnP2.player.name} (DB: ${winnerWaitingOnP2.player.duelingBook}).`})
+                }
+                else return message.channel.send({ content: `${winningPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`})
+            }, 4000)
+        }
+    }
+    
     return true
 }
 
