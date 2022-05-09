@@ -137,8 +137,7 @@ const createDecks = async (server, tournament, useTags = true) => {
                                 const participant = data[j].participant
                                 const placement = parseInt(participant.final_rank, 10)
                                 const raw = fs.readFileSync(`./decks/${tournament.community}/${tournament.name}/${file}`, 'utf8')
-                                const dname = getDeckType({ name: tournament.community }, player, tournament.format, tournament.name)
-                                console.log('dname', dname)
+                                const dname = await getDeckType({ name: tournament.community }, player, tournament.format, tournament.name)
                                 const deckType = await DeckType.findOne({ 
                                     where: { 
                                         name: {[Op.iLike]: dname } 
