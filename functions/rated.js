@@ -48,7 +48,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             }
 
             const commonServer = await Server.findOne({ where: { id: commonGuildId }})
-            const channelId = commonServer.format ? channels[commonServer].ratedChannel : format.channel
+            const channelId = commonServer.format ? channels[commonServer.name].ratedChannel : format.channel
             const channel = guild.channels.cache.get(channelId)
             const player = await Player.findOne({ where: { id: potentialPair.playerId }})
             const opponent = await Player.findOne({ where: { id: newRatedPool.playerId }})

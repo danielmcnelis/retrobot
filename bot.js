@@ -2017,7 +2017,7 @@ try {
                     where: { 
                         playerId: ppid,
                         active: true,
-                        '$server.access$': {[Op.or]: ['full', 'partner']},
+                        '$server.access$': {[Op.or]: ['full', 'partner', 'affiliate']},
                         '$server.internalLadder$': false,
                         '$server.format$': {[Op.or]: [format.name, null]}
                     },
@@ -2064,7 +2064,7 @@ try {
                 } else {
                     const commonServer = await Server.findOne({ where: { id: commonGuildId }})
                     if (!commonServer) continue
-                    const channelId = commonServer.format ? channels[commonServer].ratedChannel : format.channel
+                    const channelId = commonServer.format ? channels[commonServer.name].ratedChannel : format.channel
                     const guild = client.guilds.cache.get(commonGuildId)
                     const channel = guild.channels.cache.get(channelId)
                     const opponent = await Player.findOne({ where: { id: potentialPair.playerId }})
