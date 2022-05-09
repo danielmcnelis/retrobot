@@ -271,7 +271,7 @@ const composeBlogPost = async (shortName) => {
             const card = main[i]
             const row = Math.floor(i / 10)
             const col = i % 10
-            const image = await Canvas.loadImage(`./public/images/cards/${card.ypdId}.jpg`) 
+            const image = await Canvas.loadImage(`../formatlibrary/public/images/cards/${card.ypdId}.jpg`) 
             context.drawImage(image, (card_width + 1) * col, row * (card_height + 1), card_width, card_height)
         }
 
