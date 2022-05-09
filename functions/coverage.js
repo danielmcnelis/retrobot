@@ -412,7 +412,6 @@ const selectCoverage = async (message) => {
 
 module.exports = {
     composeBlogPost,
-    composePreview,
     composeThumbnails,
     createDecks,
     selectCoverage
