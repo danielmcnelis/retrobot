@@ -783,6 +783,7 @@ try {
             server.name === 'GoatFormat.com' ? 'Ranked Players' :
             server.name === 'EdisonFormat.com' ? 'Dueling Book' :
             server.name === 'Lab' ? 'Ranked Players' :
+            server.name === 'Goat Format War League' ? 'Warheads' :
             server.name === 'Vegas (April 2014) Format' ? 'Duelist' :
             ''
 
