@@ -138,7 +138,7 @@ const createDecks = async (server, tournament, useTags = true) => {
                                 const placement = parseInt(participant.final_rank, 10)
                                 const raw = fs.readFileSync(`./decks/${tournament.community}/${tournament.name}/${file}`, 'utf8')
                                 const dname = getDeckType({ name: tournament.community }, player, tournament.format, tournament.name)
-                                const deckType = await DeckType.findOne({ where: { name: {[Op.iLike]: dname } }}) || { name: 'other', 'category': 'other' }
+                                const deckType = await DeckType.findOne({ where: { name: {[Op.iLike]: dname } }}) || { name: 'other', category: 'other' }
 
                                 const display = (size <= 8 && placement === 1) ||
                                                 (size > 8 && size <= 16 && placement <= 2) ||
