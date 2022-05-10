@@ -191,6 +191,8 @@ const search = async (query, fuzzyCards, format) => {
 		new Discord.MessageAttachment(`../formatlibrary/public/images/cards/${card.ypdId}.jpg`, `${card.ypdId}.jpg`) :
 		false
 
+    console.log('card.name', card.name)
+    console.log('card.name.replace(/ /g, \'_\')', card.name.replace(/ /g, '_'))
 	const thumbnail = attachment ? `attachment://${card.ypdId}.jpg` : `https://ygoprodeck.com/pics/${card.ypdId}.jpg`    
     const cardEmbed = new Discord.MessageEmbed()
 	cardEmbed.setColor(color)
