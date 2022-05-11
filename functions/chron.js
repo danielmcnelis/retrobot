@@ -1,5 +1,6 @@
 
 const axios = require('axios')
+const fs = require('fs')
 const { Card, Entry, Tournament, Membership, Player, Role, Server } = require('../db')
 const { client } = require('../static/clients.js')
 const { createMembership, createPlayer } = require('./utility')
