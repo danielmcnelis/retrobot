@@ -191,16 +191,12 @@ const search = async (query, fuzzyCards, format) => {
 		new Discord.MessageAttachment(`../formatlibrary/public/images/cards/${card.ypdId}.jpg`, `${card.ypdId}.jpg`) :
 		false
 
-    console.log('card.name', card.name)
-    console.log('card.name.replace(/ /g, \'_\')', card.name.replace(/ /g, '_'))
-    const url = card.name.replace(/ /g, '_')
-    console.log('url', url)
 	const thumbnail = attachment ? `attachment://${card.ypdId}.jpg` : `https://ygoprodeck.com/pics/${card.ypdId}.jpg`    
     const cardEmbed = new Discord.MessageEmbed()
 	cardEmbed.setColor(color)
 	cardEmbed.setTitle(card.name)
 	cardEmbed.setThumbnail(thumbnail)
-	cardEmbed.setDescription(`${labels.join('')}\n\n${card.description}${stats ? `\n\n${stats}` : ''}\n\nhttps://formatlibrary.com/cards/${url}`)
+	cardEmbed.setDescription(`${labels.join('')}\n\n${card.description}${stats ? `\n\n${stats}` : ''}\n\nhttps://formatlibrary.com/cards/${card.name.replace(/ /g, '_')}`)
 	return { cardEmbed, attachment }
 }
 
