@@ -13,7 +13,7 @@ const { Op } = require('sequelize')
 const { Card, Entry, Format, Info, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
 // FUNCTION IMPORTS
-const { conductCensus, downloadNewCards, getMidnightCountdown, updateAvatars, purgeEntries } = require('./functions/chron.js')
+const { conductCensus, downloadNewCards, getMidnightCountdown, updateAvatars, updateSets, purgeEntries } = require('./functions/chron.js')
 const { createDecks, composeBlogPost, composeThumbnails, selectCoverage } = require('./functions/coverage.js')
 const { checkDeckList, getDeckFormat, getIssues } = require( './functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
@@ -49,6 +49,7 @@ client.on('ready', async() => {
 	setTimeout(() => conductCensus(client), midnightCountdown + (1 * 60 * 1000))
 	setTimeout(() => updateAvatars(client), midnightCountdown + (6 * 60 * 1000))
     setTimeout(() => downloadNewCards(), midnightCountdown + (11 * 60 * 1000))
+    setTimeout(() => updateSets(), midnightCountdown + (16 * 60 * 1000))
 })
 
 // WELCOME
@@ -152,6 +153,7 @@ try {
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
             setTimeout(() => downloadNewCards())
+            setTimeout(() => updateSets(), 2 * 60 * 1000)
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
