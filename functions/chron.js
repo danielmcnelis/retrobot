@@ -1,7 +1,7 @@
 
 const axios = require('axios')
 const fs = require('fs')
-const { Card, Entry, Tournament, Membership, Player, Role, Server } = require('../db')
+const { Card, Entry, Tournament, Membership, Player, Print, Role, Server, Set } = require('../db')
 const { client } = require('../static/clients.js')
 const { createMembership, createPlayer } = require('./utility')
 const { Op } = require('sequelize')
@@ -168,6 +168,115 @@ const purgeEntries = async () => {
     return setTimeout(() => purgeEntries(), (24 * 60 * 60 * 1000))
 } 
 
+// FIND NEW PRINTS
+const findNewPrints = async (set, groupId) => {
+    let b = 0
+    let c = 0
+    let e = 0
+    const size = set.size
+    for (let offset = 0; offset < size; offset += 100) {
+        const endpoint = `https://api.tcgplayer.com/catalog/products?groupId=${groupId}&getExtendedFields=true&offset=${offset}&limit=100`
+        const { data } = await axios.get(endpoint, {
+            headers: {
+                "Accept": "application/json",
+                "Authorization": `bearer ${tcgPlayerAPI.access_token}`
+            }
+        })
+        
+        for (let i = 0; i < data.results.length; i++) {
+            try {
+                const result = data.results[i]
+                const count = await Print.count({
+                    where: {
+                        tcgPlayerProductId: result.productId
+                    }
+                })
+    
+                if (!count) {
+                    const name = result.name.replace(' (UTR)', '')
+                        .replace(' (SE)', '')
+                        .replace(' (Secret)', '')
+                        .replace(' (Shatterfoil)', '')
+                        .replace(' (Starfoil)', '')
+                        .replace(' (Duel Terminal)', '')
+                        .replace(' (The Sacred Cards)', '')
+                        .replace(' (Dark Duel Stories)', '')
+                        .replace(' (Forbidden Memories)', '')
+                        .replace(' (Power of Chaos: Kaiba the Revenge)', '')
+                        .replace(' (Reshef of Destruction)', '')
+                        .replace(' (Ultra Rare)', '')
+                        .replace(' (Ghost Rare)', '')
+                        
+                    const card = await Card.findOne({
+                        where: {
+                            name: {[Op.iLike]: name }
+                        }
+                    })
+    
+                    if (!card) {
+                        c++
+                        console.log(`could not find card for new print: ${result.name}`)
+                        continue
+                    }
+    
+                    const print = await Print.create({
+                        cardName: card.name,
+                        cardCode: result.extendedData[0].value,
+                        setName: set.setName,
+                        rarity: result.extendedData[1].value,
+                        cardId: card.id,
+                        setId: set.id,
+                        tcgPlayerUrl: result.url,
+                        tcgPlayerProductId: result.productId
+                    })
+    
+                    b++
+                    console.log(`created new print: ${print.rarity} ${print.cardCode} - ${print.cardName} (productId: ${print.tcgPlayerProductId})`)
+                }
+            } catch (err) {
+                console.log(err)
+                e++
+            }
+        }
+    }
+
+    return console.log(`created ${b} new prints for ${set.setName}, couldn't find ${c} cards, encountered ${e} errors`)
+}
+
+// GET NEW GROUP ID
+const getNewGroupId = async (setId) => {
+    const size = 600
+    const categoryId = `2`
+    for (let offset = 0; offset < size; offset += 100) {
+        const endpoint = `https://api.tcgplayer.com/catalog/categories/${categoryId}/groups?offset=${offset}&limit=100`
+        const { data } = await axios.get(endpoint, {
+            headers: {
+                "Accept": "application/json",
+                "Authorization": `bearer ${tcgPlayerAPI.access_token}`
+            }
+        })
+    
+        for (let i = 0; i < data.results.length; i++) {
+            const r = data.results[i]
+            const set = await Set.findOne({
+                where: {
+                    [Op.and]: [
+                        {setName: {[Op.iLike]: r.name}},
+                        {id: setId},
+                        {tcgPlayerGroupId: null}
+                    ]
+                }
+            })
+
+            if (set) {
+                set.tcgPlayerGroupId = r.groupId
+                await set.save()
+                return r.groupId
+            }
+        }
+    }   
+}
+
 // GET LINK ARROWS
 const getLinkArrows = (directionsArr = []) => {
     const arrows = []
@@ -235,6 +344,9 @@ const downloadCardImage = async (id) => {
 const downloadNewCards = async () => {
     let b = 0
     let c = 0
+    let t = 0
+    let o = 0
+    let e = 0
     const { data } = await axios.get('https://db.ygoprodeck.com/api/v7/cardinfo.php?misc=yes')
     for (let i = 0; i < data.data.length; i++) {
         const datum = data.data[i]
@@ -328,22 +440,104 @@ const downloadNewCards = async () => {
                 c++
                 card.name = datum.name
                 card.description = datum.desc
+                card.tcgLegal = !!datum.misc_info[0].tcg_date
+                card.ocgLegal = !!datum.misc_info[0].ocg_date
+                card.tcgDate = datum.misc_info[0].tcg_date ? datum.misc_info[0].tcg_date : null
+                card.ocgDate = datum.misc_info[0].ocg_date ? datum.misc_info[0].ocg_date : null
                 await card.save()
                 console.log(`New name: ${card.name} is now: ${datum.name}`)
+            } else if (card && (!card.tcgDate || !card.tcgLegal) && datum.misc_info[0].tcg_date) {
+                t++
+                card.name = datum.name
+                card.description = datum.desc
+                card.tcgDate = datum.misc_info[0].tcg_date
+                card.tcgLegal = true
+                await card.save()
+                console.log(`New TCG Card: ${card.name}`)
+            } else if (card && (!card.ocgDate || !card.ocgLegal) && datum.misc_info[0].ocg_date) {
+                o++
+                card.name = datum.name
+                card.description = datum.desc
+                card.ocgDate = datum.misc_info[0].ocg_date
+                card.ocgLegal = true
+                await card.save()
+                console.log(`New OCG Card: ${card.name}`)
+            }
+        } catch (err) {
+            e++
+            console.log(err)
+        }
+    }
+
+    console.log(`Found ${b} new cards, ${c} new names, ${t} new TCG cards, ${o} new OCG cards, encountered ${e} errors`)
+    return setTimeout(() => downloadNewCards(), (24 * 60 * 60 * 1000))
+}
+
+// UPDATE SETS
+const updateSets = async () => {
+    let b = 0
+    let c = 0
+    const { data } = await axios.get('https://db.ygoprodeck.com/api/v7/cardsets.php')
+    for (let i = 0; i < data.length; i++) {
+        try {
+            const datum = data[i]
+            if (!datum.set_name.includes('(POR)') && datum.tcg_date) {
+                let set = await Set.findOne({
+                    where: {
+                        [Op.and]: [
+                            {setName: {[Op.iLike]: datum.set_name}},
+                            {tcgPlayerGroupId: {[Op.not]: null}}
+                        ]
+                    }
+                })
+    
+                if (set && set.size !== datum.num_of_cards) {
+                    console.log(`updating size of ${set.setName} from ${set.size} to ${datum.num_of_cards}`)
+                    set.size = datum.num_of_cards
+                    await set.save()
+                    c++
+
+                    try {
+                        await findNewPrints(set, set.tcgPlayerGroupId)
+                        console.log(`collected prints for old set: ${datum.set_name} (${datum.set_code})`)
+                    } catch (err) {
+                        console.log(err)
+                    }
+                } else if (!set) {
+                    set = await Set.create({
+                        setName: datum.set_name,
+                        setCode: datum.set_code,
+                        size: datum.num_of_cards,
+                        tcgDate: datum.tcg_date
+                    })
+
+                    b++
+
+                    console.log(`created new set: ${datum.set_name} (${datum.set_code})`)
+                    const groupId = await getNewGroupId(set.id)
+
+                    try {
+                        await findNewPrints(set, groupId)
+                        console.log(`collected prints for new set: ${datum.set_name} (${datum.set_code})`)
+                    } catch (err) {
+                        console.log(err)
+                    }
+                }
             }
         } catch (err) {
             console.log(err)
         }
     }
 
-    console.log(`Found ${b} new cards and ${c} new names.`)
-    return setTimeout(() => downloadNewCards(), (24 * 60 * 60 * 1000))
+    console.log(`created ${b} new sets and updated ${c} other(s)`)
+    return setTimeout(() => updateSets(), (24 * 60 * 60 * 1000))
 }
 
 module.exports = {
     conductCensus,
     downloadNewCards,
     getMidnightCountdown,
+    purgeEntries,
     updateAvatars,
-    purgeEntries
+    updateSets
 }

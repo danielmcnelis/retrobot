@@ -13,11 +13,15 @@ const Set = db.define('sets', {
   },
   tcgDate: {
     type: Sequelize.TEXT,
-    allowNull: false
+    allowNull: true
   },
   size: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: true
+  },
+  tcgPlayerGroupId: {
+    type: Sequelize.INTEGER,
+    allowNull: true
   }
 })
 
