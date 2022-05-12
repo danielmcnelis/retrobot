@@ -2,7 +2,7 @@
 const axios = require('axios')
 const fs = require('fs')
 const { Card, Entry, Tournament, Membership, Player, Print, Role, Server, Set } = require('../db')
-const { client } = require('../static/clients.js')
+const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
 const { Op } = require('sequelize')
 
