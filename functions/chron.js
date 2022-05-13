@@ -481,7 +481,7 @@ const updateSets = async () => {
     for (let i = 0; i < data.length; i++) {
         try {
             const datum = data[i]
-            if (!datum.set_name.includes('(POR)') && datum.tcg_date) {
+            if (!datum.set_name.includes('Shonen Jump') && !datum.set_name.includes('(POR)') && datum.tcg_date) {
                 let set = await Set.findOne({
                     where: {
                         setName: {[Op.iLike]: datum.set_name }
