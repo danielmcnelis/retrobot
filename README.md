@@ -66,10 +66,9 @@ RetroBot provides useful information about various Yu-Gi-Oh! formats, decks, and
 
 # Card Search - Free Tier
 
-RetroBot is the most powerful Discord bot for looking up Yu-Gi-Oh! cards. Cards are updated every day at midnight EST.
+RetroBot is the most powerful Discord bot for looking up Yu-Gi-Oh! cards. Cards are updated nightly.
 
-• Users can search for cards with **{Card Name}**.<br/>
-• Users can set the format for their server with **!format**.<br/>
+• Discord users can search for cards with **{Card Name}**.<br/>
 • RetroBot displays found cards in visually appealing Discord Message Embeds using colorful emojis and high quality images.<br/>
 • RetroBot links to the card's Mobile-friendly FormatLibrary.com webpage, which provides more extensive information.<br/>
 • RetroBot displays legality and forbidden/limited status in Affiliate/Partner servers, or if a format is manually set.<br/>
