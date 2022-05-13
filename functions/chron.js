@@ -484,10 +484,7 @@ const updateSets = async () => {
             if (!datum.set_name.includes('(POR)') && datum.tcg_date) {
                 let set = await Set.findOne({
                     where: {
-                        [Op.and]: [
-                            {setName: {[Op.iLike]: datum.set_name}},
-                            {tcgPlayerGroupId: {[Op.not]: null}}
-                        ]
+                        setName: {[Op.iLike]: datum.set_name }
                     }
                 })
     
