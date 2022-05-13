@@ -7,9 +7,10 @@ Features are gated behind access tiers: Free, Affiliate ($15 setup), Partner ($4
 Add this bot to your Discord server: https://discord.bots.gg/bots/730922003296419850<br/>
 For additional help: contact me on Discord at Jazz#2704
 
-# Tournament Host Functions - Partner Tier
+# Tournament Host - Partner Tier
 
-RetroBot makes it easy to run large, real-time Yu-Gi-Oh! tournaments from your Discord server.<br/>
+RetroBot makes it easy to run large, real-time Yu-Gi-Oh! tournaments from your Discord server.
+
 • RetroBot connects to Challonge.com via your Challonge API Key to manage tournament brackets.<br/>
 • Hosts create new tournament brackets on their Challonge accounts with **!create**.<br/>
 • Players register for tournaments with **!join** and submit a deck (via duelingbook.com/deck link).<br/>
@@ -27,9 +28,10 @@ RetroBot makes it easy to run large, real-time Yu-Gi-Oh! tournaments from your D
 • Hosts can delete unstarted tournaments on their Challonge accounts with **!destroy**.<br/>
 • Hosts can time rounds if desired with **!timer n**, where n = number of minutes.<br/>
 
-# Rated Play and Matchmaking Functions - Affiliate Tier
+# Matchmaking - Affiliate Tier
 
-RetroBot allows your Discord users to participate in FormatLibrary.com sanctioned Rated Play for one (1) format of your choosing. This includes the popular matchmaking and leaderboard systems.<br/>
+RetroBot allows your Discord users to participate in FormatLibrary.com sanctioned Rated Play for one (1) format of your choosing. This includes the popular matchmaking and leaderboard systems.
+
 • Players can anonymously join rated pools by DM'ing **!rated** to RetroBot.<br/>
 • Players indicate which FormatLibrary.com supported Yu-Gi-Oh! format they wish to play.<br/>
 • Players submit a deck (via duelingbook.com/deck link) or select a previously submitted deck for Rated Play.<br/>
@@ -40,6 +42,9 @@ RetroBot allows your Discord users to participate in FormatLibrary.com sanctione
 • Any player waiting in the pool less than 10 minutes must play if matched, otherwise they need to reconfirm.<br/>
 • Players can leave a Rated Pool at any time by DM'ing **!exit** to RetroBot.<br/>
 • When 2 players are successfully paired, they receive a DM telling them (1) who to play and (2) the host Discord server.<br/>
+
+# Rated Play - Affiliate Tier
+
 • Players are asked to report match results with **!loss @opponent**.<br/>
 • Moderators can report a result for other players with **!manual @winner @loser**.<br/>
 • RetroBot calculates the resulting change in Elo and updates both players's stats for the format they played.<br/>
@@ -49,16 +54,18 @@ RetroBot allows your Discord users to participate in FormatLibrary.com sanctione
 • Players can view a graph of their Elo history with **!hist n**, where n = number of recent matches (default is 250).<br/>
 • Players can check their head-to-head record against another player with **!h2h @player**.<br/>
 
-# Format Information Functions - Free Tier
+# Format Information - Free Tier
 
-RetroBot provides useful information about various Yu-Gi-Oh! formats, decks, and players.<br/>
+RetroBot provides useful information about various Yu-Gi-Oh! formats, decks, and players.
+
 • Players can view the Forbidden and Limited lists governing any format with **!banlist**.<br/>
 • Players can check deck legality with **!legal** and they DM their deck to RetroBot (via duelingbook.com/deck link).<br/>
 • Players can check their FormatLibrary.com profile or another player's with **!profile** or **!profile @player**.<br/>
 
-# Card Search Function - Free Tier
+# Card Search - Free Tier
 
-RetroBot is the most powerful Discord bot for looking up Yu-Gi-Oh! cards. Cards are updated every day at midnight EST.<br/>
+RetroBot is the most powerful Discord bot for looking up Yu-Gi-Oh! cards. Cards are updated every day at midnight EST.
+
 • Users can search for cards with **{Card Name}**.<br/>
 • Users can set the format for their server with **!format**.<br/>
 • RetroBot displays found cards in visually appealing Discord Message Embeds using colorful emojis and high quality images.<br/>
