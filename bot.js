@@ -247,20 +247,6 @@ try {
             return message.channel.send({ content: `You do not have a DuelingBook username in our database. You can type **!db** followed by your username to save it.`})
         }
     }
-
-    // POLITICS
-    if (cmd === `!politics`) {
-        if (server.name !== 'Format Library' || !hasFullAccess(server)) return message.channel.send({ content: `This feature is only available in Format Library. ${emojis.FL}`}) 
-        if(message.member.roles.cache.some(role => role.id === roles['Format Library'].bfpRole)) {
-            return message.channel.send({ content: `You do not have permission to do that.`})
-        } else if (!message.member.roles.cache.some(role => role.id === roles['Format Library'].politicsRole)) {
-			message.member.roles.add(roles['Format Library'].politicsRole).catch((err) => console.log(err))
-            return message.channel.send({ content: `You now have the Politics role.`})
-        } else {
-            message.member.roles.remove(roles['Format Library'].politicsRole).catch((err) => console.log(err))
-            return message.channel.send({ content: `You no longer have the Politics role.`})
-        }
-    }
         
     // CREATE 
     if (cmd === `!create`) {
