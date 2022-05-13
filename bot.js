@@ -114,7 +114,6 @@ try {
     const cmd = marr[0] ? marr[0].toLowerCase() : ''
     const args = marr[1] ? marr.slice(1) : ''
     const maid = message.author.id
-    if (maid === '597814337637187617' || message.content.includes('597814337637187617')) return
     const mcid = message.channel.id
     const mgid = message.guild ? message.guild.id : null
     
@@ -152,8 +151,7 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            setTimeout(() => downloadNewCards())
-            setTimeout(() => updateSets(), 2 * 60 * 1000)
+            setTimeout(() => updateSets())
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
