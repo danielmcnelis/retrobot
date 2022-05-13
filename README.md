@@ -30,7 +30,7 @@ RetroBot makes it easy to run large, real-time Yu-Gi-Oh! tournaments from your D
 
 # Matchmaking - Affiliate Tier
 
-RetroBot allows your Discord users to participate in FormatLibrary.com sanctioned Rated Play for one (1) format of your choosing. This includes the popular matchmaking and leaderboard systems.
+RetroBot allows your Discord users to participate in a matchmaking system for one (1) format of your choosing.
 
 • Players can anonymously join rated pools by DM'ing **!rated** to RetroBot.<br/>
 • Players indicate which FormatLibrary.com supported Yu-Gi-Oh! format they wish to play.<br/>
@@ -44,6 +44,8 @@ RetroBot allows your Discord users to participate in FormatLibrary.com sanctione
 • When 2 players are successfully paired, they receive a DM telling them (1) who to play and (2) the host Discord server.<br/>
 
 # Rated Play - Affiliate Tier
+
+RetroBot grants your server access to FormatLibrary.com Rated Play for one (1) format of your choosing.
 
 • Players are asked to report match results with **!loss @opponent**.<br/>
 • Moderators can report a result for other players with **!manual @winner @loser**.<br/>
