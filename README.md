@@ -2,22 +2,23 @@
 
 A sleek Discord bot for hosting tournaments, matchmaking, and leaderboards for a wide range of different Yu-Gi-Oh! TCG formats. It is also by far the highest quality Discord bot for looking up Yu-Gi-Oh! cards, displaying key information such as: release date, original print and rarity, forbidden/limited status, and emojis for attribute, spell/trap icons, star icons, and monster types.
 
-Features are gated behind access tiers: Free, Affiliate ($15 setup), Partner ($40 setup + $20 annually). A handful of features such as access all formats will remain Format Library exclusives.
+Features are gated behind access tiers: Free, Affiliate ($15 setup), Partner ($40 setup + $20 annually). A handful of features such as access to Rated Play for all formats will remain Format Library exclusives.
 
 Add this bot to your Discord server: https://discord.bots.gg/bots/730922003296419850
+
 For additional help: contact me on Discord at Jazz#2704
 
 # Tournament Host Functions - Partner Tier
 
 RetroBot makes it easy to run large, real-time Yu-Gi-Oh! tournaments from your Discord server.
-• RetroBot connects to Challonge.com via your Challonge API Key to manage tournament brackets.
-• Hosts create new tournament brackets on their Challonge accounts with **!create**.
-• Players register for tournaments with **!join** and submit a deck (via duelingbook.com/deck link).
-• Hosts can register players for tournaments with **!signup @player**.
-• RetroBot saves players's decks as .YDKs and checks their legality when they register.
-• RetroBot adds players to brackets on Challonge and removes them if they **!drop**.
-• Hosts can remove players from tournaments with **!remove @player**.
-• Hosts can control registration windows with **!close** and **!open**.
+\n• RetroBot connects to Challonge.com via your Challonge API Key to manage tournament brackets.
+\n• Hosts create new tournament brackets on their Challonge accounts with **!create**.
+\n• Players register for tournaments with **!join** and submit a deck (via duelingbook.com/deck link).
+\n• Hosts can register players for tournaments with **!signup @player**.
+\n• RetroBot saves players's decks as .YDKs and checks their legality when they register.
+\n• RetroBot adds players to brackets on Challonge and removes them if they **!drop**.
+\n• Hosts can remove players from tournaments with **!remove @player**.
+\n• Hosts can control registration windows with **!close** and **!open**.
 • Hosts **!start** the tournament, which triggers seeding based on players's rankings.
 • Players are notified when paired and the loser of the match is asked to report with **!loss @opponent**.
 • Hosts can directly manage the bracket with **!noshow @player** or **!manual @winner @loser**.
