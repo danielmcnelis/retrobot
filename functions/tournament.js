@@ -465,6 +465,7 @@ const postParticipant = async (server, tournament, player) => {
 // GET GAME COUNT
 const getGameCount = async (message, tournament, noshow) => {
     if (noshow) return [0, 0]
+    else return [1, 0]
     if (tournament.type === 'double elimination' || tournament.type === 'single elimination') return [1, 0]
     
     const filter = m => m.author.id === message.author.id

@@ -927,6 +927,59 @@ try {
         return message.channel.send({ content: "I messaged you the RetroBot Moderator Guide."})
     }
 
+    if (cmd === '!resources') {
+        const resources = [
+            '**Resources**',
+            'Card Database: https://formatlibrary.com/cards',
+            'Deck Database: https://formatlibrary.com/decks',
+            'Event Database: https://formatlibrary.com/events',
+            'Goat Format Ruleset: https://bit.ly/2VUB3Yx',
+            '\n**Discord Servers**',
+            'GoatFormat: https://discord.gg/kVeKDwm',
+            'EdisonFormat: https://discord.com/invite/rceESCvNkf',
+            'Yu-Gi-Oh! Legacy: https://discord.gg/XUpSqjY',
+            'OCG Archives: https://discord.gg/nKDPdxh',
+            '\n**YouTube**',
+            'FormatLibrary: https://bit.ly/2viVkv3',
+            'GoatFormat: https://bit.ly/2GzTdK9',
+            'GCI: https://bit.ly/36YPeBc',
+            'YGOLegacy: https://bit.ly/2SRuLJo',
+            'Jazz: https://bit.ly/2Gbr9Pv',
+            'Ed Edd and Edison: https://bit.ly/38sHric',
+            'Mascis: https://bit.ly/2Dld65q',
+            'Kris Perovic: https://youtube.com/user/yugioverdose',
+            '\n**Twitch**',
+            'FormatLibrary: https://twitch.tv/formatlibrary/',
+            'GoatFormat: https://twitch.tv/goatformat',
+            'AJTBLS: https://twitch.tv/AJTBLS',
+            'Mascis: https://twitch.tv/mascis',
+            'MMF: https://twitch.tv/emem_eff',
+            '\n**Websites**',
+            'Format Library: https://formatlibrary.com/',
+            'GoatFormat: https://goatformat.com/',
+            'EdisonFormat: https://edisontformat.com/',
+            'GoatStats: https://goatstats.weebly.com/',
+            'WGM\'s Blog: https://worldgonemaad.wordpress.com/',
+            '\n**Tournament Reports**',
+            'Noelle FLC8 2019: https://bit.ly/2VUa0N6',
+            'Siwski Colosseum 2019: https://bit.ly/2PiiOK9',
+            'Me. Berlin 2018: https://bit.ly/2XteqLb',
+            'WGM FLC2 2018: https://bit.ly/2vbx6my',
+            'Jazz FLC1 2018: https://bit.ly/2Dm42xi',
+            'MMF War League 2017: https://bit.ly/2UIvrnL',
+            'Perovic War League 2014: https://bit.ly/2ZnfO3J',
+            'Nolan Toy Wiz 2014: https://bit.ly/2Zok439',
+            'Bonacini Goat Controller 2014: https://bit.ly/2Gz62nX',
+            '\n**Articles**',
+            'Intro to Goat Format by Bonacini: https://bit.ly/2vbxGke',
+            'Goat Manifesto by ACP: https://bit.ly/2UwcdfX',
+            'A Brief History of Chaos Control by MMF: https://bit.ly/2VUD1Z5',
+            'Anteaus\'s YPD Articles: https://bit.ly/2IwJpCx ',
+        ]
+        
+        return message.author.send(resources.join('\n'))
+    }
+
     // PROFILE
     if (commands.profcom.includes(cmd)) {
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
