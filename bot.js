@@ -164,7 +164,7 @@ try {
             const tournaments = await Tournament.findAll({
                 where: {
                     guildId: mgid,
-                    updatedAt: { [Op.gte]: "2021-12-06 03:20:04.198+00" },
+                    createdAt: { [Op.gte]: "2022-03-01 00:00:00.000+00" },
                 },
                 order: [["createdAt", "ASC"]],
             })
@@ -174,14 +174,12 @@ try {
             const { name } = tournament
 
             try {
-                const token = await checkExpiryDate()
-                await uploadDeckFolder(name, token)
-                return message.channel.send({ content: `Your tournament files have been uploaded! ${FL}` })
+                await checkExpiryDate(server)
+                await uploadDeckFolder(server, name)
+                return message.channel.send({ content: `Your tournament files have been uploaded! ${emojis[server.name]}` })
             } catch (err) {
                 console.log(err)
-                const programmer = message.guild.members.cache.get('194147938786738176')
-                programmer.send({ content: `Error uploading data for ${name} on Google Drive.` })
-                return message.channel.send({ content: `Error. Check programmer's DMs.` })
+                return message.channel.send({ content: `Error. Check bot logs.` })
             }
         } else {
             return message.channel.send({ content: `🛠️` })
@@ -448,7 +446,7 @@ try {
 		if (status && status === 200) { 
 			tournament.state = 'underway'
 			await tournament.save()
-            await checkExpiryDate()
+            await checkExpiryDate(server)
             const { sheets, oAuth2Client } = await connectToSheets()
 			const spreadsheetId = await makeSheet(sheets, `${name} Deck Lists`, sheet1Data)
 			await addSheet(sheets, oAuth2Client, spreadsheetId, 'Summary')
