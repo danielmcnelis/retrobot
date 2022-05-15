@@ -83,7 +83,6 @@ const createDecks = async (message, tournament, useTags = true) => {
                     // if (query === 'Unfortunately__I_am_from_Bosnia_2437') query = 'Bonkai_2437'
                     // if (query === 'LWRS_5826') query = 'Asgeir_5826'
                     // if (query === 'keininsder_1992') query = 'Keininsder_1992'
-
                     // if (query === 'IAMZ1_5635') query = 'Sohaib_DB_IAMZ1__5635'
                     // if (query === 'Randage_8521') query = 'Randage_0001'
                     // if (query === 'brahimpoke_3361') query = 'brahimtrish_3361'
@@ -247,6 +246,31 @@ const composeBlogPost = async (message, shortName) => {
         const blogTitleDate = dateToVerbose(tournament.endDate, false, false, true)
         const publishDate = dateToVerbose(tournament.endDate, true, true, false)
     
+        const main = []
+        const mainKonamiCodes = deck.ydk.split('#main')[1].split('#extra')[0].split('\n').filter((e) => e.length)
+
+        for (let i = 0; i < mainKonamiCodes.length; i++) {
+            let konamiCode = mainKonamiCodes[i]
+            while (konamiCode.length < 8) konamiCode = '0' + konamiCode
+            const card = await Card.findOne({ where: { konamiCode }})
+            if (!card) continue
+            main.push(card)
+        }
+
+        main.sort((a, b) => {
+            if (a.sortPriority > b.sortPriority) {
+                return 1
+            } else if (b.sortPriority > a.sortPriority) {
+                return -1
+            } else if (a.name > b.name) {
+                return 1
+            } else if (b.name > a.name) {
+                return -1
+            } else {
+                return false
+            }
+        })
+
         const rows = Math.ceil(main.length / 10)
         const card_width = 72
         const card_height = 105
