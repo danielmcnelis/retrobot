@@ -176,8 +176,8 @@ const createDecks = async (message, tournament, useTags = true) => {
                                     playerId: player.id,
                                     community: tournament.community,
                                     tournamentId: tournament.id,
-                                    createdAt: startedAt,
-                                    updatedAt: startedAt
+                                    createdAt: tournament.startedAt,
+                                    updatedAt: tournament.startedAt
                                 })
 
                                 b++
