@@ -2290,7 +2290,7 @@ try {
         if (!tournament) return message.channel.send(`No tournament found.`)
         const coverageType = await selectCoverage(message)
         if (!coverageType) return
-        if (coverageType.includes('Create Deck')) return createDecks(message, tournament)
+        if (coverageType.includes('Upload Decks')) return createDecks(message, tournament)
         if (coverageType.includes('Thumbnail')) return composeThumbnails(message, event)
         if (coverageType.includes('BlogPost')) return composeBlogPost(message, event)
     }

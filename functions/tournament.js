@@ -502,7 +502,7 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
         return false
     } 
 
-    const gameCount = await getGameCount(message, tournament, noshow) || []
+    const gameCount = noshow ? [0, 0] : [1, 0]
     if (!gameCount || !gameCount.length) {
         message.channel.send({ content: `Please specify a valid game count.`})
         return false
