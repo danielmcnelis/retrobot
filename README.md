@@ -1,10 +1,11 @@
 # RetroBot
 
-A sleek Discord bot for hosting tournaments, matchmaking, and leaderboards for a wide range of different Yu-Gi-Oh! TCG formats. It is also by far the highest quality Discord bot for looking up Yu-Gi-Oh! cards, displaying key information such as: release date, original print and rarity, forbidden/limited status, and emojis for attribute, spell/trap icons, star icons, and monster types.
+A sleek Discord bot for hosting tournaments, matchmaking, and leaderboards for a wide range of different Yu-Gi-Oh! TCG formats. It is also by far the highest quality Discord bot for looking up Yu-Gi-Oh! cards, displaying key information such as: release date, original print and rarity, Forbidden/Limited status, and emojis for Attribute, Spell/Trap icons, Star icons, and Monster-types.
 
 Features are gated behind access tiers: Free, Affiliate ($15 setup), Partner ($40 setup + $20 annually). A handful of features such as access to Rated Play for all formats will remain Format Library exclusives.
 
-Add this bot to your Discord server: https://discord.bots.gg/bots/730922003296419850<br/>
+This app was built with Discord.js, FuzzySet, Canvas, QuickChart, Axios, Sequelize, and PostgreSQL.<br/>
+Click here to add this bot to your Discord server: https://discord.bots.gg/bots/730922003296419850<br/>
 For additional help: contact me on Discord at Jazz#2704
 
 ![Bot Profile](/public/Bot-Profile.png)
