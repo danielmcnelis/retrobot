@@ -78,7 +78,7 @@ RetroBot provides useful information about various Yu-Gi-Oh! formats, decks, and
 • Players can check deck legality with **!legal** and they DM their deck to RetroBot (via duelingbook.com/deck link).<br/>
 • Players can check their FormatLibrary.com profile or another player's with **!profile** or **!profile @player**.<br/>
 
-![Legal Check](/public/Legal-Check.png)
+![Legality Check](/public/Legality-Check.png)
 
 # Card Search - Free Tier
 
