@@ -50,6 +50,8 @@ RetroBot allows your Discord users to participate in a matchmaking system for on
 • Players can leave a Rated Pool at any time by DM'ing **!exit** to RetroBot.<br/>
 • When 2 players are successfully paired, they receive a DM telling them (1) who to play and (2) the host Discord server.<br/>
 
+![Rated](/public/Rated.png)
+
 # Rated Play - Affiliate Tier
 
 RetroBot grants your server access to FormatLibrary.com Rated Play for one (1) format of your choosing.
@@ -60,8 +62,14 @@ RetroBot grants your server access to FormatLibrary.com Rated Play for one (1) f
 • Players can undo their own report and Moderators can undo any report with **!undo** if a mistake is made.<br/>
 • Players can check their stats (ranking, Elo, medal, W/L record) or another player's with **!stats** or **!stats @player**.<br/>
 • Players can view the current leaderboard with **!top n**, where n = desired cutoff (default is 10).<br/>
+
+![Stats](/public/Stats.png)
+![Top](/public/Top.png)
+
 • Players can view a graph of their Elo history with **!hist n**, where n = number of recent matches (default is 250).<br/>
 • Players can check their head-to-head record against another player with **!h2h @player**.<br/>
+
+![History](/public/History.png)
 
 # Format Information - Free Tier
 
@@ -70,6 +78,8 @@ RetroBot provides useful information about various Yu-Gi-Oh! formats, decks, and
 • Players can view the Forbidden and Limited lists governing any format with **!banlist**.<br/>
 • Players can check deck legality with **!legal** and they DM their deck to RetroBot (via duelingbook.com/deck link).<br/>
 • Players can check their FormatLibrary.com profile or another player's with **!profile** or **!profile @player**.<br/>
+
+![Legal Check](/public/Legal-Check.png)
 
 # Card Search - Free Tier
 
@@ -81,6 +91,4 @@ RetroBot is the most powerful Discord bot for looking up Yu-Gi-Oh! cards. Cards 
 • RetroBot displays legality and forbidden/limited status in Affiliate/Partner servers, or if a format is manually set.<br/>
 • Free Tier users can set the format for their server one (1) time with **!format**. To change this please contact me.<br/>
 
-![Card Search](/public/Card-Search-2.png)
-
-<!-- ![Card Search](/public/Card-Search.png) -->
+![Card Search](/public/Card-Search.png)
