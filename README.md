@@ -4,7 +4,7 @@ A sleek Discord bot for hosting tournaments, matchmaking, and leaderboards for a
 
 Features are gated behind access tiers: Free, Affiliate ($15 setup), Partner ($40 setup + $20 annually). A handful of features such as access to Rated Play for all formats will remain Format Library exclusives.
 
-This app was built with Discord.js, FuzzySet, Canvas, QuickChart, Axios, Sequelize, and PostgreSQL.<br/>
+This app was built with Discord.js (user interaction and front-end output), FuzzySet (card search algorithms), Canvas (drawing decks), QuickChart (plotting charts), Axios (fetching external data), PostgreSQL (internal database), and Sequelize (interacting with internal datase).<br/>
 Click here to add this bot to your Discord server: https://discord.bots.gg/bots/730922003296419850<br/>
 For additional help: contact me on Discord at Jazz#2704
 
