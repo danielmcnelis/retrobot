@@ -19,6 +19,9 @@ RetroBot makes it easy to run large, real-time Yu-Gi-Oh! tournaments from your D
 • Hosts can register players for tournaments with **!signup @player**.<br/>
 • RetroBot saves players's decks as .YDKs and checks their legality when they register.<br/>
 • RetroBot adds players to brackets on Challonge and removes them if they **!drop**.<br/>
+
+![Tournament Registration](/public/Tournament-Registration.png)
+
 • Hosts can remove players from tournaments with **!remove @player**.<br/>
 • Hosts can control registration windows with **!close** and **!open**.<br/>
 • Hosts **!start** the tournament, which triggers seeding based on players's rankings.<br/>
@@ -29,6 +32,8 @@ RetroBot makes it easy to run large, real-time Yu-Gi-Oh! tournaments from your D
 • Hosts **!end** the tournament, which uploads a spreadsheet summary and .YDKs to your Google Drive.<br/>
 • Hosts can delete unstarted tournaments on their Challonge accounts with **!destroy**.<br/>
 • Hosts can time rounds if desired with **!timer n**, where n = number of minutes.<br/>
+
+![Tournament Hosting](/public/Tournament-Hosting.png)
 
 # Matchmaking - Affiliate Tier
 
