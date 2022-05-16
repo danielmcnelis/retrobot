@@ -64,10 +64,10 @@ RetroBot grants your server access to FormatLibrary.com Rated Play for one (1) f
 • RetroBot calculates the resulting change in Elo and updates both players's stats for the format they played.<br/>
 • Players can undo their own report and Moderators can undo any report with **!undo** if a mistake is made.<br/>
 • Players can check their stats (ranking, Elo, medal, W/L record) or another player's with **!stats** or **!stats @player**.<br/>
-• Players can view the current leaderboard with **!top n**, where n = desired cutoff (default is 10).<br/>
 
 ![Stats](/public/Stats.png)
 
+• Players can view the current leaderboard with **!top n**, where n = desired cutoff (default is 10).<br/>
 • Players can view a graph of their Elo history with **!hist n**, where n = number of recent matches (default is 250).<br/>
 • Players can check their head-to-head record against another player with **!h2h @player**.<br/>
 
