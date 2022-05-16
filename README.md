@@ -7,7 +7,7 @@ Features are gated behind access tiers: Free, Affiliate ($15 setup), Partner ($4
 Add this bot to your Discord server: https://discord.bots.gg/bots/730922003296419850<br/>
 For additional help: contact me on Discord at Jazz#2704
 
-![Bot Profile](Bot-Profile.png)
+![Bot Profile](/public/Bot-Profile.png)
 
 # Tournament Host - Partner Tier
 
