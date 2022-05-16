@@ -64,7 +64,6 @@ RetroBot grants your server access to FormatLibrary.com Rated Play for one (1) f
 • Players can view the current leaderboard with **!top n**, where n = desired cutoff (default is 10).<br/>
 
 ![Stats](/public/Stats.png)
-![Top](/public/Top.png)
 
 • Players can view a graph of their Elo history with **!hist n**, where n = number of recent matches (default is 250).<br/>
 • Players can check their head-to-head record against another player with **!h2h @player**.<br/>
