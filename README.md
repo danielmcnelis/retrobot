@@ -47,11 +47,11 @@ RetroBot allows your Discord users to participate in a matchmaking system for on
 
 ![Rated Pairing](/public/Join-Rated.png)
 
-• RetroBot posts a notification in all servers and channels that support that specific Rated Pool when someone joins.<br/>
-• RetroBot attempts to match players who (1) share a common Discord server and (2) have not played each other recently.<br/>
+• RetroBot posts a notification in all servers and channels that support that Rated Pool when someone joins.<br/>
+• RetroBot attempts to match players who (1) share a common Discord server and (2) have not played recently.<br/>
 • Any player waiting in the pool less than 10 minutes must play if matched, otherwise they need to reconfirm.<br/>
 • Players can leave a Rated Pool at any time by DM'ing **!exit** to RetroBot.<br/>
-• When 2 players are successfully paired, they receive a DM telling them (1) who to play and (2) the host Discord server.<br/>
+• When 2 players are successfully paired, they (1) receive a DM telling them who to play, and (2) RetroBot announces the pairing in the host server.<br/>
 
 ![Rated Pairing](/public/Rated-Pairing.png)
 
@@ -88,8 +88,8 @@ RetroBot provides useful information about various Yu-Gi-Oh! formats, decks, and
 RetroBot is the most powerful Discord bot for looking up Yu-Gi-Oh! cards. Cards are updated nightly.
 
 • Discord users can search for cards with **{Card Name}**.<br/>
-• RetroBot displays found cards in visually appealing Discord Message Embeds using colorful emojis and high quality images.<br/>
-• RetroBot links to the card's Mobile-friendly FormatLibrary.com webpage, which provides more extensive information.<br/>
+• RetroBot posts results in visually appealing Discord Message Embeds using colorful emojis and quality images.<br/>
+• RetroBot links the card's Mobile-friendly FormatLibrary.com page, which provides more extensive information.<br/>
 • RetroBot displays legality and forbidden/limited status in Affiliate/Partner servers, or if a format is manually set.<br/>
 • Free Tier users can set the format for their server one (1) time with **!format**. To change this please contact me.<br/>
 
