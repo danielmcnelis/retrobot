@@ -89,7 +89,7 @@ RetroBot is the most powerful Discord bot for looking up Yu-Gi-Oh! cards. Cards 
 
 • Discord users can search for cards with **{Card Name}**.<br/>
 • RetroBot posts results in visually appealing Discord Message Embeds using colorful emojis and quality images.<br/>
-• RetroBot links the card's Mobile-friendly FormatLibrary.com page, which provides more extensive information.<br/>
+• RetroBot links the card's mobile-friendly FormatLibrary.com webpage, which provides more extensive information.<br/>
 • RetroBot displays legality and forbidden/limited status in Affiliate/Partner servers, or if a format is manually set.<br/>
 • Free Tier users can set the format for their server one (1) time with **!format**. To change this please contact me.<br/>
 
