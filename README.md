@@ -44,13 +44,16 @@ RetroBot allows your Discord users to participate in a matchmaking system for on
 • Players submit a deck (via duelingbook.com/deck link) or select a previously submitted deck for Rated Play.<br/>
 • RetroBot saves players's decks as .YDKs and checks their legality when they join pools.<br/>
 • RetroBot creates a Node Canvas drawing of a player's deck to show them what they selected.<br/>
+
+![Rated Pairing](/public/Join-Rated.png)
+
 • RetroBot posts a notification in all servers and channels that support that specific Rated Pool when someone joins.<br/>
 • RetroBot attempts to match players who (1) share a common Discord server and (2) have not played each other recently.<br/>
 • Any player waiting in the pool less than 10 minutes must play if matched, otherwise they need to reconfirm.<br/>
 • Players can leave a Rated Pool at any time by DM'ing **!exit** to RetroBot.<br/>
 • When 2 players are successfully paired, they receive a DM telling them (1) who to play and (2) the host Discord server.<br/>
 
-![Rated](/public/Rated.png)
+![Rated Pairing](/public/Rated-Pairing.png)
 
 # Rated Play - Affiliate Tier
 
