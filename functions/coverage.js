@@ -234,7 +234,7 @@ const composeBlogPost = async (message, shortName) => {
         const decks = await Deck.findAll({ 
             where: {
                 format: {[Op.iLike]: tournament.format },
-                createdAt: {[Op.lte]: tournament.startDate }
+                createdAt: {[Op.lte]: tournament.endDate }
             }
         })
     
