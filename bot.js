@@ -1454,8 +1454,11 @@ try {
         if (!winningPlayer || !winnerStats) return message.channel.send({ content: `That user is not in the database.`})
  
         const loserHasTourRole = isTourPlayer(server, message.member)
+        console.log('!!loserHasTourRole', !!loserHasTourRole)
         const winnerHasTourRole = isTourPlayer(server, winner)
+        console.log('!!winnerHasTourRole', !!winnerHasTourRole)
         const activeTournament = await Tournament.count({ where: { state: 'underway', guildId: mgid } }) 
+        console.log('!!activeTournament', !!activeTournament)
         let isTournamentMatch
         let winningEntry
         let losingEntry
@@ -1492,6 +1495,7 @@ try {
                     }
                 }
 
+                console.log('common_tournament_ids', common_tournament_ids)
                 if (common_tournament_ids.length) {
                     for (let i = 0; i < common_tournament_ids.length; i++) {
                         const id = common_tournament_ids[i]
@@ -1512,7 +1516,8 @@ try {
                         }
                     }
                 }
-    
+                
+                console.log('tournaments', tournaments)
                 if (tournaments.length) {
                     const tournament = await selectTournament(message, tournaments, message.member.user.id)
                     if (tournament) {
