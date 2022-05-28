@@ -1504,6 +1504,7 @@ try {
                         losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
                         console.log('losingPlayer.id', losingPlayer.id)
                         console.log('tournament.id', tournament.id)
+                        console.log('!!losingEntry', !!losingEntry)
                         winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
                         console.log('winningPlayer.id', winningPlayer.id)
                         console.log('!!winningEntry', !!winningEntry)
