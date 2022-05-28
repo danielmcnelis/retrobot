@@ -4,12 +4,10 @@ const {db} = require('./db')
 
 const Info = db.define('infos', {
     element: {
-        type: Sequelize.STRING,  
-        allowNull: false
+        type: Sequelize.STRING
     },
     status: {
-        type: Sequelize.STRING,
-        allowNull: true
+        type: Sequelize.STRING
     }
 })
 

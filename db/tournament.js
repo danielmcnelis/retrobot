@@ -5,104 +5,72 @@ const { db } = require('./db')
 const Tournament = db.define('tournaments', {
     id: {
         primaryKey: true,
-        type: Sequelize.STRING,   
-        allowNull: false,
-        unique: true
+        type: Sequelize.STRING
     },
     name: {
-        type: Sequelize.STRING,  
-        defaultValue: 'New Tournament',  
-        allowNull: false
+        type: Sequelize.STRING
     },
     format: {
-        type: Sequelize.STRING,  
-        defaultValue: 'Goat',  
-        allowNull: false
+        type: Sequelize.STRING
     },
     url: {
-        type: Sequelize.STRING,      
-        allowNull: true
+        type: Sequelize.STRING
     },
     display: {
         type: Sequelize.BOOLEAN,   
-        defaultValue: false,   
-        allowNull: false
+        defaultValue: false
     },
     cleanName: {
-        type: Sequelize.STRING,   
-        allowNull: true
+        type: Sequelize.STRING
     },
     shortName: {
-        type: Sequelize.STRING,   
-        allowNull: true
+        type: Sequelize.STRING
     },
     winner: {
-        type: Sequelize.STRING,   
-        allowNull: true
+        type: Sequelize.STRING
     },
     playerId: {
-        type: Sequelize.STRING,   
-        allowNull: true
+        type: Sequelize.STRING
     },
     size: {
-        type: Sequelize.INTEGER,   
-        defaultValue: 0,   
-        allowNull: false
+        type: Sequelize.INTEGER
     },
     type: {
-        type: Sequelize.STRING, 
-        defaultValue: 'double elimination',   
-        allowNull: false
+        type: Sequelize.STRING
     },
     series: {
-        type: Sequelize.BOOLEAN,   
-        defaultValue: false,   
-        allowNull: false
+        type: Sequelize.BOOLEAN
     },
     worlds: {
-        type: Sequelize.BOOLEAN,   
-        defaultValue: false,   
-        allowNull: false
+        type: Sequelize.BOOLEAN
     },
     state: {
         type: Sequelize.STRING,   
-        defaultValue: 'pending',   
-        allowNull: false
+        defaultValue: 'pending'
     },
     rounds: {
-        type: Sequelize.INTEGER,   
-        allowNull: true 
+        type: Sequelize.INTEGER
     },
     community: {
-        type: Sequelize.STRING,   
-        defaultValue: 'Format Library',   
-        allowNull: true
+        type: Sequelize.STRING
     },
     emoji: {
-        type: Sequelize.STRING,   
-        defaultValue: 'legend',
-        allowNull: true
+        type: Sequelize.STRING
     },
     formatEmoji: {
-        type: Sequelize.STRING,   
-        defaultValue: '<:bluesheep:646866933605466131>',
-        allowNull: true
+        type: Sequelize.STRING
     },
     channelId: {
-        type: Sequelize.STRING,   
-        allowNull: true
+        type: Sequelize.STRING
     },
     guildId: {
-        type: Sequelize.STRING,      
-        allowNull: true
+        type: Sequelize.STRING
     },
     startDate: {
-        type: Sequelize.DATE,      
-        allowNull: true
+        type: Sequelize.DATE
     },
     endDate: {
-        type: Sequelize.DATE,      
-        allowNull: true
+        type: Sequelize.DATE
     },
 })
 

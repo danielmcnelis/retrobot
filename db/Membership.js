@@ -4,14 +4,11 @@ const { db } = require('./db')
 
 const Membership = db.define('memberships', {
     guildName: {
-        type: Sequelize.STRING,  
-        defaultValue: 'Format Library',          
-        allowNull: false
+        type: Sequelize.STRING
     },
     active: {
         type: Sequelize.BOOLEAN,  
-        defaultValue: true,          
-        allowNull: false
+        defaultValue: true
     }
 })
 

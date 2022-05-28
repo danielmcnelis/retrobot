@@ -4,68 +4,53 @@ const { db } = require('./db')
 
 const Deck = db.define('decks', {
   name: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   deckType: {
-      type: Sequelize.STRING,
-      allowNull: true
+      type: Sequelize.STRING
   },
   deckCategory: {
-      type: Sequelize.STRING,
-      allowNull: true
+      type: Sequelize.STRING
   },
   builder: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   format: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   ydk: {
-    type: Sequelize.TEXT,
-    allowNull: false
+    type: Sequelize.TEXT
   },
   event: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   placement: {
-    type: Sequelize.INTEGER,
-    allowNull: true
+    type: Sequelize.INTEGER
   },
   display: {
     type: Sequelize.BOOLEAN,
-    defaultValue: true,
-    allowNull: false
+    defaultValue: true
   },
   community: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   downloads: {
     type: Sequelize.INTEGER,
-    defaultValue: 0,
-    allowNull: false
+    defaultValue: 0
   },
   views: {
     type: Sequelize.INTEGER,
-    defaultValue: 0,
-    allowNull: false
+    defaultValue: 0
   },
   rating: {
     type: Sequelize.INTEGER,
-    defaultValue: 0,
-    allowNull: false
+    defaultValue: 0
   },
   playerId: {
-      type: Sequelize.STRING,
-      allowNull: true
+      type: Sequelize.STRING
   },
   tournamentId: {
-      type: Sequelize.STRING,
-      allowNull: true
+      type: Sequelize.STRING
   }
 })
 

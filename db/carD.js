@@ -4,145 +4,111 @@ const { db } = require('./db')
 
 const Card = db.define('cards', {
   name: {
-    type: Sequelize.TEXT,
+    type: Sequelize.STRING,
     unique: true,
     allowNull: false
   },
   konamiCode: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   ypdId: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   tcgLegal: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   ocgLegal: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   category: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   icon: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   normal: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   effect: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   fusion: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   ritual: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   synchro: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   }, 
   xyz: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   pendulum: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   link: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   flip: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   gemini: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   spirit: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   toon: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   tuner: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   union: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   attribute: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   type: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   level: {
-    type: Sequelize.INTEGER,
-    allowNull: true
+    type: Sequelize.INTEGER
   },
   rating: {
-    type: Sequelize.INTEGER,
-    allowNull: true
+    type: Sequelize.INTEGER
   },
   arrows: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   scale: {
-    type: Sequelize.INTEGER,
-    allowNull: true
+    type: Sequelize.INTEGER
   },
   atk: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   def: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   description: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.TEXT
   },
   tcgDate: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   ocgDate: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   color: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   extraDeck: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
+    type: Sequelize.BOOLEAN
   },
   sortPriority: {
-    type: Sequelize.INTEGER,
-    allowNull: true
+    type: Sequelize.INTEGER
   }
 })
 

@@ -4,24 +4,19 @@ const { db } = require('./db')
 
 const Set = db.define('sets', {
   setName: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   },
   setCode: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   },
   tcgDate: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.STRING
   },
   size: {
-    type: Sequelize.INTEGER,
-    allowNull: true
+    type: Sequelize.INTEGER
   },
   tcgPlayerGroupId: {
-    type: Sequelize.INTEGER,
-    allowNull: true
+    type: Sequelize.INTEGER
   }
 })
 

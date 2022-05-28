@@ -4,37 +4,29 @@ const { db } = require('./db')
 
 const Stats = db.define('stats', {
     format: {
-        type: Sequelize.STRING,         
-        allowNull: false
+        type: Sequelize.STRING
     },
     elo: {
         type: Sequelize.FLOAT,  
-        defaultValue: 500.00,          
-        allowNull: false
+        defaultValue: 500.00
     },
     backupElo: {
-        type: Sequelize.FLOAT,  
-        defaultValue: null,          
-        allowNull: true
+        type: Sequelize.FLOAT
     },
     wins: {
         type: Sequelize.INTEGER,  
-        defaultValue: 0,          
-        allowNull: false
+        defaultValue: 0
     },
     losses: {
         type: Sequelize.INTEGER,  
-        defaultValue: 0,          
-        allowNull: false
+        defaultValue: 0
     },
     games: {
         type: Sequelize.INTEGER,  
-        defaultValue: 0,          
-        allowNull: false
+        defaultValue: 0
     },
     internal: {
-        type: Sequelize.BOOLEAN,        
-        allowNull: true
+        type: Sequelize.BOOLEAN
     }
 })
 

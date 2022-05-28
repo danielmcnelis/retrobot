@@ -842,7 +842,7 @@ try {
                 }
             }
         } else if (unrecognizedCards.length) {
-            let response = `I'm sorry, ${member.user.username}, the following card IDs were not found in our database:\n${unrecognizedCards.join('\n')}`
+            let response = `I'm sorry, ${message.author.username}, the following card IDs were not found in our database:\n${unrecognizedCards.join('\n')}`
             response += `\n\nThese cards are either alternate artwork, new to the TCG, OCG only, or incorrect in our database. Please contact the Tournament Organizer or the Admin if you can't resolve this.`
             return message.author.send({ content: response.toString() }).catch((err) => console.log(err))
         } else {
@@ -896,7 +896,7 @@ try {
             .setThumbnail('https://formatlibrary.com/images/logos/FL.png')
             .addField('How to Use This Bot', '\nThe following commands can be used for any format in the appropriate server, channels, or via DM.')
         	.addField('Cards', '\n{ Card Name } - Look up a card. For example, { Dark Magician }. \n')
-        	.addField('Ranked Play', '\n!rated - DM this command to RetroBot to join the rated pool. \n!stats - (blank or @user) - Post a player\'s stats. \n!loss - (@user) - Report a loss to another player. \n!top - (n) - Post the top rated players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a ranked play role. \n!undo - Undo the last report if you made a mistake. \n!hist - Post a graph of your Elo history. \n!act - Post a graph of dueling activity. \n')
+        	.addField('Ranked Play', '\n!rated - DM this command to RetroBot to join a rated pool. \n!stats - (blank or @user) - Post a player\'s stats. \n!loss - (@user) - Report a loss to another player. \n!top - (n) - Post the top rated players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a ranked play role. \n!undo - Undo the last report if you made a mistake. \n!hist - Post a graph of your Elo history. \n!act - Post a graph of dueling activity. \n')
         	.addField('Format Info', '\n!legal - Privately check if your deck is legal. \n!list - View the Forbidden and Limited list. \n')
         	.addField('Tournaments', '\n!join - Register for an upcoming tournament.\n!resubmit - Resubmit your deck list for a tournament. \n!drop - Drop from a tournament. \n!bracket - Post the bracket(s) for the current tournament(s).')
         	.addField('Ironmans', '\n!iron - Join an ironman queue.\n!q - Check an ironman queue. \n')

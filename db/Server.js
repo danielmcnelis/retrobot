@@ -5,33 +5,26 @@ const { db } = require('./db')
 const Server = db.define('servers', {
     id: {
         primaryKey: true,
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.STRING
     },
     name: {
-        type: Sequelize.STRING,         
-        allowNull: true
+        type: Sequelize.STRING
     },
     format: {
-        type: Sequelize.STRING,        
-        allowNull: true
+        type: Sequelize.STRING
     },
     internalLadder: {
-        type: Sequelize.BOOLEAN,        
-        allowNull: true
+        type: Sequelize.BOOLEAN
     },
     access: {
         type: Sequelize.STRING,   
-        defaultValue: 'free',       
-        allowNull: true
+        defaultValue: 'free'
     },
     emoji: {
-        type: Sequelize.STRING,       
-        allowNull: true
+        type: Sequelize.STRING
     },
     formatEmoji: {
-        type: Sequelize.STRING,       
-        allowNull: true
+        type: Sequelize.STRING
     }
 })
 

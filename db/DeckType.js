@@ -3,29 +3,22 @@ const { db } = require('./db')
 
 const DeckType = db.define('deckTypes', {
   name: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   },
   category: {
-      type: Sequelize.STRING,
-      defaultValue: 'other',
-      allowNull: false
+      type: Sequelize.STRING
   },
   format: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   leftCard: {
-      type: Sequelize.STRING,
-      allowNull: true
+      type: Sequelize.STRING
   },
   centerCard: {
-      type: Sequelize.STRING,
-      allowNull: true
+      type: Sequelize.STRING
   },
   rightCard: {
-      type: Sequelize.STRING,
-      allowNull: true
+      type: Sequelize.STRING
   }
 })
 

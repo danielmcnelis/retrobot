@@ -4,40 +4,30 @@ const { db } = require('./db')
 
 const BlogPost = db.define('blogposts', {
   title: {
-    type: Sequelize.STRING,
-    defaultValue: '',
-    allowNull: false
+    type: Sequelize.STRING
   },
   content: {
-      type: Sequelize.TEXT,
-      defaultValue: '',
-      allowNull: false
+      type: Sequelize.TEXT
   },
   author: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   format: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   rating: {
     type: Sequelize.INTEGER,
-    defaultValue: 0,
-    allowNull: false
+    defaultValue: 0
   },
   views: {
     type: Sequelize.INTEGER,
-    defaultValue: 0,
-    allowNull: false
+    defaultValue: 0
   },
   publishDate: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   playerId: {
-      type: Sequelize.STRING,
-      allowNull: true
+      type: Sequelize.STRING
   }
 })
 

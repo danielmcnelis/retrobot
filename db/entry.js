@@ -4,12 +4,10 @@ const { db } = require('./db')
 
 const Entry = db.define('entries', {
     pilot: {
-        type: Sequelize.STRING,   
-        allowNull: false
+        type: Sequelize.STRING
     },
     url: {
-        type: Sequelize.STRING,      
-        allowNull: false
+        type: Sequelize.STRING
     },
     wins: {
         type: Sequelize.INTEGER,
@@ -20,16 +18,13 @@ const Entry = db.define('entries', {
         defaultValue: 0
     },
     participantId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
+        type: Sequelize.INTEGER
     },
     playerId: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.STRING
     },
     tournamentId: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.STRING
     }
 })
 

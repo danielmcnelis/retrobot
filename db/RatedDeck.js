@@ -4,29 +4,22 @@ const { db } = require('./db')
 
 const RatedDeck = db.define('ratedDecks', {
   builder: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   format: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   },
   name: {
-    type: Sequelize.STRING,
-    defaultValue: 'Unnamed Deck',
-    allowNull: true
+    type: Sequelize.STRING
   },
   url: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   },
   deckType: {
-      type: Sequelize.STRING,
-      allowNull: true
+      type: Sequelize.STRING
   },
   ydk: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.TEXT
   }
 })
 

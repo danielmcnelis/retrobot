@@ -9,41 +9,32 @@ const Format = db.define('formats', {
     allowNull: false
   },
   date: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   banlist: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   event: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   icon: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   description: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.TEXT
   },
   channel: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   emoji: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   role: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   popular: {
     type: Sequelize.BOOLEAN,
-    defaultValue: false,
-    allowNull: true
+    defaultValue: false
   }
 })
 

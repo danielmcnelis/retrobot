@@ -4,33 +4,26 @@ const { db } = require('./db')
 
 const Print = db.define('prints', {
   cardName: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   },
   cardCode: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   },
   setName: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   },
   rarity: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   marketPrice: {
     type: Sequelize.FLOAT,
-    defaultValue: 0.00,
-    allowNull: true
+    defaultValue: 0.00
   },
   tcgPlayerProductId: {
-    type: Sequelize.INTEGER,
-    allowNull: true
+    type: Sequelize.INTEGER
   },
   tcgPlayerUrl: {
-    type: Sequelize.TEXT,
-    allowNull: true
+    type: Sequelize.TEXT
   }
 })
 

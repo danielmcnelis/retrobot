@@ -4,41 +4,32 @@ const { db } = require('./db')
 
 const Iron = db.define('irons', {
     name: {
-        type: Sequelize.STRING,   
-        allowNull: false
+        type: Sequelize.STRING
     },
     format: {
-        type: Sequelize.STRING,      
-        defaultValue: 'goat',
-        allowNull: false
+        type: Sequelize.STRING
     },
     team: {
-        type: Sequelize.STRING,       
-        defaultValue: null, 
-        allowNull: true
+        type: Sequelize.STRING
     },
     paired: {
         type: Sequelize.BOOLEAN,   
-        defaultValue: false,    
-        allowNull: false
+        defaultValue: false
     },
     eliminated: {
         type: Sequelize.BOOLEAN,   
-        defaultValue: false,    
-        allowNull: false
+        defaultValue: false
     },
     position: {
-        type: Sequelize.INTEGER,   
-        allowNull: true
+        type: Sequelize.INTEGER
     },
     captain: {
         type: Sequelize.BOOLEAN,   
-        allowNull: true
+        defaultValue: false
     },
     confirmed: {
         type: Sequelize.BOOLEAN,   
-        defaultValue: false,    
-        allowNull: false
+        defaultValue: false
     }
 })
 

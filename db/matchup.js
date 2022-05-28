@@ -4,32 +4,25 @@ const { db } = require('./db')
 
 const Matchup = db.define('matchups', {
     format: {
-        type: Sequelize.STRING,   
-        defaultValue: 'goat'
+        type: Sequelize.STRING
     },
     winning_deck_name: {
-        type: Sequelize.TEXT,        
-        allowNull: false
+        type: Sequelize.STRING
     },
     winning_deck_type: {
-        type: Sequelize.STRING,        
-        allowNull: false
+        type: Sequelize.STRING
     },
     winning_deck_category: {
-        type: Sequelize.STRING,        
-        allowNull: false
+        type: Sequelize.STRING
     },
     losing_deck_name: {
-        type: Sequelize.TEXT,        
-        allowNull: false
+        type: Sequelize.STRING
     },
     losing_deck_type: {
-        type: Sequelize.STRING,        
-        allowNull: false
+        type: Sequelize.STRING
     },
     losing_deck_category: {
-        type: Sequelize.STRING,        
-        allowNull: false
+        type: Sequelize.STRING
     }
 })
 

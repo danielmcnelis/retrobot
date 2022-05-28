@@ -4,18 +4,14 @@ const { db } = require('./db')
 
 const RatedPool = db.define('ratedPools', {
     name: {
-        type: Sequelize.STRING,   
-        allowNull: false
+        type: Sequelize.STRING
     },
     format: {
-        type: Sequelize.STRING,      
-        defaultValue: 'Goat',
-        allowNull: false
+        type: Sequelize.STRING
     },
     status: {
         type: Sequelize.STRING,      
-        defaultValue: 'pending',
-        allowNull: false
+        defaultValue: 'pending'
     }
 })
 
