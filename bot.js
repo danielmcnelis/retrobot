@@ -1454,11 +1454,8 @@ try {
         if (!winningPlayer || !winnerStats) return message.channel.send({ content: `That user is not in the database.`})
  
         const loserHasTourRole = isTourPlayer(server, message.member)
-        console.log('!!loserHasTourRole', !!loserHasTourRole)
         const winnerHasTourRole = isTourPlayer(server, winner)
-        console.log('!!winnerHasTourRole', !!winnerHasTourRole)
         const activeTournament = await Tournament.count({ where: { state: 'underway', guildId: mgid } }) 
-        console.log('!!activeTournament', !!activeTournament)
         let isTournamentMatch
         let winningEntry
         let losingEntry
@@ -1495,19 +1492,13 @@ try {
                     }
                 }
 
-                console.log('common_tournament_ids', common_tournament_ids)
                 if (common_tournament_ids.length) {
                     for (let i = 0; i < common_tournament_ids.length; i++) {
                         const id = common_tournament_ids[i]
                         tournament = await Tournament.findOne({ where: { id: id, guildId: mgid }})
                         if (!tournament) continue
                         losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
-                        console.log('losingPlayer.id', losingPlayer.id)
-                        console.log('tournament.id', tournament.id)
-                        console.log('!!losingEntry', !!losingEntry)
                         winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
-                        console.log('winningPlayer.id', winningPlayer.id)
-                        console.log('!!winningEntry', !!winningEntry)
                         if (!losingEntry || !winningEntry) continue
                         const matches = await getMatches(server, tournament.id)
                         if (!matches) continue
@@ -1522,7 +1513,6 @@ try {
                     }
                 }
 
-                console.log('tournaments', tournaments)
                 if (tournaments.length) {
                     const tournament = await selectTournament(message, tournaments, message.member.user.id)
                     if (tournament) {

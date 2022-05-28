@@ -330,12 +330,7 @@ const seed = async (server, message, tournament) => {
 ////// TOURNAMENT MANAGEMENT FUNCTIONS ///////
 
 //CHECK PAIRING
-const checkPairing = (match, p1, p2) => {
-    console.log('checkPairing()')
-    console.log('match.player1_id', match.player1_id, ' === p1', p1)
-    console.log('match.player2_id', match.player2_id, ' === p2', p2)
-    return (match.player1_id === p1 && match.player2_id === p2) || (match.player1_id === p2 && match.player2_id === p1)
-}
+const checkPairing = (match, p1, p2) => (match.player1_id === p1 && match.player2_id === p2) || (match.player1_id === p2 && match.player2_id === p1)
 
 //FIND NEXT MATCH
 const findNextMatch = (matchesArr = [], matchId, participantId) => {
@@ -416,13 +411,11 @@ const findOtherPreReqMatch = (matchesArr = [], nextMatchId, completedMatchId) =>
 //GET MATCHES
 const getMatches = async (server, tournamentId) => {
     try {
-        console.log('try getMatches()')
         const { data } = await axios({
             method: 'get',
             url: `https://api.challonge.com/v1/tournaments/${tournamentId}/matches.json?api_key=${challongeAPIKeys[server.name]}`
         })
         
-        console.log('!!data', !!data)
         return data
     } catch (err) {
         console.log(err)
