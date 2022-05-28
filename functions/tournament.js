@@ -411,11 +411,14 @@ const findOtherPreReqMatch = (matchesArr = [], nextMatchId, completedMatchId) =>
 //GET MATCHES
 const getMatches = async (server, tournamentId) => {
     try {
+        console.log('try getMatches()')
         const { data } = await axios({
             method: 'get',
             url: `https://api.challonge.com/v1/tournaments/${tournamentId}/matches.json?api_key=${challongeAPIKeys[server.name]}`
         })
         
+        console.log('data', data)
+        console.log('!!data', !!data)
         return data
     } catch (err) {
         console.log(err)

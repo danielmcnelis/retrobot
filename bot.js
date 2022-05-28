@@ -1502,7 +1502,11 @@ try {
                         tournament = await Tournament.findOne({ where: { id: id, guildId: mgid }})
                         if (!tournament) continue
                         losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
+                        console.log('losingPlayer.id', losingPlayer.id)
+                        console.log('tournament.id', tournament.id)
                         winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
+                        console.log('winningPlayer.id', winningPlayer.id)
+                        console.log('!!winningEntry', !!winningEntry)
                         if (!losingEntry || !winningEntry) continue
                         const matches = await getMatches(server, tournament.id)
                         if (!matches) continue
@@ -1516,7 +1520,7 @@ try {
                         }
                     }
                 }
-                
+
                 console.log('tournaments', tournaments)
                 if (tournaments.length) {
                     const tournament = await selectTournament(message, tournaments, message.member.user.id)
@@ -1823,7 +1827,7 @@ try {
         const noShowPlayer = await Player.findOne({ where: { id: noShowId } })
         if (!noShowPlayer) return message.channel.send({ content: `Sorry, <@${noShowId}> is not in the database.`})
         const tournaments = [...await Entry.findAll({ where: { playerId: noShowId }, include: Tournament })].map((e) => e.tournament).filter((t) => t.guildId === message.guild.id)
-        if (!tournaments.length || !noshow.roles.cache.some(role => role.id === tourRole)) return message.channel.send({ content: `Sorry, ${noShowPlayer.name} is not any tournaments.`})
+        if (!tournaments.length || !noshow.roles.cache.some(role => role.id === roles[server.name].tourRole)) return message.channel.send({ content: `Sorry, ${noShowPlayer.name} is not any tournaments.`})
      
         const tournament = await selectTournament(message, tournaments, maid)
         if (!tournament) return
