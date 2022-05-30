@@ -203,12 +203,14 @@ const composeBlogPost = async (message, shortName) => {
     try {
         const tournament = await Tournament.findOne({ 
             where: { 
-                shortName: shortName,
+                shortName: {[Op.iLike]: shortName},
                 display: true
             },
             order: [["startDate", "ASC"]]
         })
     
+        console.log('!!tournament', !!tournament)
+
         const format = await Format.findOne({ where: {
             name: {[Op.iLike]: tournament.format }
         }})
