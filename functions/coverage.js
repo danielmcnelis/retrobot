@@ -57,12 +57,12 @@ const createDecks = async (message, tournament, useTags = true) => {
                     // if (query === 'boymoding xenohospitality') query = 'SQUARE THEORY WAS A GOOD IDEA'
 
                     // if (query === 'Mark_Field_YataYata_3295') query = 'YataYata_3295'
-                    if (query === 'eff04_2216') query = 'liliku_2216'
-                    if (query === 'Jean_8621') query = 'FrenchAlpha_8621'
-                    if (query === 'selim_3492') query = `selim__db___Xov_ze__3492`
+                    // if (query === 'eff04_2216') query = 'liliku_2216'
+                    // if (query === 'Jean_8621') query = 'FrenchAlpha_8621'
+                    // if (query === 'selim_3492') query = `selim__db___Xov_ze__3492`
                     // if (query === 'Snatch_Steal_92_7414') query = 'WarJOKELeague_7414'
-                    if (query === 'KingAtem_7165') query = 'Mutsuga_7165'
-                    if (query === 'nicodutto_8612') query = 'nicodutto_DB_Nico2324__8612'
+                    // if (query === 'KingAtem_7165') query = 'Mutsuga_7165'
+                    // if (query === 'nicodutto_8612') query = 'nicodutto_DB_Nico2324__8612'
                     // if (query.includes('to0fresh')) query = 'to0fresh_3550'
                     // if (query === 'Rask_2225') query = 'Berndig_2225'
                     // if (query === 'Blave_2824') query = 'Young_Sexy_MF_0357'
@@ -92,12 +92,12 @@ const createDecks = async (message, tournament, useTags = true) => {
                     } else {
                         const player = players[i]
                         let pname = player.name
-                        if (pname.includes('liliku')) pname = 'eff04'
-                        if (pname.includes('FrenchAlpha')) pname = 'Jean'
-                        if (pname.includes(`selim`)) pname = 'selim'
+                        // if (pname.includes('liliku')) pname = 'eff04'
+                        // if (pname.includes('FrenchAlpha')) pname = 'Jean'
+                        // if (pname.includes(`selim`)) pname = 'selim'
                         // if (pname.includes('WarJOKELeague')) pname = 'Snatch Steal 92'
-                        if (pname.includes('mark_mps')) pname = 'mark_mps | LRG Sigma'
-                        if (pname.includes('nicodutto')) pname = 'nicodutto'
+                        // if (pname.includes('mark_mps')) pname = 'mark_mps | LRG Sigma'
+                        // if (pname.includes('nicodutto')) pname = 'nicodutto'
                         // if (pname.includes('YataYata')) pname = 'Mark Field/YataYata'
                         // if (pname === 'Keininsder') pname = 'keininsder'
                         // if (pname === 'Asgeir') pname = 'LWRS'
@@ -175,7 +175,7 @@ const createDecks = async (message, tournament, useTags = true) => {
                                     playerId: player.id,
                                     community: tournament.community,
                                     tournamentId: tournament.id,
-                                    createdAt: tournament.startedAt,
+                                    createdAt: tournament.endDate,
                                     updatedAt: tournament.startedAt
                                 })
 
@@ -200,6 +200,7 @@ const createDecks = async (message, tournament, useTags = true) => {
 
 // COMPOSE BLOG POST
 const composeBlogPost = async (message, shortName) => {
+    console.log('shortName', shortName)
     try {
         const tournament = await Tournament.findOne({ 
             where: { 

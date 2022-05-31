@@ -19,6 +19,11 @@ const Player = db.define('players', {
     password: {
         type: Sequelize.STRING
     },
+    admin: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: true
+    },
     blacklisted: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
