@@ -191,10 +191,10 @@ const createDecks = async (message, tournament, useTags = true) => {
             }
         })
 
-        return message.channel.send(`Uploaded ${b} out of ${size} decks for ${shortName}.`)
+        return message.channel.send(`Uploaded ${b} out of ${size} decks for ${tournament.shortName}.`)
     } catch (err) {
         console.log(err)
-        return message.channel.send(`Error uploading decks for ${shortName}.`)
+        return message.channel.send(`Error uploading decks for ${tournament.shortName}.`)
     }
 } 
 
