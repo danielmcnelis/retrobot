@@ -10,8 +10,8 @@ const { challongeAPIKeys } = require('../secrets.json')
 
 // CREATE DECKS
 const createDecks = async (message, tournament, useTags = true) => {
+    let b = 0 
     try {    
-        let b = 0 
         const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${challongeAPIKeys[tournament.community]}`)
         if (!res) return
         const size = res.data.tournament.participants_count

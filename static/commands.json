@@ -14,6 +14,7 @@
   "deckcom": ["!deck", "!decklist"],
   "dropcom": ["!drop", "!quit"],
   "exitcom": ["!exit", "!leave", "!out"],
+  "flipcom": ["!flip", "!coin"],
   "h2hcom": ["!h2h", "!head2head", "!headtohead"],
   "histcom": ["!h", "!hist", "!history"],
   "ironcom": ["!i", "!iron", "!fe"],

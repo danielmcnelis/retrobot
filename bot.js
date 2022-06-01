@@ -207,7 +207,7 @@ try {
     }
 
     // FLIP
-    if(cmd === `!flip`) {
+    if(commands.flipcom.includes(cmd)) {
         const coin = Math.floor((Math.random() * 2)) === 0 ? 'Heads' : 'Tails'
         return message.channel.send({ content: `Your coin flip landed on: **${coin}**!`})
     }
