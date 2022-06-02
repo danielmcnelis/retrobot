@@ -165,8 +165,7 @@ try {
             let b = 0
             const players = await Player.findAll({
                 where: {
-                    avatar: {[Op.not]: null},
-                    updatedAt: { [Op.gte]: "2022-04-07 00:00:00.000+00" },
+                    avatar: {[Op.not]: null}
                 }
             })
 
@@ -175,8 +174,6 @@ try {
             for (let i = 0; i < players.length; i++) {
                 try {
                     const player = players[i]
-                    const tag = player.tag.replace(/[^\ws]/gi, "_").replace(/ /g,'')
-
                     const {data} = await axios.get(
                         `https://cdn.discordapp.com/avatars/${player.id}/${player.avatar}.webp`, {
                             responseType: 'arraybuffer',
@@ -189,8 +186,8 @@ try {
                     const image = await Canvas.loadImage(png)
                     context.drawImage(image, 0, 0, 128, 128)
                     const buffer = canvas.toBuffer('image/png')
-                    fs.writeFileSync(`../formatlibrary/public/images/pfps/${tag}.png`, buffer)
-                    console.log(`Saved pfp for ${player.name} to pfps/${tag}.png`)
+                    fs.writeFileSync(`../formatlibrary/public/images/pfps/${player.id}.png`, buffer)
+                    console.log(`Saved pfp for ${player.name} to pfps/${player.id}.png`)
                     b++
                 } catch (err) {
                     console.log(err)
