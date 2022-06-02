@@ -9,7 +9,8 @@ const FuzzySet = require('fuzzyset')
 const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
 const Canvas = require('canvas')
- 
+const sharp = require('sharp')
+
 // DATABASE IMPORTS
 const { Card, Entry, Format, Info, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
