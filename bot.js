@@ -166,9 +166,17 @@ try {
                 try {
                     const player = players[i]
                     const tag = player.tag.replace(/[^\ws]/gi, "_").replace(/ /g,'')
+
+                    const {data} = await axios.get(
+                        `https://cdn.discordapp.com/avatars/${player.id}/${player.avatar}.webp`, {
+                            responseType: 'arraybuffer',
+                        }
+                    )
+
+                    const png = await sharp(data).toFormat('png').toBuffer()
                     const canvas = Canvas.createCanvas(128, 128)
                     const context = canvas.getContext('2d')
-                    const image = await Canvas.loadImage(`https://cdn.discordapp.com/avatars/${player.id}/${player.avatar}.webp`) 
+                    const image = await Canvas.loadImage(png)
                     context.drawImage(image, 128, 128)
                     const buffer = canvas.toBuffer('image/png')
                     fs.writeFileSync(`../formatlibrary/public/images/pfps/${tag}.png`, buffer)
