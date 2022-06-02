@@ -8,6 +8,7 @@ const fs = require('fs')
 const FuzzySet = require('fuzzyset')
 const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
+const Canvas = require('canvas')
  
 // DATABASE IMPORTS
 const { Card, Entry, Format, Info, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
@@ -151,11 +152,32 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            setTimeout(() => purgeEntries())
-            setTimeout(() => conductCensus(client), (0.25 * 60 * 1000))
-            setTimeout(() => updateAvatars(client), (2.5 * 60 * 1000))
-            setTimeout(() => downloadNewCards(), (5 * 60 * 1000))
-            setTimeout(() => updateSets(), (7.5 * 60 * 1000))
+            
+            const players = await Player.findAll({
+                where: {
+                    avatar: {[Op.not]: null},
+                    updatedAt: { [Op.gte]: "2022-04-07 00:00:00.000+00" },
+                }
+            })
+
+            console.log('players.length', players.length)
+
+            for (let i = 0; i < 1; i++) {
+                try {
+                    const player = players[i]
+                    const tag = player.tag.replace(/[^\ws]/gi, "_").replace(/ /g,'')
+                    const canvas = Canvas.createCanvas(128, 128)
+                    const context = canvas.getContext('2d')
+                    const image = await Canvas.loadImage(`https://cdn.discordapp.com/avatars/${player.id}/${player.avatar}.webp`) 
+                    context.drawImage(image, 128, 128)
+                    const buffer = canvas.toBuffer('image/png')
+                    fs.writeFileSync(`../formatlibrary/public/images/pfps/${tag}.png`, buffer)
+                    console.log(`Saved pfp for ${player.name} to pfps/${tag}.png`)
+                } catch (err) {
+                    console.log(err)
+                }   
+            }
+
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
