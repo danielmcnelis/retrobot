@@ -44,7 +44,12 @@ client.on('ready', async() => {
         console.log(err)
     }
 
-    const midnightCountdown = getMidnightCountdown()ffff
+    const midnightCountdown = getMidnightCountdown()
+	setTimeout(() => purgeEntries(), midnightCountdown)
+	setTimeout(() => conductCensus(client), midnightCountdown + (1 * 60 * 1000))
+	setTimeout(() => updateAvatars(client), midnightCountdown + (6 * 60 * 1000))
+    setTimeout(() => downloadNewCards(), midnightCountdown + (11 * 60 * 1000))
+    setTimeout(() => updateSets(), midnightCountdown + (16 * 60 * 1000))
 })
 
 // WELCOME
