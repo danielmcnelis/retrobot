@@ -1,6 +1,8 @@
 
 const axios = require('axios')
+const Canvas = require('canvas')
 const fs = require('fs')
+const sharp = require('sharp')
 const { Card, Entry, Tournament, Membership, Player, Print, Role, Server, Set } = require('../db')
 const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
@@ -28,24 +30,44 @@ const updateAvatars = async (client) => {
             const memberIds = [...membersMap.keys()]
             
             for (let i = 0; i < memberIds.length; i++) {
-                const memberId = memberIds[i]
-                const avatar = membersMap.get(memberId).user.avatar
-                if (!avatar) continue
-    
-                const player = await Player.findOne({
-                    where: {
-                        id: memberId,
-                        avatar: {[Op.not]: avatar }
+                try {
+                    const memberId = memberIds[i]
+                    const avatar = membersMap.get(memberId).user.avatar
+                    if (!avatar) continue
+        
+                    const player = await Player.findOne({
+                        where: {
+                            id: memberId,
+                            avatar: {[Op.not]: avatar }
+                        }
+                    })
+        
+                    if (player) {
+                        player.avatar = avatar
+                        await player.save()
+                        count++
+                    } else {
+                        continue
                     }
-                })
-    
-                if (player) {
-                    player.avatar = avatar
-                    await player.save()
+                    
+                    const {data} = await axios.get(
+                        `https://cdn.discordapp.com/avatars/${player.id}/${avatar}.webp`, {
+                            responseType: 'arraybuffer',
+                        }
+                    )
+
+                    const png = await sharp(data).toFormat('png').toBuffer()
+                    const canvas = Canvas.createCanvas(128, 128)
+                    const context = canvas.getContext('2d')
+                    const image = await Canvas.loadImage(png)
+                    context.drawImage(image, 0, 0, 128, 128)
+                    const buffer = canvas.toBuffer('image/png')
+                    fs.writeFileSync(`../formatlibrary/public/images/pfps/${player.id}.png`, buffer)
+                    console.log(`saved new pfp for ${player.name}`)
                     count++
-                } else {
-                    continue
-                }
+                } catch (err) {
+                    console.log(err)
+                }   
             }
 
             console.log(`updated ${count} avatars for ${server.name}`)

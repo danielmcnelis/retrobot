@@ -163,38 +163,49 @@ try {
     if (cmd === `!pfps`) {
         if (isProgrammer(message.member)) {
             let b = 0
-            const players = await Player.findAll({
-                where: {
-                    avatar: {[Op.not]: null}
-                }
-            })
+            const players = await Player.findAll()
 
             console.log('players.length', players.length)
 
             for (let i = 0; i < players.length; i++) {
                 try {
                     const player = players[i]
-                    const {data} = await axios.get(
-                        `https://cdn.discordapp.com/avatars/${player.id}/${player.avatar}.webp`, {
-                            responseType: 'arraybuffer',
-                        }
-                    )
+                    const str = player.tag.replace(/[^\ws]/gi, "_").replace(/ /g,'')
+                    const tag = str.slice(0, -5) + str.slice(-4)
 
-                    const png = await sharp(data).toFormat('png').toBuffer()
-                    const canvas = Canvas.createCanvas(128, 128)
-                    const context = canvas.getContext('2d')
-                    const image = await Canvas.loadImage(png)
-                    context.drawImage(image, 0, 0, 128, 128)
-                    const buffer = canvas.toBuffer('image/png')
-                    fs.writeFileSync(`../formatlibrary/public/images/pfps/${player.id}.png`, buffer)
-                    console.log(`Saved pfp for ${player.name} to pfps/${player.id}.png`)
-                    b++
+                    if (fs.existsSync(`../formatlibrary/public/images/pfps/${player.id}.png`)) {
+                        console.log(`/pfp/${player.id}.png exists`)
+                        continue
+                    } else if (
+                        !fs.existsSync(`../formatlibrary/public/images/pfps/${player.id}.png`) && 
+                        fs.existsSync(`../formatlibrary/public/images/pfps/${tag}.png`)
+                    ) {
+                        fs.rename(
+                            `../formatlibrary/public/images/pfps/${tag}.png`, 
+                            `../formatlibrary/public/images/pfps/${player.id}.png`,
+                            () => console.log(`renamed ${tag}.png to ${player.id}.png`)
+                        )
+                        b++
+                    } else if (
+                        !fs.existsSync(`../formatlibrary/public/images/pfps/${player.id}.png`) && 
+                        fs.existsSync(`../formatlibrary/public/images/pfps/${str}.png`)
+                    ) {
+                        fs.rename(
+                            `../formatlibrary/public/images/pfps/${str}.png`, 
+                            `../formatlibrary/public/images/pfps/${player.id}.png`,
+                            () => console.log(`renamed ${str}.png to ${player.id}.png`)
+                        )
+                        b++
+                    } else {
+                        console.log(`no pfp exists for ${player.name}`)
+                        continue
+                    }
                 } catch (err) {
                     console.log(err)
                 }   
             }
 
-            return message.channel.send(`Saved ${b} updated profile pictures.`)
+            return message.channel.send(`Renamed ${b} profile picture files.`)
         } else {
             return message.channel.send({ content: `🧪`})
         }
