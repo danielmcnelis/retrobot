@@ -153,7 +153,16 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            
+            return message.channel.send({ content: `${emojis.yellow}`})
+        } else {
+            return message.channel.send({ content: `🧪`})
+        }
+    }
+ 
+    // PFPS 
+    if (cmd === `!pfps`) {
+        if (isProgrammer(message.member)) {
+            let b = 0
             const players = await Player.findAll({
                 where: {
                     avatar: {[Op.not]: null},
@@ -163,7 +172,7 @@ try {
 
             console.log('players.length', players.length)
 
-            for (let i = 0; i < 1; i++) {
+            for (let i = 0; i < players.length; i++) {
                 try {
                     const player = players[i]
                     const tag = player.tag.replace(/[^\ws]/gi, "_").replace(/ /g,'')
@@ -174,8 +183,6 @@ try {
                         }
                     )
 
-
-
                     const png = await sharp(data).toFormat('png').toBuffer()
                     const canvas = Canvas.createCanvas(128, 128)
                     const context = canvas.getContext('2d')
@@ -184,12 +191,13 @@ try {
                     const buffer = canvas.toBuffer('image/png')
                     fs.writeFileSync(`../formatlibrary/public/images/pfps/${tag}.png`, buffer)
                     console.log(`Saved pfp for ${player.name} to pfps/${tag}.png`)
+                    b++
                 } catch (err) {
                     console.log(err)
                 }   
             }
 
-            return message.channel.send({ content: `${emojis.yellow}`})
+            return message.channel.send(`Saved ${b} updated profile pictures.`)
         } else {
             return message.channel.send({ content: `🧪`})
         }
