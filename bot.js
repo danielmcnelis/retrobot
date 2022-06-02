@@ -174,11 +174,13 @@ try {
                         }
                     )
 
+
+
                     const png = await sharp(data).toFormat('png').toBuffer()
                     const canvas = Canvas.createCanvas(128, 128)
                     const context = canvas.getContext('2d')
                     const image = await Canvas.loadImage(png)
-                    context.drawImage(image, 128, 128)
+                    context.drawImage(image, 0, 0, 128, 128)
                     const buffer = canvas.toBuffer('image/png')
                     fs.writeFileSync(`../formatlibrary/public/images/pfps/${tag}.png`, buffer)
                     console.log(`Saved pfp for ${player.name} to pfps/${tag}.png`)
