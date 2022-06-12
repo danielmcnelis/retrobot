@@ -83,6 +83,9 @@ Deck.belongsTo(Player)
 Event.hasMany(Deck)
 Deck.belongsTo(Event)
 
+DeckType.hasMany(Deck)
+Deck.belongsTo(DeckType)
+
 module.exports = {
   db,
   BlogPost,
