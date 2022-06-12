@@ -20,10 +20,10 @@ const Server = db.define('servers', {
         type: Sequelize.STRING,   
         defaultValue: 'free'
     },
-    emoji: {
+    logo: {
         type: Sequelize.STRING
     },
-    formatEmoji: {
+    emoji: {
         type: Sequelize.STRING
     }
 })
