@@ -5,6 +5,7 @@ const Card = require('./Card')
 const Deck = require('./Deck')
 const DeckType = require('./DeckType')
 const Entry = require('./Entry')
+const Event = require('./Event')
 const Format = require('./Format')
 const Info = require('./Info')
 const Iron = require('./Iron')
@@ -46,14 +47,17 @@ Player.hasMany(Entry)
 Entry.belongsTo(Tournament)
 Tournament.hasMany(Entry)
 
+Tournament.belongsTo(Event)
+Event.hasOne(Tournament)
+
 Status.belongsTo(Card)
-Card.hasOne(Status)
+Card.hasMany(Status)
 
-Card.hasMany(Print)
 Print.belongsTo(Card)
+Card.hasMany(Print)
 
-Set.hasMany(Print)
 Print.belongsTo(Set)
+Set.hasMany(Print)
 
 Matchup.belongsTo(Match)
 Match.hasOne(Matchup)
@@ -76,8 +80,8 @@ RatedDeck.belongsTo(Player)
 Player.hasMany(Deck)
 Deck.belongsTo(Player)
 
-Tournament.hasMany(Deck)
-Deck.belongsTo(Tournament)
+Event.hasMany(Deck)
+Deck.belongsTo(Event)
 
 module.exports = {
   db,
@@ -86,6 +90,7 @@ module.exports = {
   Deck,
   DeckType,
   Entry,
+  Event,
   Format,
   Info,
   Iron,

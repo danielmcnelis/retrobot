@@ -28,6 +28,9 @@ const BlogPost = db.define('blogposts', {
   },
   playerId: {
       type: Sequelize.STRING
+  },
+  eventDate: {
+      type: Sequelize.DATE
   }
 })
 

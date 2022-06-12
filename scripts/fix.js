@@ -57,13 +57,13 @@ const fixDecks = async () => {
         try {
             const d = decks[i]
             const name = capitalize(d.name, true)
-            const deckType = capitalize(d.deckType, true)
-            const deckCategory = capitalize(d.deckCategory, true)
+            const deckType = capitalize(d.type, true)
+            const deckCategory = capitalize(d.category, true)
             const format = capitalize(d.format, true)
             d.format = format
             d.name = name
-            d.deckCategory = deckCategory
-            d.deckType = deckType
+            d.category = deckCategory
+            d.type = deckType
             await d.save()
             b++
         } catch (err) {

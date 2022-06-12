@@ -16,6 +16,9 @@ const Player = db.define('players', {
     duelingBook: {
         type: Sequelize.STRING
     },
+    realName: {
+        type: Sequelize.STRING
+    },
     password: {
         type: Sequelize.STRING
     },

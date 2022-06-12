@@ -3,13 +3,13 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const { Op } = require('sequelize')
-const { BlogPost, Card, Deck, DeckType, Format, Player, Tournament } = require('../db')
+const { BlogPost, Card, Deck, DeckType, Event, Format, Player, Tournament } = require('../db')
 const { capitalize, dateToVerbose } = require('./utility')
 const { getDeckType } = require('./deck')
 const { challongeAPIKeys } = require('../secrets.json')
 
 // CREATE DECKS
-const createDecks = async (message, tournament, useTags = true) => {
+const createDecks = async (message, event, tournament, useTags = true) => {
     let b = 0 
     try {    
         const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${challongeAPIKeys[tournament.community]}`)
@@ -17,10 +17,10 @@ const createDecks = async (message, tournament, useTags = true) => {
         const size = res.data.tournament.participants_count
         const startDate = `${res.data.tournament.started_at.slice(0, 10)} ${res.data.tournament.started_at.slice(11, 26)}`
         const endDate = `${res.data.tournament.completed_at.slice(0, 10)} ${res.data.tournament.completed_at.slice(11, 26)}`
-        tournament.size = size
-        tournament.startDate = startDate
-        tournament.endDate = endDate
-        await tournament.save()
+        event.size = size
+        event.startDate = startDate
+        event.endDate = endDate
+        await event.save()
 
         const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${challongeAPIKeys[tournament.community]}`)
         if (!data) return
@@ -135,7 +135,8 @@ const createDecks = async (message, tournament, useTags = true) => {
                             const count = await Deck.count({
                                 where: {
                                     builder: player.name,
-                                    event: tournament.shortName || tournament.name
+                                    event: event.name,
+                                    eventId: event.id
                                 }
                             })
 
@@ -163,27 +164,26 @@ const createDecks = async (message, tournament, useTags = true) => {
                                                 false
 
                                 await Deck.create({
-                                    name: deckType.name,
-                                    deckType: deckType.name,
-                                    deckCategory: deckType.category,
+                                    type: deckType.name,
+                                    category: deckType.category,
                                     builder: player.name,
                                     format: tournament.format,
                                     ydk: raw,
                                     placement: placement,
-                                    event: tournament.shortName || tournament.name,
+                                    event: event.abbreviation || event.name,
                                     display: display,
+                                    community: event.community,
                                     playerId: player.id,
-                                    community: tournament.community,
-                                    tournamentId: tournament.id,
-                                    createdAt: tournament.endDate,
-                                    updatedAt: tournament.startedAt
+                                    eventId: event.id,
+                                    deckTypeId: deckType.id,
+                                    eventDate: event.startDate
                                 })
 
                                 b++
     
-                                console.log(`uploaded ${tournament.shortName || tournament.name} #${placement} ${deckType.name} deck built by ${player.name}`)
+                                console.log(`uploaded ${event.abbreviation || event.name} #${placement} ${deckType.name} deck built by ${player.name}`)
                             } else {
-                                console.log(`already have ${player.name}'s deck for ${tournament.shortName || tournament.name}`)
+                                console.log(`already have ${player.name}'s deck for ${event.name}`)
                             }
                         }
                     }
@@ -191,63 +191,59 @@ const createDecks = async (message, tournament, useTags = true) => {
             }
         })
 
-        return message.channel.send(`Uploaded ${b} out of ${size} decks for ${tournament.shortName}.`)
+        return message.channel.send(`Uploaded ${b} out of ${size} decks for ${event.name}.`)
     } catch (err) {
         console.log(err)
-        return message.channel.send(`Error uploading decks for ${tournament.shortName}.`)
+        return message.channel.send(`Error uploading decks for ${event.name}.`)
     }
 } 
 
 // COMPOSE BLOG POST
-const composeBlogPost = async (message, shortName) => {
+const composeBlogPost = async (message, abbreviation) => {
     console.log('shortName', shortName)
     try {
-        const tournament = await Tournament.findOne({ 
+        const event = await Event.findOne({ 
             where: { 
-                shortName: {[Op.iLike]: shortName},
-                display: true
+                abbreviation: {[Op.iLike]: abbreviation}
             },
             order: [["startDate", "ASC"]]
         })
-    
-        console.log('!!tournament', !!tournament)
 
         const format = await Format.findOne({ where: {
-            name: {[Op.iLike]: tournament.format }
+            name: {[Op.iLike]: event.format }
         }})
 
         const winner = await Player.findOne({
             where: {
-                id: tournament.playerId
+                id: event.playerId
             }
         })
 
         const deck = await Deck.findOne({
             where: {
-                event: shortName,
+                event: abbreviation || event.name,
                 placement: 1
             }
         })
     
-        const communityLogo = tournament.community === 'Format Library' ? "/images/logos/FL.png" :
-            tournament.community === 'GoatFormat.com' ? "/images/logos/GF.png" :
-            tournament.community === 'EdisonFormat.com' ? "/images/logos/EF.png" :
+        const communityLogo = event.community === 'Format Library' ? "/images/logos/FL.png" :
+            event.community === 'GoatFormat.com' ? "/images/logos/GF.png" :
+            event.community === 'EdisonFormat.com' ? "/images/logos/EF.png" :
             ""
         
         const decks = await Deck.findAll({ 
             where: {
-                format: {[Op.iLike]: tournament.format },
-                createdAt: {[Op.lte]: tournament.endDate }
+                format: {[Op.iLike]: event.format }
             }
         })
     
         if (!decks.length) return console.log('no decks found')
         
-        const freqs = decks.reduce((acc, curr) => (acc[curr.deckType] ? acc[curr.deckType]++ : acc[curr.deckType] = 1, acc), {})
+        const freqs = decks.reduce((acc, curr) => (acc[curr.type] ? acc[curr.type]++ : acc[curr.type] = 1, acc), {})
         const popularDecks = Object.entries(freqs).sort((a, b) => b[1] - a[1]).map((e) => e[0]).slice(0, 6)
-        const title = `Congrats to ${tournament.winner} on winning ${tournament.shortName}!`
-        const blogTitleDate = dateToVerbose(tournament.endDate, false, false, true)
-        const publishDate = dateToVerbose(tournament.endDate, true, true, false)
+        const title = `Congrats to ${event.winner} on winning ${event.abbreviation}!`
+        const blogTitleDate = dateToVerbose(event.endDate, false, false, true)
+        const publishDate = dateToVerbose(event.endDate, true, true, false)
     
         const main = []
         const mainKonamiCodes = deck.ydk.split('#main')[1].split('#extra')[0].split('\n').filter((e) => e.length)
@@ -288,16 +284,16 @@ const composeBlogPost = async (message, shortName) => {
             context.drawImage(image, (card_width + 1) * col, row * (card_height + 1), card_width, card_height)
         }
     
-        const conclusion = tournament.series ? `Enter the next <i>${tournament.cleanName.replace(/[0-9]/g, '').trim()}</i> to see if you can knock out the reigning champ!` :
-            tournament.worlds ? `And so the ${tournament.createdAt.getFullYear()} ${capitalize(tournament.format, true)} Format season comes to a close. Be sure to enter next year's qualifiers for your chance to compete in the World Championship!` :
-            tournament.cleanName.includes('Last Chance') ? `And so the ${tournament.createdAt.getFullYear()} ${capitalize(tournament.format, true)} Format qualifying season comes to a close. Tune in to find out who wins the World Championship!` :
-            tournament.cleanName.includes('Obelisk') || tournament.cleanName.includes('Ra') || tournament.cleanName.includes('Slifer') ? `Join the Goat Format Europe Discord community to compete in the <i>Academy series</i>!` :
-            `Join the ${tournament.community} Discord community to compete in similar events!`
+        const conclusion = event.series ? `Enter the next <i>${event.name.replace(/[0-9]/g, '').trim()}</i> to see if you can knock out the reigning champ!` :
+            event.name.includes('World Championship') ? `And so the ${event.startDate.getFullYear()} ${capitalize(event.format, true)} Format season comes to a close. Be sure to enter next year's qualifiers for your chance to compete in the World Championship!` :
+            event.name.includes('Last Chance') ? `And so the ${event.startDate.getFullYear()} ${capitalize(event.format, true)} Format qualifying season comes to a close. Tune in to find out who wins the World Championship!` :
+            event.name.includes('Obelisk') || event.name.includes('Ra') || event.name.includes('Slifer') ? `Join the Goat Format Europe Discord community to compete in the <i>Academy series</i>!` :
+            `Join the ${event.community} Discord community to compete in similar events!`
     
         const content = 
             `<div className="blogpost-title-flexbox">` +
                     `<div className="blogpost-title-text">` +
-                        `<a href="/events/${tournament.shortName}">` +
+                        `<a href="/events/${event.abbreviation}">` +
                             `<h1 className="blogpost-title">${title}</h1>` +
                         `</a>` +
                         `<p className="blogpost-date">${blogTitleDate}</p>` +
@@ -309,7 +305,7 @@ const composeBlogPost = async (message, shortName) => {
             `</div>` +
             `<div className="blogpost-content-flexbox">` +
                 `<p className="blogpost-paragraph">` +
-                    `${tournament.winner} won <a className="blogpost-event-link" href="/events/${tournament.shortName}">${tournament.cleanName}</a> on ${publishDate} with a ${popularDecks.includes(deck.deckType) ? 'popular' : 'rogue'} deck, ${capitalize(deck.deckType, true)}!` +
+                    `${event.winner} won <a className="blogpost-event-link" href="/events/${event.abbreviation}">${event.name}</a> on ${publishDate} with a ${popularDecks.includes(deck.type) ? 'popular' : 'rogue'} deck, ${capitalize(deck.type, true)}!` +
                 `</p>` +
                 `<div className="blogpost-images-flexbox">` +
                     `<div className="blogpost-pfp-community-flexbox">` +
@@ -330,17 +326,17 @@ const composeBlogPost = async (message, shortName) => {
             content: content,
             publishDate: publishDate,
             author: 'RetroBot',
-            format: tournament.format,
+            format: event.format,
             playerId: deck.playerId,
-            createdAt: tournament.startDate
+            eventDate: event.endDate
         })
     
         const buffer = canvas.toBuffer('image/png')
         fs.writeFileSync(`../formatlibrary/public/images/decks/previews/${deck.id}.png`, buffer)
-        return message.channel.send(`Composed blogpost for ${shortName}.`)
+        return message.channel.send(`Composed blogpost for ${abbreviation}.`)
     } catch (err) {
         console.log(err)
-        return message.channel.send(`Error composing blogpost for ${shortName}.`)
+        return message.channel.send(`Error composing blogpost for ${abbreviation}.`)
     }
 }
 

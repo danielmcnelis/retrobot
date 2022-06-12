@@ -10,7 +10,7 @@ const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
 
 // DATABASE IMPORTS
-const { Card, Entry, Format, Info, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
+const { Card, Entry, Event, Format, Info, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
 // FUNCTION IMPORTS
 const { conductCensus, downloadNewCards, getMidnightCountdown, updateAvatars, updateSets, purgeEntries } = require('./functions/chron.js')
@@ -115,15 +115,6 @@ try {
     const maid = message.author.id
     const mcid = message.channel.id
     const mgid = message.guild ? message.guild.id : null
-
-    if (mgid === '110373943822540800') {
-        try {
-            console.log('LEAVING DISCORD BOTS')
-            message.guild.leave()
-        } catch (err) {
-            console.log(err)
-        }
-    }
     
     const server = (!mgid || mgid === '110373943822540800' || mgid === '333949691962195969') ? {} : await Server.findOne({ where: { id: mgid }}) || await Server.create({ id: mgid, name: message.guild.name })
     if (hasAffiliateAccess(server) && await isNewUser(server, maid)) await createPlayer(message.member)
@@ -348,14 +339,13 @@ try {
                     id: data.tournament.id,
                     name: data.tournament.name,
                     state: data.tournament.state,
-                    rounds: data.tournament.swiss_rounds, 
                     type: data.tournament.tournament_type,
                     format: format.name,
-                    emoji: emoji,
-                    formatEmoji: format.emoji,
+                    logo: emoji,
+                    emoji: format.emoji,
                     url: data.tournament.url,
                     channelId: channelId,
-                    guildId: mgid,
+                    serverId: mgid,
                     community: server.name
                 })
             
@@ -395,14 +385,13 @@ try {
                         id: data.tournament.id,
                         name: data.tournament.name,
                         state: data.tournament.state,
-                        rounds: data.tournament.swiss_rounds, 
                         type: data.tournament.tournament_type,
                         format: format.name,
-                        emoji: emoji,
-                        formatEmoji: format.emoji,
+                        logo: emoji,
+                        emoji: format.emoji,
                         url: data.tournament.url,
                         channelId: channelId,
-                        guildId: mgid,
+                        serverId: mgid,
                         community: server.name
                     })
                     
@@ -435,7 +424,7 @@ try {
         if (!args.length) return message.channel.send({ content: `Please specify the name of the tournament you wish to destroy.`})
 
         const name = args[0]
-        const tournament = await Tournament.findOne({ where: { name: { [Op.iLike]: name } }, guildId: mgid })
+        const tournament = await Tournament.findOne({ where: { name: { [Op.iLike]: name } }, serverId: mgid })
         if (!tournament) return message.channel.send({ content: `Could not find tournament: "${name}".`})
         if (tournament.state === 'underway') return message.channel.send({ content: `This tournament is underway, therefore it may only be deleted by the database manager.`})
         if (tournament.state === 'complete') return message.channel.send({ content: `This tournament is complete, therefore it may only be deleted by the database manager.`})
@@ -461,7 +450,7 @@ try {
                     }
                 }
         
-                const content = `Yikes! You deleted ${tournament.name} ${tournament.emoji} from your Challonge account.`
+                const content = `Yikes! You deleted ${tournament.name} ${tournament.logo} from your Challonge account.`
                 await tournament.destroy()
                 return message.channel.send({ content })
             } else {
@@ -481,7 +470,7 @@ try {
                 state: {
                     [Op.or]: ['pending', 'standby']
                 },
-                guildId: mgid
+                serverId: mgid
             }, 
             order: [['createdAt', 'ASC']] 
         })
@@ -561,33 +550,56 @@ try {
                         console.log(err)
                     }
                 }
+
+                const lastMatch = [...await Match.findAll({
+                    where: {
+                        format: tournament.format,
+                        tournament: true,
+                        serverId: mgid
+                    },
+                    order: [['createdAt', 'DESC']]
+                })][0]
+
+                await Event.create({
+                    name: tournament.name,
+                    format: tournament.format,
+                    referenceUrl: `https://challonge.com/${tournament.url}`,
+                    display: true,
+                    tournamentId: tournament.id,
+                    winner: lastMatch.winner_name,
+                    playerId: lastMatch.winnerId,
+                    type: tournament.type,
+                    community: tournament.community,
+                    logo: tournament.logo,
+                    emoji: tournament.emoji
+                })
     
                 await tournament.update({
                     state: 'complete'
                 })
                 
-                return message.channel.send({ content: `Congrats! The results of ${tournament.name} ${tournament.emoji} have been finalized.`})
+                return message.channel.send({ content: `Congrats! The results of ${tournament.name} ${tournament.logo} have been finalized.`})
             } else {
-                return message.channel.send({ content: `Unable to finalize ${tournament.name} ${tournament.emoji} on Challonge.com.`})
+                return message.channel.send({ content: `Unable to finalize ${tournament.name} ${tournament.logo} on Challonge.com.`})
             }
         } catch (err) {
             console.log(err)
-            return message.channel.send({ content: `Unable to finalize ${tournament.name} ${tournament.emoji} on Challonge.com.`})
+            return message.channel.send({ content: `Unable to finalize ${tournament.name} ${tournament.logo} on Challonge.com.`})
         }
     }
 
     // BRACKET
     if (commands.bracketcom.includes(cmd)) {
         if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
-        const tournaments = await Tournament.findAll({ where: { state: { [Op.not]: 'complete'}, guildId: mgid }, order: [['createdAt', 'ASC']]})
+        const tournaments = await Tournament.findAll({ where: { state: { [Op.not]: 'complete'}, serverId: mgid }, order: [['createdAt', 'ASC']]})
         if (!tournaments.length) return message.channel.send({ content: `There are no active tournaments.`})
         
         const results = []
         for (let i = 0; i < tournaments.length; i++) {
             const tournament = tournaments[i]
-            results.push(`Name: ${tournament.name} ${tournament.emoji}` +
-                `\nType: ${capitalize(tournament.type, true)}` +
-                `\nFormat: ${tournament.format} ${tournament.formatEmoji}` + 
+            results.push(`Name: ${tournament.name} ${tournament.logo}` +
+                `\nStatus: ${capitalize(tournament.state, true)}` +
+                `\nFormat: ${tournament.format} ${tournament.emoji}` + 
                 `\nBracket: <https://challonge.com/${tournament.url}>`
             )
         }
@@ -602,7 +614,7 @@ try {
         const tournaments = await Tournament.findAll({ 
             where: { 
                 state: 'standby',
-                guildId: mgid
+                serverId: mgid
             }, 
             order: [['createdAt', 'ASC']] 
         })
@@ -611,7 +623,7 @@ try {
 		if (!tournament) return message.channel.send({ content: `There are no closed tournaments.`})
         tournament.state = 'pending'
         await tournament.save()
-        return message.channel.send({ content: `Registration for ${tournament.name} ${tournament.emoji} is now open.`})
+        return message.channel.send({ content: `Registration for ${tournament.name} ${tournament.logo} is now open.`})
     }
 
     // CLOSE
@@ -621,7 +633,7 @@ try {
         const tournaments = await Tournament.findAll({ 
             where: { 
                 state: 'pending',
-                guildId: mgid
+                serverId: mgid
             }, 
             order: [['createdAt', 'ASC']] 
         })
@@ -630,7 +642,7 @@ try {
 		if (!tournament) return message.channel.send({ content: `There are no pending tournaments.`})
         tournament.state = 'standby'
         await tournament.save()
-        return message.channel.send({ content: `Registration for ${tournament.name} ${tournament.emoji} is now closed.`})
+        return message.channel.send({ content: `Registration for ${tournament.name} ${tournament.logo} is now closed.`})
     }
 
     // JOIN
@@ -640,13 +652,13 @@ try {
         if (isMod(server, message.member) && mention) return message.channel.send({ content: `Please type **!signup @user** to register someone else for the tournament.`})
         const player = await Player.findOne({ where: { id: maid }})
         if (!player) return message.channel.send({ content: `You are not in the database.`})
-        const tournaments = await Tournament.findAll({ where: { state: {[Op.or]: ['pending', 'standby']}, guildId: mgid }, order: [['createdAt', 'ASC']] })
+        const tournaments = await Tournament.findAll({ where: { state: {[Op.or]: ['pending', 'standby']}, serverId: mgid }, order: [['createdAt', 'ASC']] })
         const tournament = await selectTournament(message, tournaments, maid)
-        const count = await Tournament.count({ where: { state: 'underway', guildId: mgid } })
+        const count = await Tournament.count({ where: { state: 'underway', serverId: mgid } })
         if (!tournament && count) return message.channel.send({ content: `Sorry, the tournament already started.`})
         if (!tournament && !count) return message.channel.send({ content: `There is no pending tournament.`})
         const entry = await Entry.findOne({ where: { playerId: maid, tournamentId: tournament.id } })
-        if (tournament.state === 'standby' && !entry) return message.channel.send({ content: `Sorry, registration for ${tournament.name} ${tournament.emoji} is currently closed.`})
+        if (tournament.state === 'standby' && !entry) return message.channel.send({ content: `Sorry, registration for ${tournament.name} ${tournament.logo} is currently closed.`})
         const format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.format } }})
         if (!format) return message.channel.send(`Unable to determine what format is being played in ${tournament.name}. Please contact the database manager.`)
         message.channel.send({ content: `Please check your DMs.` })
@@ -659,7 +671,7 @@ try {
         if (!entry) {  
             try {                                
                 const { participant } = await postParticipant(server, tournament, player)
-                if (!participant) return message.channel.send({ content: `Error: Unable to register on Challonge for ${tournament.name} ${tournament.emoji}.`})
+                if (!participant) return message.channel.send({ content: `Error: Unable to register on Challonge for ${tournament.name} ${tournament.logo}.`})
                 
                 await Entry.create({
                     pilot: player.name,
@@ -674,7 +686,7 @@ try {
             } finally {
                 message.member.roles.add(roles[server.name].tourRole).catch((err) => console.log(err))
                 message.author.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament!`}).catch((err) => console.log(err))
-                return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.id}> is now registered for ${tournament.name} ${tournament.emoji}!`}).catch((err) => console.log(err))
+                return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.id}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
             }
         } else {
             try {
@@ -684,7 +696,7 @@ try {
                 return message.author.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
             } finally {
                 message.author.send({ content: `Thanks! I have your updated deck list for the tournament.`}).catch((err) => console.log(err))
-                return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.id}> resubmitted their deck list for ${tournament.name} ${tournament.emoji}!`}).catch((err) => console.log(err))
+                return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.id}> resubmitted their deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
             }
         }
     }
@@ -697,7 +709,7 @@ try {
         if (!mentioned) return message.channel.send({ content: `Could not find user in the server.`})
         const player = await Player.findOne({ where: { id: mentioned.user.id }})
         if (!player) return message.channel.send({ content: `${mentioned.user.username} is not in the database.`})
-        const tournaments = await Tournament.findAll({ where: { state: {[Op.or]: ['pending', 'standby']}, guildId: mgid }, order: [['createdAt', 'ASC']] })
+        const tournaments = await Tournament.findAll({ where: { state: {[Op.or]: ['pending', 'standby']}, serverId: mgid }, order: [['createdAt', 'ASC']] })
         const tournament = await selectTournament(message, tournaments, maid)
         const count = await Tournament.count({ where: { state: 'underway', guildId: mgid } })
         if (!tournament && count) return message.channel.send({ content: `Sorry, the tournament already started.`})
@@ -707,7 +719,7 @@ try {
         if (!format) return message.channel.send(`Unable to determine what format is being played in ${tournament.name}. Please contact the database manager.`)
         
         if (entry) {
-            message.channel.send({ content: `Please check your DMs.\n\n(FYI: ${player.name} is already registered for ${tournament.name} ${tournament.emoji})`})
+            message.channel.send({ content: `Please check your DMs.\n\n(FYI: ${player.name} is already registered for ${tournament.name} ${tournament.logo})`})
         } else {
             message.channel.send({ content: `Please check your DMs.`})
         }
@@ -736,7 +748,7 @@ try {
 
             mentioned.roles.add(roles[server.name].tourRole).catch((err) => console.log(err))
             message.author.send({ content: `Thanks! I have all the information we need for ${player.name}!`}).catch((err) => console.log(err))
-            return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.id}> is now registered for ${tournament.name} ${tournament.emoji}!`}).catch((err) => console.log(err))
+            return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.id}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
         } else {
             try {
                 await entry.update({ url: deckListUrl })
@@ -745,7 +757,7 @@ try {
                 return message.author.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
             } finally {
                 message.author.send({ content: `Thanks! I have ${player.name}'s updated deck list for the tournament.`}).catch((err) => console.log(err))
-                return client.channels.cache.get(tournament.channelId).send({ content: `A moderator resubmitted <@${player.id}>'s deck list for ${tournament.name} ${tournament.emoji}!`})
+                return client.channels.cache.get(tournament.channelId).send({ content: `A moderator resubmitted <@${player.id}>'s deck list for ${tournament.name} ${tournament.logo}!`})
             }
         }
     }
@@ -1514,7 +1526,7 @@ try {
  
         const loserHasTourRole = isTourPlayer(server, message.member)
         const winnerHasTourRole = isTourPlayer(server, winner)
-        const activeTournament = await Tournament.count({ where: { state: 'underway', guildId: mgid } }) 
+        const activeTournament = await Tournament.count({ where: { state: 'underway', serverId: mgid } }) 
         let isTournamentMatch
         let winningEntry
         let losingEntry
@@ -1554,7 +1566,7 @@ try {
                 if (common_tournament_ids.length) {
                     for (let i = 0; i < common_tournament_ids.length; i++) {
                         const id = common_tournament_ids[i]
-                        tournament = await Tournament.findOne({ where: { id: id, guildId: mgid }})
+                        tournament = await Tournament.findOne({ where: { id: id, serverId: mgid }})
                         if (!tournament) continue
                         losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
                         winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
@@ -1712,7 +1724,7 @@ try {
 
         const loserHasTourRole = await isTourPlayer(server, loser)
         const winnerHasTourRole = await isTourPlayer(server, winner)
-        const activeTournament = await Tournament.count({ where: { state: 'underway', guildId: mgid } }) 
+        const activeTournament = await Tournament.count({ where: { state: 'underway', serverId: mgid } }) 
         let isTournamentMatch
         let winningEntry
         let losingEntry
@@ -2340,14 +2352,16 @@ try {
     //COVERAGE
     if (cmd === `!coverage`) {
         if (!isProgrammer(message.member)) return message.channel.send({ content: "You do not have permission to do that."})
-        const event = args[0]
-        const tournament = await Tournament.findOne({ where: { shortName: event }})
+        const abbreviation = args[0]
+        const event = await Event.findOne({ where: { abbreviation: abbreviation }})
+        if (!event) return message.channel.send(`No event found.`)
+        const tournament = await Tournament.findOne({ where: { id: event.tournamentId }})
         if (!tournament) return message.channel.send(`No tournament found.`)
         const coverageType = await selectCoverage(message)
         if (!coverageType) return
-        if (coverageType.includes('Upload Decks')) return createDecks(message, tournament)
-        if (coverageType.includes('Thumbnail')) return composeThumbnails(message, event)
-        if (coverageType.includes('BlogPost')) return composeBlogPost(message, event)
+        if (coverageType.includes('Upload Decks')) return createDecks(message, event, tournament)
+        if (coverageType.includes('Thumbnail')) return composeThumbnails(message, abbreviation)
+        if (coverageType.includes('BlogPost')) return composeBlogPost(message, abbreviation)
     }
 
     // COMBINE
