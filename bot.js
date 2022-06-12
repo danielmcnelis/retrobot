@@ -115,6 +115,15 @@ try {
     const maid = message.author.id
     const mcid = message.channel.id
     const mgid = message.guild ? message.guild.id : null
+
+    if (mgid === '110373943822540800') {
+        try {
+            console.log('LEAVING DISCORD BOTS')
+            message.guild.leave()
+        } catch (err) {
+            console.log(err)
+        }
+    }
     
     const server = (!mgid || mgid === '110373943822540800' || mgid === '333949691962195969') ? {} : await Server.findOne({ where: { id: mgid }}) || await Server.create({ id: mgid, name: message.guild.name })
     if (hasAffiliateAccess(server) && await isNewUser(server, maid)) await createPlayer(message.member)
