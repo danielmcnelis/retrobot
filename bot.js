@@ -2102,9 +2102,9 @@ try {
                         const yGId = yourGuildIds[y]
                         const guild = client.guilds.cache.get(yGId)
                         const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                        const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].rankedRole
                         const channel = guild.channels.cache.get(channelId)
-                        channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
+                        const tag = guild.id === '414551319031054346' ? `<@&${format.role}> ` : ''
+                        channel.send(`${tag}Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
                     } catch (err) {
                         console.log(err)
                     }
@@ -2112,8 +2112,6 @@ try {
 
                 return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
             }
-
-            let messageSent = false
     
             for (let i = 0; i < potentialPairs.length; i++) {
                 const potentialPair = potentialPairs[i]
@@ -2200,9 +2198,9 @@ try {
                 const yGId = yourGuildIds[y]
                 const guild = client.guilds.cache.get(yGId)
                 const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
-                const roleId = guild.id === '414551319031054346' ? format.role : roles[guild.name].rankedRole
                 const channel = guild.channels.cache.get(channelId)
-                channel.send(`<@&${roleId}> Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
+                const tag = guild.id === '414551319031054346' ? `<@&${format.role}> ` : ''
+                channel.send(`${tag}Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
             } catch (err) {
                 console.log(err)
             }
