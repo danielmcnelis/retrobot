@@ -42,9 +42,6 @@ Tournament.hasMany(Entry)
 Event.hasMany(Deck)
 Deck.belongsTo(Event)
 
-Event.belongsTo(Tournament)
-Tournament.hasOne(Event)
-
 //IRON
 Iron.belongsTo(Player)
 Player.hasMany(Iron)
