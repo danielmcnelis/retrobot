@@ -7,18 +7,6 @@ const DeckType = db.define('deckTypes', {
   },
   category: {
       type: Sequelize.STRING
-  },
-  format: {
-    type: Sequelize.STRING
-  },
-  leftCard: {
-      type: Sequelize.STRING
-  },
-  centerCard: {
-      type: Sequelize.STRING
-  },
-  rightCard: {
-      type: Sequelize.STRING
   }
 })
 

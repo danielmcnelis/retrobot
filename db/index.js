@@ -3,6 +3,7 @@ const { db } = require('./db')
 const BlogPost = require('./BlogPost')
 const Card = require('./Card')
 const Deck = require('./Deck')
+const DeckThumb = require('./DeckThumb')
 const DeckType = require('./DeckType')
 const Entry = require('./Entry')
 const Event = require('./Event')
@@ -26,6 +27,9 @@ const Tournament = require('./Tournament')
 //DECKTYPE
 DeckType.hasMany(Deck)
 Deck.belongsTo(DeckType)
+
+DeckType.hasMany(DeckThumb)
+DeckThumb.belongsTo(DeckType)
 
 //ENTRY
 Entry.belongsTo(Player)
@@ -106,6 +110,9 @@ Card.hasMany(Status)
 Tournament.hasMany(Deck)
 Deck.belongsTo(Tournament)
 
+Tournament.belongsTo(Event)
+Event.hasOne(Tournament)
+
 Tournament.belongsTo(Server)
 Server.hasMany(Tournament)
 
@@ -114,6 +121,7 @@ module.exports = {
   BlogPost,
   Card,
   Deck,
+  DeckThumb,
   DeckType,
   Entry,
   Event,
