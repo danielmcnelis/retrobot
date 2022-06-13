@@ -765,7 +765,7 @@ try {
     // DROP
     if(commands.dropcom.includes(cmd)) {
         if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
-        const tournaments = [...await Entry.findAll({ where: { playerId: maid }, include: Tournament })].map((e) => e.tournament).filter((t) => t.guildId === message.guild.id)
+        const tournaments = [...await Entry.findAll({ where: { playerId: maid }, include: Tournament })].map((e) => e.tournament).filter((t) => t.serverId === message.guild.id)
         if (!tournaments.length) return message.channel.send({ content: `You are not in an active tournament.`})
         const tournament = await selectTournament(message, tournaments, maid)
         let success = (tournament.state === 'pending' || tournament.state === 'standby')
@@ -797,7 +797,7 @@ try {
         const member = message.mentions.members.first()
         const playerId = member && member.user ? member.user.id : null
         if (!playerId) return message.channel.send({ content: `Please specify the player you wish to remove.`})
-        const tournaments = [...await Entry.findAll({ where: { playerId }, include: Tournament })].map((e) => e.tournament).filter((t) => t.guildId === message.guild.id)
+        const tournaments = [...await Entry.findAll({ where: { playerId }, include: Tournament })].map((e) => e.tournament).filter((t) => t.serverId === message.guild.id)
         if (!tournaments.length) return message.channel.send({ content: `That user is not in any tournaments.`})
         const tournament = await selectTournament(message, tournaments, maid)
         const entry = await Entry.findOne({ where: { playerId, tournamentId: tournament.id }, include: Player})
@@ -1888,7 +1888,7 @@ try {
         if (noshow && await isNewUser(server, noShowId)) await createPlayer(noshow)
         const noShowPlayer = await Player.findOne({ where: { id: noShowId } })
         if (!noShowPlayer) return message.channel.send({ content: `Sorry, <@${noShowId}> is not in the database.`})
-        const tournaments = [...await Entry.findAll({ where: { playerId: noShowId }, include: Tournament })].map((e) => e.tournament).filter((t) => t.guildId === message.guild.id)
+        const tournaments = [...await Entry.findAll({ where: { playerId: noShowId }, include: Tournament })].map((e) => e.tournament).filter((t) => t.serverId === message.guild.id)
         if (!tournaments.length || !noshow.roles.cache.some(role => role.id === roles[server.name].tourRole)) return message.channel.send({ content: `Sorry, ${noShowPlayer.name} is not any tournaments.`})
      
         const tournament = await selectTournament(message, tournaments, maid)
