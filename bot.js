@@ -551,14 +551,17 @@ try {
                     }
                 }
 
-                const lastMatch = [...await Match.findAll({
-                    where: {
-                        format: tournament.format,
-                        tournament: true,
-                        serverId: mgid
-                    },
-                    order: [['createdAt', 'DESC']]
-                })][0]
+                const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${challongeAPIKeys[server.name]}`)
+
+                let winnerParticipantId
+                for (let i = 0; i < data.length; i++) {
+                    const participant = data[i]
+                    if (participant.final_rank === 1) winnerParticipantId = participant.id
+                }
+
+                const winningEntry = await Entry.findOne({ where: { participantId: winnerParticipantId }})
+                const winner = winningEntry ? winningEntry.pilot : null
+                const playerId = winningEntry ? winningEntry.playerId : null
 
                 await Event.create({
                     name: tournament.name,
@@ -566,8 +569,8 @@ try {
                     referenceUrl: `https://challonge.com/${tournament.url}`,
                     display: true,
                     tournamentId: tournament.id,
-                    winner: lastMatch.winner_name,
-                    playerId: lastMatch.winnerId,
+                    winner: winner,
+                    playerId: playerId,
                     type: tournament.type,
                     community: tournament.community,
                     logo: tournament.logo,
