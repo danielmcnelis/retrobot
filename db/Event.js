@@ -54,4 +54,4 @@ const Event = db.define('events', {
     }
 })
 
-module.exports = Entry
+module.exports = Event

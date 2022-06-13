@@ -65,6 +65,9 @@ Match.hasOne(Matchup)
 Matchup.belongsTo(Tournament)
 Tournament.hasMany(Matchup)
 
+Tournament.belongsTo(Server)
+Server.hasMany(Tournament)
+
 Stats.belongsTo(Server)
 Server.hasMany(Stats)
 
