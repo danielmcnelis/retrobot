@@ -613,9 +613,9 @@ try {
         for (let i = 0; i < tournaments.length; i++) {
             const tournament = tournaments[i]
             results.push(`Name: ${tournament.name} ${tournament.logo}` +
-                `\nStatus: ${capitalize(tournament.state, true)}` +
                 `\nFormat: ${tournament.format} ${tournament.emoji}` + 
-                `\nBracket: <https://challonge.com/${tournament.url}>`
+                `\nBracket: <https://challonge.com/${tournament.url}>` +
+                `\nStatus: ${capitalize(tournament.state, true)}`
             )
         }
 
