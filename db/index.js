@@ -71,7 +71,7 @@ Server.hasMany(Tournament)
 Stats.belongsTo(Server)
 Server.hasMany(Stats)
 
-Match.belongsTo(Server)
+Match.belongsTo(Server)f
 Server.hasMany(Match)
 
 Membership.belongsTo(Server)
@@ -82,6 +82,9 @@ RatedDeck.belongsTo(Player)
 
 Player.hasMany(Deck)
 Deck.belongsTo(Player)
+
+Tournament.hasMany(Deck)
+Deck.belongsTo(Tournament)
 
 Event.hasMany(Deck)
 Deck.belongsTo(Event)
