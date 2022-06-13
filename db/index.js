@@ -71,7 +71,7 @@ Server.hasMany(Tournament)
 Stats.belongsTo(Server)
 Server.hasMany(Stats)
 
-Match.belongsTo(Server)f
+Match.belongsTo(Server)
 Server.hasMany(Match)
 
 Membership.belongsTo(Server)
