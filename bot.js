@@ -2190,8 +2190,8 @@ try {
                     const channel = guild.channels.cache.get(channelId)
                     const opponent = await Player.findOne({ where: { id: potentialPair.playerId }})
                     const member = await guild.members.fetch(opponent.id)
-                    member.user.send(`New pairing for Rated ${format.name} Format ${commonformat.emoji}!\nServer: ${commonServer.name} ${emojis[commonServer.name]}\nDiscord:${player.tag} \nDuelingBook: ${player.duelingBook}`)
-                    message.channel.send(`New pairing for Rated ${format.name} Format ${commonformat.emoji}!\nServer: ${commonServer.name} ${emojis[commonServer.name]}\nDiscord: ${opponent.tag}\nDuelingBook: ${opponent.duelingBook}`)
+                    member.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${emojis[commonServer.name]}\nDiscord: ${player.tag}\nDuelingBook: ${player.duelingBook}`)
+                    message.channel.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${emojis[commonServer.name]}\nDiscord: ${opponent.tag}\nDuelingBook: ${opponent.duelingBook}`)
                     
                     const ratedPoolsToDestroy = await RatedPool.findAll({
                         where: {
