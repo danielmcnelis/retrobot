@@ -18,7 +18,7 @@ const Deck = db.define('decks', {
   ydk: {
     type: Sequelize.TEXT
   },
-  event: {
+  eventName: {
     type: Sequelize.STRING
   },
   eventDate: {
