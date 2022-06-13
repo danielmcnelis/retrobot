@@ -34,7 +34,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                 console.log(err)
             } else {
                 console.log('files', files)
-                files.forEach(async (file) => {
+                files.forEach(async (file, index) => {
                     let query = file.slice(0, -4)
                     // if (query === 'noahmowdy985') query = 'ChainStrike'
                     // if (query === 'Ithrowitintomylunch_!') query = 'Ithrowitintomylunch__'
@@ -187,11 +187,11 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                             }
                         }
                     }
+
+                    if (index === files.length) return message.channel.send(`Uploaded ${b} out of ${size} decks for ${event.name}.`)
                 })
             }
         })
-
-        return message.channel.send(`Uploaded ${b} out of ${size} decks for ${event.name}.`)
     } catch (err) {
         console.log(err)
         return message.channel.send(`Error uploading decks for ${event.name}.`)
@@ -200,7 +200,6 @@ const createDecks = async (message, event, tournament, useTags = true) => {
 
 // COMPOSE BLOG POST
 const composeBlogPost = async (message, abbreviation) => {
-    console.log('shortName', shortName)
     try {
         const event = await Event.findOne({ 
             where: { 
