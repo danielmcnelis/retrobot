@@ -200,7 +200,6 @@ const createDecks = async (message, event, tournament, useTags = true) => {
 
 // COMPOSE BLOG POST
 const composeBlogPost = async (message, abbreviation) => {
-    console.log('shortName', shortName)
     try {
         const event = await Event.findOne({ 
             where: { 
