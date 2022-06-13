@@ -2204,7 +2204,7 @@ try {
                         await rPTD.destroy()
                     }
 
-                    return channel.send({ content: `New Rated ${format.name} Format ${commonformat.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
+                    return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
                 }
             }
         } catch (err) {

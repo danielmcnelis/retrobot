@@ -54,8 +54,8 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             const opponent = await Player.findOne({ where: { id: newRatedPool.playerId }})
             const opposingMember = await guild.members.fetch(opponent.id)
 
-            opposingMember.user.send(`New pairing for Rated ${format.name} Format ${commonformat.emoji}!\nServer: ${commonServer.name} ${emojis[commonServer.name]}\nDiscord: ${player.tag}\nDuelingBook: ${player.duelingBook}`)
-            message.channel.send(`New pairing for Rated ${format.name} Format ${commonformat.emoji}!\nServer: ${commonServer.name} ${emojis[commonServer.name]}\nDiscord: ${opponent.tag}\nDuelingBook: ${opponent.duelingBook}`)
+            opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${player.tag}\nDuelingBook: ${player.duelingBook}`)
+            message.channel.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.tag}\nDuelingBook: ${opponent.duelingBook}`)
             
             const ratedPoolsToDestroy = await RatedPool.findAll({
                 where: {
@@ -68,7 +68,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
                 await rPTD.destroy()
             }
 
-            return channel.send({ content: `New Rated ${format.name} Format ${commonformat.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
+            return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
         } else {
             await potentialPair.destroy()
             return message.channel.send(`Not a problem. I've removed you from the Rated ${format.name} Format ${format.emoji} player pool.`)
