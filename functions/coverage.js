@@ -135,7 +135,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                             const count = await Deck.count({
                                 where: {
                                     builder: player.name,
-                                    event: event.name,
+                                    eventName: event.name,
                                     eventId: event.id
                                 }
                             })
@@ -221,7 +221,7 @@ const composeBlogPost = async (message, abbreviation) => {
 
         const deck = await Deck.findOne({
             where: {
-                event: abbreviation || event.name,
+                eventName: abbreviation || event.name,
                 placement: 1
             }
         })
@@ -346,7 +346,7 @@ const composeThumbnails = async (message, event) => {
     try {
         const decks = await Deck.findAll({
             where: {
-                event: event
+                eventName: event
             }
         })
     
