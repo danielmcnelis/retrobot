@@ -23,74 +23,91 @@ const Stats = require('./Stats')
 const Status = require('./Status')
 const Tournament = require('./Tournament')
 
-Player.hasMany(BlogPost)
-BlogPost.belongsTo(Player)
+//DECKTYPE
+DeckType.hasMany(Deck)
+Deck.belongsTo(DeckType)
 
-Stats.belongsTo(Player)
-Player.hasMany(Stats)
-
-Membership.belongsTo(Player)
-Player.hasMany(Membership)
-
-Role.belongsTo(Membership)
-Membership.hasMany(Role)
-
-RatedPool.belongsTo(Player)
-Player.hasMany(RatedPool)
-
-Iron.belongsTo(Player)
-Player.hasMany(Iron)
-
+//ENTRY
 Entry.belongsTo(Player)
 Player.hasMany(Entry)
 
 Entry.belongsTo(Tournament)
 Tournament.hasMany(Entry)
 
-Tournament.belongsTo(Event)
-Event.hasOne(Tournament)
+//EVENT
+Event.hasMany(Deck)
+Deck.belongsTo(Event)
 
-Status.belongsTo(Card)
-Card.hasMany(Status)
+//IRON
+Iron.belongsTo(Player)
+Player.hasMany(Iron)
 
-Print.belongsTo(Card)
-Card.hasMany(Print)
+//MATCH
+Match.belongsTo(Server)
+Server.hasMany(Match)
 
-Print.belongsTo(Set)
-Set.hasMany(Print)
-
+//MATCHUP
 Matchup.belongsTo(Match)
 Match.hasOne(Matchup)
 
 Matchup.belongsTo(Tournament)
 Tournament.hasMany(Matchup)
 
-Tournament.belongsTo(Server)
-Server.hasMany(Tournament)
-
-Stats.belongsTo(Server)
-Server.hasMany(Stats)
-
-Match.belongsTo(Server)
-Server.hasMany(Match)
+//MEMBERSHIP
+Membership.belongsTo(Player)
+Player.hasMany(Membership)
 
 Membership.belongsTo(Server)
 Server.hasMany(Membership)
 
-Player.hasMany(RatedDeck)
-RatedDeck.belongsTo(Player)
+//PLAYER
+Player.hasMany(BlogPost)
+BlogPost.belongsTo(Player)
 
 Player.hasMany(Deck)
 Deck.belongsTo(Player)
 
+Player.hasMany(Event)
+Event.belongsTo(Player)
+
+Player.hasMany(RatedDeck)
+RatedDeck.belongsTo(Player)
+
+//PRINT
+Print.belongsTo(Card)
+Card.hasMany(Print)
+
+Print.belongsTo(Set)
+Set.hasMany(Print)
+
+//RATED POOL
+RatedPool.belongsTo(Player)
+Player.hasMany(RatedPool)
+
+//ROLE
+Role.belongsTo(Membership)
+Membership.hasMany(Role)
+
+//STATS
+Stats.belongsTo(Player)
+Player.hasMany(Stats)
+
+Stats.belongsTo(Server)
+Server.hasMany(Stats)
+
+//STATUS
+Status.belongsTo(Card)
+Card.hasMany(Status)
+
+//TOURNAMENT
 Tournament.hasMany(Deck)
 Deck.belongsTo(Tournament)
 
-Event.hasMany(Deck)
-Deck.belongsTo(Event)
+Tournament.belongsTo(Event)
+Event.hasOne(Tournament)
 
-DeckType.hasMany(Deck)
-Deck.belongsTo(DeckType)
+Tournament.belongsTo(Server)
+Server.hasMany(Tournament)
 
 module.exports = {
   db,
