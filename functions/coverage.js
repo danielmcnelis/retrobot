@@ -170,7 +170,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                                     format: tournament.format,
                                     ydk: raw,
                                     placement: placement,
-                                    event: event.abbreviation || event.name,
+                                    eventName: event.abbreviation || event.name,
                                     display: display,
                                     community: event.community,
                                     playerId: player.id,
