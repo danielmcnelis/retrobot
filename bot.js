@@ -150,6 +150,18 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
+            const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${11271110}/participants.json?api_key=${challongeAPIKeys[server.name]}`)
+            console.log('!!data', !!data)
+            console.log('data.length', data.length)
+
+            let winnerParticipantId = null
+            for (let i = 0; i < data.length; i++) {
+                const participant = data[i]
+                console.log('participant', participant)
+                if (participant.final_rank === 1) winnerParticipantId = participant.id
+            }
+
+            console.log('winnerParticipantId', winnerParticipantId)
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
@@ -553,10 +565,12 @@ try {
 
                 const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${challongeAPIKeys[server.name]}`)
                 console.log('!!data', !!data)
+                console.log('data.length', data.length)
 
                 let winnerParticipantId = null
                 for (let i = 0; i < data.length; i++) {
                     const participant = data[i]
+                    console.log('participant', participant)
                     if (participant.final_rank === 1) winnerParticipantId = participant.id
                 }
 
