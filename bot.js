@@ -156,8 +156,8 @@ try {
 
             let winnerParticipantId = null
             for (let i = 0; i < data.length; i++) {
-                const participant = data[i]
-                console.log('participant', participant)
+                const participant = data[i].participant
+                console.log('participant.id', participant.id)
                 if (participant.final_rank === 1) winnerParticipantId = participant.id
             }
 
