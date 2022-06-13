@@ -225,7 +225,7 @@ try {
         if (isProgrammer(message.member)) {
             const tournaments = await Tournament.findAll({
                 where: {
-                    guildId: mgid,
+                    serverId: mgid,
                     createdAt: { [Op.gte]: "2022-03-01 00:00:00.000+00" },
                 },
                 order: [["createdAt", "ASC"]],

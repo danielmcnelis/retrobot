@@ -152,16 +152,16 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                                 }) || ({ name: 'other', category: 'other' })
 
                                 const display = (size <= 8 && placement === 1) ||
-                                                (size > 8 && size <= 16 && placement <= 2) ||
-                                                (size > 16 && size <= 24 && placement <= 3) ||
-                                                (size > 24 && size <= 32 && placement <= 4) ||
-                                                (size > 32 && size <= 48 && placement <= 6) ||
-                                                (size > 48 && size <= 64 && placement <= 8) ||
-                                                (size > 64 && size <= 96 && placement <= 12) ||
-                                                (size > 96 && size <= 128 && placement <= 16) ||
-                                                (size > 128 && size <= 224 && placement <= 24) ||
-                                                (size > 224 && placement <= 32) ||
-                                                false
+                                    (size > 8 && size <= 16 && placement <= 2) ||
+                                    (size > 16 && size <= 24 && placement <= 3) ||
+                                    (size > 24 && size <= 32 && placement <= 4) ||
+                                    (size > 32 && size <= 48 && placement <= 6) ||
+                                    (size > 48 && size <= 64 && placement <= 8) ||
+                                    (size > 64 && size <= 96 && placement <= 12) ||
+                                    (size > 96 && size <= 128 && placement <= 16) ||
+                                    (size > 128 && size <= 224 && placement <= 24) ||
+                                    (size > 224 && placement <= 32) ||
+                                    false
 
                                 await Deck.create({
                                     type: deckType.name,
