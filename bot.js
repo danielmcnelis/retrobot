@@ -113,7 +113,13 @@ try {
     const cmd = marr[0] ? marr[0].toLowerCase() : ''
     const args = marr[1] ? marr.slice(1) : ''
     const maid = message.author.id
-    if (maid === '597814337637187617' || message.content.includes('597814337637187617')) return
+    const bList = [...await Player.findAll({ where: { blacklisted: true }})].map((p) => p.id)
+    console.log('bList', bList)
+    if (bList.includes(maid) || message.mentions.users.first() && bList.includes(message.mentions.users.first().id)) {
+        console.log('bList hit from', maid, ':', message.content)
+        return
+    }
+
     const mcid = message.channel.id
     const mgid = message.guild ? message.guild.id : null
     
