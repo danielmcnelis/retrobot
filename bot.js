@@ -114,7 +114,6 @@ try {
     const args = marr[1] ? marr.slice(1) : ''
     const maid = message.author.id
     const bList = [...await Player.findAll({ where: { blacklisted: true }})].map((p) => p.id)
-    console.log('bList', bList)
     if (bList.includes(maid) || message.mentions.users.first() && bList.includes(message.mentions.users.first().id)) {
         console.log('bList hit from', maid, ':', message.content)
         return
