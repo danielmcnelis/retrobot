@@ -2376,13 +2376,15 @@ try {
         const abbreviation = args[0]
         const event = await Event.findOne({ where: { abbreviation: abbreviation }})
         if (!event) return message.channel.send(`No event found.`)
-        const tournament = await Tournament.findOne({ where: { id: event.tournamentId }})
-        if (!tournament) return message.channel.send(`No tournament found.`)
         const coverageType = await selectCoverage(message)
         if (!coverageType) return
-        if (coverageType.includes('Upload Decks')) return createDecks(message, event, tournament)
+        
         if (coverageType.includes('Thumbnail')) return composeThumbnails(message, abbreviation)
         if (coverageType.includes('BlogPost')) return composeBlogPost(message, abbreviation)
+
+        const tournament = await Tournament.findOne({ where: { id: event.tournamentId }})
+        if (!tournament) return message.channel.send(`No tournament found.`)
+        if (coverageType.includes('Upload Decks')) return createDecks(message, event, tournament)
     }
 
     // COMBINE
