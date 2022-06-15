@@ -51,9 +51,6 @@ const Deck = db.define('decks', {
   },
   eventId: {
       type: Sequelize.INTEGER
-  },
-  tournamentId: {
-      type: Sequelize.STRING
   }
 })
 
