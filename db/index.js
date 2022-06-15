@@ -107,9 +107,6 @@ Status.belongsTo(Card)
 Card.hasMany(Status)
 
 //TOURNAMENT
-Tournament.hasMany(Deck)
-Deck.belongsTo(Tournament)
-
 Tournament.belongsTo(Server)
 Server.hasMany(Tournament)
 
