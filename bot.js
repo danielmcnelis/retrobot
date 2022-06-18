@@ -545,7 +545,7 @@ try {
         if (!isMod(server, message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
         if (!args.length) return message.channel.send({ content: `Please specify the name of the tournament you wish to end.`})
         const name = args[0]
-        const tournament = await Tournament.findOne({ where: { name: { [Op.iLike]: name }}, guildId: mgid })
+        const tournament = await Tournament.findOne({ where: { name: { [Op.iLike]: name }}, serverId: mgid })
         if (!tournament) return message.channel.send({ content: `Could not find tournament: "${name}".`})
         if (tournament.state === 'pending' || tournament.state === 'standby') return message.channel.send({ content: `This tournament has not begun.`})
         if (tournament.state === 'complete') return message.channel.send({ content: `This tournament has already ended.`})
@@ -734,7 +734,7 @@ try {
         if (!player) return message.channel.send({ content: `${mentioned.user.username} is not in the database.`})
         const tournaments = await Tournament.findAll({ where: { state: {[Op.or]: ['pending', 'standby']}, serverId: mgid }, order: [['createdAt', 'ASC']] })
         const tournament = await selectTournament(message, tournaments, maid)
-        const count = await Tournament.count({ where: { state: 'underway', guildId: mgid } })
+        const count = await Tournament.count({ where: { state: 'underway', serverId: mgid } })
         if (!tournament && count) return message.channel.send({ content: `Sorry, the tournament already started.`})
         if (!tournament && !count) return message.channel.send({ content: `There is no active tournament.`})
         const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournament.id } })
@@ -840,12 +840,12 @@ try {
         const tournaments = await Tournament.findAll({
             where: { 
                 state: "pending", 
-                guildId: mgid 
+                serverId: mgid 
             },
             order: [["createdAt", "ASC"]]
         })
         
-        const count = await Tournament.count({ where: { state: "underway", guildId: mgid } })
+        const count = await Tournament.count({ where: { state: "underway", serverId: mgid } })
         const tournament = await selectTournament(message, tournaments, maid);
         if (!tournament && count) return message.channel.send({ content: `Sorry, the tournament already started.` })
         if (!tournament && !count) return message.channel.send({ content: `There is no active tournament.` })
@@ -1787,7 +1787,7 @@ try {
                 if (common_tournament_ids.length) {
                     for (let i = 0; i < common_tournament_ids.length; i++) {
                         const id = common_tournament_ids[i]
-                        tournament = await Tournament.findOne({ where: { id: id, guildId: mgid }})
+                        tournament = await Tournament.findOne({ where: { id: id, serverId: mgid }})
                         if (!tournament) continue
                         losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
                         winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
