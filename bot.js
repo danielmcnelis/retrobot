@@ -2479,7 +2479,7 @@ try {
     // This is needed after matches are directly added or deleted using postgreSQL.
     // It's also required after using the !combine command, but the bot will remind you to do it.
     if (commands.recalccom.includes(cmd)) { 
-        if (!hasFullAccess(server)) return message.channel.send({ content: `This feature is only available in Format Library. ${emojis.FL}`}) 
+        if (!hasFullPartner(server)) return message.channel.send({ content: `This feature is only available with Partner Access. ${emojis.legend}`}) 
         if (!isMod(server, message.member)) return message.channel.send({ content: "You do not have permission to do that."})
         const format = await Format.findOne({
             where: {
@@ -2490,8 +2490,10 @@ try {
             }
         })
         
+        const serverId = server.internalLadder ? server.id : '414551319031054346'
+        const serverName = server.internalLadder ? server.name : 'Format Library'
         if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
-        const all_stats = await Stats.findAll({ where: { format: format.name, serverId: '414551319031054346' } })
+        const all_stats = await Stats.findAll({ where: { format: format.name, serverId: serverId } })
 
         for (let i = 0; i < all_stats.length; i++) {
             const stats = all_stats[i]
@@ -2504,15 +2506,15 @@ try {
         }
         
         const allMatches = await Match.findAll({ where: { format: format.name, serverId: '414551319031054346' }, order: [["createdAt", "ASC"]]})
-        message.channel.send({ content: `Recalculating data for ${allMatches.length} matches. Please wait...`})
+        message.channel.send({ content: `Recalculating data from ${allMatches.length} ${serverName} ${format.name} ${format.emoji} matches. Please wait...`})
         for (let i = 0; i < allMatches.length; i++) {
             const match = allMatches[i]
             const winnerId = match.winnerId
             const loserId = match.loserId
             const winningPlayer = await Player.findOne({ where: { id: winnerId }})
-            const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format: format.name, serverId: '414551319031054346' } })
+            const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format: format.name, serverId: serverId } })
             const losingPlayer = await Player.findOne({ where: { id: loserId }})
-            const loserStats = await Stats.findOne({ where: { playerId: loserId, format: format.name, serverId: '414551319031054346' } })
+            const loserStats = await Stats.findOne({ where: { playerId: loserId, format: format.name, serverId: serverId } })
 
             if (!winningPlayer || !winnerStats) {
                 await trackStats(server, winnerId, format.name)
