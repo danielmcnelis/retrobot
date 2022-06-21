@@ -1076,7 +1076,7 @@ try {
     if (commands.profcom.includes(cmd)) {
         const playerId = message.mentions.users.first() ? message.mentions.users.first().id : maid	
         const player = await Player.findOne({ where: { id: playerId } })
-        const all_stats = await Stats.findAll({ where: { playerId } })
+        const all_stats = await Stats.findAll({ where: { playerId, internal: false } })
         if (!player || !all_stats) return message.channel.send({ content: "That user is not in the database."})
         const results = []
         
@@ -1105,7 +1105,8 @@ try {
                 playerId, 
                 elo: { 
                     [Op.gte]: 530 
-                }
+                },
+                internal: false
             }
         })
 
@@ -1533,13 +1534,13 @@ try {
         const winner = await message.guild.members.fetch(opid)
         const winningPlayer = await Player.findOne({ where: { id: opid } })
         const serverId = server.internalLadder ? server.id : '414551319031054346'
-
+        
         const wCount = await Stats.count({ where: { playerId: opid, format: format.name, serverId: serverId } })
-        if (!wCount) await Stats.create({ playerId: opid, format: format.name, serverId: serverId })
+        if (!wCount) await Stats.create({ playerId: opid, format: format.name, serverId: serverId, internal: server.internalLadder })
         const winnerStats = await Stats.findOne({ where: { playerId: opid, format: format.name, serverId: serverId } })
         const losingPlayer = await Player.findOne({ where: { id: maid } })
         const lCount = await Stats.count({ where: { playerId: maid, format: format.name, serverId: serverId } })
-        if (!lCount) await Stats.create({ playerId: maid, format: format.name, serverId: serverId })
+        if (!lCount) await Stats.create({ playerId: maid, format: format.name, serverId: serverId, internal: server.internalLadder })
         const loserStats = await Stats.findOne({ where: { playerId: maid, format: format.name, serverId: serverId } })
 
         if (winner && winner.user.bot) return message.channel.send({ content: `Sorry, Bots do not play ${format.name} Format... *yet*.`})
@@ -1681,7 +1682,8 @@ try {
             tournament: isTournamentMatch,
             format: format.name,
             delta: delta,
-            serverId: serverId
+            serverId: serverId,
+            internal: server.internalLadder
         })
 
         if (isTournamentMatch && winningEntry && losingEntry && tournament && match) {
@@ -1735,11 +1737,11 @@ try {
         const serverId = server.internalLadder ? server.id : '414551319031054346'
         const winningPlayer = await Player.findOne({ where: { id: winnerId } })
         const wCount = await Stats.count({ where: { playerId: winnerId, format: format.name, serverId: serverId } })
-        if (!wCount) await Stats.create({ playerId: winnerId, format: format.name, serverId: serverId })
+        if (!wCount) await Stats.create({ playerId: winnerId, format: format.name, serverId: serverId, internal: server.internalLadder })
         const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format: format.name, serverId: serverId } })
         const losingPlayer = await Player.findOne({ where: { id: loserId } })
         const lCount = await Stats.count({ where: { playerId: loserId, format: format.name, serverId: serverId } })
-        if (!lCount) await Stats.create({ playerId: loserId, format: format.name, serverId: serverId })
+        if (!lCount) await Stats.create({ playerId: loserId, format: format.name, serverId: serverId, internal: server.internalLadder })
         const loserStats = await Stats.findOne({ where: { playerId: loserId, format: format.name, serverId: serverId } })
 
         if (!losingPlayer || !loserStats) return message.channel.send({ content: `Sorry, <@${loserId}> is not in the database.`})
@@ -1879,7 +1881,8 @@ try {
             tournament: isTournamentMatch,
             format: format.name,
             delta: delta,
-            serverId: serverId
+            serverId: serverId,
+            internal: server.internalLadder
         })
 
         if (isTournamentMatch && winningEntry && losingEntry && tournament && match) {

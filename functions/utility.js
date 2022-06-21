@@ -491,7 +491,8 @@ const trackStats = async (server, id, format) => {
         await Stats.create({
             playerId: id,
             format: format,
-            serverId: '414551319031054346'
+            serverId: '414551319031054346',
+            internal: server.internalLadder
         })
     }
 }
