@@ -2479,7 +2479,7 @@ try {
     // This is needed after matches are directly added or deleted using postgreSQL.
     // It's also required after using the !combine command, but the bot will remind you to do it.
     if (commands.recalccom.includes(cmd)) { 
-        if (!hasFullPartner(server)) return message.channel.send({ content: `This feature is only available with Partner Access. ${emojis.legend}`}) 
+        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with Partner Access. ${emojis.legend}`}) 
         if (!isMod(server, message.member)) return message.channel.send({ content: "You do not have permission to do that."})
         const format = await Format.findOne({
             where: {
