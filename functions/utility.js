@@ -328,7 +328,7 @@ const assignRoles = async (guild, member) => {
 }
 
 //CAPITALIZE
-const capitalize = (str, eachWord = false) => {
+const capitalize = (str = '', eachWord = false) => {
     if (eachWord) {
         const splt = str.split(' ').map((s) => capitalize(s))
         return splt.join(' ')
@@ -338,7 +338,7 @@ const capitalize = (str, eachWord = false) => {
 } 
 
 //CONVERT ARRAY TO OBJECT
-const convertArrayToObject = (arr) => {
+const convertArrayToObject = (arr = []) => {
     const obj = {}
     arr.forEach(e => obj[e] ? obj[e]++ : obj[e] = 1)
     return obj
@@ -346,7 +346,7 @@ const convertArrayToObject = (arr) => {
 
 //CREATE PLAYER
 const createPlayer = async (member) => {
-    if (!member.user.bot) {
+    if (member && !member.user.bot) {
         try {
             await Player.create({
                 id: `${member.user.id}`,

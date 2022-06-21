@@ -245,6 +245,23 @@ const fixMemberships = async () => {
     return console.log(`fixed ${b} memberships, encountered ${e} errors and destroyed ${e} memberships`)
 }
 
+const fixInternal = async () => {
+    const matches = await Match.findAll({
+        where: {
+            serverId: '961281521719836693'
+        }
+    })
+
+    for (let i = 0; i < matches.length; i++) {
+        const m = matches[i]
+        m.internal = true
+        await m.save()
+    }
+
+    return
+}
+
+fixInternal()
 // fixFormats()
 // erasePasswords()
 // createNewStatues()
@@ -255,4 +272,4 @@ const fixMemberships = async () => {
 // fixMatchups()
 // fixStatuses()
 // deleteMemberships()
-fixMemberships()
+// fixMemberships()
