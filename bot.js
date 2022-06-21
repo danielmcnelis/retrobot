@@ -2505,7 +2505,7 @@ try {
             await stats.save()
         }
         
-        const allMatches = await Match.findAll({ where: { format: format.name, serverId: '414551319031054346' }, order: [["createdAt", "ASC"]]})
+        const allMatches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [["createdAt", "ASC"]]})
         message.channel.send({ content: `Recalculating data from ${allMatches.length} ${serverName} ${format.name} ${format.emoji} matches. Please wait...`})
         for (let i = 0; i < allMatches.length; i++) {
             const match = allMatches[i]
