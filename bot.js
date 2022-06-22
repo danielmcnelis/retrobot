@@ -181,7 +181,6 @@ try {
         if (isProgrammer(message.member)) {
             let b = 0
             const players = await Player.findAll()
-
             console.log('players.length', players.length)
 
             for (let i = 0; i < players.length; i++) {
@@ -1647,12 +1646,12 @@ try {
                 isIronMatch = true
                 ironPersonB.eliminated = true
                 await ironPersonB.save()
-                setTimeout(() => postStory(message.channel, format.name), 5000)
+                setTimeout(() => postStory(message.channel, format), 5000)
             } else if (winningPlayer.id === ironPersonB.playerId && losingPlayer.id === ironPersonA.playerId) {
                 isIronMatch = true
                 ironPersonA.eliminated = true
                 await ironPersonA.save()
-                setTimeout(() => postStory(message.channel, format.name), 5000)
+                setTimeout(() => postStory(message.channel, format), 5000)
             } else {
                 return message.channel.send({ content: `Sorry, ${winningPlayer.name} is not your ${format.name} Iron opponent. ${format.emoji} ${emojis.iron}`})
             }
@@ -1846,12 +1845,12 @@ try {
                 isIronMatch = true
                 ironPersonB.eliminated = true
                 await ironPersonB.save()
-                setTimeout(() => postStory(message.channel, format.name), 5000)
+                setTimeout(() => postStory(message.channel, format), 5000)
             } else if (winningPlayer.id === ironPersonB.playerId && losingPlayer.id === ironPersonA.playerId) {
                 isIronMatch = true
                 ironPersonA.eliminated = true
                 await ironPersonA.save()
-                setTimeout(() => postStory(message.channel, format.name), 5000)
+                setTimeout(() => postStory(message.channel, format), 5000)
             } else {
                 return message.channel.send({ content: `Sorry, ${winningPlayer.name} is not ${losingPlayer.name}'s ${format.name} Iron opponent. ${format.emoji} ${emojis.iron}`})
             }
