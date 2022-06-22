@@ -2,7 +2,7 @@
 const { Info, Iron, Player, Stats } = require('../db')
 const { yescom } = require('../static/commands')
 const { cavebob, iron, vincent } = require('../static/emojis')
-const { ironRole } = require('../static/roles')
+const roles = require('../static/roles.json')
 const { client } = require('../static/clients.js')
 
 //CONFIRM IRON
@@ -38,7 +38,7 @@ const confirmIron = async (channel, format) => {
                 await info.save()
                 assignIronRoles(entries)
                 setTimeout(() => {
-                    channel.send({ content: `<@&${ironRole}>, square-up gamers! The Iron starts in 10 seconds. ${cavebob}`})
+                    channel.send({ content: `<@&${roles['Format Library'].ironRole}>, square-up gamers! The Iron starts in 10 seconds. ${cavebob}`})
                 }, 1000)
                 return setTimeout(() => assignCaptains(entries, channel, format), 11000)
             }
@@ -92,7 +92,7 @@ const confirmIron = async (channel, format) => {
             await info.save()
             assignIronRoles(entries)
             setTimeout(() => {
-                channel.send({ content: `<@&${ironRole}>, square-up gamers! The Iron starts in 10 seconds. ${cavebob}`})
+                channel.send({ content: `<@&${roles['Format Library'].ironRole}>, square-up gamers! The Iron starts in 10 seconds. ${cavebob}`})
             }, 1000)
             return setTimeout(() => assignCaptains(entries, channel, format), 11000)
         }
@@ -139,7 +139,7 @@ const assignIronRoles = (entries) => {
     const guild = client.guilds.cache.get("414551319031054346")
     entries.forEach((entry) => {
         const member = guild.members.cache.get(entry.playerId)
-        member.roles.add(ironRole)
+        member.roles.add(roles['Format Library'].ironRole)
     })
 }
 
