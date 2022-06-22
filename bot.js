@@ -160,7 +160,16 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            setTimeout(() => postStory(message.channel, 'Edison'), 5000)
+            const format = await Format.findOne({
+                where: {
+                    [Op.or]: {
+                        name: { [Op.iLike]: server.format },
+                        channel: mcid
+                    }
+                }
+            })
+            
+            setTimeout(() => postStory(message.channel, format), 5000)
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
@@ -2332,7 +2341,7 @@ try {
             })
             message.channel.send({ content: `You joined the Iron queue. ${emojis.iron}`})
             
-            if (count === 7) return confirmIron(message.channel, format.name)
+            if (count === 7) return confirmIron(message.channel, format)
         } else {
             const ironPerson = await Iron.findOne({ 
                 where: {

@@ -11,7 +11,7 @@ const confirmIron = async (channel, format) => {
     info.status = 'confirming'
     await info.save()
     channel.send({ content: `Iron players, please check your DMs!`})
-    const entries = await Iron.findAll({ where: { format: format }})
+    const entries = await Iron.findAll({ where: { format: format.name }})
     getIronConfirmation(entries[0], channel, format)
     getIronConfirmation(entries[1], channel, format)
     getIronConfirmation(entries[2], channel, format)
@@ -24,7 +24,7 @@ const confirmIron = async (channel, format) => {
     for (let i = 1; i < 12; i ++) {
         setTimeout(async () => {
             const count = await Iron.count({ where: {
-                format: format,
+                format: format.name,
                 confirmed: true
             } })
     
@@ -47,7 +47,7 @@ const confirmIron = async (channel, format) => {
 
     return setTimeout(async () => {
         const count = await Iron.count({ where: {
-            format: format,
+            format: format.name,
             confirmed: true
         } })
 
@@ -62,7 +62,7 @@ const confirmIron = async (channel, format) => {
 
             const missingEntries = await Iron.findAll({ 
                 where: { 
-                    format: format,
+                    format: format.name,
                     confirmed: false
                 },
                 include: Player
@@ -74,7 +74,7 @@ const confirmIron = async (channel, format) => {
                 await entry.destroy()
             }
 
-            const remainingEntries = await Iron.findAll({ where: { format: format }})
+            const remainingEntries = await Iron.findAll({ where: { format: format.name }})
             for (let i = 0; i < remainingEntries.length; i++) {
                 const entry = remainingEntries[i]
                 entry.team = null
@@ -151,7 +151,7 @@ const assignCaptains = async (entries, channel, format) => {
         const playerId = entry.playerId
 
         const stats = await Stats.findOne({ where: {
-            format: format,
+            format: format.name,
             playerId: playerId,
             serverId: '414551319031054346'
         }})
@@ -166,7 +166,7 @@ const assignCaptains = async (entries, channel, format) => {
 
     const captainA = await Iron.findOne({ 
         where: {
-            format: format,
+            format: format.name,
             playerId: captains[0]
         }
     })
@@ -177,7 +177,7 @@ const assignCaptains = async (entries, channel, format) => {
 
     const captainB = await Iron.findOne({ 
         where: {
-            format: format,
+            format: format.name,
             playerId: captains[1]
         }
     })
@@ -197,7 +197,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
     const filter = m => m.author.id === captain.playerId
     const ironPeople = [...await Iron.findAll({ 
         where: {
-            format: format,
+            format: format.name,
             captain: null,
             team: null
         }
@@ -243,7 +243,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
             const ironPerson = await Iron.findOne({
                 where: {
                     name: name,
-                    format: format,
+                    format: format.name,
                     team: null
                 }
             })
@@ -262,7 +262,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         const ironPerson = await Iron.findOne({
             where: {
                 name: name,
-                format: format,
+                format: format.name,
                 team: null
             }
         })
@@ -283,7 +283,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
     
     const team = captain.team
     const ironPeople = [...await Iron.findAll({ where: {
-        format: format,
+        format: format.name,
         team: team,
         position: null
     }})]
@@ -308,7 +308,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
         member.send({ content: `${ironPerson.name} will go ${word}.`})
         const count = await Iron.count({ 
             where: {
-                format: format,
+                format: format.name,
                 position: null
             }
         })
@@ -346,7 +346,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
             const ironPerson = await Iron.findOne({
                 where: {
                     name: name,
-                    format: format,
+                    format: format.name,
                     team: team
                 }
             })
@@ -360,7 +360,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
 		console.log(err)
         const ironPerson = await Iron.findOne({
             where: {
-                format: format,
+                format: format.name,
                 position: null,
                 team: team
             }
@@ -377,7 +377,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
 const postPairing = async (channel, format) => {
     const teamA = [...await Iron.findAll({ 
         where: {
-            format: format,
+            format: format.name,
             team: 'A',
             eliminated: false
         },
@@ -386,7 +386,7 @@ const postPairing = async (channel, format) => {
 
     const teamB = [...await Iron.findAll({ 
         where: {
-            format: format,
+            format: format.name,
             team: 'B',
             eliminated: false
         },
@@ -408,7 +408,7 @@ const postPairing = async (channel, format) => {
 const postStory = async (channel, format) => {
     const teamA = [...await Iron.findAll({ 
         where: {
-            format: format,
+            format: format.name,
             team: 'A'
         },
         order: [["position", "ASC"]]
@@ -416,7 +416,7 @@ const postStory = async (channel, format) => {
 
     const teamB = [...await Iron.findAll({ 
         where: {
-            format: format,
+            format: format.name,
             team: 'B'
         },
         order: [["position", "ASC"]]
@@ -435,7 +435,7 @@ const postStory = async (channel, format) => {
 
 //RESET IRON
 const resetIron = async (channel, format) => {
-    const entries = await Iron.findAll({ where: { format: format }})
+    const entries = await Iron.findAll({ where: { format: format.name }})
     for (let i = 0; i < entries.length; i++) {
         const entry = entries[i]
         await entry.destroy()
