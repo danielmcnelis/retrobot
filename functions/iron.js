@@ -392,13 +392,21 @@ const postPairing = async (channel, format) => {
         },
         order: [["position", "ASC"]]
     })]
+
+    console.log('teamA.length', teamA.length)
+    console.log('teamB.length', teamB.length)
     
     if (!teamA.length) {
         const participants = await Iron.findAll({ where: { format: format.name }}) || []
+        console.log('participants.length', participants.length)
         for (let i = 0; i < participants.length; i++) {
             const participant = participants[i]
             const member = guild.members.cache.get(participant.playerId)
-            member.roles.remove(roles['Format Library'].ironRole).catch((err) => console.log(err))
+            try {
+                member.roles.remove(roles['Format Library'].ironRole)
+            } catch (err) {
+                console.log(err)
+            }
         }
 
         channel.send({ content: `Team B has emerged victorious!!!`})
@@ -407,10 +415,15 @@ const postPairing = async (channel, format) => {
 
     if (!teamB.length) {
         const participants = await Iron.findAll({ where: { format: format.name }}) || []
+        console.log('participants.length', participants.length)
         for (let i = 0; i < participants.length; i++) {
             const participant = participants[i]
             const member = guild.members.cache.get(participant.playerId)
-            member.roles.remove(roles['Format Library'].ironRole).catch((err) => console.log(err))
+            try {
+                member.roles.remove(roles['Format Library'].ironRole)
+            } catch (err) {
+                console.log(err)
+            }
         }
 
         channel.send({ content: `Team A has emerged victorious!!!`})
