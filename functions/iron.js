@@ -392,13 +392,9 @@ const postPairing = async (channel, format) => {
         },
         order: [["position", "ASC"]]
     })]
-
-    console.log('teamA.length', teamA.length)
-    console.log('teamB.length', teamB.length)
     
     if (!teamA.length) {
         const participants = await Iron.findAll({ where: { format: format.name }}) || []
-        console.log('participants.length', participants.length)
         for (let i = 0; i < participants.length; i++) {
             const participant = participants[i]
             const member = channel.guild.members.cache.get(participant.playerId)
@@ -416,7 +412,6 @@ const postPairing = async (channel, format) => {
 
     if (!teamB.length) {
         const participants = await Iron.findAll({ where: { format: format.name }}) || []
-        console.log('participants.length', participants.length)
         for (let i = 0; i < participants.length; i++) {
             const participant = participants[i]
             const member = channel.guild.members.cache.get(participant.playerId)

@@ -298,7 +298,7 @@ const composeBlogPost = async (message, abbreviation) => {
                         `<p className="blogpost-date">${blogTitleDate}</p>` +
                     `</div>` +
                 `<div className="blogpost-title-emojis">` +
-                    `<img className="blogpost-format-icon" src="/images/emojis/${format.icon.toLowerCase()}.png"/>` +
+                    `<img className="blogpost-format-icon" src="/images/emojis/${format.icon}"/>` +
                     `<img className="blogpost-event-icon" src="/images/emojis/event.png"/>` +
                 `</div>` +
             `</div>` +
@@ -308,7 +308,7 @@ const composeBlogPost = async (message, abbreviation) => {
                 `</p>` +
                 `<div className="blogpost-images-flexbox">` +
                     `<div className="blogpost-pfp-community-flexbox">` +
-                        `<img className="blogpost-pfp" src="/images/pfps/${winner.tag.slice(0, -5)}${winner.tag.slice(-4)}.png" />` +
+                        `<img className="blogpost-pfp" src="/images/pfps/${winner.id}.png" />` +
                         `<img className="blogpost-community"  src=${communityLogo} />` +
                     `</div>` +
                     `<div className="blogpost-deck-box">` + 
