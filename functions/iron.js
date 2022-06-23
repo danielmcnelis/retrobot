@@ -403,6 +403,7 @@ const postPairing = async (channel, format) => {
             const participant = participants[i]
             const member = channel.guild.members.cache.get(participant.playerId)
             try {
+                await participant.destroy()
                 member.roles.remove(roles['Format Library'].ironRole)
             } catch (err) {
                 console.log(err)
@@ -420,6 +421,7 @@ const postPairing = async (channel, format) => {
             const participant = participants[i]
             const member = channel.guild.members.cache.get(participant.playerId)
             try {
+                await participant.destroy()
                 member.roles.remove(roles['Format Library'].ironRole)
             } catch (err) {
                 console.log(err)
