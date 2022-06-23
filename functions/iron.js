@@ -401,7 +401,7 @@ const postPairing = async (channel, format) => {
         console.log('participants.length', participants.length)
         for (let i = 0; i < participants.length; i++) {
             const participant = participants[i]
-            const member = guild.members.cache.get(participant.playerId)
+            const member = channel.guild.members.cache.get(participant.playerId)
             try {
                 member.roles.remove(roles['Format Library'].ironRole)
             } catch (err) {
@@ -418,7 +418,7 @@ const postPairing = async (channel, format) => {
         console.log('participants.length', participants.length)
         for (let i = 0; i < participants.length; i++) {
             const participant = participants[i]
-            const member = guild.members.cache.get(participant.playerId)
+            const member = channel.guild.members.cache.get(participant.playerId)
             try {
                 member.roles.remove(roles['Format Library'].ironRole)
             } catch (err) {
