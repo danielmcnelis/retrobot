@@ -2183,7 +2183,7 @@ try {
                 if (!commonGuildId) continue
                 const now = new Date()
                 const tenMinutesAgo = new Date(now - (10 * 60 * 1000))
-                const threeHoursAgo = new Date(now - (3 * 60 * 60 * 1000))
+                const oneHourAgo = new Date(now - (60 * 60 * 1000))
     
                 const yourRecentOpponents = [...await Match.findAll({
                     where: {
@@ -2192,7 +2192,7 @@ try {
                             loserId: maid
                         },
                         format: format.name,
-                        createdAt: {[Op.gte]: threeHoursAgo }
+                        createdAt: {[Op.gte]: oneHourAgo }
                     }
                 })].map((m) => {
                     if (maid === m.winnerId) {
