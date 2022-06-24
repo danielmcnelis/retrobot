@@ -196,7 +196,7 @@ const search = async (query, fuzzyCards, format) => {
 	cardEmbed.setColor(color)
 	cardEmbed.setTitle(card.name)
 	cardEmbed.setThumbnail(thumbnail)
-	cardEmbed.setDescription(`${labels.join('')}\n\n${card.description}${stats ? `\n\n${stats}` : ''}\n\nhttps://formatlibrary.com/cards/${card.name.replace(/ /g, '_')}`)
+	cardEmbed.setDescription(`${labels.join('')}\n\n${card.description}${stats ? `\n\n${stats}` : ''}\n\nhttps://formatlibrary.com/cards/${card.name.replace(/ /g, '_').replaceAll('#', '%23')}`)
 	return { cardEmbed, attachment }
 }
 
