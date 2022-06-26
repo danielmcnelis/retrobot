@@ -7,7 +7,6 @@ const { capitalize } = require('../functions/utility')
 const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
-const { Op } = require('sequelize')
 
 const fixFormats = async () => {
     let b = 0
