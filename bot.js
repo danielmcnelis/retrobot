@@ -2054,7 +2054,7 @@ try {
 
         const yourRatedDecks = await RatedDeck.findAll({
             where: {
-                 format.name,
+                format: format.name,
                 playerId: maid
             },
             order: [['updatedAt', 'DESC']]
