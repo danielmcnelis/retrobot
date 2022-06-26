@@ -159,8 +159,27 @@ try {
 
     // TEST 
     if (cmd === `!test`) {
-        if (isProgrammer(message.member)) {
-            updateAvatars(client)
+        if (isProgrammer(message.member)) { 
+            const servers = await Server.findAll()
+
+            for (let i = 0; i < servers.length; i++) {
+                const server = servers[i]
+                const guild = client.guilds.cache.get(server.id)
+
+                if (!guild) {
+                    console.log(`could not find guild for ${server.name}`)
+                    continue
+                }
+
+                if (server.name !== guild.name) {
+                    console.log(`updating server name of ${server.name} => ${guild.name}`)
+                    server.name = guild.name
+                    await server.save()
+                }
+
+                setTimeout(() => console.log('guild', guild), 15000)
+            }
+        
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})

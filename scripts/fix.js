@@ -293,30 +293,6 @@ const downloadDuelingBookAvatar = async (playerId, cardId) => {
 }
 
 
-const fixServers = async () => {
-    const servers = await Server.findAll()
-
-    for (let i = 0; i < servers.length; i++) {
-        const server = servers[i]
-        const guild = client.guilds.cache.get(server.id)
-
-        if (!guild) {
-            console.log(`could not find guild for ${server.name}`)
-            continue
-        }
-
-        if (server.name !== guild.name) {
-            console.log(`updating server name of ${server.name} => ${guild.name}`)
-            server.name = guild.name
-            await server.save()
-        }
-
-        setTimeout(() => console.log('guild', guild), 15000)
-    }
-}
-
-fixServers()
-
 // downloadDuelingBookAvatar('692063231988072479', '3904')
 // downloadDuelingBookAvatar('290946983307247617', '2699')
 // downloadDuelingBookAvatar('215128682459561985', '826')
