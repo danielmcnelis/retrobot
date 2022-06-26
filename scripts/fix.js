@@ -1,7 +1,7 @@
 
 
 const { Op } = require('sequelize')
-const { BlogPost, Deck, DeckType, Match, Matchup, Server, Stats, Status, Format, Player, Membership, Server } = require('../db')
+const { BlogPost, Deck, DeckType, Format, Match, Matchup, Membership, Player, Server, Stats, Status  } = require('../db')
 const statuses = require('../static/statuses.json')
 const { capitalize } = require('../functions/utility')
 const axios = require('axios')
