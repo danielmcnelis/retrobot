@@ -274,7 +274,7 @@ const findMissingBlogPostPFPs = async () => {
         if (!exists) console.log(`missing PFP for ${bp.player.name}: ${bp.player.id}.png`)
     }
 }
-f
+
 const downloadDuelingBookAvatar = async (playerId, cardId) => {
     const {data} = await axios.get(
         `https://images.duelingbook.com/low-res/${cardId}.jpg`, {
