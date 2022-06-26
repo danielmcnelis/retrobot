@@ -40,17 +40,10 @@ const updateAvatars = async (client) => {
                     const avatar = user.avatar
                     if (memberId === '98926488430088192') console.log('!!avatar', !!avatar)
                     if (!avatar) continue
-        
-                    const player = await Player.findOne({
-                        where: {
-                            id: memberId,
-                            avatar: {[Op.not]: avatar }
-                        }
-                    })
-
+                    const player = await Player.findOne({ where: { id: memberId }})
                     if (memberId === '98926488430088192') console.log('!!player', !!player)
         
-                    if (player) {
+                    if (player && player.avatar !== avatar) {
                         player.avatar = avatar
                         await player.save()
                         count++
