@@ -274,8 +274,8 @@ const findMissingBlogPostPFPs = async () => {
         if (!exists) console.log(`missing PFP for ${bp.player.name}: ${bp.player.id}.png`)
     }
 }
-
-const downloadPfps = async (playerId, cardId) => {
+f
+const downloadDuelingBookAvatar = async (playerId, cardId) => {
     const {data} = await axios.get(
         `https://images.duelingbook.com/low-res/${cardId}.jpg`, {
             responseType: 'arraybuffer',
@@ -290,11 +290,10 @@ const downloadPfps = async (playerId, cardId) => {
     const buffer = canvas.toBuffer('image/png')
     fs.writeFileSync(`../formatlibrary/public/images/pfps/${playerId}.png`, buffer)
     console.log(`saved new pfp for ${playerId}`)
-    count++
 }
 
 findMissingBlogPostPFPs()
-downloadPfps('224356605846618112', '3560')
+downloadDuelingBookAvatar('224356605846618112', '3560')
 // fixInternal()
 // fixFormats()
 // erasePasswords()
