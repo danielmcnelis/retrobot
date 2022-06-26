@@ -1,7 +1,7 @@
 
 
 const { Op } = require('sequelize')
-const { BlogPost, Deck, DeckType, Match, Matchup, Stats, Status, Format, Player, Membership } = require('../db')
+const { BlogPost, Deck, DeckType, Match, Matchup, Server, Stats, Status, Format, Player, Membership, Server } = require('../db')
 const statuses = require('../static/statuses.json')
 const { capitalize } = require('../functions/utility')
 const axios = require('axios')
@@ -292,15 +292,40 @@ const downloadDuelingBookAvatar = async (playerId, cardId) => {
     console.log(`saved new pfp for ${playerId}`)
 }
 
-downloadDuelingBookAvatar('692063231988072479', '3904')
-downloadDuelingBookAvatar('290946983307247617', '2699')
-downloadDuelingBookAvatar('215128682459561985', '826')
-downloadDuelingBookAvatar('785674251356602399', '559')
-downloadDuelingBookAvatar('893020814654443540', '4375')
-downloadDuelingBookAvatar('539827308710854662', '5097')
-downloadDuelingBookAvatar('227931066269171714', '1408')
-downloadDuelingBookAvatar('210974547950698496', '10339')
-findMissingBlogPostPFPs()
+
+const fixServers = async () => {
+    const servers = await Server.findAll()
+
+    for (let i = 0; i < servers.length; i++) {
+        const server = servers[s]
+        const guild = client.guilds.cache.get(server.id)
+
+        if (!guild) {
+            console.log(`could not find guild for ${server.name}`)
+            continue
+        }
+
+        if (server.name !== guild.name) {
+            console.log(`updating server name of ${server.name} => ${guild.name}`)
+            server.name = guild.name
+            await server.save()
+        }
+
+        setTimeout(() => console.log('guild', guild), 15000)
+    }
+}
+
+fixServers()
+
+// downloadDuelingBookAvatar('692063231988072479', '3904')
+// downloadDuelingBookAvatar('290946983307247617', '2699')
+// downloadDuelingBookAvatar('215128682459561985', '826')
+// downloadDuelingBookAvatar('785674251356602399', '559')
+// downloadDuelingBookAvatar('893020814654443540', '4375')
+// downloadDuelingBookAvatar('539827308710854662', '5097')
+// downloadDuelingBookAvatar('227931066269171714', '1408')
+// downloadDuelingBookAvatar('210974547950698496', '10339')
+// findMissingBlogPostPFPs()
 
 // fixInternal()
 // fixFormats()

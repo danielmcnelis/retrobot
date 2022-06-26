@@ -10,6 +10,9 @@ const Server = db.define('servers', {
     name: {
         type: Sequelize.STRING
     },
+    size: {
+        type: Sequelize.INTEGER
+    },
     format: {
         type: Sequelize.STRING
     },
