@@ -209,7 +209,7 @@ const composeBlogPost = async (message, abbreviation) => {
         })
 
         const format = await Format.findOne({ where: {
-            name: {[Op.iLike]: event.format }
+            name: {[Op.iLike]: event.formatName }
         }})
 
         const winner = await Player.findOne({
@@ -232,7 +232,7 @@ const composeBlogPost = async (message, abbreviation) => {
         
         const decks = await Deck.findAll({ 
             where: {
-                format: {[Op.iLike]: event.format }
+                format: {[Op.iLike]: event.formatName }
             }
         })
     
@@ -284,8 +284,8 @@ const composeBlogPost = async (message, abbreviation) => {
         }
     
         const conclusion = event.series ? `Enter the next <i>${event.name.replace(/[0-9]/g, '').trim()}</i> to see if you can knock out the reigning champ!` :
-            event.name.includes('World Championship') ? `And so the ${event.startDate.getFullYear()} ${capitalize(event.format, true)} Format season comes to a close. Be sure to enter next year's qualifiers for your chance to compete in the World Championship!` :
-            event.name.includes('Last Chance') ? `And so the ${event.startDate.getFullYear()} ${capitalize(event.format, true)} Format qualifying season comes to a close. Tune in to find out who wins the World Championship!` :
+            event.name.includes('World Championship') ? `And so the ${event.startDate.getFullYear()} ${capitalize(eventName, true)} Format season comes to a close. Be sure to enter next year's qualifiers for your chance to compete in the World Championship!` :
+            event.name.includes('Last Chance') ? `And so the ${event.startDate.getFullYear()} ${capitalize(event.formatName, true)} Format qualifying season comes to a close. Tune in to find out who wins the World Championship!` :
             event.name.includes('Obelisk') || event.name.includes('Ra') || event.name.includes('Slifer') ? `Join the Goat Format Europe Discord community to compete in the <i>Academy series</i>!` :
             `Join the ${event.community} Discord community to compete in similar events!`
     
@@ -325,7 +325,7 @@ const composeBlogPost = async (message, abbreviation) => {
             content: content,
             publishDate: publishDate,
             author: 'RetroBot',
-            format: event.format,
+            format: event.formatName,
             playerId: deck.playerId,
             eventDate: event.endDate
         })

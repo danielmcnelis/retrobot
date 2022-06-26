@@ -77,6 +77,9 @@ Deck.belongsTo(Player)
 Player.hasMany(Event)
 Event.belongsTo(Player)
 
+Format.hasMany(Event)
+Event.belongsTo(Format)
+
 Player.hasMany(RatedDeck)
 RatedDeck.belongsTo(Player)
 

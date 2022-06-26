@@ -9,7 +9,10 @@ const Event = db.define('events', {
     abbreviation: {
         type: Sequelize.STRING
     },
-    format: {
+    formatName: {
+        type: Sequelize.STRING
+    },
+    formatId: {
         type: Sequelize.STRING
     },
     referenceUrl: {

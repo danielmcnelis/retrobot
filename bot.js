@@ -584,7 +584,7 @@ try {
 
                 await Event.create({
                     name: tournament.name,
-                    format: tournament.format,
+                    formatName: tournament.format,
                     referenceUrl: `https://challonge.com/${tournament.url}`,
                     display: true,
                     tournamentId: tournament.id,
@@ -2054,7 +2054,7 @@ try {
 
         const yourRatedDecks = await RatedDeck.findAll({
             where: {
-                format: format.name,
+                 format.name,
                 playerId: maid
             },
             order: [['updatedAt', 'DESC']]
