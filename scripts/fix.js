@@ -292,8 +292,16 @@ const downloadDuelingBookAvatar = async (playerId, cardId) => {
     console.log(`saved new pfp for ${playerId}`)
 }
 
+downloadDuelingBookAvatar('692063231988072479', '3904')
+downloadDuelingBookAvatar('290946983307247617', '2699')
+downloadDuelingBookAvatar('215128682459561985', '826')
+downloadDuelingBookAvatar('785674251356602399', '559')
+downloadDuelingBookAvatar('893020814654443540', '4375')
+downloadDuelingBookAvatar('539827308710854662', '5097')
+downloadDuelingBookAvatar('227931066269171714', '1408')
+downloadDuelingBookAvatar('210974547950698496', '10339')
 findMissingBlogPostPFPs()
-downloadDuelingBookAvatar('224356605846618112', '3560')
+
 // fixInternal()
 // fixFormats()
 // erasePasswords()
