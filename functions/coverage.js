@@ -225,9 +225,9 @@ const composeBlogPost = async (message, abbreviation) => {
             }
         })
     
-        const communityLogo = event.community === 'Format Library' ? "/images/logos/FL.png" :
-            event.community === 'GoatFormat.com' ? "/images/logos/GF.png" :
-            event.community === 'EdisonFormat.com' ? "/images/logos/EF.png" :
+        const communityLogo = event.community === 'Format Library' ? "/images/logos/Format Library.png" :
+            event.community === 'GoatFormat.com' ? "/images/logos/GoatFormat.com.png" :
+            event.community === 'EdisonFormat.com' ? "/images/logos/EdisonFormat.com.png" :
             ""
         
         const decks = await Deck.findAll({ 
