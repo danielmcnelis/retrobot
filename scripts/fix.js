@@ -271,7 +271,7 @@ const findMissingBlogPostPFPs = async () => {
         const bp = blogposts[i]
         if (!bp.player) continue
         const exists = fs.existsSync(`../formatlibrary/public/images/pfps/${bp.playerId}.png`)
-        if (!exists) console.log(`missing PFP for ${bp.player.name}`)
+        if (!exists) console.log(`missing PFP for ${bp.player.name}: ${bp.player.id}.png`)
     }
 }
 
