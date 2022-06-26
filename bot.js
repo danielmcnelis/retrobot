@@ -160,7 +160,6 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) { 
-            // updateAvatars(client)
             const servers = await Server.findAll()
 
             for (let i = 0; i < servers.length; i++) {
@@ -189,18 +188,17 @@ try {
                     await server.save()
                 }
 
-                // const channelsMap = await guild.channels.fetch()
-                // const channelIds = [...channelsMap.keys()]
-                // for (let z = 0; z < channelIds; z++) {
-                //     const channelId = channelIds[z]
-                //     const channel = channelsMap.get(channelId)
-                //     console.log('channel', channel)
-                // }
-
-                if (guild.name === 'Format Library') setTimeout(() => console.log(guild), 30000)
+                console.log('guild.name', guild.name)
+                const channelsMap = await guild.channels.fetch()
+                const channelIds = [...channelsMap.keys()]
+                for (let z = 0; z < channelIds; z++) {
+                    const channelId = channelIds[z]
+                    const channel = channelsMap.get(channelId)
+                    console.log('channel', channel)
+                }
             }
-            
         
+            setTimeout(() => updateAvatars(client), 30000)
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
