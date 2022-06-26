@@ -160,6 +160,7 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) { 
+            // updateAvatars(client)
             const servers = await Server.findAll()
 
             for (let i = 0; i < servers.length; i++) {
@@ -167,7 +168,7 @@ try {
                 const guild = client.guilds.cache.get(server.id)
 
                 if (!guild) {
-                    console.log(`could not find guild for ${server.name}`)
+                    console.log(`could not find guild: ${server.name}`)
                     continue
                 }
 
@@ -177,8 +178,28 @@ try {
                     await server.save()
                 }
 
-                setTimeout(() => console.log('guild', guild), 15000)
+                if (server.size !== guild.memberCount) {
+                    console.log(`updating server size: ${server.size} => ${guild.memberCount}`)
+                    server.size = guild.memberCount
+                    await server.save()
+                }
+
+                if (server.ownerId !== guild.ownerId) {
+                    server.ownerId = guild.ownerId
+                    await server.save()
+                }
+
+                // const channelsMap = await guild.channels.fetch()
+                // const channelIds = [...channelsMap.keys()]
+                // for (let z = 0; z < channelIds; z++) {
+                //     const channelId = channelIds[z]
+                //     const channel = channelsMap.get(channelId)
+                //     console.log('channel', channel)
+                // }
+
+                if (guild.name === 'Format Library') setTimeout(() => console.log(guild), 30000)
             }
+            
         
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
