@@ -190,8 +190,8 @@ try {
 
                 console.log('guild.name', guild.name)
                 const channelsMap = await guild.channels.fetch()
-                console.log('channelsMap', channelsMap)
-                const channels = [...channelsMap.values()]
+                console.log('!!channelsMap', !!channelsMap)
+                const channels = [...channelsMap.values()].map((v) => v.name)
                 console.log('channels', channels)
             }
         
