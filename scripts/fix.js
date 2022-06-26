@@ -1,9 +1,13 @@
 
 
 const { Op } = require('sequelize')
-const { Deck, DeckType, Match, Matchup, Stats, Status, Format, Player, Membership } = require('../db')
+const { BlogPost, Deck, DeckType, Match, Matchup, Stats, Status, Format, Player, Membership } = require('../db')
 const statuses = require('../static/statuses.json')
 const { capitalize } = require('../functions/utility')
+const axios = require('axios')
+const Canvas = require('canvas')
+const fs = require('fs')
+const { Op } = require('sequelize')
 
 const fixFormats = async () => {
     let b = 0
@@ -261,7 +265,36 @@ const fixInternal = async () => {
     return
 }
 
-fixInternal()
+const findMissingBlogPostPFPs = async () => {
+    const blogposts = await BlogPost.findAll({ include: Player })
+    for (let i = 0; i < blogposts.length; i++) {
+        const bp = blogposts[i]
+        const exists = fs.existsSync(`../formatlibrary/public/images/pfps/${bp.playerId}.png`)
+        if (!exists) console.log(`missing PFP for ${bp.player.name}`)
+    }
+}
+
+const downloadPfps = async (playerId, cardId) => {
+    const {data} = await axios.get(
+        `https://images.duelingbook.com/low-res/${cardId}.jpg`, {
+            responseType: 'arraybuffer',
+        }
+    )
+
+    const png = await sharp(data).toFormat('png').toBuffer()
+    const canvas = Canvas.createCanvas(128, 128)
+    const context = canvas.getContext('2d')
+    const image = await Canvas.loadImage(png)
+    context.drawImage(image, 0, 0, 128, 128)
+    const buffer = canvas.toBuffer('image/png')
+    fs.writeFileSync(`../formatlibrary/public/images/pfps/${playerId}.png`, buffer)
+    console.log(`saved new pfp for ${playerId}`)
+    count++
+}
+
+findMissingBlogPostPFPs()
+downloadPfps('224356605846618112', '3560')
+// fixInternal()
 // fixFormats()
 // erasePasswords()
 // createNewStatues()
