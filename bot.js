@@ -190,12 +190,9 @@ try {
 
                 console.log('guild.name', guild.name)
                 const channelsMap = await guild.channels.fetch()
-                const channelIds = [...channelsMap.keys()]
-                for (let z = 0; z < channelIds; z++) {
-                    const channelId = channelIds[z]
-                    const channel = channelsMap.get(channelId)
-                    console.log('channel', channel)
-                }
+                console.log('channelsMap', channelsMap)
+                const channels = [...channelsMap.values()]
+                console.log('channels', channels)
             }
         
             setTimeout(() => updateAvatars(client), 30000)
