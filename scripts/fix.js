@@ -1,7 +1,7 @@
 
 
 const { Op } = require('sequelize')
-const { BlogPost, Deck, DeckType, Format, Match, Matchup, Membership, Player, Server, Stats, Status  } = require('../db')
+const { BlogPost, Deck, DeckType, Format, fMatch, Matchup, Membership, Player, Server, Stats, Status  } = require('../db')
 const statuses = require('../static/statuses.json')
 const { capitalize } = require('../functions/utility')
 const axios = require('axios')
@@ -297,7 +297,7 @@ const fixServers = async () => {
     const servers = await Server.findAll()
 
     for (let i = 0; i < servers.length; i++) {
-        const server = servers[s]
+        const server = servers[i]
         const guild = client.guilds.cache.get(server.id)
 
         if (!guild) {
