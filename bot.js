@@ -160,16 +160,7 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            const format = await Format.findOne({
-                where: {
-                    [Op.or]: {
-                        name: { [Op.iLike]: server.format },
-                        channel: mcid
-                    }
-                }
-            })
-            
-            setTimeout(() => postStory(message.channel, format), 5000)
+            updateAvatars(client)
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})

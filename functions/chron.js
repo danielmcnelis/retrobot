@@ -32,7 +32,13 @@ const updateAvatars = async (client) => {
             for (let i = 0; i < memberIds.length; i++) {
                 try {
                     const memberId = memberIds[i]
-                    const avatar = membersMap.get(memberId).user.avatar
+                    if (memberId === '98926488430088192') console.log('Birdman')
+                    const member = membersMap.get(memberId)
+                    if (memberId === '98926488430088192') console.log('!!member', !!member)
+                    const user = member.user
+                    if (memberId === '98926488430088192') console.log('!!user', !!user)
+                    const avatar = user.avatar
+                    if (memberId === '98926488430088192') console.log('!!avatar', !!avatar)
                     if (!avatar) continue
         
                     const player = await Player.findOne({
@@ -41,6 +47,8 @@ const updateAvatars = async (client) => {
                             avatar: {[Op.not]: avatar }
                         }
                     })
+
+                    if (memberId === '98926488430088192') console.log('!!player', !!player)
         
                     if (player) {
                         player.avatar = avatar
