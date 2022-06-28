@@ -204,7 +204,11 @@ try {
 
                 const dbDeckId = rd.url.slice(rd.url.indexOf('https://duelingbook.com/deck?id=') + 32)
                 const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${dbDeckId}`)
-                if (data.message === 'Deck does not exist') console.log(`no data: ratedDeck ${rd.id}`)
+                if (data.message === 'Deck does not exist') {
+                    console.log(`deleting ratedDeck ${rd.id}: ${rd.builder}, ${rd.format}, dbId: ${dbDeckId}`)
+                    await rd.destroy()
+                    continue
+                }
             }
         
             return message.channel.send({ content: `${emojis.yellow}`})
