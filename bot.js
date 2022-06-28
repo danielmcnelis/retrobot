@@ -97,7 +97,7 @@ client.on('messageCreate', async (message) => {
 try {
     if (
 		//no commands in DMs except !rated
-		(!message.guild && !message.content.startsWith("!exit") && !message.content.startsWith("!leave") && !message.content.startsWith("!out") && !message.content.startsWith("!ranked") && !message.content.startsWith("!rated")) || 
+		(!message.guild && !message.content.startsWith("!exit") && !message.content.startsWith("!leave") && !message.content.startsWith("!out") && !message.content.startsWith("!ranked") && !message.content.startsWith("!rated") && !message.content.startsWith("!pools")) || 
 		//no commands from bots
 		message.author.bot ||
 		//do not allow users to parrot @everyone or @here with the bot
@@ -942,7 +942,8 @@ try {
             .setThumbnail('https://formatlibrary.com/images/logos/Format%20Library.png')
             .addField('How to Use This Bot', '\nThe following commands can be used for any format in the appropriate server, channels, or via DM.')
         	.addField('Cards', '\n{ Card Name } - Look up a card. For example, { Dark Magician }. \n')
-        	.addField('Ranked Play', '\n!rated - DM this command to RetroBot to join a rated pool. \n!stats - (blank or @user) - Post a player\'s stats. \n!loss - (@user) - Report a loss to another player. \n!top - (n) - Post the top rated players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a ranked play role. \n!undo - Undo the last report if you made a mistake. \n!hist - Post a graph of your Elo history. \n!act - Post a graph of dueling activity. \n')
+        	.addField('Rated Pools', '\n!rated - DM to join a rated pool. \n!exit - DM to leave a rated pool. \n!pools - DM to view your rated pools. \n')
+        	.addField('Ranked Play', '\n!stats - (blank or @user) - Post a player\'s stats. \n!loss - (@user) - Report a loss to another player. \n!top - (n) - Post the top rated players (100 max). \n!h2h - (@user + @user) - Post the H2H record between 2 players. \n!role - Add or remove a ranked play role. \n!undo - Undo the last report if you made a mistake. \n!hist - Post a graph of your Elo history. \n!act - Post a graph of dueling activity. \n')
         	.addField('Format Info', '\n!legal - Privately check if your deck is legal. \n!list - View the Forbidden and Limited list. \n')
         	.addField('Tournaments', '\n!join - Register for an upcoming tournament.\n!resubmit - Resubmit your deck list for a tournament. \n!drop - Drop from a tournament. \n!bracket - Post the bracket(s) for the current tournament(s).')
         	.addField('Ironmans', '\n!iron - Join an ironman queue.\n!q - Check an ironman queue. \n')
@@ -2205,17 +2206,12 @@ try {
         return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
     }
 
-
     // POOLS
     if (cmd === `!pools`) {
-        console.log('pools')
         if (mgid) return message.channel.send(`Try using ${cmd} by DM'ing it to me.`)
-        console.log('pools')
         const player = await Player.findOne({ where: { id: maid } })
         if (!player) return message.channel.send(`You are not in the database. Please join the Format Library Discord server to register.`)
-        console.log('pools')
         const pools = [...await RatedPool.findAll({ where: { playerId: maid }, order: [['format', 'ASC']] })].map((p) => p.format)
-        console.log('pools')
         if (!pools.length) return message.channel.send(`You were not in any Rated Pools.`)
         return message.channel.send({ content: `You are in the following pools:\n${pools.join('\n')}`})
     }
