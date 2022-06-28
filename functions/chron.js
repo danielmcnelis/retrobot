@@ -3,7 +3,7 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const sharp = require('sharp')
-const { Card, Entry, Tournament, Membership, Player, Print, Role, Server, Set } = require('../db')
+const { Card, Entry, Tournament, Membership, Player, Print, RatedDeck, Role, Server, Set } = require('../db')
 const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
 const { Op } = require('sequelize')
@@ -190,6 +190,34 @@ const purgeEntries = async () => {
     console.log(`Purged ${count} old tournament entries from the database.`)
     return setTimeout(() => purgeEntries(), (24 * 60 * 60 * 1000))
 } 
+
+// PURGE RATED DECKS
+const purgeRatedDecks = async () => {
+    let d = 0
+    const ratedDecks = await RatedDeck.findAll({ order: ['createdAt', 'DESC'] })
+    for (let i = 0; i < ratedDecks.length; i++) {
+        const rd = ratedDecks[i]
+        const count = await RatedDeck.count({ where: { url: rd.url }})
+        if (count > 1) {
+            console.log(`deleting ${rd.builder} duplicate: ${rd.url}`)
+            await rd.destroy()
+            d++
+            continue
+        }
+
+        const dbDeckId = rd.url.slice(rd.url.indexOf('https://duelingbook.com/deck?id=') + 32)
+        const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${dbDeckId}`)
+        if (data.message === 'Deck does not exist') {
+            console.log(`deleting ratedDeck: ${rd.id}, DuelingBookId: ${dbDeckId}`)
+            await rd.destroy()
+            d++
+            continue
+        }
+    }
+
+    console.log(`Purged ${d} duplicate and missing rated decks from the database.`)
+    return setTimeout(() => purgeRatedDecks(), (24 * 60 * 60 * 1000))
+}
 
 // FIND NEW PRINTS
 const findNewPrints = async (set, groupId) => {
@@ -553,11 +581,48 @@ const updateSets = async () => {
     return setTimeout(() => updateSets(), (24 * 60 * 60 * 1000))
 }
 
+// UPDATE SERVERS
+const updateServers = async () => {
+    const servers = await Server.findAll()
+    for (let i = 0; i < servers.length; i++) {
+        const server = servers[i]
+        const guild = client.guilds.cache.get(server.id)
+
+        if (!guild) {
+            console.log(`could not find guild: ${server.name}`)
+            continue
+        }
+
+        if (server.name !== guild.name) {
+            console.log(`updating server name from ${server.name} => ${guild.name}`)
+            server.name = guild.name
+            await server.save()
+        }
+
+        if (server.size !== guild.memberCount) {
+            console.log(`updating server size from ${server.size} => ${guild.memberCount}`)
+            server.size = guild.memberCount
+            await server.save()
+        }
+
+        if (server.ownerId !== guild.ownerId) {
+            console.log(`updating guild owner from ${server.ownerId} => ${guild.ownerId}`)
+            server.ownerId = guild.ownerId
+            await server.save()
+        }
+    }
+
+    return setTimeout(() => updateServers(), (24 * 60 * 60 * 1000))
+}
+
+
 module.exports = {
     conductCensus,
     downloadNewCards,
     getMidnightCountdown,
     purgeEntries,
+    purgeRatedDecks,
     updateAvatars,
-    updateSets
+    updateSets,
+    updateServers
 }

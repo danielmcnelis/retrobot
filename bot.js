@@ -13,7 +13,7 @@ const { Op } = require('sequelize')
 const { Card, Entry, Event, Format, Info, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
 // FUNCTION IMPORTS
-const { conductCensus, downloadNewCards, getMidnightCountdown, updateAvatars, updateSets, purgeEntries } = require('./functions/chron.js')
+const { conductCensus, downloadNewCards, getMidnightCountdown, purgeEntries, purgeRatedDecks, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { createDecks, composeBlogPost, composeThumbnails, selectCoverage } = require('./functions/coverage.js')
 const { checkDeckList, getDeckFormat, getIssues } = require( './functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
@@ -46,10 +46,12 @@ client.on('ready', async() => {
 
     const midnightCountdown = getMidnightCountdown()
 	setTimeout(() => purgeEntries(), midnightCountdown)
-	setTimeout(() => conductCensus(client), midnightCountdown + (1 * 60 * 1000))
+	setTimeout(() => purgeRatedDecks(), midnightCountdown + (1 * 60 * 1000))
+    setTimeout(() => updateServers(), midnightCountdown + (2 * 60 * 1000))
+	setTimeout(() => conductCensus(client), midnightCountdown + (3 * 60 * 1000))
 	setTimeout(() => updateAvatars(client), midnightCountdown + (6 * 60 * 1000))
-    setTimeout(() => downloadNewCards(), midnightCountdown + (11 * 60 * 1000))
-    setTimeout(() => updateSets(), midnightCountdown + (16 * 60 * 1000))
+    setTimeout(() => updateSets(), midnightCountdown + (9 * 60 * 1000))
+    setTimeout(() => downloadNewCards(), midnightCountdown + (12 * 60 * 1000))
 })
 
 // WELCOME
@@ -160,37 +162,36 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) { 
-            // const servers = await Server.findAll()
+            const servers = await Server.findAll()
+            for (let i = 0; i < servers.length; i++) {
+                const server = servers[i]
+                const guild = client.guilds.cache.get(server.id)
+                console.log('guild', guild)
+                console.log('guild.ownerId', guild.ownerId)
 
-            // for (let i = 0; i < servers.length; i++) {
-            //     const server = servers[i]
-            //     const guild = client.guilds.cache.get(server.id)
-            //     console.log('guild', guild)
-            //     console.log('guild.ownerId', guild.ownerId)
+                if (!guild) {
+                    console.log(`could not find guild: ${server.name}`)
+                    continue
+                }
 
-            //     if (!guild) {
-            //         console.log(`could not find guild: ${server.name}`)
-            //         continue
-            //     }
+                if (server.name !== guild.name) {
+                    console.log(`updating server name of ${server.name} => ${guild.name}`)
+                    server.name = guild.name
+                    await server.save()
+                }
 
-            //     if (server.name !== guild.name) {
-            //         console.log(`updating server name of ${server.name} => ${guild.name}`)
-            //         server.name = guild.name
-            //         await server.save()
-            //     }
+                if (server.size !== guild.memberCount) {
+                    console.log(`updating server size: ${server.size} => ${guild.memberCount}`)
+                    server.size = guild.memberCount
+                    await server.save()
+                }
 
-            //     if (server.size !== guild.memberCount) {
-            //         console.log(`updating server size: ${server.size} => ${guild.memberCount}`)
-            //         server.size = guild.memberCount
-            //         await server.save()
-            //     }
-
-            //     if (server.ownerId !== guild.ownerId) {
-            //         console.log(`updating guild owner: ${server.ownerId} => ${guild.ownerId}`)
-            //         server.ownerId = guild.ownerId
-            //         await server.save()
-            //     }
-            // }
+                if (server.ownerId !== guild.ownerId) {
+                    console.log(`updating guild owner: ${server.ownerId} => ${guild.ownerId}`)
+                    server.ownerId = guild.ownerId
+                    await server.save()
+                }
+            }
 
             const ratedDecks = await RatedDeck.findAll()
             for (let i = 0; i < ratedDecks.length; i++) {
