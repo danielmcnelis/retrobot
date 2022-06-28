@@ -202,6 +202,8 @@ try {
                     continue
                 }
 
+                const dbDeckId = rd.url.slice(rd.indexOf('https://duelingbook.com/deck?id=') + 32)
+                console.log('dbDeckId', dbDeckId)
                 const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${id}`)
                 if (!data) console.log(`no data: ratedDeck ${rd.id}`)
             }
