@@ -162,108 +162,7 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) { 
-            const servers = await Server.findAll()
-            for (let i = 0; i < servers.length; i++) {
-                const server = servers[i]
-                const guild = client.guilds.cache.get(server.id)
-                console.log('guild', guild)
-                console.log('guild.ownerId', guild.ownerId)
-
-                if (!guild) {
-                    console.log(`could not find guild: ${server.name}`)
-                    continue
-                }
-
-                if (server.name !== guild.name) {
-                    console.log(`updating server name of ${server.name} => ${guild.name}`)
-                    server.name = guild.name
-                    await server.save()
-                }
-
-                if (server.size !== guild.memberCount) {
-                    console.log(`updating server size: ${server.size} => ${guild.memberCount}`)
-                    server.size = guild.memberCount
-                    await server.save()
-                }
-
-                if (server.ownerId !== guild.ownerId) {
-                    console.log(`updating guild owner: ${server.ownerId} => ${guild.ownerId}`)
-                    server.ownerId = guild.ownerId
-                    await server.save()
-                }
-            }
-
-            const ratedDecks = await RatedDeck.findAll()
-            for (let i = 0; i < ratedDecks.length; i++) {
-                const rd = ratedDecks[i]
-                const count = await RatedDeck.count({ where: { url: rd.url }})
-                if (count > 1) {
-                    console.log(`deleting duplicate ${rd.builder} ${rd.format} ${rd.url}`)
-                    await rd.destroy()
-                    continue
-                }
-
-                const dbDeckId = rd.url.slice(rd.url.indexOf('https://duelingbook.com/deck?id=') + 32)
-                const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${dbDeckId}`)
-                if (data.message === 'Deck does not exist') {
-                    console.log(`deleting ratedDeck ${rd.id}: ${rd.builder}, ${rd.format}, dbId: ${dbDeckId}`)
-                    await rd.destroy()
-                    continue
-                }
-            }
-        
             return message.channel.send({ content: `${emojis.yellow}`})
-        } else {
-            return message.channel.send({ content: `🧪`})
-        }
-    }
- 
-    // PFPS 
-    if (cmd === `!pfps`) {
-        if (isProgrammer(message.member)) {
-            let b = 0
-            const players = await Player.findAll()
-            console.log('players.length', players.length)
-
-            for (let i = 0; i < players.length; i++) {
-                try {
-                    const player = players[i]
-                    const str = player.tag.replace(/[^\ws]/gi, "_").replace(/ /g,'')
-                    const tag = str.slice(0, -5) + str.slice(-4)
-
-                    if (fs.existsSync(`../formatlibrary/public/images/pfps/${player.id}.png`)) {
-                        console.log(`/pfp/${player.id}.png exists`)
-                        continue
-                    } else if (
-                        !fs.existsSync(`../formatlibrary/public/images/pfps/${player.id}.png`) && 
-                        fs.existsSync(`../formatlibrary/public/images/pfps/${tag}.png`)
-                    ) {
-                        fs.rename(
-                            `../formatlibrary/public/images/pfps/${tag}.png`, 
-                            `../formatlibrary/public/images/pfps/${player.id}.png`,
-                            () => console.log(`renamed ${tag}.png to ${player.id}.png`)
-                        )
-                        b++
-                    } else if (
-                        !fs.existsSync(`../formatlibrary/public/images/pfps/${player.id}.png`) && 
-                        fs.existsSync(`../formatlibrary/public/images/pfps/${str}.png`)
-                    ) {
-                        fs.rename(
-                            `../formatlibrary/public/images/pfps/${str}.png`, 
-                            `../formatlibrary/public/images/pfps/${player.id}.png`,
-                            () => console.log(`renamed ${str}.png to ${player.id}.png`)
-                        )
-                        b++
-                    } else {
-                        console.log(`no pfp exists for ${player.name}`)
-                        continue
-                    }
-                } catch (err) {
-                    console.log(err)
-                }   
-            }
-
-            return message.channel.send(`Renamed ${b} profile picture files.`)
         } else {
             return message.channel.send({ content: `🧪`})
         }
@@ -303,6 +202,18 @@ try {
         return message.channel.send({ content: user.displayAvatarURL() })
     }
 
+    // POLITICS
+    if (cmd === `!politics`) {
+        if (server.name !== 'Format Library' || !hasFullAccess(server)) return message.channel.send({ content: `This feature is only available in Format Library. ${emojis.FL}`}) 
+        if (!message.member.roles.cache.some(role => role.id === roles['Format Library'].politicsRole)) {
+			message.member.roles.add(roles['Format Library'].politicsRole).catch((err) => console.log(err))
+            return message.channel.send({ content: `You now have the Politics role.`})
+        } else {
+            message.member.roles.remove(roles['Format Library'].politicsRole).catch((err) => console.log(err))
+            return message.channel.send({ content: `You no longer have the Politics role.`})
+        }
+    }
+    
     // RNG
     if(cmd === `!rng`) {
         const num = parseInt(args[0])
@@ -2292,6 +2203,39 @@ try {
         }
         
         return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+    }
+
+
+    // POOLS
+    if (cmd === `!pools`) {
+        if (mgid) return message.channel.send(`Try using ${cmd} by DM'ing it to me.`)
+        const player = await Player.findOne({ where: { id: maid } })
+        if (!player) return message.channel.send(`You are not in the database. Please join the Format Library Discord server to register.`)
+       
+        const oldRatedPools = await RatedPool.findAll({ where: {  playerId: maid }, order: [''] }) || []
+        if (!oldRatedPools.length) return message.channel.send(`You were not in any Rated Pools.`)
+
+        const pools = oldRatedPools.map((p) => p.format)
+        message.channel.send({ content: `You are in the following pools:\n${pools.join('\n')}`})
+
+        const drops = await getDropFormats(message, pools)
+        if (!drops || !drops.length) return message.channel.send(`Please specify a valid number.`)
+
+        let b = 0
+        const results = []
+        for (let i = 0; i < drops.length; i++) {
+            try {
+                const format = drops[i]
+                const oldRatedPool = await RatedPool.findOne({ where: { format: format, playerId: maid } })
+                await oldRatedPool.destroy()
+                results.push(format)
+                b++
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        return message.channel.send({ content: `You left the Rated Pool for the following format(s):\n${results.join('\n').toString()}.`}).catch((err) => console.log(err))
     }
 
     // EXIT
