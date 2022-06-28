@@ -16,6 +16,9 @@ const Server = db.define('servers', {
     format: {
         type: Sequelize.STRING
     },
+    ownerId: {
+        type: Sequelize.STRING
+    },
     internalLadder: {
         type: Sequelize.BOOLEAN
     },

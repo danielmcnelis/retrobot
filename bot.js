@@ -165,6 +165,8 @@ try {
             for (let i = 0; i < servers.length; i++) {
                 const server = servers[i]
                 const guild = client.guilds.cache.get(server.id)
+                console.log('guild', guild)
+                console.log('guild.ownerId', guild.ownerId)
 
                 if (!guild) {
                     console.log(`could not find guild: ${server.name}`)
@@ -184,18 +186,26 @@ try {
                 }
 
                 if (server.ownerId !== guild.ownerId) {
+                    console.log(`updating guild owner: ${server.ownerId} => ${guild.ownerId}`)
                     server.ownerId = guild.ownerId
                     await server.save()
                 }
+            }
 
-                console.log('guild.name', guild.name)
-                const channelsMap = await guild.channels.fetch()
-                console.log('!!channelsMap', !!channelsMap)
-                const channels = [...channelsMap.values()].map((v) => v.name)
-                console.log('channels', channels)
+            const ratedDecks = await RatedDeck.findAll()
+            for (let i = 0; i < ratedDecks.length; i++) {
+                const rd = ratedDecks[i]
+                const count = await RatedDeck.count({ where: { url: rd.url }})
+                if (count > 1) {
+                    console.log(`deleting duplicate ${rd.builder} ${rd.format} ${rd.url}`)
+                    await rd.destroy()
+                    continue
+                }
+
+                const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${id}`)
+                if (!data) console.log(`no data: ratedDeck ${rd.id}`)
             }
         
-            setTimeout(() => updateAvatars(client), 30000)
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
