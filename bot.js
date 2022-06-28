@@ -160,37 +160,37 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) { 
-            const servers = await Server.findAll()
+            // const servers = await Server.findAll()
 
-            for (let i = 0; i < servers.length; i++) {
-                const server = servers[i]
-                const guild = client.guilds.cache.get(server.id)
-                console.log('guild', guild)
-                console.log('guild.ownerId', guild.ownerId)
+            // for (let i = 0; i < servers.length; i++) {
+            //     const server = servers[i]
+            //     const guild = client.guilds.cache.get(server.id)
+            //     console.log('guild', guild)
+            //     console.log('guild.ownerId', guild.ownerId)
 
-                if (!guild) {
-                    console.log(`could not find guild: ${server.name}`)
-                    continue
-                }
+            //     if (!guild) {
+            //         console.log(`could not find guild: ${server.name}`)
+            //         continue
+            //     }
 
-                if (server.name !== guild.name) {
-                    console.log(`updating server name of ${server.name} => ${guild.name}`)
-                    server.name = guild.name
-                    await server.save()
-                }
+            //     if (server.name !== guild.name) {
+            //         console.log(`updating server name of ${server.name} => ${guild.name}`)
+            //         server.name = guild.name
+            //         await server.save()
+            //     }
 
-                if (server.size !== guild.memberCount) {
-                    console.log(`updating server size: ${server.size} => ${guild.memberCount}`)
-                    server.size = guild.memberCount
-                    await server.save()
-                }
+            //     if (server.size !== guild.memberCount) {
+            //         console.log(`updating server size: ${server.size} => ${guild.memberCount}`)
+            //         server.size = guild.memberCount
+            //         await server.save()
+            //     }
 
-                if (server.ownerId !== guild.ownerId) {
-                    console.log(`updating guild owner: ${server.ownerId} => ${guild.ownerId}`)
-                    server.ownerId = guild.ownerId
-                    await server.save()
-                }
-            }
+            //     if (server.ownerId !== guild.ownerId) {
+            //         console.log(`updating guild owner: ${server.ownerId} => ${guild.ownerId}`)
+            //         server.ownerId = guild.ownerId
+            //         await server.save()
+            //     }
+            // }
 
             const ratedDecks = await RatedDeck.findAll()
             for (let i = 0; i < ratedDecks.length; i++) {
@@ -202,7 +202,7 @@ try {
                     continue
                 }
 
-                const dbDeckId = rd.url.slice(rd.indexOf('https://duelingbook.com/deck?id=') + 32)
+                const dbDeckId = rd.url.slice(rd.url.indexOf('https://duelingbook.com/deck?id=') + 32)
                 console.log('dbDeckId', dbDeckId)
                 const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${id}`)
                 if (!data) console.log(`no data: ratedDeck ${rd.id}`)
