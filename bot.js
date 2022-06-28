@@ -2212,30 +2212,9 @@ try {
         const player = await Player.findOne({ where: { id: maid } })
         if (!player) return message.channel.send(`You are not in the database. Please join the Format Library Discord server to register.`)
        
-        const oldRatedPools = await RatedPool.findAll({ where: {  playerId: maid }, order: ['format', 'ASC'] }) || []
-        if (!oldRatedPools.length) return message.channel.send(`You were not in any Rated Pools.`)
-
-        const pools = oldRatedPools.map((p) => p.format)
-        message.channel.send({ content: `You are in the following pools:\n${pools.join('\n')}`})
-
-        const drops = await getDropFormats(message, pools)
-        if (!drops || !drops.length) return message.channel.send(`Please specify a valid number.`)
-
-        let b = 0
-        const results = []
-        for (let i = 0; i < drops.length; i++) {
-            try {
-                const format = drops[i]
-                const oldRatedPool = await RatedPool.findOne({ where: { format: format, playerId: maid } })
-                await oldRatedPool.destroy()
-                results.push(format)
-                b++
-            } catch (err) {
-                console.log(err)
-            }
-        }
-
-        return message.channel.send({ content: `You left the Rated Pool for the following format(s):\n${results.join('\n').toString()}.`}).catch((err) => console.log(err))
+        const pools = [...await RatedPool.findAll({ where: {  playerId: maid }, order: ['format', 'ASC'] })].map((p) => p.format)
+        if (!pools.length) return message.channel.send(`You were not in any Rated Pools.`)
+        return message.channel.send({ content: `You are in the following pools:\n${pools.join('\n')}`})
     }
 
     // EXIT
