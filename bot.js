@@ -2212,7 +2212,7 @@ try {
         const player = await Player.findOne({ where: { id: maid } })
         if (!player) return message.channel.send(`You are not in the database. Please join the Format Library Discord server to register.`)
         const pools = [...await RatedPool.findAll({ where: { playerId: maid }, order: [['format', 'ASC']] })].map((p) => p.format)
-        if (!pools.length) return message.channel.send(`You were not in any Rated Pools.`)
+        if (!pools.length) return message.channel.send(`You are not in any Rated Pools.`)
         return message.channel.send({ content: `You are in the following pools:\n${pools.join('\n')}`})
     }
 
@@ -2223,7 +2223,7 @@ try {
         if (!player) return message.channel.send(`You are not in the database. Please join the Format Library Discord server to register.`)
        
         const oldRatedPools = await RatedPool.findAll({ where: {  playerId: maid } }) || []
-        if (!oldRatedPools.length) return message.channel.send(`You were not in any Rated Pools.`)
+        if (!oldRatedPools.length) return message.channel.send(`You are not in any Rated Pools.`)
 
         const pools = oldRatedPools.map((p) => p.format)
 
