@@ -309,7 +309,7 @@ const composeBlogPost = async (message, abbreviation) => {
                 `<div className="blogpost-images-flexbox">` +
                     `<div className="blogpost-pfp-community-flexbox">` +
                         `<img className="blogpost-pfp" src="/images/pfps/${winner.id}.png" />` +
-                        `<img className="blogpost-community"  src=${communityLogo} />` +
+                        `<img className="blogpost-community"  src="${communityLogo}" />` +
                     `</div>` +
                     `<div className="blogpost-deck-box">` + 
                         `<a className="blogpost-deck-link" href="/decks/${deck.id}">` +
