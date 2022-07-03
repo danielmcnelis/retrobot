@@ -162,6 +162,7 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) { 
+            updateServers()
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
