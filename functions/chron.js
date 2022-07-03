@@ -582,7 +582,7 @@ const updateSets = async () => {
 }
 
 // UPDATE SERVERS
-const updateServers = async () => {
+const updateServers = async (client) => {
     const servers = await Server.findAll()
     for (let i = 0; i < servers.length; i++) {
         const server = servers[i]
@@ -612,7 +612,7 @@ const updateServers = async () => {
         }
     }
 
-    return setTimeout(() => updateServers(), (24 * 60 * 60 * 1000))
+    return setTimeout(() => updateServers(client), (24 * 60 * 60 * 1000))
 }
 
 
