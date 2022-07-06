@@ -29,8 +29,22 @@
     "ratedChannel": "747365773038583898",
     "welcomeChannel": "693480484105355347"
   },
-  "The H.A.T. Alliance (Yugioh)": {
-    "botSpamChannel": "787834305174306867",
-    "ratedChannel": "784981641797304330"
+  "Androidland": {
+    "ratedChannel": "809274277551144964"
+  },
+  "Yugi-Kaibaland": {
+    "ratedChannel": "777779794497765378"
+  },
+  "Critterland": {
+    "ratedChannel": "797014506979065888"
+  },
+  "Yataland": {
+    "ratedChannel": "837499432982544385"
+  },
+  "Scientistvania": {
+    "ratedChannel": "843702390510059522"
+  },
+  "Sogen": {
+    "ratedChannel": "963314177915629571"
   }
 }
