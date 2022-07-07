@@ -194,7 +194,7 @@ const purgeEntries = async () => {
 // PURGE RATED DECKS
 const purgeRatedDecks = async () => {
     let d = 0
-    const ratedDecks = await RatedDeck.findAll({ order: ['createdAt', 'DESC'] })
+    const ratedDecks = await RatedDeck.findAll({ order: [['createdAt', 'DESC']] })
     for (let i = 0; i < ratedDecks.length; i++) {
         const rd = ratedDecks[i]
         const count = await RatedDeck.count({ where: { url: rd.url }})
