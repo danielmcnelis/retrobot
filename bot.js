@@ -538,7 +538,7 @@ try {
 
                 await Event.create({
                     name: tournament.name,
-                    formatName: tournament.format,
+                    formatName: tournament.formatName,
                     referenceUrl: `https://challonge.com/${tournament.url}`,
                     display: true,
                     tournamentId: tournament.id,
@@ -574,7 +574,7 @@ try {
         for (let i = 0; i < tournaments.length; i++) {
             const tournament = tournaments[i]
             results.push(`Name: ${tournament.name} ${tournament.logo}` +
-                `\nFormat: ${tournament.format} ${tournament.emoji}` + 
+                `\nFormat: ${tournament.formatName} ${tournament.emoji}` + 
                 `\nBracket: <https://challonge.com/${tournament.url}>` +
                 `\nStatus: ${capitalize(tournament.state, true)}`
             )
@@ -635,7 +635,7 @@ try {
         if (!tournament && !count) return message.channel.send({ content: `There is no pending tournament.`})
         const entry = await Entry.findOne({ where: { playerId: maid, tournamentId: tournament.id } })
         if (tournament.state === 'standby' && !entry) return message.channel.send({ content: `Sorry, registration for ${tournament.name} ${tournament.logo} is currently closed.`})
-        const format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.format } }})
+        const format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.formatName } }})
         if (!format) return message.channel.send(`Unable to determine what format is being played in ${tournament.name}. Please contact the database manager.`)
         message.channel.send({ content: `Please check your DMs.` })
         
@@ -691,7 +691,7 @@ try {
         if (!tournament && count) return message.channel.send({ content: `Sorry, the tournament already started.`})
         if (!tournament && !count) return message.channel.send({ content: `There is no active tournament.`})
         const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournament.id } })
-        const format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.format } }})
+        const format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.formatName } }})
         if (!format) return message.channel.send(`Unable to determine what format is being played in ${tournament.name}. Please contact the database manager.`)
         
         if (entry) {
