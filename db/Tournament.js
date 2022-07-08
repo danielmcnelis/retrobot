@@ -13,7 +13,7 @@ const Tournament = db.define('tournaments', {
     url: {
         type: Sequelize.STRING
     },
-    format: {
+    formatName: {
         type: Sequelize.STRING
     },
     type: {
