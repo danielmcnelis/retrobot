@@ -167,7 +167,8 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                                     type: deckType.name,
                                     category: deckType.category,
                                     builder: player.name,
-                                    format: tournament.formatName,
+                                    formatName: event.formatName,
+                                    formatId: event.formatId,
                                     ydk: raw,
                                     placement: placement,
                                     eventName: event.abbreviation || event.name,
@@ -232,7 +233,7 @@ const composeBlogPost = async (message, abbreviation) => {
         
         const decks = await Deck.findAll({ 
             where: {
-                format: {[Op.iLike]: event.formatName }
+                formatName: {[Op.iLike]: event.formatName }
             }
         })
     

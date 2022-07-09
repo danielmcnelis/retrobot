@@ -12,7 +12,7 @@ const Deck = db.define('decks', {
   builder: {
     type: Sequelize.STRING
   },
-  format: {
+  formatName: {
     type: Sequelize.STRING
   },
   ydk: {
