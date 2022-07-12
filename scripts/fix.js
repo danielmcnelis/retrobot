@@ -1,7 +1,7 @@
 
 
 const { Op } = require('sequelize')
-const { BlogPost, Deck, DeckType, Format, fMatch, Matchup, Membership, Player, Server, Stats, Status  } = require('../db')
+const { BlogPost, Card, Deck, DeckType, Event, Format, Match, Matchup, Membership, Player, Server, Stats, Status  } = require('../db')
 const statuses = require('../static/statuses.json')
 const { capitalize } = require('../functions/utility')
 const axios = require('axios')
@@ -293,16 +293,135 @@ const downloadDuelingBookAvatar = async (playerId, cardId) => {
 }
 
 
-// downloadDuelingBookAvatar('692063231988072479', '3904')
-// downloadDuelingBookAvatar('290946983307247617', '2699')
-// downloadDuelingBookAvatar('215128682459561985', '826')
-// downloadDuelingBookAvatar('785674251356602399', '559')
-// downloadDuelingBookAvatar('893020814654443540', '4375')
-// downloadDuelingBookAvatar('539827308710854662', '5097')
-// downloadDuelingBookAvatar('227931066269171714', '1408')
-// downloadDuelingBookAvatar('210974547950698496', '10339')
-// findMissingBlogPostPFPs()
 
+// COMPOSE THUMBNAILS
+const composeThumbnails = async () => {
+    let b = 0
+    const decks = await Deck.findAll()
+    if (!decks.length) return console.log('no decks found')
+    for (let i = 0; i < decks.length; i++) {
+        try {    
+            const deck = decks[i]
+            const main = []
+            const mainKonamiCodes = deck.ydk.split('#main')[1].split('#extra')[0].split('\n').filter((e) => e.length)
+    
+            for (let i = 0; i < mainKonamiCodes.length; i++) {
+                let konamiCode = mainKonamiCodes[i]
+                while (konamiCode.length < 8) konamiCode = '0' + konamiCode
+                const card = await Card.findOne({ where: { konamiCode }})
+                if (!card) continue
+                main.push(card)
+            }
+    
+            main.sort((a, b) => {
+                if (a.sortPriority > b.sortPriority) {
+                    return 1
+                } else if (b.sortPriority > a.sortPriority) {
+                    return -1
+                } else if (a.name > b.name) {
+                    return 1
+                } else if (b.name > a.name) {
+                    return -1
+                } else {
+                    return false
+                }
+            })
+            
+            const rows = Math.ceil(main.length / 10)
+            const card_width = 36
+            const card_height = 52.5
+            const canvas = Canvas.createCanvas(card_width * 10, card_height * rows)
+            const context = canvas.getContext('2d')
+    
+            for (let i = 0; i < main.length; i++) {
+                const card = main[i]
+                const row = Math.floor(i / 10)
+                const col = i % 10
+                const image = await Canvas.loadImage(`../../formatlibrary/public/images/cards/${card.ypdId}.jpg`) 
+                context.drawImage(image, card_width * col, row * card_height, card_width, card_height)
+            }
+            
+            const buffer = canvas.toBuffer('image/png')
+            fs.writeFileSync(`../../formatlibrary/public/images/decks/thumbnails/${deck.id}.png`, buffer)
+            console.log('saved deck thumbnail')
+            b++
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    return console.log(`composed ${b} deck thumbnails.`)
+}
+
+
+// COMPOSE PREVIEWS
+const composePreviews = async () => {
+    let b = 0
+    const decks = await Deck.findAll({
+        where: {
+            placement: 1
+        }
+    })
+
+    for (let z = 0; z < decks.length; z++) {
+        try {
+            const deck = decks[z]
+            const main = []
+            const mainKonamiCodes = deck.ydk.split('#main')[1].split('#extra')[0].split('\n').filter((e) => e.length)
+    
+            for (let i = 0; i < mainKonamiCodes.length; i++) {
+                let konamiCode = mainKonamiCodes[i]
+                while (konamiCode.length < 8) konamiCode = '0' + konamiCode
+                const card = await Card.findOne({ where: { konamiCode }})
+                if (!card) continue
+                main.push(card)
+            }
+    
+            main.sort((a, b) => {
+                if (a.sortPriority > b.sortPriority) {
+                    return 1
+                } else if (b.sortPriority > a.sortPriority) {
+                    return -1
+                } else if (a.name > b.name) {
+                    return 1
+                } else if (b.name > a.name) {
+                    return -1
+                } else {
+                    return false
+                }
+            })
+    
+            const rows = Math.ceil(main.length / 10)
+            const card_width = 72
+            const card_height = 105
+            const canvas = Canvas.createCanvas((card_width * 10) + 9, (card_height * rows) + rows - 1)
+            const context = canvas.getContext('2d')
+        
+            for (let i = 0; i < main.length; i++) {
+                const card = main[i]
+                const row = Math.floor(i / 10)
+                const col = i % 10
+                const image = await Canvas.loadImage(`../../formatlibrary/public/images/cards/${card.ypdId}.jpg`) 
+                context.drawImage(image, (card_width + 1) * col, row * (card_height + 1), card_width, card_height)
+            }
+        
+            const buffer = canvas.toBuffer('image/png')
+            fs.writeFileSync(`../../formatlibrary/public/images/decks/previews/${deck.id}.png`, buffer)
+            console.log(`composed preview`)
+            b++
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    return console.log(`composed ${b} previews`)
+}
+
+composeThumbnails()
+composePreviews()
+
+// downloadDuelingBookAvatar('692063231988072479', '3904')
+// findMissingBlogPostPFPs()
 // fixInternal()
 // fixFormats()
 // erasePasswords()
