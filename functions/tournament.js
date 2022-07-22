@@ -249,18 +249,22 @@ const getTournamentFormat = async (server, message) => {
 //REMOVE PARTICIPANT
 const removeParticipant = async (server, message, member, entry, tournament, drop = false) => {    
     try {
-        console.log('server.id', server.id)
-        console.log('member.user.id', member.user.id)
-        console.log('entry.participantId', entry.participantId)
-        console.log('tournament.id', tournament.id)
         const success = await axios({
             method: 'delete',
             url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/${entry.participantId}.json?api_key=${challongeAPIKeys[server.name]}`
         })
 
         if (success) {
+            const playerId = entry.playerId
             await entry.destroy()
-            member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
+            const count = await Entry.count({ 
+                where: {
+                    playerId: playerId,
+                    '$Tournament.serverId': server.id
+                }
+            })
+
+            if (!count) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
         
             if (drop) {
                 return message.channel.send({ content: `I removed you from the tournament. Better luck next time!`})
@@ -340,9 +344,13 @@ const checkPairing = (match, p1, p2) => (match.player1_id === p1 && match.player
 const findNextMatch = (matchesArr = [], matchId, participantId) => {
     for (let i = 0; i < matchesArr.length; i++) {
         const match = matchesArr[i].match
-        if (match.state === 'complete') continue
+        // if (match.state === 'complete') continue
         if (match.prerequisite_match_ids_csv.includes(matchId) && (match.player1_id === participantId || match.player2_id === participantId)) {
-            return match.id
+            if (match.state === 'complete') {
+                return findNextMatch(matchesArr, match.id, participantId)
+            } else {
+                return match.id
+            }
         }
     }
 
@@ -569,7 +577,14 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
             const entries = await Entry.count({ where: { playerId: losingPlayer.id } })
             if (entries === 1) {
                 const member = message.guild.members.cache.get(losingEntry.playerId)
-                if (member) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
+                const count = await Entry.count({
+                    where: {
+                        playerId: losingEntry.playerId,
+                        '$Tournament.serverId': server.id
+                    }
+                })
+
+                if (member && !count) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
             }
             await losingEntry.destroy()
         }
@@ -608,7 +623,6 @@ module.exports = {
     askForDBName,
     checkPairing,
     createSheetData,
-    findNextMatch,
     findNextOpponent,
     findNoShowOpponent,
     findOtherPreReqMatch,
