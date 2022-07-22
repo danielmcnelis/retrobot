@@ -799,22 +799,20 @@ try {
         
         const tournaments = await Tournament.findAll({
             where: { 
-                state: "pending", 
+                state: {[Op.or]: ["pending", "underway"]}, 
                 serverId: mgid 
             },
             order: [["createdAt", "ASC"]]
         })
         
-        const count = await Tournament.count({ where: { state: "underway", serverId: mgid } })
         const tournament = await selectTournament(message, tournaments, maid);
-        if (!tournament && count) return message.channel.send({ content: `Sorry, the tournament already started.` })
-        if (!tournament && !count) return message.channel.send({ content: `There is no active tournament.` })
+        if (!tournament) return message.channel.send({ content: `There is no active tournament.` })
         const entry = await Entry.findOne({ where: { playerId, tournamentId: tournament.id } })
         if (!entry) return message.channel.send({ content: `${isAuthor ? "You are" : "That player is"} not registered for ${tournament.name}.`})
 
         message.channel.send({ content: `Please check your DMs.` })
         const deckAttachments = await drawDeck(entry.ydk) || []
-        return message.author.send({ content: `${isAuthor ? `${player.name}\'s` : 'Your'} deck for ${tournament.name} is: ${entry.url}`, files: [...deckAttachments]}).catch((err) => console.log(err))
+        return message.author.send({ content: `${isAuthor ? `${player.name}\'s` : 'Your'} deck for ${tournament.name} is:\n<${entry.url}>`, files: [...deckAttachments]}).catch((err) => console.log(err))
     }
 
     // ROLE
