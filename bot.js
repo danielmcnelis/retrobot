@@ -641,8 +641,8 @@ try {
         
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player)
         if (!dbName) return
-        const deckListUrl = await getDeckList(server, message.member, player, format, tournament.name)
-        if (!deckListUrl) return
+        const { url, ydk } = await getDeckList(server, message.member, player, format, tournament.name)
+        if (!url) return
 
         if (!entry) {  
             try {                                
@@ -651,27 +651,31 @@ try {
                 
                 await Entry.create({
                     pilot: player.name,
-                    url: deckListUrl,
+                    url: url,
+                    ydk: ydk,
                     participantId: participant.id,
                     playerId: player.id,
                     tournamentId: tournament.id
                 })
+        
             } catch (err) {
                 console.log(err)
                 return message.author.send({ content: `Error: Could not access database.`})
             } finally {
+                const deckAttachments = await drawDeck(ydk) || []
                 message.member.roles.add(roles[server.name].tourRole).catch((err) => console.log(err))
-                message.author.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament!`}).catch((err) => console.log(err))
+                message.author.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament! FYI, this is the deck you submitted:`, files: [...deckAttachments] }).catch((err) => console.log(err))
                 return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.id}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
             }
         } else {
             try {
-                await entry.update({ url: deckListUrl })
+                await entry.update({ url: url, ydk: ydk })
             } catch (err) {
                 console.log(err)
                 return message.author.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
             } finally {
-                message.author.send({ content: `Thanks! I have your updated deck list for the tournament.`}).catch((err) => console.log(err))
+                const deckAttachments = await drawDeck(ydk) || []
+                message.author.send({ content: `Thanks! I have your updated deck list for the tournament:`, files: [...deckAttachments] }).catch((err) => console.log(err))
                 return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.id}> resubmitted their deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
             }
         }
@@ -702,8 +706,8 @@ try {
 
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player, true)
         if (!dbName) return
-        const deckListUrl = await getDeckList(server, message.member, player, format, tournament.name, true)
-        if (!deckListUrl) return         
+        const {url, ydk} = await getDeckList(server, message.member, player, format, tournament.name, true)
+        if (!url) return         
 
         if (!entry) {       
             try {                   
@@ -712,7 +716,8 @@ try {
                 
                 await Entry.create({
                     pilot: player.name,
-                    url: deckListUrl,
+                    url: url,
+                    ydk: ydk,
                     participantId: participant.id,
                     playerId: player.id,
                     tournamentId: tournament.id
@@ -723,16 +728,18 @@ try {
             } 
 
             mentioned.roles.add(roles[server.name].tourRole).catch((err) => console.log(err))
-            message.author.send({ content: `Thanks! I have all the information we need for ${player.name}!`}).catch((err) => console.log(err))
+            const deckAttachments = await drawDeck(ydk) || []                
+            message.author.send({ content: `Thanks! I have all the information we need for ${player.name}! FYI, here is their deck list:`, files: [...deckAttachments] }).catch((err) => console.log(err))
             return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.id}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
         } else {
             try {
-                await entry.update({ url: deckListUrl })
+                await entry.update({ url: url, ydk: ydk })
             } catch (err) {
                 console.log(err)
                 return message.author.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
             } finally {
-                message.author.send({ content: `Thanks! I have ${player.name}'s updated deck list for the tournament.`}).catch((err) => console.log(err))
+                const deckAttachments = await drawDeck(ydk) || []                
+                message.author.send({ content: `Thanks! I have ${player.name}'s updated deck list for the tournament:`, files: [...deckAttachments] }).catch((err) => console.log(err))
                 return client.channels.cache.get(tournament.channelId).send({ content: `A moderator resubmitted <@${player.id}>'s deck list for ${tournament.name} ${tournament.logo}!`})
             }
         }
@@ -806,7 +813,8 @@ try {
         if (!entry) return message.channel.send({ content: `${isAuthor ? "You are" : "That player is"} not registered for ${tournament.name}.`})
 
         message.channel.send({ content: `Please check your DMs.` })
-        return message.author.send({ content: `${isAuthor ? `${player.name}\'s` : 'Your'} deck link for ${tournament.name} is: ${entry.url}`}).catch((err) => console.log(err))
+        const deckAttachments = await drawDeck(entry.ydk) || []
+        return message.author.send({ content: `${isAuthor ? `${player.name}\'s` : 'Your'} deck for ${tournament.name} is: ${entry.url}`, files: [...deckAttachments]}).catch((err) => console.log(err))
     }
 
     // ROLE

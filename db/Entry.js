@@ -9,6 +9,9 @@ const Entry = db.define('entries', {
     url: {
         type: Sequelize.STRING
     },
+    ydk: {
+        type: Sequelize.TEXT
+    },
     wins: {
         type: Sequelize.INTEGER,
         defaultValue: 0

@@ -86,7 +86,7 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
             if (override) {
                 saveYDK(server.name, player, ydk, tournamentName)
                 member.send({ content: `Thanks, ${member.user.username}, I saved a copy of ${pronoun} deck. ${legend}`}).catch((err) => console.log(err))
-                return url
+                return { url, ydk }
             } else if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
                 let response = [`I'm sorry, ${member.user.username}, your deck is not legal. ${mad}`]
                 if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format:`, ...illegalCards]
@@ -113,7 +113,7 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
              } else {
                 saveYDK(server.name, player, ydk, tournamentName)
                 member.send({ content: `Thanks, ${member.user.username}, ${pronoun} deck is perfectly legal. ${legend}`}).catch((err) => console.log(err))
-                return url
+                return { url, ydk }
             }
         } else {
             member.send({ content: "Sorry, I only accept duelingbook.com/deck links."}).catch((err) => console.log(err))    
