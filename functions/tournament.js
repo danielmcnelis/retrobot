@@ -249,6 +249,10 @@ const getTournamentFormat = async (server, message) => {
 //REMOVE PARTICIPANT
 const removeParticipant = async (server, message, member, entry, tournament, drop = false) => {    
     try {
+        console.log('server.id', server.id)
+        console.log('member.user.id', member.user.id)
+        console.log('entry.participantId', entry.participantId)
+        console.log('tournament.id', tournament.id)
         const success = await axios({
             method: 'delete',
             url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/${entry.participantId}.json?api_key=${challongeAPIKeys[server.name]}`
