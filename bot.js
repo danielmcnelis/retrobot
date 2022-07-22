@@ -768,7 +768,7 @@ try {
             if (!success) return message.channel.send({ content: `If you played a match, please report the result before dropping. Otherwise ask a Moderator to remove you.`})
         }
 
-        const entry = await Entry.findOne({ where: { playerId: maid } })
+        const entry = await Entry.findOne({ where: { playerId: maid, tournamentId: tournament.id } })
         if (!entry) return message.channel.send({ content: `You are not in an active tournament.`})
         return removeParticipant(server, message, message.member, entry, tournament, true)
     }
