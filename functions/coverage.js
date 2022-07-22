@@ -225,12 +225,7 @@ const composeBlogPost = async (message, abbreviation) => {
                 placement: 1
             }
         })
-    
-        const communityLogo = event.community === 'Format Library' ? "/images/logos/Format Library.png" :
-            event.community === 'GoatFormat.com' ? "/images/logos/GoatFormat.com.png" :
-            event.community === 'EdisonFormat.com' ? "/images/logos/EdisonFormat.com.png" :
-            ""
-        
+
         const decks = await Deck.findAll({ 
             where: {
                 formatName: {[Op.iLike]: event.formatName }
@@ -299,7 +294,7 @@ const composeBlogPost = async (message, abbreviation) => {
                         `<p className="blogpost-date">${blogTitleDate}</p>` +
                     `</div>` +
                 `<div className="blogpost-title-emojis">` +
-                    `<img className="blogpost-format-icon" src="/images/emojis/${format.icon}"/>` +
+                    `<img className="blogpost-format-icon" src="/images/emojis/${format.icon}.png"/>` +
                     `<img className="blogpost-event-icon" src="/images/emojis/event.png"/>` +
                 `</div>` +
             `</div>` +
@@ -310,7 +305,7 @@ const composeBlogPost = async (message, abbreviation) => {
                 `<div className="blogpost-images-flexbox">` +
                     `<div className="blogpost-pfp-community-flexbox">` +
                         `<img className="blogpost-pfp" src="/images/pfps/${winner.id}.png" />` +
-                        `<img className="blogpost-community"  src="${communityLogo}" />` +
+                        `<img className="blogpost-community"  src="/images/logos/${event.community}.png" />` +
                     `</div>` +
                     `<div className="blogpost-deck-box">` + 
                         `<a className="blogpost-deck-link" href="/decks/${deck.id}">` +
