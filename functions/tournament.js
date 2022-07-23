@@ -260,7 +260,7 @@ const removeParticipant = async (server, message, member, entry, tournament, dro
             const count = await Entry.count({ 
                 where: {
                     playerId: playerId,
-                    '$Tournament.serverId': server.id
+                    '$Tournament.serverId$': server.id
                 }
             })
 
@@ -347,7 +347,7 @@ const findNextMatch = (matchesArr = [], matchId, participantId) => {
         // if (match.state === 'complete') continue
         if (match.prerequisite_match_ids_csv.includes(matchId) && (match.player1_id === participantId || match.player2_id === participantId)) {
             if (match.state === 'complete') {
-                return findNextMatch(matchesArr, match.id, participantId)
+                return findNextMatch(matchesArr, match.id, part)
             } else {
                 return match.id
             }
@@ -580,7 +580,7 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
                 const count = await Entry.count({
                     where: {
                         playerId: losingEntry.playerId,
-                        '$Tournament.serverId': server.id
+                        '$Tournament.serverId$': server.id
                     }
                 })
 
