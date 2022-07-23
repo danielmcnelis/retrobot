@@ -347,7 +347,7 @@ const findNextMatch = (matchesArr = [], matchId, participantId) => {
         // if (match.state === 'complete') continue
         if (match.prerequisite_match_ids_csv.includes(matchId) && (match.player1_id === participantId || match.player2_id === participantId)) {
             if (match.state === 'complete') {
-                return findNextMatch(matchesArr, match.id, part)
+                return findNextMatch(matchesArr, match.id, participantId)
             } else {
                 return match.id
             }
