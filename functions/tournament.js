@@ -260,7 +260,7 @@ const removeParticipant = async (server, message, member, entry, tournament, dro
             const count = await Entry.count({ 
                 where: {
                     playerId: playerId,
-                    '$Tournament.serverId$': server.id
+                    // '$Tournament.serverId$': server.id
                 }
             })
 
@@ -580,7 +580,7 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
                 const count = await Entry.count({
                     where: {
                         playerId: losingEntry.playerId,
-                        '$Tournament.serverId$': server.id
+                        // '$Tournament.serverId$': server.id
                     }
                 })
 
