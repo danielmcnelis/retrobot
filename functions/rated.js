@@ -99,8 +99,8 @@ const getDropFormats = async (message, pools) => {
             index !== null ? pools[index - 2] :
             false
 
-        console.log('poolsToLeave', poolsToLeave)
-        return poolsToLeave
+        console.log('[...poolsToLeave]', [...poolsToLeave])
+        return [...poolsToLeave]
     }).catch((err) => {
         console.log(err)
         message.channel.send({ content: `Sorry, time's up.`})
