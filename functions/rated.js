@@ -96,11 +96,11 @@ const getDropFormats = async (message, pools) => {
         const index = !isNaN(parseInt(response)) ? parseInt(response) - 1 : null
         console.log('index', index)
         const poolsToLeave = response.includes('all') || index === 0 ? pools : 
-            index !== null ? pools[index - 2] :
+            index !== null ? [pools[index - 2]] :
             false
 
-        console.log('[...poolsToLeave]', [...poolsToLeave])
-        return [...poolsToLeave]
+        console.log('poolsToLeave', poolsToLeave)
+        return poolsToLeave
     }).catch((err) => {
         console.log(err)
         message.channel.send({ content: `Sorry, time's up.`})
