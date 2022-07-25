@@ -919,7 +919,7 @@ try {
     if (commands.infocom.includes(cmd)) {
         const format = await getDeckFormat(server, message, mcid)
         if (!format) return
-        return message.channel.send(`**${format.name.toUpperCase()} FORMAT ${format.emoji} - OVERVIEW**\nhttps://formatlibrary.com/formats/${format.name}`)
+        return message.channel.send(`**${format.name.toUpperCase()} FORMAT ${format.emoji} - OVERVIEW**\nhttps://formatlibrary.com/formats/${urlize(format.name)}`)
     }
 
     // BANLIST
