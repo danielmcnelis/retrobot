@@ -92,9 +92,9 @@ const getDropFormats = async (message, pools) => {
         time: 30000
     }).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
-        const index = isNaN(parseInt(response)) ? parseInt(response) - 1 : null
+        const index = !isNaN(parseInt(response)) ? parseInt(response) - 1 : null
         const poolsToLeave = response.includes('all') || index === 0 ? pools : 
-            index ? pools[index] :
+            index !== null ? pools[index - 1] :
             false
 
         return poolsToLeave

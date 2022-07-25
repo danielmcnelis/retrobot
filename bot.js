@@ -2272,7 +2272,6 @@ try {
         const drops = await getDropFormats(message, pools)
         if (!drops || !drops.length) return message.channel.send(`Please specify a valid number.`)
 
-        let b = 0
         const results = []
         for (let i = 0; i < drops.length; i++) {
             try {
@@ -2280,7 +2279,6 @@ try {
                 const oldRatedPool = await RatedPool.findOne({ where: { format: format, playerId: maid } })
                 await oldRatedPool.destroy()
                 results.push(format)
-                b++
             } catch (err) {
                 console.log(err)
             }
