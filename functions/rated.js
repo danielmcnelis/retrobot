@@ -85,7 +85,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
 const getDropFormats = async (message, pools) => {
     if (pools.length === 1) return pools
     const filter = m => m.author.id === message.author.id
-    message.channel.send({ content: `Which Rated Pool(s) do you want to leave?\n(1) all\n${pools.join('\n')}`})
+    message.channel.send({ content: `Which Rated Pool(s) do you want to leave?\n(1) - All\n${pools.map((p, index) => `(${index+2}) - ${p}`).join('\n')}`})
     return await message.channel.awaitMessages({
         filter,
         max: 1,
