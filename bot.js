@@ -2221,10 +2221,10 @@ try {
                     }) || []
 
                     const p1Index = allStats.findIndex((s) => s.playerId === player.id)
-                    const p1Rank = p1Index >= 0 ? `#${index + 1} ` : ''
+                    const p1Rank = p1Index >= 0 ? `#${p1Index + 1} ` : ''
                     const p2Index = allStats.findIndex((s) => s.playerId === opponent.id)
-                    const p2Rank = p2Index >= 0 ? `#${index + 1} ` : ''
-
+                    const p2Rank = p2Index >= 0 ? `#${p2Index + 1} ` : ''
+                    
                     return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: ${p2Rank}<@${opponent.id}> (DB: ${opponent.duelingBook}) vs. ${p1Rank}<@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
                 }
             }
