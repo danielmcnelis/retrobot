@@ -44,7 +44,7 @@ client.on('ready', async() => {
         console.log(err)
     }
 
-    const midnightCountdown = 1 || getMidnightCountdown()
+    const midnightCountdown = getMidnightCountdown()
 	setTimeout(() => purgeEntries(), midnightCountdown)
 	setTimeout(() => purgeRatedDecks(), midnightCountdown + (1 * 60 * 1000))
     setTimeout(() => updateServers(client), midnightCountdown + (2 * 60 * 1000))
@@ -2213,7 +2213,7 @@ try {
                         where: {
                             format: { [Op.iLike]: format.name }, 
                             games: { [Op.gte]: 3 },
-                            serverId: server.id,
+                            serverId: commonServer.id,
                             '$player.blacklisted$': false
                         },
                         order: [['elo', 'DESC']] 
