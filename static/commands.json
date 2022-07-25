@@ -17,7 +17,8 @@
   "flipcom": ["!flip", "!coin"],
   "h2hcom": ["!h2h", "!head2head", "!headtohead"],
   "histcom": ["!h", "!hist", "!history"],
-  "ironcom": ["!i", "!iron", "!fe"],
+  "infocom": ["!info", "!format", "!overview", "!intro"],
+  "ironcom": ["!iron", "!fe"],
   "joincom": ["!j", "!join", "!resubmit", "!in", "!play", "!enter"],
   "legalcom": [
     "!c",
@@ -43,7 +44,7 @@
     "!lostto",
     "!lostat"
   ],
-  "manualcom": ["!m", "!manual", "!man"],
+  "manualcom": ["!manual", "!man"],
   "medalscom": ["!medals", "!medal"],
   "nocom": [
     "no",

@@ -2,7 +2,6 @@
 
 const { Op } = require('sequelize')
 const { BlogPost, Card, Deck, DeckType, Event, Format, Match, Matchup, Membership, Player, Server, Stats, Status  } = require('../db')
-const statuses = require('../static/statuses.json')
 const { capitalize } = require('../functions/utility')
 const axios = require('axios')
 const Canvas = require('canvas')
@@ -143,38 +142,6 @@ const erasePasswords = async () => {
     return console.log(`erased the passwords for ${b} players`)
 }
 
-const createNewStatues = async () => {
-    let b = 0
-    let e = 0
-    for (let i = 0; i < statuses.length; i++) {
-        const s = statuses[i]
-        const name = s.name
-        const cardId = s.cardId
-        console.log('name, cardId', name, cardId)
-        const keys = Object.keys(s)
-        console.log('keys.length', keys.length)
-        for (let j = 0; j < keys.length; j++) {
-            const key = keys[j]
-            if (s[key] && key !== 'id' && key !== 'name' && key !== 'createdAt' && key !== 'updatedAt' && key !== 'cardId') {
-                console.log('name, key, s.key, cardId', name, key, s.key, cardId)
-                try {
-                    await Status.create({
-                        name: name,
-                        banlist: key,
-                        restriction: s[key],
-                        cardId: cardId
-                    })
-                    b++
-                } catch (err) {
-                    e++
-                    console.log(err)
-                }
-            }
-        }
-    }
-
-    return console.log(`created ${b} new statuses for ${statuses.length} cards, encountered ${e} errors`)
-}
 
 const fixStats = async () => {
     const stats = await Stats.findAll()
@@ -194,18 +161,6 @@ const fixMatches = async () => {
         m.internal = false
         await m.save()
     }
-}
-
-const fixStatuses = async () => {
-    let b = 0
-    const statuses = await Status.findAll({ where: { restriction: 'unlimited' }})
-    for (let i = 0; i < statuses.length; i++) {
-        const s = statuses[i]
-        await s.destroy()
-        b++
-    }
-
-    return console.log(`destroyed ${b} statuses`)
 }
 
 const deleteMemberships = async () => {
@@ -431,6 +386,5 @@ composePreviews()
 // fixDecks()
 // fixDeckTypes()
 // fixMatchups()
-// fixStatuses()
 // deleteMemberships()
 // fixMemberships()

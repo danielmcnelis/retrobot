@@ -468,11 +468,15 @@ try {
 			tournament.state = 'underway'
 			await tournament.save()
             await checkExpiryDate(server)
-            const { sheets, oAuth2Client } = await connectToSheets()
-			const spreadsheetId = await makeSheet(sheets, `${name} Deck Lists`, sheet1Data)
-			await addSheet(sheets, oAuth2Client, spreadsheetId, 'Summary')
-			await writeToSheet(sheets, spreadsheetId, 'Summary', 'RAW', sheet2Data)
-            await uploadDeckFolder(server, name)
+            try {
+                const { sheets, oAuth2Client } = await connectToSheets()
+                const spreadsheetId = await makeSheet(sheets, `${name} Deck Lists`, sheet1Data)
+                await addSheet(sheets, oAuth2Client, spreadsheetId, 'Summary')
+                await writeToSheet(sheets, spreadsheetId, 'Summary', 'RAW', sheet2Data)
+                await uploadDeckFolder(server, name)
+            } catch (err) {
+                console.log(err)
+            }
 			return message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
 		} else {
 			return message.channel.send({ content: `Error connecting to Challonge account.`})
@@ -533,7 +537,8 @@ try {
                 }
 
                 console.log('winnerParticipantId', winnerParticipantId) 
-                const winningEntry = await Entry.findOne({ where: { participantId: winnerParticipantId }})
+                const winningEntry = await Entry.findOne({ where: { participantId: {[Op.iLike]: winnerParticipantId }}})
+                console.log('!!winningEntry', !!winningEntry) 
                 const winner = winningEntry ? winningEntry.pilot : null
                 const playerId = winningEntry ? winningEntry.playerId : null
 
@@ -908,6 +913,13 @@ try {
         } else {
             return message.author.send({ content: `Congrats, your ${format.name} Format deck is perfectly legal! ${format.emoji}`}).catch((err) => console.log(err))
         }
+    }
+
+    //INFO
+    if (commands.infocom.includes(cmd)) {
+        const format = await getDeckFormat(server, message, mcid)
+        if (!format) return
+        return message.channel.send(`**${format.name.toUpperCase()} FORMAT ${format.emoji} - OVERVIEW**\nhttps://formatlibrary.com/formats/${format.name}`)
     }
 
     // BANLIST
@@ -2197,7 +2209,22 @@ try {
                         await rPTD.destroy()
                     }
 
-                    return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
+                    const allStats = await Stats.findAll({ 
+                        where: {
+                            format: { [Op.iLike]: format.name }, 
+                            games: { [Op.gte]: 3 },
+                            serverId: server.id,
+                            '$player.blacklisted$': false
+                        },
+                        order: [['elo', 'DESC']] 
+                    }) || []
+
+                    const p1Index = allStats.findIndex((s) => s.playerId === player.id)
+                    const p1Rank = p1Index >= 0 ? `#${index + 1} ` : ''
+                    const p2Index = allStats.findIndex((s) => s.playerId === opponent.id)
+                    const p2Rank = p2Index >= 0 ? `#${index + 1} ` : ''
+
+                    return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: ${p2Rank}<@${opponent.id}> (DB: ${opponent.duelingBook}) vs. ${p1Rank}<@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
                 }
             }
         } catch (err) {
