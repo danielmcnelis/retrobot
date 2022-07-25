@@ -1523,7 +1523,7 @@ try {
         const loserStats = await Stats.findOne({ where: { playerId: maid, format: format.name, serverId: serverId } })
 
         if (winner && winner.user.bot) return message.channel.send({ content: `Sorry, Bots do not play ${format.name} Format... *yet*.`})
-        if (opid.length < 17 || opid.length > 18) return message.channel.send({ content: `To report a loss, type **!loss @opponent**.`})
+        if (opid.length < 17 || opid.length > 19) return message.channel.send({ content: `To report a loss, type **!loss @opponent**.`})
         if (!losingPlayer || !loserStats) return message.channel.send({ content: `You are not in the database.`})
         if (!winningPlayer || !winnerStats) return message.channel.send({ content: `That user is not in the database.`})
  
@@ -2213,7 +2213,7 @@ try {
                         where: {
                             format: { [Op.iLike]: format.name }, 
                             games: { [Op.gte]: 3 },
-                            serverId: commonServer.id,
+                            serverId: '414551319031054346',
                             '$player.blacklisted$': false
                         },
                         order: [['elo', 'DESC']] 
