@@ -189,7 +189,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                         }
                     }
 
-                    if (index === files.length) return message.channel.send(`Uploaded ${b} out of ${size} decks for ${event.name}.`)
+                    if (index === files.length - 1) return message.channel.send(`Uploaded ${b} out of ${size} decks for ${event.name}.`)
                 })
             }
         })

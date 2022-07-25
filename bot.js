@@ -525,20 +525,27 @@ try {
                 }
 
                 const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${challongeAPIKeys[server.name]}`)
-               
+                console.log('data', data)
                 let winnerParticipantId = null
                 for (let i = 0; i < data.length; i++) {
                     const participant = data[i].participant
                     if (participant.final_rank === 1) winnerParticipantId = participant.id
                 }
 
+                console.log('winnerParticipantId', winnerParticipantId) 
                 const winningEntry = await Entry.findOne({ where: { participantId: winnerParticipantId }})
                 const winner = winningEntry ? winningEntry.pilot : null
                 const playerId = winningEntry ? winningEntry.playerId : null
 
+                const format = await Format.findOne({ where: {
+                    name: {[Op.iLike]: tournament.formatName }
+                }}) || {}
+
                 await Event.create({
                     name: tournament.name,
+                    abbreviation: tournament.name,
                     formatName: tournament.formatName,
+                    formatId: format.id,
                     referenceUrl: `https://challonge.com/${tournament.url}`,
                     display: true,
                     tournamentId: tournament.id,
