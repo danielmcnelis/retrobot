@@ -2216,6 +2216,7 @@ try {
                             serverId: '414551319031054346',
                             '$player.blacklisted$': false
                         },
+                        include: [Player],
                         order: [['elo', 'DESC']] 
                     }) || []
 
