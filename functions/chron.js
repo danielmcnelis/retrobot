@@ -353,9 +353,9 @@ const getSortPriority = (type = '') => {
         type.includes('Synchro') ? 7 :
         type.includes('Fusion') ? 6 :
         type.includes('Ritual') ? 5 :
-        type.includes('Pendulum') && !type.includes('Normal') ? 4 :
+        type.includes('Pendulum') && type.includes('Effect') ? 4 :
         type.includes('Effect') ? 3 :
-        type.includes('Pendulum') && type.includes('Normal') ? 2 :
+        type.includes('Pendulum') && !type.includes('Effect') ? 2 :
         type.includes('Normal') ? 1 :
         null
 
