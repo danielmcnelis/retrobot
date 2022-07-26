@@ -6,7 +6,7 @@ const axios = require('axios')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Format, Player, RatedDeck, RatedPool, Server } = require('../db/index.js')
+const { Format, Player, RatedDeck, RatedPool, Stats, Server } = require('../db/index.js')
 
 //STATIC IMPORTS
 const channels = require('../static/channels')
@@ -67,6 +67,22 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
                 const rPTD = ratedPoolsToDestroy[d]
                 await rPTD.destroy()
             }
+
+            const allStats = await Stats.findAll({ 
+                where: {
+                    format: { [Op.iLike]: format.name }, 
+                    games: { [Op.gte]: 3 },
+                    serverId: '414551319031054346',
+                    '$player.blacklisted$': false
+                },
+                include: [Player],
+                order: [['elo', 'DESC']] 
+            }) || []
+
+            const p1Index = allStats.findIndex((s) => s.playerId === player.id)
+            const p1Rank = p1Index >= 0 ? `#${p1Index + 1} ` : ''
+            const p2Index = allStats.findIndex((s) => s.playerId === opponent.id)
+            const p2Rank = p2Index >= 0 ? `#${p2Index + 1} ` : ''
 
             return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
         } else {
