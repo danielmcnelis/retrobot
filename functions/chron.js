@@ -349,13 +349,13 @@ const getSortPriority = (type = '') => {
     const sortPriority = type.includes('Trap') ? 11 :
         type.includes('Spell') ? 10 :
         type.includes('Link') ? 9 :
-        type.includes('Pendulum') && !type.includes('Normal') ? 8 :
-        type.includes('Pendulum') && type.includes('Normal') ? 7 :
-        type.includes('Xyz') ? 6 :
-        type.includes('Synchro') ? 5 :
-        type.includes('Ritual') ? 4 :
-        type.includes('Fusion') ? 3 :
-        type.includes('Effect') ? 2 :
+        type.includes('Xyz') ? 8 :
+        type.includes('Synchro') ? 7 :
+        type.includes('Fusion') ? 6 :
+        type.includes('Ritual') ? 5 :
+        type.includes('Pendulum') && !type.includes('Normal') ? 4 :
+        type.includes('Effect') ? 3 :
+        type.includes('Pendulum') && type.includes('Normal') ? 2 :
         type.includes('Normal') ? 1 :
         null
 
