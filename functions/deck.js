@@ -230,8 +230,8 @@ const getDeckType = async (server, player, format, tournamentName = 'other') => 
             ((ydk[panda] >= 2 || ydk[mataza] >= 2) && (ydk[koala] >= 2 || ydk[spy] >= 2) && ydk[storm]) ? 'aggro bomb' :
             ((!ydk[llab] || ydk[llab] <= 1) && (!ydk[gbind] || ydk[gbind] <= 1) && (!ydk[worl] || ydk[worl] <= 1) && (ydk[koala] >= 2 || ydk[bigshield] >= 2) && (ydk[barrel] >= 2 || ydk[fire] >= 2 || ydk[poison] >= 2)) ? 'speed burn' :
             (ydk[sorc] >= 2 && ydk[tomato] && ydk[angel] && !ydk[scapegoat] && !ydk[meta]) ? 'chaos recruiter' :
-            (ydk[sorc] && ydk[rota] && ydk[solemn] >= 2) ? 'chaos warrior' :
-            ((!ydk[sorc] || ydk[sorc] <= 1) && ydk[rota] && (ydk[blade] || ydk[ddwl] || ydk[lv2]) && ydk[solemn] >= 2 && !ydk[llab] && !ydk[gbind] && !ydk[worl] && !ydk[freed]) ? 'warrior' :
+            (ydk[sorc] && ydk[tdrag] >= 3 && ydk[rota] && ydk[solemn] >= 2) ? 'chaos warrior' :
+            (ydk[rota] && (ydk[blade] || ydk[ddwl] || ydk[lv2]) && ydk[solemn] >= 2 && !ydk[llab] && !ydk[gbind] && !ydk[worl] && !ydk[freed]) ? 'warrior' :
             (ydk[sorc] >= 2 && ydk[tdrag] >= 3 && ydk[mof] && !ydk[scapegoat]) ? 'chaos turbo' :
             (ydk[sorc] >= 2 && ydk[meta] && ydk[scapegoat]) ? 'chaos control' :
             ((!ydk[sorc] || ydk[sorc] <= 1) && ((ydk[scapegoat] && ydk[meta] >= 2) || (ydk[scapegoat] >= 2 && ydk[meta])) && ydk[bls] && (!ydk[bigbang] || ydk[bigbang] <= 1)) ? 'goat control' :
