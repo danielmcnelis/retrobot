@@ -481,5 +481,6 @@ const resetIron = async (channel, format) => {
 module.exports = {
     confirmIron,
     postStory,
-    resetIron
+    resetIron,
+    draftTeams
 }

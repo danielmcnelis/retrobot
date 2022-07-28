@@ -17,7 +17,7 @@ const { conductCensus, downloadNewCards, getMidnightCountdown, purgeEntries, pur
 const { createDecks, composeBlogPost, composeThumbnails, selectCoverage } = require('./functions/coverage.js')
 const { checkDeckList, getDeckFormat, getIssues } = require( './functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
-const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
+const { confirmIron, postStory, resetIron, draftTeams } = require('./functions/iron.js')
 const { getDropFormats, getNewRatedDeck, getPreviousRatedDeck, getRatedFormat, getPotentialPairConfirmation } = require('./functions/rated.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getTournamentChannel, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
@@ -162,7 +162,19 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) { 
-            conductCensus(client)
+            const format = await Format.findOne({
+                where: {
+                    [Op.or]: {
+                        name: {[Op.iLike]: server.format },
+                        channel: mcid
+                    }
+                }
+            })
+
+            const captainA = await Iron.findOne({ where: { captain: true, team: 'A', format: format.name }})
+            const captainB = await Iron.findOne({ where: { captain: true, team: 'B', format: format.name }})
+
+            draftTeams(1, captainA, captainB, message.channel, format)
             return message.channel.send({ content: `${emojis.yellow}`})
         } else {
             return message.channel.send({ content: `🧪`})
