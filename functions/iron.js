@@ -192,11 +192,11 @@ const assignCaptains = async (entries, channel, format) => {
 
 //DRAFT TEAMS
 const draftTeams = async (pick, captainA, captainB, channel, format) => {
-    console.log('draftTeams', pick)
-    console.log('captainA', captainA)
-    console.log('captainB', captainB)
-    console.log('channel', channel)
-    console.log('format', format)
+    console.log('pick', pick)
+    console.log('captainA.name', captainA.name)
+    console.log('captainB.name', captainB.name)
+    console.log('channel.name', channel.name)
+    console.log('format.name', format.name)
     const captain = (pick === 1 || pick === 4 || pick === 5) ? captainB : captainA
     const team = captain === captainA ? 'A' : 'B'
     console.log('team', team)
@@ -207,7 +207,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
             captain: null,
             team: null
         }
-    })]
+    })]f
 
     console.log('ironPeople.length', ironPeople.length)
 
