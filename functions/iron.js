@@ -207,7 +207,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
             captain: null,
             team: null
         }
-    })]f
+    })]
 
     console.log('ironPeople.length', ironPeople.length)
 
