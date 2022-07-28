@@ -204,7 +204,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
     const ironPeople = [...await Iron.findAll({ 
         where: {
             format: format.name,
-            captain: null,
+            captain: false,
             team: null
         }
     })]
