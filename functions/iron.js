@@ -192,8 +192,14 @@ const assignCaptains = async (entries, channel, format) => {
 
 //DRAFT TEAMS
 const draftTeams = async (pick, captainA, captainB, channel, format) => {
+    console.log('draftTeams', pick)
+    console.log('captainA', captainA)
+    console.log('captainB', captainB)
+    console.log('channel', channel)
+    console.log('format', format)
     const captain = (pick === 1 || pick === 4 || pick === 5) ? captainB : captainA
     const team = captain === captainA ? 'A' : 'B'
+    console.log('team', team)
     const filter = m => m.author.id === captain.playerId
     const ironPeople = [...await Iron.findAll({ 
         where: {
@@ -203,7 +209,11 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         }
     })]
 
+    console.log('ironPeople.length', ironPeople.length)
+
     const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
+
+    console.log('players', players)
 
     if (!ironPeople.length) {
         chooseOrder(captainA, channel, format)
