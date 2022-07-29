@@ -604,7 +604,7 @@ try {
         const tournaments = await Tournament.findAll({ 
             where: { 
                 state: { [Op.not]: 'complete'},
-                formatName: format ? format.name : [Op.all],
+                formatName: format ? format.name : Op.all,
                 serverId: mgid
             },
             order: [['createdAt', 'ASC']]
@@ -684,7 +684,7 @@ try {
         const tournaments = await Tournament.findAll({ 
             where: { 
                 state: {[Op.or]: ['pending', 'standby']}, 
-                formatName: format ? format.name : [Op.all],
+                formatName: format ? format.name : Op.all,
                 serverId: mgid
             }, 
             order: [['createdAt', 'ASC']] 
@@ -694,7 +694,7 @@ try {
         const count = await Tournament.count({ 
             where: { 
                 state: 'underway', 
-                formatName: format ? format.name : [Op.all],
+                formatName: format ? format.name : Op.all,
                 serverId: mgid
             }
         })
