@@ -6,7 +6,7 @@ const axios = require('axios')
 const {Op} = require('sequelize')
 
 //DATABASE IMPORTS
-const { Entry, Format, Player, Stats }  = require('../db/index.js')
+const { Entry, Format, Player, Stats, Tournament }  = require('../db/index.js')
 
 //FUNCTION IMPORTS
 const { getIssues, saveYDK } = require('./deck.js')
@@ -262,7 +262,8 @@ const removeParticipant = async (server, message, member, entry, tournament, dro
                 where: {
                     playerId: playerId,
                     '$tournament.serverId$': server.id
-                }
+                },
+                include: Tournament,
             })
 
             if (!count) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
@@ -582,7 +583,8 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
                     where: {
                         playerId: losingEntry.playerId,
                         '$tournament.serverId$': server.id
-                    }
+                    },
+                    include: Tournament
                 })
 
                 if (member && !count) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
