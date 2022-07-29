@@ -591,8 +591,27 @@ try {
     // BRACKET
     if (commands.bracketcom.includes(cmd)) {
         if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
-        const tournaments = await Tournament.findAll({ where: { state: { [Op.not]: 'complete'}, serverId: mgid }, order: [['createdAt', 'ASC']]})
-        if (!tournaments.length) return message.channel.send({ content: `There are no active tournaments.`})
+        
+        let format = await Format.findOne({
+            where: {
+                [Op.or]: {
+                    name: {[Op.iLike]: server.format },
+                    channel: mcid
+                }
+            }
+        })
+        
+        const tournaments = await Tournament.findAll({ 
+            where: { 
+                state: { [Op.not]: 'complete'},
+                formatName: format ? format.name : [Op.all],
+                serverId: mgid
+            },
+            order: [['createdAt', 'ASC']]
+        })
+
+        if (!tournaments.length && format) return message.channel.send({ content: `There are no active ${format.name} ${format.emoji} tournaments.`})
+        if (!tournaments.length && !format) return message.channel.send({ content: `There are no active tournaments.`})
         
         const results = []
         for (let i = 0; i < tournaments.length; i++) {
@@ -652,14 +671,41 @@ try {
         if (isMod(server, message.member) && mention) return message.channel.send({ content: `Please type **!signup @user** to register someone else for the tournament.`})
         const player = await Player.findOne({ where: { id: maid }})
         if (!player) return message.channel.send({ content: `You are not in the database.`})
-        const tournaments = await Tournament.findAll({ where: { state: {[Op.or]: ['pending', 'standby']}, serverId: mgid }, order: [['createdAt', 'ASC']] })
+        
+        let format = await Format.findOne({
+            where: {
+                [Op.or]: {
+                    name: {[Op.iLike]: server.format },
+                    channel: mcid
+                }
+            }
+        })
+        
+        const tournaments = await Tournament.findAll({ 
+            where: { 
+                state: {[Op.or]: ['pending', 'standby']}, 
+                formatName: format ? format.name : [Op.all],
+                serverId: mgid
+            }, 
+            order: [['createdAt', 'ASC']] 
+        })
+
         const tournament = await selectTournament(message, tournaments, maid)
-        const count = await Tournament.count({ where: { state: 'underway', serverId: mgid } })
-        if (!tournament && count) return message.channel.send({ content: `Sorry, the tournament already started.`})
-        if (!tournament && !count) return message.channel.send({ content: `There is no pending tournament.`})
+        const count = await Tournament.count({ 
+            where: { 
+                state: 'underway', 
+                formatName: format ? format.name : [Op.all],
+                serverId: mgid
+            }
+        })
+
+        if (!tournament && format && count) return message.channel.send({ content: `Sorry, the ${format.name} ${format.emoji} tournament already started.`})
+        if (!tournament && !format && count) return message.channel.send({ content: `Sorry, the tournament already started.`})
+        if (!tournament && format && !count) return message.channel.send({ content: `There is no pending ${format.name} ${format.emoji} tournament.`})
+        if (!tournament && !format && !count) return message.channel.send({ content: `There is no pending tournament.`})
         const entry = await Entry.findOne({ where: { playerId: maid, tournamentId: tournament.id } })
         if (tournament.state === 'standby' && !entry) return message.channel.send({ content: `Sorry, registration for ${tournament.name} ${tournament.logo} is currently closed.`})
-        const format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.formatName } }})
+        if (!format) format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.formatName } }})
         if (!format) return message.channel.send(`Unable to determine what format is being played in ${tournament.name}. Please contact the database manager.`)
         message.channel.send({ content: `Please check your DMs.` })
         

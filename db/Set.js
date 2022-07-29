@@ -15,6 +15,12 @@ const Set = db.define('sets', {
   size: {
     type: Sequelize.INTEGER
   },
+  originals: {
+    type: Sequelize.INTEGER
+  },
+  booster: {
+    type: Sequelize.BOOLEAN
+  },
   tcgPlayerGroupId: {
     type: Sequelize.INTEGER
   }

@@ -15,6 +15,9 @@ const Print = db.define('prints', {
   rarity: {
     type: Sequelize.STRING
   },
+  original: {
+    type: Sequelize.BOOLEAN
+  },
   marketPrice: {
     type: Sequelize.FLOAT,
     defaultValue: 0.00
