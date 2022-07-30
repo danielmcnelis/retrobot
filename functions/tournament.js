@@ -576,20 +576,18 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
             false
 
         if (loserEliminated) {
-            const entries = await Entry.count({ where: { playerId: losingPlayer.id } })
-            if (entries === 1) {
-                const member = message.guild.members.cache.get(losingEntry.playerId)
-                const count = await Entry.count({
-                    where: {
-                        playerId: losingEntry.playerId,
-                        '$tournament.serverId$': server.id
-                    },
-                    include: Tournament
-                })
-
-                if (member && !count) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
-            }
+            const playerId = losingEntry.playerId
             await losingEntry.destroy()
+            const member = message.guild.members.cache.get(playerId)
+            const count = await Entry.count({
+                where: {
+                    playerId: playerId,
+                    '$tournament.serverId$': server.id
+                },
+                include: Tournament
+            })
+
+            if (member && !count) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
         }
 
         const loserNextMatch = loserEliminated ? null : findNextMatch(updatedMatchesArr, matchId, losingEntry.participantId)
