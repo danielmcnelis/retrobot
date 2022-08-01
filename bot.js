@@ -168,8 +168,8 @@ try {
 
             for (let i = 0; i < members.length; i++) {
                 const member = members[i]
-                if (i === 0) console.log('member', member)
-                if (!member.roles.cache.some(role => role.id === roleId)) continue
+                if (i < 10) console.log('member', member)
+                if (!member._roles.includes(roleId)) continue
                 const count = await Entry.count({
                     where: {
                         playerId: member.user.id,
@@ -180,7 +180,7 @@ try {
     
                 if (member && !count) {
                     console.log(`removing tour role from ${member.user.username}`)
-                    member.roles.remove(roleId).catch((err) => console.log(err))
+                    member._roles.remove(roleId).catch((err) => console.log(err))
                 }
             }
 
