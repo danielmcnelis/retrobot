@@ -163,11 +163,12 @@ try {
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) { 
             const roleId = roles[server.name].rankedRole
-            const members = message.guild.roles.get(roleId).members
-            console.log(members)
+            const members = message.guild.members.fetch()
 
             for (let i = 0; i < members.length; i++) {
+                if (!member.roles.cache.some(role => role.id === roleId)) continue
                 const member = members[i]
+                if (i === 0) console.log('member', member)
                 const count = await Entry.count({
                     where: {
                         playerId: member.user.id,
