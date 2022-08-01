@@ -167,9 +167,9 @@ try {
             console.log('members.length', members.length)
 
             for (let i = 0; i < members.length; i++) {
-                if (!member.roles.cache.some(role => role.id === roleId)) continue
                 const member = members[i]
                 if (i === 0) console.log('member', member)
+                if (!member.roles.cache.some(role => role.id === roleId)) continue
                 const count = await Entry.count({
                     where: {
                         playerId: member.user.id,
