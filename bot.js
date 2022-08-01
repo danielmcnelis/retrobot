@@ -163,13 +163,19 @@ try {
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) { 
             const roleId = roles[server.name].rankedRole
+            console.log('roleId', roleId)
             const members = [...await message.guild.members.fetch()].map((m) => m[1])
             console.log('members.length', members.length)
 
             for (let i = 0; i < members.length; i++) {
                 const member = members[i]
-                console.log('member._roles', member._roles)
-                if (!member._roles.includes(roleId)) continue
+                //console.log('member._roles', member._roles)
+                if (!member._roles.includes(roleId)) {
+                    continue
+                } else {
+                    console.log('INCLUDES TOUR ROLE')
+                }
+
                 const count = await Entry.count({
                     where: {
                         playerId: member.user.id,
