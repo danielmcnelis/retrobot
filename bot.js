@@ -163,8 +163,8 @@ try {
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) { 
             const roleId = roles[server.name].rankedRole
-            const members = await message.guild.members.fetch()
-            console.log('members', members)
+            const members = await message.guild.members.fetch().values()
+            console.log('members.length', members.length)
 
             for (let i = 0; i < members.length; i++) {
                 if (!member.roles.cache.some(role => role.id === roleId)) continue
