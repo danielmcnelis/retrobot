@@ -185,7 +185,7 @@ try {
     
                 if (member && !count) {
                     console.log(`removing tour role from ${member.user.username}`)
-                    member._roles.remove(roleId).catch((err) => console.log(err))
+                    member.guild.roles.remove(roleId).catch((err) => console.log(err))
                 }
             }
 
