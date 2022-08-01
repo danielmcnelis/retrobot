@@ -168,7 +168,7 @@ try {
 
             for (let i = 0; i < members.length; i++) {
                 const member = members[i]
-                if (i < 10) console.log('member', member)
+                console.log('member._roles', member._roles)
                 if (!member._roles.includes(roleId)) continue
                 const count = await Entry.count({
                     where: {
