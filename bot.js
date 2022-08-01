@@ -162,20 +162,24 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) { 
-            const format = await Format.findOne({
-                where: {
-                    [Op.or]: {
-                        name: {[Op.iLike]: server.format },
-                        channel: mcid
-                    }
-                }
-            })
+            const roleId = roles[server.name].rankedRole
+            const members = message.guild.roles.get(roleId).members
+            console.log(members)
 
-            const captainA = await Iron.findOne({ where: { captain: true, team: 'A', format: format.name }})
-            const captainB = await Iron.findOne({ where: { captain: true, team: 'B', format: format.name }})
+            for (let i = 0; i < members.length; i++) {
+                const member = members[i]
+                const count = await Entry.count({
+                    where: {
+                        playerId: member.user.id,
+                        '$tournament.serverId$': server.id
+                    },
+                    include: Tournament
+                })
+    
+                if (member && !count) member.roles.remove(roleId).catch((err) => console.log(err))
+            }
 
-            draftTeams(1, captainA, captainB, message.channel, format)
-            return message.channel.send({ content: `${emojis.yellow}`})
+            return message.channel.send({ content: emojis.yellow })
         } else {
             return message.channel.send({ content: `🧪`})
         }
@@ -547,9 +551,7 @@ try {
                     if (participant.final_rank === 1) winnerParticipantId = participant.id
                 }
 
-                console.log('winnerParticipantId', winnerParticipantId) 
                 const winningEntry = await Entry.findOne({ where: { participantId: parseInt(winnerParticipantId) }})
-                console.log('!!winningEntry', !!winningEntry) 
                 const winner = winningEntry ? winningEntry.pilot : null
                 const playerId = winningEntry ? winningEntry.playerId : null
 
