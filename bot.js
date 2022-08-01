@@ -178,7 +178,10 @@ try {
                     include: Tournament
                 })
     
-                if (member && !count) member.roles.remove(roleId).catch((err) => console.log(err))
+                if (member && !count) {
+                    console.log(`removing tour role from ${member.user.username}`)
+                    member.roles.remove(roleId).catch((err) => console.log(err))
+                }
             }
 
             return message.channel.send({ content: emojis.yellow })
