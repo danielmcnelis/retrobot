@@ -541,7 +541,6 @@ try {
                 }
 
                 const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${challongeAPIKeys[server.name]}`)
-                console.log('data', data)
                 let winnerParticipantId = null
                 for (let i = 0; i < data.length; i++) {
                     const participant = data[i].participant
@@ -549,7 +548,7 @@ try {
                 }
 
                 console.log('winnerParticipantId', winnerParticipantId) 
-                const winningEntry = await Entry.findOne({ where: { participantId: {[Op.iLike]: winnerParticipantId }}})
+                const winningEntry = await Entry.findOne({ where: { participantId: parseInt(winnerParticipantId) }})
                 console.log('!!winningEntry', !!winningEntry) 
                 const winner = winningEntry ? winningEntry.pilot : null
                 const playerId = winningEntry ? winningEntry.playerId : null
