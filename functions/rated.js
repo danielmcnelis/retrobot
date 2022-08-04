@@ -84,7 +84,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             const p2Index = allStats.findIndex((s) => s.playerId === opponent.id)
             const p2Rank = p2Index >= 0 ? `#${p2Index + 1} ` : ''
 
-            return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: <@${opponent.id}> (DB: ${opponent.duelingBook}) vs. <@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
+            return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: ${p2Rank}<@${opponent.id}> (DB: ${opponent.duelingBook}) vs. ${p1Rank}<@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
         } else {
             await potentialPair.destroy()
             return message.channel.send(`Not a problem. I've removed you from the Rated ${format.name} Format ${format.emoji} player pool.`)
