@@ -198,26 +198,41 @@ try {
     // FIX
     if (cmd === `!fix`) {
         if (isProgrammer(message.member)) {
-            const tournaments = await Tournament.findAll({
-                where: {
-                    serverId: mgid,
-                    createdAt: { [Op.gte]: "2022-03-01 00:00:00.000+00" },
-                },
-                order: [["createdAt", "ASC"]],
-            })
-
-            const tournament = await selectTournament(message, tournaments, maid)
-            if (!tournament) return message.channel.send({ content: `There are no tournaments.` })
-            const { name } = tournament
-
-            try {
-                await checkExpiryDate(server)
-                await uploadDeckFolder(server, name)
-                return message.channel.send({ content: `Your tournament files have been uploaded! ${emojis[server.name]}` })
-            } catch (err) {
-                console.log(err)
-                return message.channel.send({ content: `Error. Check bot logs.` })
+            const records = require('./static/records.json')
+            for (let i = 0; i < records.length; i++) {
+                const r = records[i]
+                await Match.create({
+                    format: 'Sonichu',
+                    winner_name: r.winner_name,
+                    winnerId: r.winnerId,
+                    loser_name: r.loser_name,
+                    loserId: r.loserId,
+                    delta: 10.00,
+                    serverId: '414551319031054346'
+                })
             }
+            
+            return message.channel.send({ content: `🛠️` })
+            // const tournaments = await Tournament.findAll({
+            //     where: {
+            //         serverId: mgid,
+            //         createdAt: { [Op.gte]: "2022-03-01 00:00:00.000+00" },
+            //     },
+            //     order: [["createdAt", "ASC"]],
+            // })
+
+            // const tournament = await selectTournament(message, tournaments, maid)
+            // if (!tournament) return message.channel.send({ content: `There are no tournaments.` })
+            // const { name } = tournament
+
+            // try {
+            //     await checkExpiryDate(server)
+            //     await uploadDeckFolder(server, name)
+            //     return message.channel.send({ content: `Your tournament files have been uploaded! ${emojis[server.name]}` })
+            // } catch (err) {
+            //     console.log(err)
+            //     return message.channel.send({ content: `Error. Check bot logs.` })
+            // }
         } else {
             return message.channel.send({ content: `🛠️` })
         }
