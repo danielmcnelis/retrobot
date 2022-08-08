@@ -272,7 +272,7 @@ try {
                 '$player.blacklisted$': false
             },
             include: Player,
-            order: [['elo', 'DESC']] 
+            order: [['testElo', 'DESC']] 
         })
         
         const top_stats = all_stats.slice(0, x)
@@ -280,7 +280,7 @@ try {
         const results = []
         top_stats.length === 1 ? results[0] = `${format.emoji} --- The Best ${server.internalLadder ? 'Internal ' : ''}${format.name} Player --- ${format.emoji}`
         : results[0] = `${format.emoji} --- Top ${top_stats.length} ${server.internalLadder ? 'Internal ' : ''}${format.name} Players --- ${format.emoji}`
-        for (let i = 0; i < top_stats.length; i++) results[i+1] = `${(i+1)}. ${getMedal(top_stats[i].elo)} ${top_stats[i].player.name}`
+        for (let i = 0; i < top_stats.length; i++) results[i+1] = `${(i+1)}. ${getMedal(top_stats[i].testElo)} ${top_stats[i].player.name}`
         if (!server.internalLadder) results.push(`\nFull Leaderboard: https://formatlibrary.com/leaderboards/${urlize(format.name)}`)
         for (let i = 0; i < results.length; i += 30) message.author.send({ content: results.slice(i, i+30).join('\n').toString() })
         return message.channel.send({ content: emojis.yellow })
