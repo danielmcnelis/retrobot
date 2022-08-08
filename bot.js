@@ -221,11 +221,11 @@ try {
             winnerStats.games++
             await winnerStats.save()
 
-            if (winnerStats.games >= 30 && winnerStats.testElo >= 650 && winnerStats.kFactor !== 20) {
-                winnerStats.kFactor = 20
+            if (winnerStats.kFactor !== 10 && winnerStats.testElo >= 650 && winnerStats.games >= 30) {
+                winnerStats.kFactor = 10
                 await winnerStats.save()
-            } else if (winnerStats.games >= 30 && winnerStats.testElo < 650 && winnerStats.kFactor === 40) {
-                winnerStats.kFactor = 30
+            } else if (winnerStats.kFactor === 40 && winnerStats.games >= 30 && winnerStats.testElo < 650) {
+                winnerStats.kFactor = 20
                 await winnerStats.save()
             }
 
@@ -235,11 +235,11 @@ try {
             loserStats.games++
             await loserStats.save()
 
-            if (loserStats.games >= 30 && loserStats.testElo >= 650 && loserStats.kFactor !== 5) {
-                loserStats.kFactor = 20
+            if (loserStats.kFactor !== 10 && loserStats.testElo >= 650 && loserStats.games >= 30) {
+                loserStats.kFactor = 10
                 await loserStats.save()
-            } else if (loserStats.games >= 30 && loserStats.testElo < 650 && loserStats.kFactor === 40) {
-                loserStats.kFactor = 30
+            } else if (loserStats.kFactor === 40 && loserStats.games >= 30 && loserStats.testElo < 650) {
+                loserStats.kFactor = 20
                 await loserStats.save()
             }
 
