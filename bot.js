@@ -161,38 +161,129 @@ try {
 
     // TEST 
     if (cmd === `!test`) {
-        if (isProgrammer(message.member)) { 
-            const roleId = roles[server.name].tourRole
-            console.log('roleId', roleId)
-            const members = [...await message.guild.members.fetch()].map((m) => m[1])
-            console.log('members.length', members.length)
-
-            for (let i = 0; i < members.length; i++) {
-                const member = members[i]
-                if (!member._roles.includes(roleId)) {
-                    continue
-                } else {
-                    console.log('INCLUDES TOUR ROLE')
-                }
-
-                const count = await Entry.count({
-                    where: {
-                        playerId: member.user.id,
-                        '$tournament.serverId$': server.id
-                    },
-                    include: Tournament
-                })
-    
-                if (member && !count) {
-                    console.log(`removing tour role from ${member.user.username}`)
-                    member.roles.remove(roleId).catch((err) => console.log(err))
+        if (!isProgrammer(message.member)) return message.channel.send({ content: `🧪`}) 
+        const format = await Format.findOne({
+            where: {
+                [Op.or]: {
+                    name: { [Op.iLike]: server.format },
+                    channel: mcid
                 }
             }
+        })
+        
+        const serverId = server.internalLadder ? server.id : '414551319031054346'
+        const serverName = server.internalLadder ? server.name : 'Format Library'
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        const all_stats = await Stats.findAll({ where: { format: format.name, serverId: serverId } })
 
-            return message.channel.send({ content: emojis.yellow })
-        } else {
-            return message.channel.send({ content: `🧪`})
+        for (let i = 0; i < all_stats.length; i++) {
+            const stats = all_stats[i]
+            // stats.elo = 500.00
+            stats.testElo = 500.00
+            stats.backupElo = null
+            stats.kFactor = 30
+            stats.wins = 0
+            stats.losses = 0
+            stats.games = 0
+            await stats.save()
         }
+        
+        const allMatches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [["createdAt", "ASC"]]})
+        message.channel.send({ content: `Recalculating data from ${allMatches.length} ${serverName} ${format.name} ${format.emoji} matches. Please wait...`})
+        for (let i = 0; i < allMatches.length; i++) {
+            const match = allMatches[i]
+            const winnerId = match.winnerId
+            const loserId = match.loserId
+            const winningPlayer = await Player.findOne({ where: { id: winnerId }})
+            const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format: format.name, serverId: serverId } })
+            const losingPlayer = await Player.findOne({ where: { id: loserId }})
+            const loserStats = await Stats.findOne({ where: { playerId: loserId, format: format.name, serverId: serverId } })
+
+            if (!winningPlayer || !winnerStats) {
+                await trackStats(server, winnerId, format.name)
+                i--
+                continue
+            }
+
+            if (!losingPlayer || !loserStats) {
+                await trackStats(server, loserId, format.name)
+                i--
+                continue
+            }
+
+            const origEloWinner = winnerStats.testElo || 500.00
+            const origEloLoser = loserStats.testElo || 500.00
+            const delta = (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origEloWinner - origEloLoser) / 400))))))
+            
+            winnerStats.testElo = origEloWinner + (winnerStats.kFactor * delta)
+            winnerStats.backupElo = origEloWinner
+            winnerStats.wins++
+            winnerStats.games++
+            await winnerStats.save()
+
+            if (winnerStats.games >= 30 && winnerStats.testElo >= 650 && winnerStats.kFactor !== 10) {
+                winnerStats.kFactor = 10
+                await winnerStats.save()
+            } else if (winnerStats.games >= 30 && winnerStats.testElo < 650 && winnerStats.kFactor === 30) {
+                winnerStats.kFactor = 20
+                await winnerStats.save()
+            }
+
+            loserStats.testElo = origEloLoser - (loserStats.kFactor * delta)
+            loserStats.backupElo = origEloLoser
+            loserStats.losses++
+            loserStats.games++
+            await loserStats.save()
+
+            if (loserStats.games >= 30 && loserStats.testElo >= 650 && loserStats.kFactor !== 10) {
+                loserStats.kFactor = 10
+                await loserStats.save()
+            } else if (loserStats.games >= 30 && loserStats.testElo < 650 && loserStats.kFactor === 40) {
+                loserStats.kFactor = 20
+                await loserStats.save()
+            }
+
+            console.log(`${format.name} Match ${i+1}: ${winningPlayer.name} > ${losingPlayer.name}`)
+        }
+
+        return message.channel.send({ content: emojis.yellow })
+    }
+
+    if (cmd === `!test2`) {
+        if (!isProgrammer(message.member)) return message.channel.send({ content: `🧪`})
+        const format = await Format.findOne({
+            where: {
+                [Op.or]: {
+                    name: { [Op.iLike]: server.format },
+                    channel: mcid
+                }
+            }
+        })
+        
+        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        const x = 50
+        const serverId = server.internalLadder ? server.id : '414551319031054346'
+
+        const all_stats = await Stats.findAll({ 
+            where: {
+                format: {[Op.iLike]: format.name}, 
+                games: { [Op.gte]: 3 },
+                serverId: serverId,
+                '$player.blacklisted$': false
+            },
+            include: Player,
+            order: [['elo', 'DESC']] 
+        })
+        
+        const top_stats = all_stats.slice(0, x)
+        if (!top_stats.length) return message.author.send({ content: `I'm sorry, we don't have any ${format.name} players.`})
+        const results = []
+        top_stats.length === 1 ? results[0] = `${format.emoji} --- The Best ${server.internalLadder ? 'Internal ' : ''}${format.name} Player --- ${format.emoji}`
+        : results[0] = `${format.emoji} --- Top ${top_stats.length} ${server.internalLadder ? 'Internal ' : ''}${format.name} Players --- ${format.emoji}`
+        for (let i = 0; i < top_stats.length; i++) results[i+1] = `${(i+1)}. ${getMedal(top_stats[i].elo)} ${top_stats[i].player.name}`
+        if (!server.internalLadder) results.push(`\nFull Leaderboard: https://formatlibrary.com/leaderboards/${urlize(format.name)}`)
+        for (let i = 0; i < results.length; i += 30) message.author.send({ content: results.slice(i, i+30).join('\n').toString() })
+        return message.channel.send({ content: emojis.yellow })
     }
  
     // FIX
@@ -2585,6 +2676,7 @@ try {
         for (let i = 0; i < all_stats.length; i++) {
             const stats = all_stats[i]
             stats.elo = 500.00
+            stats.testElo = 500.00
             stats.backupElo = null
             stats.wins = 0
             stats.losses = 0

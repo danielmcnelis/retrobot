@@ -13,6 +13,14 @@ const Stats = db.define('stats', {
     backupElo: {
         type: Sequelize.FLOAT
     },
+    kFactor: {
+        type: Sequelize.INTEGER,  
+        defaultValue: 30
+    },
+    testElo: {
+        type: Sequelize.FLOAT,  
+        defaultValue: 500.00
+    },
     wins: {
         type: Sequelize.INTEGER,  
         defaultValue: 0
