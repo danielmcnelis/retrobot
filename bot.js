@@ -217,7 +217,7 @@ try {
                     winnerStats.kFactor = 10
                     await winnerStats.save()
                 } else if (winnerStats.kFactor === 30 && winnerStats.games >= 30 && winnerStats.testElo < 650) {
-                    winnerStats.kFactor = 15
+                    winnerStats.kFactor = 20
                     await winnerStats.save()
                 }
     
@@ -231,7 +231,7 @@ try {
                     loserStats.kFactor = 10
                     await loserStats.save()
                 } else if (loserStats.kFactor === 30 && loserStats.games >= 30 && loserStats.testElo < 650) {
-                    loserStats.kFactor = 15
+                    loserStats.kFactor = 20
                     await loserStats.save()
                 }
     
