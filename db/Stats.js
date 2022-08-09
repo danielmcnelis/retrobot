@@ -15,7 +15,7 @@ const Stats = db.define('stats', {
     },
     kFactor: {
         type: Sequelize.INTEGER,  
-        defaultValue: 40
+        defaultValue: 32
     },
     testElo: {
         type: Sequelize.FLOAT,  
