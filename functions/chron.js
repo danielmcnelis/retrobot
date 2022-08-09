@@ -4,7 +4,7 @@ const Canvas = require('canvas')
 const fs = require('fs')
 const sharp = require('sharp')
 const roles = require('../static/roles.json')
-const { Card, Entry, Tournament, Membership, Player, Print, RatedDeck, Role, Server, Set } = require('../db')
+const { Card, Entry, Tournament, Membership, Player, Print, RatedDeck, Role, Server, Set, Stats, Match } = require('../db')
 const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
 const { Op } = require('sequelize')
@@ -168,6 +168,29 @@ const conductCensus = async (client) => {
     }
 
     return setTimeout(() => conductCensus(client), (24 * 60 * 60 * 1000))
+}
+
+// MARK INACTIVES
+const markInactives = async () => {
+
+    const now = new Date()
+    const year = now.getFullYear()
+    
+    const stats = await Stats.findAll({ where: { inactive: false }})
+    for (let i = 0; i < stats.length; i++) {
+        const s = stats[i]
+
+        const count = await Match.count({ 
+            where: {
+                format: s.format,
+                [Op.or]: {
+                    winnerId: s.playerId,
+                    loserId: s.playerId
+                },
+                createdAt: {[Op.lte]: 'x'}
+            }
+        })
+    }
 }
 
 // PURGE ENTRIES
@@ -654,6 +677,7 @@ module.exports = {
     conductCensus,
     downloadNewCards,
     getMidnightCountdown,
+    markInactives,
     purgeEntries,
     purgeRatedDecks,
     purgeTourRoles,

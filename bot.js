@@ -13,7 +13,7 @@ const { Op } = require('sequelize')
 const { Card, Entry, Event, Format, Info, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
 // FUNCTION IMPORTS
-const { conductCensus, downloadNewCards, getMidnightCountdown, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
+const { conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { createDecks, composeBlogPost, composeThumbnails, selectCoverage } = require('./functions/coverage.js')
 const { checkDeckList, getDeckFormat, getIssues } = require( './functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
@@ -166,7 +166,6 @@ try {
         for (let i = 0; i < formats.length; i++) {
             const format = formats[i]
             const serverId = '414551319031054346'
-            const serverName = 'Format Library'
             const all_stats = await Stats.findAll({ where: { format: format.name, serverId: serverId } })
     
             for (let i = 0; i < all_stats.length; i++) {
@@ -213,10 +212,10 @@ try {
                 winnerStats.games++
                 await winnerStats.save()
     
-                if (winnerStats.kFactor !== 10 && winnerStats.testElo >= 650 && winnerStats.games >= 40) {
+                if (winnerStats.kFactor !== 10 && winnerStats.testElo >= 650 && winnerStats.games >= 20) {
                     winnerStats.kFactor = 10
                     await winnerStats.save()
-                } else if (winnerStats.kFactor === 20 && winnerStats.games >= 40 && winnerStats.testElo < 650) {
+                } else if (winnerStats.kFactor === 20 && winnerStats.games >= 20 && winnerStats.testElo < 650) {
                     winnerStats.kFactor = 15
                     await winnerStats.save()
                 }
@@ -227,10 +226,10 @@ try {
                 loserStats.games++
                 await loserStats.save()
     
-                if (loserStats.kFactor !== 10 && loserStats.testElo >= 650 && loserStats.games >= 40) {
+                if (loserStats.kFactor !== 10 && loserStats.testElo >= 650 && loserStats.games >= 20) {
                     loserStats.kFactor = 10
                     await loserStats.save()
-                } else if (loserStats.kFactor === 20 && loserStats.games >= 40 && loserStats.testElo < 650) {
+                } else if (loserStats.kFactor === 20 && loserStats.games >= 20 && loserStats.testElo < 650) {
                     loserStats.kFactor = 15
                     await loserStats.save()
                 }
@@ -322,7 +321,7 @@ try {
     }
 
     if (cmd === `!test3`) {
-        purgeTourRoles(client)
+        markInactives()
     }
 
     // AVATAR

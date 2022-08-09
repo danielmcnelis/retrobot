@@ -34,7 +34,12 @@ const Stats = db.define('stats', {
         defaultValue: 0
     },
     internal: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+    },
+    inactive: {
+        type: Sequelize.BOOLEAN,  
+        defaultValue: false
     }
 })
 
