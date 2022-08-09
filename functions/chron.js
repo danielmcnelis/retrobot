@@ -3,6 +3,7 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const sharp = require('sharp')
+const roles = require('../static/roles.json')
 const { Card, Entry, Tournament, Membership, Player, Print, RatedDeck, Role, Server, Set } = require('../db')
 const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
@@ -212,6 +213,42 @@ const purgeRatedDecks = async () => {
 
     console.log(`Purged ${d} duplicate and missing rated decks from the database.`)
     return setTimeout(() => purgeRatedDecks(), (24 * 60 * 60 * 1000))
+}
+
+// PURGE TOURNAMENT PARTICIPANT ROLES
+const purgeTourRoles = async (client) => {
+    const servers = await Server.findAll()
+    for (let s = 0; s < servers.length; s++) {
+        try {
+            const server = servers[s]
+            const roleId = roles[server.name].tourRole
+            const guild = client.guilds.cache.get(server.id)
+            const membersMap = await guild.members.fetch()
+            const members = [...membersMap.values()]
+
+            for (let i = 0; i < members.length; i++) {
+                const member = members[i]
+                if (!member._roles.includes(roleId)) continue
+
+                const count = await Entry.count({
+                    where: {
+                        playerId: member.user.id,
+                        '$tournament.serverId$': server.id
+                    },
+                    include: Tournament
+                })
+
+                if (member && !count) {
+                    console.log(`removing tour role from ${member.user.username}`)
+                    member.roles.remove(roleId).catch((err) => console.log(err))
+                }
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    return setTimeout(() => purgeTourRoles(client), (24 * 60 * 60 * 1000))
 }
 
 // FIND NEW PRINTS
@@ -617,6 +654,7 @@ module.exports = {
     getMidnightCountdown,
     purgeEntries,
     purgeRatedDecks,
+    purgeTourRoles,
     updateAvatars,
     updateSets,
     updateServers

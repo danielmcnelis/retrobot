@@ -13,7 +13,7 @@ const { Op } = require('sequelize')
 const { Card, Entry, Event, Format, Info, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
 // FUNCTION IMPORTS
-const { conductCensus, downloadNewCards, getMidnightCountdown, purgeEntries, purgeRatedDecks, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
+const { conductCensus, downloadNewCards, getMidnightCountdown, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { createDecks, composeBlogPost, composeThumbnails, selectCoverage } = require('./functions/coverage.js')
 const { checkDeckList, getDeckFormat, getIssues } = require( './functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
@@ -327,6 +327,10 @@ try {
         } else {
             return message.channel.send({ content: `🛠️` })
         }
+    }
+
+    if (cmd === `!test3`) {
+        purgeTourRoles(client)
     }
 
     // AVATAR
