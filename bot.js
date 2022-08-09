@@ -173,7 +173,7 @@ try {
                 const stats = all_stats[i]
                 stats.testElo = 500.00
                 stats.backupElo = null
-                stats.kFactor = 30
+                stats.kFactor = 20
                 stats.wins = 0
                 stats.losses = 0
                 stats.games = 0
@@ -216,9 +216,6 @@ try {
                 if (winnerStats.kFactor !== 10 && winnerStats.testElo >= 650 && winnerStats.games >= 20) {
                     winnerStats.kFactor = 10
                     await winnerStats.save()
-                } else if (winnerStats.kFactor === 30 && winnerStats.games >= 20 && winnerStats.testElo < 650) {
-                    winnerStats.kFactor = 20
-                    await winnerStats.save()
                 }
     
                 loserStats.testElo = origEloLoser - (loserStats.kFactor * delta)
@@ -230,11 +227,8 @@ try {
                 if (loserStats.kFactor !== 10 && loserStats.testElo >= 650 && loserStats.games >= 20) {
                     loserStats.kFactor = 10
                     await loserStats.save()
-                } else if (loserStats.kFactor === 30 && loserStats.games >= 20 && loserStats.testElo < 650) {
-                    loserStats.kFactor = 20
-                    await loserStats.save()
                 }
-    
+
                 console.log(`${format.name} Match ${i+1}: ${winningPlayer.name} > ${losingPlayer.name}`)
             }
         }
