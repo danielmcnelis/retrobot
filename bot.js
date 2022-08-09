@@ -213,8 +213,11 @@ try {
                 winnerStats.games++
                 await winnerStats.save()
     
-                if (winnerStats.kFactor !== 10 && winnerStats.testElo >= 650 && winnerStats.games >= 20) {
+                if (winnerStats.kFactor !== 10 && winnerStats.testElo >= 650 && winnerStats.games >= 40) {
                     winnerStats.kFactor = 10
+                    await winnerStats.save()
+                } else if (winnerStats.kFactor === 20 && winnerStats.games >= 40 && winnerStats.testElo < 650) {
+                    winnerStats.kFactor = 15
                     await winnerStats.save()
                 }
     
@@ -224,11 +227,14 @@ try {
                 loserStats.games++
                 await loserStats.save()
     
-                if (loserStats.kFactor !== 10 && loserStats.testElo >= 650 && loserStats.games >= 20) {
+                if (loserStats.kFactor !== 10 && loserStats.testElo >= 650 && loserStats.games >= 40) {
                     loserStats.kFactor = 10
                     await loserStats.save()
+                } else if (loserStats.kFactor === 20 && loserStats.games >= 40 && loserStats.testElo < 650) {
+                    loserStats.kFactor = 15
+                    await loserStats.save()
                 }
-
+    
                 console.log(`${format.name} Match ${i+1}: ${winningPlayer.name} > ${losingPlayer.name}`)
             }
         }
