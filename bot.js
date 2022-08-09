@@ -181,7 +181,7 @@ try {
             }
             
             const allMatches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [["createdAt", "ASC"]]})
-            message.channel.send({ content: `Recalculating data from ${allMatches.length} ${serverName} ${format.name} ${format.emoji} matches. Please wait...`})
+            message.channel.send({ content: `Recalculating data from ${allMatches.length} ${format.name} ${format.emoji} matches. Please wait...`})
             for (let i = 0; i < allMatches.length; i++) {
                 const match = allMatches[i]
                 const winnerId = match.winnerId
@@ -263,7 +263,10 @@ try {
             })
             
             const top_stats = all_stats.slice(0, x)
-            if (!top_stats.length) return message.author.send({ content: `I'm sorry, we don't have any ${format.name} players.`})
+            if (!top_stats.length) {
+                message.author.send({ content: `I'm sorry, we don't have any ${format.name} players.`})
+                continue
+            }
             const results = []
             top_stats.length === 1 ? results[0] = `${format.emoji} --- The Best ${server.internalLadder ? 'Internal ' : ''}${format.name} Player --- ${format.emoji}`
             : results[0] = `${format.emoji} --- Top ${top_stats.length} ${server.internalLadder ? 'Internal ' : ''}${format.name} Players --- ${format.emoji}`
@@ -2678,7 +2681,7 @@ try {
         }
         
         const allMatches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [["createdAt", "ASC"]]})
-        message.channel.send({ content: `Recalculating data from ${allMatches.length} ${serverName} ${format.name} ${format.emoji} matches. Please wait...`})
+        message.channel.send({ content: `Recalculating data from ${allMatches.length} ${format.name} ${format.emoji} matches. Please wait...`})
         for (let i = 0; i < allMatches.length; i++) {
             const match = allMatches[i]
             const winnerId = match.winnerId
