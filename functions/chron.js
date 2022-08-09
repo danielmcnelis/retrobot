@@ -221,7 +221,9 @@ const purgeTourRoles = async (client) => {
     for (let s = 0; s < servers.length; s++) {
         try {
             const server = servers[s]
-            const roleId = roles[server.name].tourRole
+            const roles = roles[server.name]
+            if (!roles) continue
+            const roleId = roles.tourRole
             const guild = client.guilds.cache.get(server.id)
             const membersMap = await guild.members.fetch()
             const members = [...membersMap.values()]
