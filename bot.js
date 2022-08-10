@@ -314,16 +314,19 @@ try {
         const formats = await Format.findAll()
         for (let i = 0; i < formats.length; i++) {
             const f = formats[i]
-            const actives = await Stats.count({ where: {
+            const actives = await Stats.findAll({ where: {
                 format: f.name,
                 inactive: false
             }})
-            const inactives = await Stats.count({ where: {
+
+            const inactives = await Stats.findAll({ where: {
                 format: f.name,
                 inactive: true
             }})
 
-            console.log(`${f.name} format has an Active to Inactive ratio of ${actives}:${inactives}`)
+            console.log(`${f.name} format has an Active to Inactive ratio of ${actives.length}:${inactives.length}`)
+            if (inactives.length) console.log(`Inactive ${f.name} Players:`)
+            for (let j = 0; j < inactives.length; j++) console.log(inactives[j].name)
         }
 
         return message.channel.send({ content: emojis.yellow })
@@ -1822,12 +1825,14 @@ try {
         winnerStats.backupElo = origEloWinner
         winnerStats.wins++
         winnerStats.games++
+        winnerStats.inactive = false
         await winnerStats.save()
 
         loserStats.elo = origEloLoser - delta
         loserStats.backupElo = origEloLoser
         loserStats.losses++
         loserStats.games++
+        loserStats.inactive = false
         await loserStats.save()
 
         const match = await Match.create({
@@ -2021,12 +2026,14 @@ try {
         winnerStats.backupElo = origEloWinner
         winnerStats.wins++
         winnerStats.games++
+        winnerStats.inactive = false
         await winnerStats.save()
 
         loserStats.elo = origEloLoser - delta
         loserStats.backupElo = origEloLoser
         loserStats.losses++
         loserStats.games++
+        loserStats.inactive = false
         await loserStats.save()
 
         const match = await Match.create({
