@@ -319,14 +319,18 @@ try {
                 inactive: false
             }})
 
-            const inactives = await Stats.findAll({ where: {
-                format: f.name,
-                inactive: true
-            }})
+            const inactives = await Stats.findAll({ 
+                where: {
+                    format: f.name,
+                    inactive: true
+                },
+                include: Player,
+                order: [[Player, 'name', 'ASC']]
+            })
 
             console.log(`${f.name} format has an Active to Inactive ratio of ${actives.length}:${inactives.length}`)
             if (inactives.length) console.log(`Inactive ${f.name} Players:`)
-            for (let j = 0; j < inactives.length; j++) console.log(inactives[j].name)
+            for (let j = 0; j < inactives.length; j++) console.log(inactives[j].player.name)
         }
 
         return message.channel.send({ content: emojis.yellow })
