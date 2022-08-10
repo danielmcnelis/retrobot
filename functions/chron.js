@@ -174,7 +174,8 @@ const conductCensus = async (client) => {
 const markInactives = async () => {
     let b = 0
     const oneYearAgo = new Date() - (365 * 24 * 60 * 60 * 1000)
-    const stats = await Stats.findAll({ where: { inactive: {[Op.not]: true }, include: Player }})
+    const stats = await Stats.findAll({ where: { inactive: {[Op.not]: true }}, include: Player })
+    console.log('stats.length', stats.length)
     for (let i = 0; i < stats.length; i++) {
         const s = stats[i]
         const count = await Match.count({ 
