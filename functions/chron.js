@@ -189,12 +189,13 @@ const markInactives = async () => {
             }
         })
 
-
         console.log(`${s.player ? s.player.name : s.playerId}'s recent ${s.format} format matches: ${count}`)
         if (!count) { 
             console.log(`INACTIVATING ${s.player ? s.player.name : s.playerId}'s STATS IN ${s.format} FORMAT`)
             await s.update({ inactive: true })
             b++
+        } else {
+            await s.update({ inactive: false })
         }
     }
 
