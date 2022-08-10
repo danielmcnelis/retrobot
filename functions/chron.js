@@ -172,16 +172,11 @@ const conductCensus = async (client) => {
 
 // MARK INACTIVES
 const markInactives = async () => {
+    let b = 0
     const oneYearAgo = new Date() - (365 * 24 * 60 * 60 * 1000)
-    const stats = await Stats.findAll({ where: { inactive: false }})
+    const stats = await Stats.findAll({ where: { inactive: {[Op.not]: true }, include: Player }})
     for (let i = 0; i < stats.length; i++) {
         const s = stats[i]
-
-        const d = new Date()
-        console.log(d)
-
-        console.log((new Date(d - t)).toDateString())
-
         const count = await Match.count({ 
             where: {
                 format: s.format,
@@ -193,8 +188,16 @@ const markInactives = async () => {
             }
         })
 
-        if (!count) await s.update({ inactive: true })
+        console.log(`${s.player.name}'s recent ${s.format} format matches: ${count}`)
+        if (!count) { 
+            console.log(`INACTIVATING ${s.player.name}'s STATS IN ${s.format} FORMAT`)
+            await s.update({ inactive: true })
+            b++
+        }
     }
+
+    console.log(`Inactivated ${b} stats rows in the database.`)
+    return setTimeout(() => purgeEntries(), (24 * 60 * 60 * 1000))
 }
 
 // PURGE ENTRIES
