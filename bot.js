@@ -326,11 +326,11 @@ try {
         const formats = await Format.findAll()
         for (let i = 0; i < formats.length; i++) {
             const f = formats[i]
-            const actives = Stats.count({ where: {
+            const actives = await Stats.count({ where: {
                 format: f.name,
                 inactive: false
             }})
-            const inactives = Stats.count({ where: {
+            const inactives = await Stats.count({ where: {
                 format: f.name,
                 inactive: false
             }})
