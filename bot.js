@@ -324,6 +324,20 @@ try {
     if (cmd === `!test3`) {
         markInactives()
     }
+    
+
+    if (cmd === `!test4`) {
+        let b = 0
+        const stats = await Stats.findAll({ where: { games: 0 }})
+
+        for (let i = 0; i < stats.length; i++) {
+            const s = stats[i]
+            await s.destroy()
+            b++
+        }
+
+        return console.log(`destroyed ${b} empty stats rows`)
+    }
 
     // AVATAR
     if (commands.pfpcom.includes(cmd)) {
