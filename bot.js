@@ -173,7 +173,6 @@ try {
                 const stats = all_stats[i]
                 stats.testElo = 500.00
                 stats.backupElo = null
-                stats.kFactor = 20
                 stats.wins = 0
                 stats.losses = 0
                 stats.games = 0
@@ -205,29 +204,19 @@ try {
     
                 const origEloWinner = winnerStats.testElo || 500.00
                 const origEloLoser = loserStats.testElo || 500.00
-                const delta = (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origEloWinner - origEloLoser) / 400))))))
+                const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origEloWinner - origEloLoser) / 400))))))
                 
-                winnerStats.testElo = origEloWinner + (winnerStats.kFactor * delta)
+                winnerStats.testElo = origEloWinner + delta
                 winnerStats.backupElo = origEloWinner
                 winnerStats.wins++
                 winnerStats.games++
                 await winnerStats.save()
     
-                if (winnerStats.kFactor !== 10 && winnerStats.testElo >= 650 && winnerStats.games >= 40) {
-                    winnerStats.kFactor = 10
-                    await winnerStats.save()
-                }
-    
-                loserStats.testElo = origEloLoser - (loserStats.kFactor * delta)
+                loserStats.testElo = origEloLoser - delta
                 loserStats.backupElo = origEloLoser
                 loserStats.losses++
                 loserStats.games++
                 await loserStats.save()
-    
-                if (loserStats.kFactor !== 10 && loserStats.testElo >= 650 && loserStats.games >= 40) {
-                    loserStats.kFactor = 10
-                    await loserStats.save()
-                }
     
                 console.log(`${format.name} Match ${i+1}: ${winningPlayer.name} > ${losingPlayer.name}`)
             }
@@ -319,7 +308,6 @@ try {
     if (cmd === `!test3`) {
         markInactives()
     }
-    
 
     // TEST 4
     if (cmd === `!test4`) {
@@ -1331,6 +1319,7 @@ try {
                 format: { [Op.iLike]: format.name }, 
                 games: { [Op.gte]: 3 },
                 serverId: serverId,
+                inactive: false,
                 '$player.blacklisted$': false
             },
             include: [Player],
@@ -1663,6 +1652,7 @@ try {
                 format: {[Op.iLike]: format.name}, 
                 games: { [Op.gte]: 3 },
                 serverId: serverId,
+                inactive: false,
                 '$player.blacklisted$': false
             },
             include: Player,
@@ -2401,6 +2391,7 @@ try {
                             format: { [Op.iLike]: format.name }, 
                             games: { [Op.gte]: 3 },
                             serverId: '414551319031054346',
+                            inactive: false,
                             '$player.blacklisted$': false
                         },
                         include: Player,
@@ -2681,7 +2672,6 @@ try {
         })
         
         const serverId = server.internalLadder ? server.id : '414551319031054346'
-        const serverName = server.internalLadder ? server.name : 'Format Library'
         if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const all_stats = await Stats.findAll({ where: { format: format.name, serverId: serverId } })
 
