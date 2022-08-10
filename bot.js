@@ -332,7 +332,7 @@ try {
             }})
             const inactives = await Stats.count({ where: {
                 format: f.name,
-                inactive: false
+                inactive: true
             }})
 
             console.log(`${f.name} format has ${actives} Active player(s) and ${inactives} Inactive player(s)`)
