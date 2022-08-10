@@ -335,7 +335,7 @@ try {
                 inactive: true
             }})
 
-            console.log(`${f.name} format has ${actives} Active player(s) and ${inactives} Inactive player(s)`)
+            console.log(`${f.name} format has an Active to Inactive ratio of ${actives}:${inactives}`)
         }
 
         return message.channel.send({ content: emojis.yellow })
