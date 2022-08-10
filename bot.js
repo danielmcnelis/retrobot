@@ -46,12 +46,13 @@ client.on('ready', async() => {
 
     const midnightCountdown = getMidnightCountdown()
 	setTimeout(() => purgeEntries(), midnightCountdown)
-	setTimeout(() => purgeRatedDecks(), midnightCountdown + (1 * 60 * 1000))
-    setTimeout(() => updateServers(client), midnightCountdown + (2 * 60 * 1000))
-	setTimeout(() => conductCensus(client), midnightCountdown + (3 * 60 * 1000))
-	setTimeout(() => updateAvatars(client), midnightCountdown + (6 * 60 * 1000))
-    setTimeout(() => updateSets(), midnightCountdown + (9 * 60 * 1000))
-    setTimeout(() => downloadNewCards(), midnightCountdown + (12 * 60 * 1000))
+	setTimeout(() => markInactives(), midnightCountdown + (1 * 60 * 1000))
+	setTimeout(() => purgeRatedDecks(), midnightCountdown + (2 * 60 * 1000))
+    setTimeout(() => updateServers(client), midnightCountdown + (3 * 60 * 1000))
+	setTimeout(() => conductCensus(client), midnightCountdown + (4 * 60 * 1000))
+	setTimeout(() => updateAvatars(client), midnightCountdown + (7 * 60 * 1000))
+    setTimeout(() => updateSets(), midnightCountdown + (10 * 60 * 1000))
+    setTimeout(() => downloadNewCards(), midnightCountdown + (13 * 60 * 1000))
 })
 
 // WELCOME
@@ -212,10 +213,10 @@ try {
                 winnerStats.games++
                 await winnerStats.save()
     
-                if (winnerStats.kFactor !== 10 && winnerStats.testElo >= 650 && winnerStats.games >= 20) {
+                if (winnerStats.kFactor !== 10 && winnerStats.testElo >= 650 && winnerStats.games >= 40) {
                     winnerStats.kFactor = 10
                     await winnerStats.save()
-                } else if (winnerStats.kFactor === 20 && winnerStats.games >= 20 && winnerStats.testElo < 650) {
+                } else if (winnerStats.kFactor === 20 && winnerStats.games >= 40 && winnerStats.testElo < 650) {
                     winnerStats.kFactor = 15
                     await winnerStats.save()
                 }
@@ -226,10 +227,10 @@ try {
                 loserStats.games++
                 await loserStats.save()
     
-                if (loserStats.kFactor !== 10 && loserStats.testElo >= 650 && loserStats.games >= 20) {
+                if (loserStats.kFactor !== 10 && loserStats.testElo >= 650 && loserStats.games >= 40) {
                     loserStats.kFactor = 10
                     await loserStats.save()
-                } else if (loserStats.kFactor === 20 && loserStats.games >= 20 && loserStats.testElo < 650) {
+                } else if (loserStats.kFactor === 20 && loserStats.games >= 40 && loserStats.testElo < 650) {
                     loserStats.kFactor = 15
                     await loserStats.save()
                 }

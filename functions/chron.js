@@ -172,13 +172,15 @@ const conductCensus = async (client) => {
 
 // MARK INACTIVES
 const markInactives = async () => {
-
-    const now = new Date()
-    const year = now.getFullYear()
-    
+    const oneYearAgo = new Date() - (365 * 24 * 60 * 60 * 1000)
     const stats = await Stats.findAll({ where: { inactive: false }})
     for (let i = 0; i < stats.length; i++) {
         const s = stats[i]
+
+        const d = new Date()
+        console.log(d)
+
+        console.log((new Date(d - t)).toDateString())
 
         const count = await Match.count({ 
             where: {
@@ -187,9 +189,11 @@ const markInactives = async () => {
                     winnerId: s.playerId,
                     loserId: s.playerId
                 },
-                createdAt: {[Op.lte]: 'x'}
+                createdAt: {[Op.gte]: oneYearAgo}
             }
         })
+
+        if (!count) await s.update({ inactive: true })
     }
 }
 
