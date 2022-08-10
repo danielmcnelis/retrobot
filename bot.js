@@ -216,9 +216,6 @@ try {
                 if (winnerStats.kFactor !== 10 && winnerStats.testElo >= 650 && winnerStats.games >= 40) {
                     winnerStats.kFactor = 10
                     await winnerStats.save()
-                } else if (winnerStats.kFactor === 20 && winnerStats.games >= 40 && winnerStats.testElo < 650) {
-                    winnerStats.kFactor = 15
-                    await winnerStats.save()
                 }
     
                 loserStats.testElo = origEloLoser - (loserStats.kFactor * delta)
@@ -229,9 +226,6 @@ try {
     
                 if (loserStats.kFactor !== 10 && loserStats.testElo >= 650 && loserStats.games >= 40) {
                     loserStats.kFactor = 10
-                    await loserStats.save()
-                } else if (loserStats.kFactor === 20 && loserStats.games >= 40 && loserStats.testElo < 650) {
-                    loserStats.kFactor = 15
                     await loserStats.save()
                 }
     
@@ -321,22 +315,30 @@ try {
         }
     }
 
+    // TEST 3
     if (cmd === `!test3`) {
         markInactives()
     }
     
 
+    // TEST 4
     if (cmd === `!test4`) {
-        let b = 0
-        const stats = await Stats.findAll({ where: { games: 0 }})
+        const formats = await Format.findAll()
+        for (let i = 0; i < formats.length; i++) {
+            const f = formats[i]
+            const actives = Stats.count({ where: {
+                format: f.name,
+                inactive: false
+            }})
+            const inactives = Stats.count({ where: {
+                format: f.name,
+                inactive: false
+            }})
 
-        for (let i = 0; i < stats.length; i++) {
-            const s = stats[i]
-            await s.destroy()
-            b++
+            console.log(`${f.name} format has ${actives} Active player(s) and ${inactives} Inactive player(s)`)
         }
 
-        return console.log(`destroyed ${b} empty stats rows`)
+        return message.channel.send({ content: emojis.yellow })
     }
 
     // AVATAR
