@@ -184,6 +184,8 @@ const getDeckType = async (server, player, format, tournamentName = 'other') => 
             (ydk[collapse] >= 2 || ydk[insect] >= 2  || ydk[susa] >= 2 || ydk[toonelf] >= 2 || ydk[mazera] >= 2 || ydk[pixie] >= 2 || ydk[ecto] >= 2 || ydk[silent] >= 2 || ydk[skull] >= 2 || ydk[hugerev] >= 2 || ydk[necrovalley] >= 2 || ydk[smackdown] >= 2 || ydk[pyrlight] >= 2 || ydk[clown] >= 2 || ydk[coin] >= 2) ? 'other' :
             (ydk[cat] >= 2  && (ydk[panda] >= 2 || ydk[milus] >= 2) && !ydk[stein] && (ydk[trunade] >= 2 || ydk[decree] >= 2)) ? 'cat otk' :
             (ydk[cat] >= 2 && ydk[manticore] && ydk[wicked] >= 2) ? 'cat control' :
+            (ydk[panda] >= 2 && ydk[trio] >= 2 && !ydk[milus]) ? 'panda burn' :
+            (ydk[mataza] >= 2) ? 'mataza aggro' :
             (ydk[ben_kei] >= 2 && (ydk[trunade] >= 2 || ydk[decree] >= 2)) ? 'ben kei otk' :
             (ydk[stein] >= 2 && ydk[gate] >= 2) ? 'stein gate turbo' :
             (ydk[stein] >= 2 && (ydk[megamorph] >= 2 || ydk[natures] >= 2 || ydk[thanksgiving] >= 2) &&!ydk[cat] && (ydk[trunade] >= 2 || ydk[decree] >= 2)) ? 'stein otk' :
@@ -222,18 +224,18 @@ const getDeckType = async (server, player, format, tournamentName = 'other') => 
             (ydk[lacooda] >= 2 && ydk[scarabs] >= 2 && (ydk[gbind] >= 2 || ydk[llab] >= 2 || ydk[worl] >= 2)) ? 'pacman' :
             (ydk[scapegoat] && ydk[meta] && ydk[soulex] >= 2) ? 'soul control' :
             ((ydk[thestalos] >= 2 || ydk[mobius] >= 2 || ydk[granmarg] >= 2) && (ydk[brain] >= 2 || ydk[soulex] >= 2 || (ydk[brain] && ydk[soulex]))) ? 'monarch' :
-            (ydk[sorc] >= 2 && ydk[rftdd] && (!ydk[angel] || !ydk[tomato] || !ydk[swap]) && !ydk[serpent] && (!ydk[nightass] || ydk[nightass] <= 1)) ? 'chaos return' :
+            (ydk[sorc] >= 1 && ydk[rftdd] && (!ydk[angel] || !ydk[tomato] || !ydk[swap]) && !ydk[serpent] && (!ydk[nightass] || ydk[nightass] <= 1)) ? 'chaos return' :
             (ydk[bazoo] >= 2 && ydk[rftdd]) ? 'bazoo return' :
             (ydk[canceller] >= 2 && ydk[solemn] >= 2) ? 'canceller stun' :
             (ydk[tiger] >= 2 && ydk[solemn] >= 2) ? 'tiger stun' :
             (ydk[meta] &&  ydk[scapegoat] && (ydk[wmc] >= 2 || ydk[lava] >= 2 || ydk[trio] >= 2)) ? 'goat burn' :
             ((ydk[panda] >= 2 || ydk[mataza] >= 2) && (ydk[koala] >= 2 || ydk[spy] >= 2) && ydk[storm]) ? 'aggro bomb' :
             ((!ydk[llab] || ydk[llab] <= 1) && (!ydk[gbind] || ydk[gbind] <= 1) && (!ydk[worl] || ydk[worl] <= 1) && (ydk[koala] >= 2 || ydk[bigshield] >= 2) && (ydk[barrel] >= 2 || ydk[fire] >= 2 || ydk[poison] >= 2)) ? 'speed burn' :
-            (ydk[sorc] >= 2 && ydk[tomato] && ydk[angel] && !ydk[scapegoat] && !ydk[meta]) ? 'chaos recruiter' :
+            (ydk[sorc] >= 1 && ydk[tomato] && ydk[angel] && !ydk[scapegoat] && !ydk[meta]) ? 'chaos recruiter' :
             (ydk[sorc] && ydk[tdrag] >= 3 && ydk[rota] && ydk[solemn] >= 2) ? 'chaos warrior' :
             (ydk[rota] && (ydk[blade] || ydk[ddwl] || ydk[lv2]) && ydk[solemn] >= 2 && !ydk[llab] && !ydk[gbind] && !ydk[worl] && !ydk[freed]) ? 'warrior' :
-            (ydk[sorc] >= 2 && ydk[tdrag] >= 3 && ydk[mof] && !ydk[scapegoat]) ? 'chaos turbo' :
-            (ydk[sorc] >= 2 && ydk[meta] && ydk[scapegoat]) ? 'chaos control' :
+            (ydk[sorc] >= 1 && ydk[tdrag] >= 3 && ydk[mof] && !ydk[scapegoat]) ? 'chaos turbo' :
+            (ydk[sorc] >= 1 && ydk[meta] && ydk[scapegoat]) ? 'chaos control' :
             ((!ydk[sorc] || ydk[sorc] <= 1) && ((ydk[scapegoat] && ydk[meta] >= 2) || (ydk[scapegoat] >= 2 && ydk[meta])) && ydk[bls] && (!ydk[bigbang] || ydk[bigbang] <= 1)) ? 'goat control' :
             'other'
         ) : format.toLowerCase() === 'edison' ? (
@@ -296,6 +298,8 @@ const getDeckTypeFromYDK = async (raw, format = 'goat') => {
             (ydk[collapse] >= 2 || ydk[insect] >= 2  || ydk[susa] >= 2 || ydk[toonelf] >= 2 || ydk[mazera] >= 2 || ydk[pixie] >= 2 || ydk[ecto] >= 2 || ydk[silent] >= 2 || ydk[skull] >= 2 || ydk[hugerev] >= 2 || ydk[necrovalley] >= 2 || ydk[smackdown] >= 2 || ydk[pyrlight] >= 2 || ydk[clown] >= 2 || ydk[coin] >= 2) ? 'other' :
             (ydk[cat] >= 2  && (ydk[panda] >= 2 || ydk[milus] >= 2) && !ydk[stein] && (ydk[trunade] >= 2 || ydk[decree] >= 2)) ? 'cat otk' :
             (ydk[cat] >= 2 && ydk[manticore] && ydk[wicked] >= 2) ? 'cat control' :
+            (ydk[panda] >= 2 && ydk[trio] >= 2 && !ydk[milus]) ? 'panda burn' :
+            (ydk[mataza] >= 2) ? 'mataza aggro' :
             (ydk[ben_kei] >= 2 && (ydk[trunade] >= 2 || ydk[decree] >= 2)) ? 'ben kei otk' :
             (ydk[stein] >= 2 && ydk[gate] >= 2) ? 'stein gate turbo' :
             (ydk[stein] >= 2 && (ydk[megamorph] >= 2 || ydk[natures] >= 2 || ydk[thanksgiving] >= 2) &&!ydk[cat] && (ydk[trunade] >= 2 || ydk[decree] >= 2)) ? 'stein otk' :
@@ -334,18 +338,18 @@ const getDeckTypeFromYDK = async (raw, format = 'goat') => {
             (ydk[lacooda] >= 2 && ydk[scarabs] >= 2 && (ydk[gbind] >= 2 || ydk[llab] >= 2 || ydk[worl] >= 2)) ? 'pacman' :
             (ydk[scapegoat] && ydk[meta] && ydk[soulex] >= 2) ? 'soul control' :
             ((ydk[thestalos] >= 2 || ydk[mobius] >= 2 || ydk[granmarg] >= 2) && (ydk[brain] >= 2 || ydk[soulex] >= 2 || (ydk[brain] && ydk[soulex]))) ? 'monarch' :
-            (ydk[sorc] >= 2 && ydk[rftdd] && (!ydk[angel] || !ydk[tomato] || !ydk[swap]) && !ydk[serpent] && (!ydk[nightass] || ydk[nightass] <= 1)) ? 'chaos return' :
+            (ydk[sorc] >= 1 && ydk[rftdd] && (!ydk[angel] || !ydk[tomato] || !ydk[swap]) && !ydk[serpent] && (!ydk[nightass] || ydk[nightass] <= 1)) ? 'chaos return' :
             (ydk[bazoo] >= 2 && ydk[rftdd]) ? 'bazoo return' :
             (ydk[canceller] >= 2 && ydk[solemn] >= 2) ? 'canceller stun' :
             (ydk[tiger] >= 2 && ydk[solemn] >= 2) ? 'tiger stun' :
             (ydk[meta] &&  ydk[scapegoat] && (ydk[wmc] >= 2 || ydk[lava] >= 2 || ydk[trio] >= 2)) ? 'goat burn' :
             ((ydk[panda] >= 2 || ydk[mataza] >= 2) && (ydk[koala] >= 2 || ydk[spy] >= 2) && ydk[storm]) ? 'aggro bomb' :
             ((!ydk[llab] || ydk[llab] <= 1) && (!ydk[gbind] || ydk[gbind] <= 1) && (!ydk[worl] || ydk[worl] <= 1) && (ydk[koala] >= 2 || ydk[bigshield] >= 2) && (ydk[barrel] >= 2 || ydk[fire] >= 2 || ydk[poison] >= 2)) ? 'speed burn' :
-            (ydk[sorc] >= 2 && ydk[tomato] && ydk[angel] && !ydk[scapegoat] && !ydk[meta]) ? 'chaos recruiter' :
-            (ydk[sorc] && ydk[rota] && ydk[solemn] >= 2) ? 'chaos warrior' :
+            (ydk[sorc] >= 1 && ydk[tomato] && ydk[angel] && !ydk[scapegoat] && !ydk[meta]) ? 'chaos recruiter' :
+            (ydk[sorc] && ydk[tdrag] >= 3 && ydk[rota] && ydk[solemn] >= 2) ? 'chaos warrior' :
             ((!ydk[sorc] || ydk[sorc] <= 1) && ydk[rota] && (ydk[blade] || ydk[ddwl] || ydk[lv2]) && ydk[solemn] >= 2 && !ydk[llab] && !ydk[gbind] && !ydk[worl] && !ydk[freed]) ? 'warrior' :
-            (ydk[sorc] >= 2 && ydk[tdrag] >= 3 && ydk[mof] && !ydk[scapegoat]) ? 'chaos turbo' :
-            (ydk[sorc] >= 2 && ydk[meta] && ydk[scapegoat]) ? 'chaos control' :
+            (ydk[sorc] >= 1 && ydk[tdrag] >= 3 && ydk[mof] && !ydk[scapegoat]) ? 'chaos turbo' :
+            (ydk[sorc] >= 1 && ydk[meta] && ydk[scapegoat]) ? 'chaos control' :
             ((!ydk[sorc] || ydk[sorc] <= 1) && ((ydk[scapegoat] && ydk[meta] >= 2) || (ydk[scapegoat] >= 2 && ydk[meta])) && ydk[bls] && (!ydk[bigbang] || ydk[bigbang] <= 1)) ? 'goat control' :
             'other'
         ) : format.toLowerCase() === 'edison' ? (
