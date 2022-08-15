@@ -1922,7 +1922,7 @@ try {
         let losingEntry
         let tournament
 
-        const loserHasIronRole = isIronPlayer(server, message.member)
+        const loserHasIronRole = isIronPlayer(server, loser)
         const winnerHasIronRole = isIronPlayer(server, winner)
         const activeIron = await Info.count({ where: { element: 'iron', status: 'active' }})
         let isIronMatch
