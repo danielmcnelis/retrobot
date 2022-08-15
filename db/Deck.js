@@ -51,6 +51,9 @@ const Deck = db.define('decks', {
   },
   eventId: {
       type: Sequelize.INTEGER
+  },
+  formatId: {
+    type: Sequelize.INTEGER
   }
 })
 
