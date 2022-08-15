@@ -10,6 +10,7 @@ const { challongeAPIKeys } = require('../secrets.json')
 
 // CREATE DECKS
 const createDecks = async (message, event, tournament, useTags = true) => {
+    console.log('event.formatId', event.formatId)
     let b = 0 
     try {    
         const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${challongeAPIKeys[tournament.community]}`)
@@ -163,6 +164,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                                     (size > 224 && placement <= 32) ||
                                     false
 
+                                console.log('event.formatId', event.formatId)
                                 await Deck.create({
                                     type: deckType.name,
                                     category: deckType.category,
