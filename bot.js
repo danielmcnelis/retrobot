@@ -157,6 +157,23 @@ try {
     // PING 
     if (cmd === `!ping`) return message.channel.send({ content: '🏓'})
 
+    // STORY
+    if (cmd === `!story`) {
+        if (!hasFullAccess(server)) return message.channel.send({ content: `This feature is only available in Format Library. ${emojis.FL}`})
+        if (!isMod(server, message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
+
+        const format = await Format.findOne({
+            where: {
+                [Op.or]: {
+                    name: {[Op.iLike]: server.format },
+                    channel: mcid
+                }
+            }
+        })
+
+        return postStory(message.channel, format)
+    }
+
     // SEED 
     if (cmd === `!seed`) return message.channel.send({ content: '🌱'})
 
