@@ -31,6 +31,12 @@ const Server = db.define('servers', {
     },
     emoji: {
         type: Sequelize.STRING
+    },
+    challongeAPIKey: {
+        type: Sequelize.STRING
+    },
+    googleToken: {
+        type: Sequelize.TEXT
     }
 })
 

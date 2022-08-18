@@ -29,7 +29,6 @@ const { client } = require('./static/clients.js')
 const commands = require('./static/commands.json')
 const emojis = require('./static/emojis.json')
 const roles = require('./static/roles.json')
-const { challongeAPIKeys } = require('./secrets.json')
 
 // GLOBAL VARIABLES
 const fuzzyCards = FuzzySet([], false)
@@ -437,7 +436,7 @@ try {
         try {
             const { status, data } = await axios({
                 method: 'post',
-                url: `https://api.challonge.com/v1/tournaments.json?api_key=${challongeAPIKeys[server.name]}`,
+                url: `https://api.challonge.com/v1/tournaments.json?api_key=${server.challongeAPIKey}`,
                 data: {
                     tournament: {
                         name: name,
@@ -483,7 +482,7 @@ try {
             try {
                 const { status, data } = await axios({
                     method: 'post',
-                    url: `https://api.challonge.com/v1/tournaments.json?api_key=${challongeAPIKeys[server.name]}`,
+                    url: `https://api.challonge.com/v1/tournaments.json?api_key=${server.challongeAPIKey}`,
                     data: {
                         tournament: {
                             name: name,
@@ -546,7 +545,7 @@ try {
         try {
             const { status } = await axios({
                 method: 'delete',
-                url: `https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${challongeAPIKeys[server.name]}`
+                url: `https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${server.challongeAPIKey}`
             })
         
             if (status && status === 200) {
@@ -602,7 +601,7 @@ try {
 
 		const { status } = await axios({
 			method: 'post',
-			url: `https://api.challonge.com/v1/tournaments/${tournament.id}/start.json?api_key=${challongeAPIKeys[server.name]}`
+			url: `https://api.challonge.com/v1/tournaments/${tournament.id}/start.json?api_key=${server.challongeAPIKey}`
 		})
 
 		if (status && status === 200) { 
@@ -651,7 +650,7 @@ try {
         try {
             const { status } = await axios({
                 method: 'post',
-                url: `https://api.challonge.com/v1/tournaments/${tournament.id}/finalize.json?api_key=${challongeAPIKeys[server.name]}`
+                url: `https://api.challonge.com/v1/tournaments/${tournament.id}/finalize.json?api_key=${server.challongeAPIKey}`
             })
     
             if (status && status === 200) {
@@ -669,7 +668,7 @@ try {
                     }
                 }
 
-                const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${challongeAPIKeys[server.name]}`)
+                const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${server.challongeAPIKey}`)
                 let winnerParticipantId = null
                 for (let i = 0; i < data.length; i++) {
                     const participant = data[i].participant
@@ -2581,7 +2580,7 @@ try {
         if (coverageType.includes('Thumbnail')) return composeThumbnails(message, abbreviation)
         if (coverageType.includes('BlogPost')) return composeBlogPost(message, abbreviation)
 
-        const tournament = await Tournament.findOne({ where: { id: event.tournamentId }})
+        const tournament = await Tournament.findOne({ where: { id: event.tournamentId }, include: Server })
         if (!tournament) return message.channel.send(`No tournament found.`)
         if (coverageType.includes('Upload Decks')) return createDecks(message, event, tournament)
     }

@@ -6,14 +6,12 @@ const { Op } = require('sequelize')
 const { BlogPost, Card, Deck, DeckType, Event, Format, Player, Tournament } = require('../db')
 const { capitalize, dateToVerbose } = require('./utility')
 const { getDeckType } = require('./deck')
-const { challongeAPIKeys } = require('../secrets.json')
 
 // CREATE DECKS
 const createDecks = async (message, event, tournament, useTags = true) => {
-    console.log('event.formatId', event.formatId)
     let b = 0 
     try {    
-        const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${challongeAPIKeys[tournament.community]}`)
+        const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${tournament.server.challongeAPIKey}`)
         if (!res) return
         const size = res.data.tournament.participants_count
         const startDate = `${res.data.tournament.started_at.slice(0, 10)} ${res.data.tournament.started_at.slice(11, 26)}`
@@ -23,7 +21,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
         event.endDate = endDate
         await event.save()
 
-        const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${challongeAPIKeys[tournament.community]}`)
+        const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${tournament.server.challongeAPIKey}`)
         if (!data) return
         const participants = data.map((d) => d.participant.name)
         const players = await Player.findAll({ where: { tag: {[Op.not]: null } }})

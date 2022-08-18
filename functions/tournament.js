@@ -15,7 +15,6 @@ const { capitalize, shuffleArray } = require('./utility.js')
 // STATIC IMPORTS
 const { legend, mad } = require('../static/emojis')
 const roles = require('../static/roles')
-const { challongeAPIKeys } = require('../secrets.json')
 
 ////// TOURNAMENT REGISTRATION FUNCTIONS ///////
 
@@ -251,7 +250,7 @@ const removeParticipant = async (server, message, member, entry, tournament, dro
     try {
         const success = await axios({
             method: 'delete',
-            url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/${entry.participantId}.json?api_key=${challongeAPIKeys[server.name]}`
+            url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/${entry.participantId}.json?api_key=${server.challongeAPIKey}`
         })
 
         if (success) {
@@ -317,7 +316,7 @@ const seed = async (server, message, tournament) => {
         try {
             await axios({
                 method: 'put',
-                url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/${participantId}.json?api_key=${challongeAPIKeys[server.name]}`,
+                url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/${participantId}.json?api_key=${server.challongeAPIKey}`,
                 data: {
                     participant: {
                         seed: i+1
@@ -427,7 +426,7 @@ const getMatches = async (server, tournamentId) => {
     try {
         const { data } = await axios({
             method: 'get',
-            url: `https://api.challonge.com/v1/tournaments/${tournamentId}/matches.json?api_key=${challongeAPIKeys[server.name]}`
+            url: `https://api.challonge.com/v1/tournaments/${tournamentId}/matches.json?api_key=${server.challongeAPIKey}`
         })
         
         return data
@@ -463,7 +462,7 @@ const postParticipant = async (server, tournament, player) => {
     try {
         const { data } = await axios({
             method: 'post',
-            url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${challongeAPIKeys[server.name]}`,
+            url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${server.challongeAPIKey}`,
             data: {
                 participant: {
                     name: player.name
@@ -540,7 +539,7 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
     try {
         success = await axios({
             method: 'put',
-            url: `https://api.challonge.com/v1/tournaments/${tournament.id}/matches/${matchId}.json?api_key=${challongeAPIKeys[server.name]}`,
+            url: `https://api.challonge.com/v1/tournaments/${tournament.id}/matches/${matchId}.json?api_key=${server.challongeAPIKey}`,
             data: {
                 match: {
                     winner_id: winningEntry.participantId,
