@@ -2374,7 +2374,7 @@ try {
                 if (yourRecentOpponents.includes(potentialPair.playerId)) {
                     continue
                 } else {
-                    return getPotentialPairConfirmation(client, format, potentialPair, newRatedPool, commonGuildId)
+                    getPotentialPairConfirmation(client, format, potentialPair, newRatedPool, commonGuildId)
                 }
             }
         } catch (err) {
