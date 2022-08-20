@@ -2351,7 +2351,7 @@ try {
     
                 if (!commonGuildId) continue
                 const now = new Date()
-                const tenMinutesAgo = new Date(now - (10 * 60 * 1000))
+                // const tenMinutesAgo = new Date(now - (10 * 60 * 1000))
                 const oneHourAgo = new Date(now - (60 * 60 * 1000))
     
                 const yourRecentOpponents = [...await Match.findAll({
@@ -2371,51 +2371,10 @@ try {
                     }
                 }) || []
     
-                if (yourRecentOpponents.includes(potentialPair.playerId)) continue
-    
-                if (potentialPair.createdAt < tenMinutesAgo) {
-                    getPotentialPairConfirmation(client, format, potentialPair, newRatedPool, commonGuildId)
+                if (yourRecentOpponents.includes(potentialPair.playerId)) {
                     continue
                 } else {
-                    const commonServer = await Server.findOne({ where: { id: commonGuildId }})
-                    if (!commonServer) continue
-                    const channelId = commonServer.format ? channels[commonServer.name].ratedChannel : format.channel
-                    const guild = client.guilds.cache.get(commonGuildId)
-                    const channel = guild.channels.cache.get(channelId)
-                    const opponent = await Player.findOne({ where: { id: potentialPair.playerId }})
-                    const member = await guild.members.fetch(opponent.id)
-                    member.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${emojis[commonServer.name]}\nDiscord: ${player.tag}\nDuelingBook: ${player.duelingBook}`)
-                    message.channel.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${emojis[commonServer.name]}\nDiscord: ${opponent.tag}\nDuelingBook: ${opponent.duelingBook}`)
-                    
-                    const ratedPoolsToDestroy = await RatedPool.findAll({
-                        where: {
-                            playerId: {[Op.or]: [player.id, opponent.id]}
-                        }
-                    }) || []
-    
-                    for (let d = 0; d < ratedPoolsToDestroy.length; d++) {
-                        const rPTD = ratedPoolsToDestroy[d]
-                        await rPTD.destroy()
-                    }
-
-                    const allStats = await Stats.findAll({ 
-                        where: {
-                            format: { [Op.iLike]: format.name }, 
-                            games: { [Op.gte]: 3 },
-                            serverId: '414551319031054346',
-                            inactive: false,
-                            '$player.blacklisted$': false
-                        },
-                        include: Player,
-                        order: [['elo', 'DESC']] 
-                    }) || []
-
-                    const p1Index = allStats.findIndex((s) => s.playerId === player.id)
-                    const p1Rank = p1Index >= 0 ? `#${p1Index + 1} ` : ''
-                    const p2Index = allStats.findIndex((s) => s.playerId === opponent.id)
-                    const p2Rank = p2Index >= 0 ? `#${p2Index + 1} ` : ''
-                    
-                    return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: ${p2Rank}<@${opponent.id}> (DB: ${opponent.duelingBook}) vs. ${p1Rank}<@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
+                    return getPotentialPairConfirmation(client, format, potentialPair, newRatedPool, commonGuildId)
                 }
             }
         } catch (err) {
