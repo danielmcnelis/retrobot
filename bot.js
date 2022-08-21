@@ -2126,8 +2126,8 @@ try {
         if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const usersMap = message.mentions.users
         const userIds = [...usersMap.keys()]
-        const player1Id = message.mentions.users.first() ? message.mentions.users.first().id : null	
-        const player2Id = userIds.length > 1 ? userIds[1] : maid	
+        const player1Id = message.mentions.users.first() ? message.mentions.users.first().id : args[1] || null	
+        const player2Id = userIds.length > 1 ? userIds[1] : args[0] || maid	
 
         if (!player1Id) return message.channel.send({ content: "Please specify at least 1 other player."})
         if (player1Id === player2Id) return message.channel.send({ content: `Please specify 2 different players.`})
@@ -2397,6 +2397,7 @@ try {
         return message.channel.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
     }
 
+    
     // POOLS
     if (cmd === `!pools`) {
         if (mgid) return message.channel.send(`Try using ${cmd} by DM'ing it to me.`)
