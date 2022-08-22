@@ -348,6 +348,7 @@ const composeThumbnails = async (message, event) => {
         if (!decks.length) return console.log('no decks found')
     
         for (let i = 0; i < decks.length; i++) {
+            console.log(`drawing ${deck.builder}'s deck...`)
             const deck = decks[i]
             const main = []
             const mainKonamiCodes = deck.ydk.split('#main')[1].split('#extra')[0].split('\n').filter((e) => e.length)
