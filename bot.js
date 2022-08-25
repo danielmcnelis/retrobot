@@ -2485,7 +2485,7 @@ try {
         
         if (!alreadyIn) {
             const count = await Iron.count({ where: { format: format.name }})
-            if (count >= 8) return message.channel.send({ content: `Sorry, ${message.author.username}, the ${format.name} ${format.emoji} Iron is full.`})
+            if (count >= 6) return message.channel.send({ content: `Sorry, ${message.author.username}, the ${format.name} ${format.emoji} Iron is full.`})
 
             await Iron.create({ 
                 name: message.author.username,
@@ -2494,7 +2494,7 @@ try {
             })
             message.channel.send({ content: `You joined the Iron queue. ${emojis.iron}`})
             
-            if (count === 7) return confirmIron(message.channel, format)
+            if (count === 5) return confirmIron(message.channel, format)
         } else {
             const ironPerson = await Iron.findOne({ 
                 where: {

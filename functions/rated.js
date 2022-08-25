@@ -121,7 +121,6 @@ const getDropFormats = async (message, pools) => {
     })
 }
 
-
 // GET RATED FORMAT
 const getRatedFormat = async (message) => {
     const filter = m => m.author.id === message.author.id

@@ -161,7 +161,7 @@ const assignCaptains = async (entries, channel, format) => {
     }
 
     statsArr.sort((a, b) => b[1] - a[1])
-    const index = Math.floor(Math.random() * 6)
+    const index = Math.floor(Math.random() * 4)
     const captains = statsArr.slice(index, index + 2).map((a) => a[0])
 
     const captainA = await Iron.findOne({ 
@@ -193,7 +193,7 @@ const assignCaptains = async (entries, channel, format) => {
 //DRAFT TEAMS
 const draftTeams = async (pick, captainA, captainB, channel, format) => {
     console.log('pick', pick)
-    const captain = (pick === 1 || pick === 4 || pick === 5) ? captainB : captainA
+    const captain = (pick === 1) ? captainB : captainA
     console.log('captain.name', captain.name)
     const team = captain === captainA ? 'A' : 'B'
     console.log('team', team)
@@ -234,8 +234,6 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
                 response.includes('2') ? 1 :
                 response.includes('3') ? 2 :
                 response.includes('4') ? 3 :
-                response.includes('5') ? 4 :
-                response.includes('6') ? 5 :
                 false
     
             if (index === false || (index + 1) > players.length) {
@@ -294,15 +292,13 @@ const chooseOrder = async (captain = {}, channel, format) => {
     }})]
     const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
     
-    const word = players.length === 4 ? 'first' :
-        players.length === 3 ? 'second' :
-        players.length === 2 ? 'third' :
+    const word = players.length === 3 ? 'first' :
+        players.length === 2 ? 'second' :
         'last'
 
-    const position = players.length === 4 ? 1 :
-        players.length === 3 ? 2 :
-        players.length === 2 ? 3 :
-        4
+    const position = players.length === 3 ? 1 :
+        players.length === 2 ? 2 :
+        3
         
     if (!ironPeople.length) {
         return
@@ -323,7 +319,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
         } else {
             return
         }
-    } else if (!ironPeople.length > 4) {
+    } else if (!ironPeople.length > 3) {
         return channel.send({ content: `Error: too many players on ${captain.name}'s team.`})
     }
 
@@ -339,7 +335,6 @@ const chooseOrder = async (captain = {}, channel, format) => {
         const index = response.includes('1') ? 0 :
             response.includes('2') ? 1 :
             response.includes('3') ? 2 :
-            response.includes('4') ? 3 :
             false
 
         if (index === false || (index + 1) > players.length) {
@@ -432,7 +427,7 @@ const postPairing = async (channel, format) => {
         return channel.send({ content: `${emojis.dimmadome} ${emojis.keith} ${emojis.aight} ${emojis.chadward}`})
     }
 
-    const matchNo = 9 - (teamA.length + teamB.length)
+    const matchNo = 7 - (teamA.length + teamB.length)
 
     return channel.send({ content:
         `${emojis.iron} --- Iron Match #${matchNo} --- ${emojis.iron}` + 
