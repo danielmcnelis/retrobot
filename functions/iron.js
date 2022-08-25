@@ -193,26 +193,21 @@ const assignCaptains = async (entries, channel, format) => {
 //DRAFT TEAMS
 const draftTeams = async (pick, captainA, captainB, channel, format) => {
     console.log('pick', pick)
-    console.log('captainA.name', captainA.name)
-    console.log('captainB.name', captainB.name)
-    console.log('channel.name', channel.name)
-    console.log('format.name', format.name)
     const captain = (pick === 1 || pick === 4 || pick === 5) ? captainB : captainA
+    console.log('captain.name', captain.name)
     const team = captain === captainA ? 'A' : 'B'
     console.log('team', team)
     const filter = m => m.author.id === captain.playerId
     const ironPeople = [...await Iron.findAll({ 
         where: {
             format: format.name,
-            captain: false,
+            captain: {[Op.not]: true},
             team: null
         }
     })]
 
     console.log('ironPeople.length', ironPeople.length)
-
     const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
-
     console.log('players', players)
 
     if (!ironPeople.length) {
@@ -227,27 +222,45 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         chooseOrder(captainA, channel, format)
         chooseOrder(captainB, channel, format)
         return
-    }
-
-	channel.send({ content: `<@${captain.playerId}>, Please select a player:\n${players.join('\n')}`})
-	return await channel.awaitMessages({ 
-        filter,
-		max: 1,
-		time: 30000
-	}).then(async (collected) => {
-        const response = collected.first().content.toLowerCase()
-        const index = response.includes('1') ? 0 :
-            response.includes('2') ? 1 :
-            response.includes('3') ? 2 :
-            response.includes('4') ? 3 :
-            response.includes('5') ? 4 :
-            response.includes('6') ? 5 :
-            false
-
-        if (index === false || (index + 1) > players.length) {
-            channel.send({ content: `Invalid selection.`})
-            return setTimeout(() => draftTeams(pick, captainA, captainB, channel, format), 1000)
-        } else {
+    } else {
+        channel.send({ content: `<@${captain.playerId}>, Please select a player:\n${players.join('\n')}`})
+        return await channel.awaitMessages({ 
+            filter,
+            max: 1,
+            time: 30000
+        }).then(async (collected) => {
+            const response = collected.first().content.toLowerCase()
+            const index = response.includes('1') ? 0 :
+                response.includes('2') ? 1 :
+                response.includes('3') ? 2 :
+                response.includes('4') ? 3 :
+                response.includes('5') ? 4 :
+                response.includes('6') ? 5 :
+                false
+    
+            if (index === false || (index + 1) > players.length) {
+                channel.send({ content: `Invalid selection.`})
+                return setTimeout(() => draftTeams(pick, captainA, captainB, channel, format), 1000)
+            } else {
+                const selection = players[index]
+                const name = selection.slice(selection.indexOf(`) - `) + 4)
+                const ironPerson = await Iron.findOne({
+                    where: {
+                        name: name,
+                        format: format.name,
+                        team: null
+                    }
+                })
+    
+                ironPerson.team = team
+                await ironPerson.save()
+                channel.send({ content: `${captain.name} selected <@${ironPerson.playerId}>!`})
+                return setTimeout(() => draftTeams(pick + 1, captainA, captainB, channel, format), 2000)
+            }
+        }).catch(async (err) => {
+            console.log(err)
+            channel.send({ content: `Sorry, time's up.`})
+            const index = Math.floor(Math.random() * players.length)
             const selection = players[index]
             const name = selection.slice(selection.indexOf(`) - `) + 4)
             const ironPerson = await Iron.findOne({
@@ -257,31 +270,13 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
                     team: null
                 }
             })
-
+    
             ironPerson.team = team
             await ironPerson.save()
-            channel.send({ content: `${captain.name} selected <@${ironPerson.playerId}>!`})
+            channel.send({ content: `<@${ironPerson.playerId}> was randomly assigned to ${captain.name}'s Team!`})
             return setTimeout(() => draftTeams(pick + 1, captainA, captainB, channel, format), 2000)
-        }
-	}).catch(async (err) => {
-		console.log(err)
-        channel.send({ content: `Sorry, time's up.`})
-        const index = Math.floor(Math.random() * players.length)
-        const selection = players[index]
-        const name = selection.slice(selection.indexOf(`) - `) + 4)
-        const ironPerson = await Iron.findOne({
-            where: {
-                name: name,
-                format: format.name,
-                team: null
-            }
         })
-
-        ironPerson.team = team
-        await ironPerson.save()
-        channel.send({ content: `<@${ironPerson.playerId}> was randomly assigned to ${captain.name}'s Team!`})
-        return setTimeout(() => draftTeams(pick + 1, captainA, captainB, channel, format), 2000)
-	})
+    }	
 }
 
 //CHOOSE ORDER
