@@ -191,14 +191,14 @@ const assignCaptains = async (entries, channel, format) => {
 
 //DRAFT TEAMS
 const draftTeams = async (pick, captainA, captainB, channel, format) => {
-    const captain = (pick === 1 || pick === 4) ? captainB : captainA
+    const captain = (pick === 1 || pick === 4 || pick === 5 || pick === 8) ? captainB : captainA
     const team = captain === captainA ? 'A' : 'B'
 
     const filter = m => m.author.id === captain.playerId
     const ironPeople = [...await Iron.findAll({ 
         where: {
             format: format.name,
-            captain: {[Op.not]: true},
+            captain: false,
             team: null
         }
     })]
@@ -276,24 +276,30 @@ const chooseOrder = async (captain = {}, channel, format) => {
     if (!member) return channel.send(`Unable to message ${captain.name}.`)
     
     const team = captain.team
+
     const ironPeople = [...await Iron.findAll({ where: {
         format: format.name,
         team: team,
         position: null
     }})]
+
+    const count = await Iron.findAll({ where: {
+        format: format.name,
+        team: team,
+        position: {[Op.not]: null}
+    }})
+    
     const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
     
-    const word = players.length === 3 ? 'first' :
-        players.length === 2 ? 'second' :
-        'last'
+    const word = count === 0 ? 'first' :
+        count === 1 ? 'second' :
+        count === 2 ? 'third' :
+        count === 3 ? 'fourth' :
+        'fifth'
 
-    const position = players.length === 3 ? 1 :
-        players.length === 2 ? 2 :
-        3
+    const position = count + 1
         
-    if (!ironPeople.length) {
-        return
-    } else if (ironPeople.length === 1) {
+    if (ironPeople.length === 1) {
         const ironPerson = ironPeople[0]
         ironPerson.position = position
         await ironPerson.save()
@@ -310,11 +316,9 @@ const chooseOrder = async (captain = {}, channel, format) => {
         } else {
             return
         }
-    } else if (!ironPeople.length > 3) {
-        return channel.send({ content: `Error: too many players on ${captain.name}'s team.`})
     }
 
-    const time = 15000 * players.length
+    const time = 20000 * players.length
     const filter = m => m.author.id === playerId
 	const message = await member.send({ content: `${captain.name}, You have ${time / 1000}s to choose who will go ${word} for Team ${team}:\n${players.join('\n')}`})
 	return await message.channel.awaitMessages({ 
