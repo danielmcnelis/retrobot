@@ -18,8 +18,6 @@ const confirmIron = async (channel, format) => {
     getIronConfirmation(entries[3], channel, format)
     getIronConfirmation(entries[4], channel, format)
     getIronConfirmation(entries[5], channel, format)
-    getIronConfirmation(entries[6], channel, format)
-    getIronConfirmation(entries[7], channel, format)
 
     for (let i = 1; i < 12; i ++) {
         setTimeout(async () => {
@@ -33,7 +31,7 @@ const confirmIron = async (channel, format) => {
                 status: 'active'
             } })
 
-            if (count === 8 && !active) {
+            if (count === 6 && !active) {
                 info.status = 'active'
                 await info.save()
                 assignIronRoles(entries)
@@ -56,7 +54,7 @@ const confirmIron = async (channel, format) => {
             status: 'active'
         } })
 
-        if (count !== 8 && !active) {
+        if (count !== 6 && !active) {
             info.status = 'pending'
             await info.save()
 
@@ -86,8 +84,8 @@ const confirmIron = async (channel, format) => {
                 await entry.save()
             }
             
-            return channel.send({ content: `Unfortunately, The ${format.name} Iron cannot begin without 8 players. ${format.emoji} ${emojis.iron}\n\nThe following players have been removed from the queue:\n${missingNames.sort().join("\n")}`})
-        } else if (count === 8 && !active) {
+            return channel.send({ content: `Unfortunately, The ${format.name} Iron cannot begin without 6f players. ${format.emoji} ${emojis.iron}\n\nThe following players have been removed from the queue:\n${missingNames.sort().join("\n")}`})
+        } else if (count === 6 && !active) {
             info.status = 'active'
             await info.save()
             assignIronRoles(entries)
