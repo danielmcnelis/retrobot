@@ -191,11 +191,9 @@ const assignCaptains = async (entries, channel, format) => {
 
 //DRAFT TEAMS
 const draftTeams = async (pick, captainA, captainB, channel, format) => {
-    console.log('pick', pick)
-    const captain = (pick === 1) ? captainB : captainA
-    console.log('captain.name', captain.name)
+    const captain = (pick === 1 || pick === 4) ? captainB : captainA
     const team = captain === captainA ? 'A' : 'B'
-    console.log('team', team)
+
     const filter = m => m.author.id === captain.playerId
     const ironPeople = [...await Iron.findAll({ 
         where: {
@@ -205,15 +203,9 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         }
     })]
 
-    console.log('ironPeople.length', ironPeople.length)
     const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
-    console.log('players', players)
 
-    if (!ironPeople.length) {
-        chooseOrder(captainA, channel, format)
-        chooseOrder(captainB, channel, format)
-        return
-    } else if (ironPeople.length === 1) {
+    if (ironPeople.length === 1) {
         const ironPerson = ironPeople[0]
         ironPerson.team = team
         await ironPerson.save()
@@ -374,6 +366,11 @@ const chooseOrder = async (captain = {}, channel, format) => {
 
 //POST PAIRING
 const postPairing = async (channel, format) => {
+    const matchNo = await Iron.count({ where: {
+        format: format.name,
+        eliminated: true
+    }}) + 1
+
     const teamA = [...await Iron.findAll({ 
         where: {
             format: format.name,
@@ -425,8 +422,6 @@ const postPairing = async (channel, format) => {
         channel.send({ content: `Team A has emerged victorious!!!`})
         return channel.send({ content: `${emojis.dimmadome} ${emojis.keith} ${emojis.aight} ${emojis.chadward}`})
     }
-
-    const matchNo = 7 - (teamA.length + teamB.length)
 
     return channel.send({ content:
         `${emojis.iron} --- Iron Match #${matchNo} --- ${emojis.iron}` + 
