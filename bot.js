@@ -2504,12 +2504,12 @@ try {
                         team: 'B'
                     })
 
-                    if (teamACount <= teamBCount) {
+                    if (teamBCount <= teamACount) {
                         await Iron.create({ 
                             name: message.author.username,
                             playerId: maid,
                             format: format.name,
-                            team: 'A',
+                            team: 'B',
                             confirmed: true,
                             position: teamACount + 1
                         })
@@ -2518,7 +2518,7 @@ try {
                             name: message.author.username,
                             playerId: maid,
                             format: format.name,
-                            team: 'B',
+                            team: 'A',
                             confirmed: true,
                             position: teamBCount + 1
                         })
