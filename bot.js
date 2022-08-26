@@ -2499,20 +2499,34 @@ try {
                         team: 'A'
                     })
 
+                    const teamAElim = await Iron.count({ 
+                        format: format.name,
+                        team: 'A',
+                        eliminate: true
+                    })
+
                     const teamBCount = await Iron.count({ 
                         format: format.name,
                         team: 'B'
                     })
 
-                    if (teamBCount <= teamACount) {
+                    const teamBElim = await Iron.count({ 
+                        format: format.name,
+                        team: 'B',
+                        eliminate: true
+                    })
+
+                    if ((teamBCount === teamACount && teamBElim >= teamAElim) || teamBCount < teamACount) {
                         await Iron.create({ 
                             name: message.author.username,
                             playerId: maid,
                             format: format.name,
                             team: 'B',
                             confirmed: true,
-                            position: teamACount + 1
+                            position: teamBCount + 1
                         })
+
+                        return message.channel.send({ content: `You joined the Iron for Team B. ${emojis.iron}`})
                     } else {
                         await Iron.create({ 
                             name: message.author.username,
@@ -2520,8 +2534,10 @@ try {
                             format: format.name,
                             team: 'A',
                             confirmed: true,
-                            position: teamBCount + 1
+                            position: teamACount + 1
                         })
+
+                        return message.channel.send({ content: `You joined the Iron for Team A. ${emojis.iron}`})
                     }
                 }
             } else {
