@@ -4,6 +4,7 @@ const { yescom } = require('../static/commands.json')
 const emojis = require('../static/emojis.json')
 const roles = require('../static/roles.json')
 const { client } = require('../static/clients.js')
+const { Op } = require('sequelize')
 
 //CONFIRM IRON
 const confirmIron = async (channel, format) => {
