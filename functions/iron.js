@@ -24,7 +24,7 @@ const confirmIron = async (channel, format) => {
         setTimeout(async () => {
             const count = await Iron.count({ where: {
                 format: format.name,
-                confirmed: true
+                confirmed: false
             } })
     
             const active = await Info.count({ where: {
@@ -32,8 +32,8 @@ const confirmIron = async (channel, format) => {
                 status: 'active'
             } })
 
-            if (count === 6 && !active) {
-                info.status = 'active'
+            if (!count && !active) {
+                info.status = 'drafting'
                 await info.save()
                 assignIronRoles(entries)
                 setTimeout(() => {
@@ -312,6 +312,9 @@ const chooseOrder = async (captain = {}, channel, format) => {
         })
 
         if (!count) {
+            const info = await Info.findOne({ where: { element: 'iron' }})
+            info.status = 'active'
+            await info.save()
             return postStory(channel, format)
         } else {
             return

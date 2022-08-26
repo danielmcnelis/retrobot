@@ -2467,34 +2467,73 @@ try {
         })
         
         if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
-        const hasStarted = await Iron.count({ 
-            where: {
-                format: format.name,
-                paired: true
-            }
-        })
-
-        if (hasStarted) return message.channel.send({ content: `Sorry, the ${format.name} ${format.emoji} Iron already started. ${emojis.iron}`})
-
+        
         const alreadyIn = await Iron.count({ 
             where: { 
                 format: format.name,
                 playerId: maid
             } 
         })
+
+        const info = await Info.findOne({ where: { element: 'iron' }})
+        if (info.status === 'drafting' && !alreadyIn) return message.channel.send({ content: 'Please wait until after the drafting process is complete to join the iron.' })
+        if (info.status === 'drafting' && alreadyIn) return message.channel.send({ content: 'Sorry, you cannot leave the iron during the drafting process.' })
         
         if (!alreadyIn) {
             const count = await Iron.count({ where: { format: format.name }})
-            if (count >= 6) return message.channel.send({ content: `Sorry, ${message.author.username}, the ${format.name} ${format.emoji} Iron is full.`})
+            if (count >= 10) {
+                return message.channel.send({ content: `Sorry, ${message.author.username}, the ${format.name} ${format.emoji} Iron is full.`})
+            } else if (count < 10 && count >= 6) {
+                if (info.status === 'confirming') {
+                    await Iron.create({ 
+                        name: message.author.username,
+                        playerId: maid,
+                        format: format.name,
+                        confirmed: true
+                    })
+    
+                    message.channel.send({ content: `You joined the Iron queue. ${emojis.iron}`})
+                } else if (info.status === 'active') {
+                    const teamACount = await Iron.count({ 
+                        format: format.name,
+                        team: 'A'
+                    })
 
-            await Iron.create({ 
-                name: message.author.username,
-                playerId: maid,
-                format: format.name
-            })
-            message.channel.send({ content: `You joined the Iron queue. ${emojis.iron}`})
-            
-            if (count === 5) return confirmIron(message.channel, format)
+                    const teamBCount = await Iron.count({ 
+                        format: format.name,
+                        team: 'B'
+                    })
+
+                    if (teamACount <= teamBCount) {
+                        await Iron.create({ 
+                            name: message.author.username,
+                            playerId: maid,
+                            format: format.name,
+                            team: 'A',
+                            confirmed: true,
+                            position: teamACount + 1
+                        })
+                    } else {
+                        await Iron.create({ 
+                            name: message.author.username,
+                            playerId: maid,
+                            format: format.name,
+                            team: 'B',
+                            confirmed: true,
+                            position: teamBCount + 1
+                        })
+                    }
+                }
+            } else {
+                await Iron.create({ 
+                    name: message.author.username,
+                    playerId: maid,
+                    format: format.name
+                })
+
+                message.channel.send({ content: `You joined the Iron queue. ${emojis.iron}`})
+                if (count === 5) return confirmIron(message.channel, format)
+            }
         } else {
             const ironPerson = await Iron.findOne({ 
                 where: {
