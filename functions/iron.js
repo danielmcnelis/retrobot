@@ -29,7 +29,7 @@ const confirmIron = async (channel, format) => {
     
             const active = await Info.count({ where: {
                 element: 'iron',
-                status: 'active'
+                status: {[Op.not]: 'confirming'}
             } })
 
             if (!count && !active) {
@@ -47,15 +47,15 @@ const confirmIron = async (channel, format) => {
     return setTimeout(async () => {
         const count = await Iron.count({ where: {
             format: format.name,
-            confirmed: true
+            confirmed: false
         } })
 
         const active = await Info.count({ where: {
             element: 'iron',
-            status: 'active'
+            status: {[Op.not]: 'confirming'}
         } })
 
-        if (count !== 6 && !active) {
+        if (count && !active) {
             info.status = 'pending'
             await info.save()
 
@@ -86,8 +86,8 @@ const confirmIron = async (channel, format) => {
             }
             
             return channel.send({ content: `Unfortunately, The ${format.name} Iron cannot begin without 6f players. ${format.emoji} ${emojis.iron}\n\nThe following players have been removed from the queue:\n${missingNames.sort().join("\n")}`})
-        } else if (count === 6 && !active) {
-            info.status = 'active'
+        } else if (!count && !active) {
+            info.status = 'drafting'
             await info.save()
             assignIronRoles(entries)
             setTimeout(() => {
