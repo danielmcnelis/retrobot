@@ -1724,7 +1724,10 @@ try {
         const winnerHasIronRole = isIronPlayer(server, winner)
         const activeIron = await Info.count({ where: { element: 'iron', status: 'active' }})
         let isIronMatch
-        
+        console.log('loserHasIronRole', loserHasIronRole)
+        console.log('winnerHasIronRole', winnerHasIronRole)
+        console.log('activeIron', activeIron)
+
         if (loserHasTourRole && winnerHasTourRole && activeTournament) {
             const loserEntries = await Entry.findAll({ where: { playerId: losingPlayer.id }, include: Tournament })
             const winnerEntries = await Entry.findAll({ where: { playerId: winningPlayer.id }, include: Tournament })
@@ -1925,6 +1928,9 @@ try {
         const winnerHasIronRole = isIronPlayer(server, winner)
         const activeIron = await Info.count({ where: { element: 'iron', status: 'active' }})
         let isIronMatch
+        console.log('loserHasIronRole', loserHasIronRole)
+        console.log('winnerHasIronRole', winnerHasIronRole)
+        console.log('activeIron', activeIron)
 
         if (loserHasTourRole && winnerHasTourRole && activeTournament) {
             const loserEntries = await Entry.findAll({ where: { playerId: losingPlayer.id }, include: Tournament })
