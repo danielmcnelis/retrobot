@@ -270,19 +270,26 @@ const chooseOrder = async (captain = {}, team, channel, format) => {
     const member = guild.members.cache.get(playerId)
     if (!member) return channel.send(`Unable to message ${captain.name}.`)
     
-    const ironPeople = [...await Iron.findAll({ where: {
-        format: format.name,
-        team: team,
-        position: null
-    }})]
+    const ironPeople = [
+        ...await Iron.findAll({ 
+            where: {
+                format: format.name,
+                team: team,
+                position: null
+            },
+            order: [['name', 'ASC']]
+        })
+    ]
 
-    const count = await Iron.findAll({ where: {
-        format: format.name,
-        team: team,
-        position: {[Op.not]: null}
-    }})
+    const count = await Iron.count({ 
+        where: {
+            format: format.name,
+            team: team,
+            position: {[Op.not]: null}
+        }
+    })
     
-    const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
+    const players = ironPeople.map((p, index) => `(${index + 1}) - ${p.name}`)
     
     const word = count === 0 ? 'first' :
         count === 1 ? 'second' :
@@ -291,7 +298,6 @@ const chooseOrder = async (captain = {}, team, channel, format) => {
         'fifth'
 
     const position = count + 1
-    console.log('position', position)
         
     if (ironPeople.length === 1) {
         const ironPerson = ironPeople[0]
@@ -333,16 +339,7 @@ const chooseOrder = async (captain = {}, team, channel, format) => {
             message.channel.send({ content: `Invalid selection.`})
             return setTimeout(() => chooseOrder(captain, team, channel, format), 1000)
         } else {
-            const selection = players[index]
-            const name = selection.slice(selection.indexOf(`) - `) + 4)
-            const ironPerson = await Iron.findOne({
-                where: {
-                    name: name,
-                    format: format.name,
-                    team: team
-                }
-            })
-
+            const ironPerson = ironPeople[index]
             ironPerson.position = position
             await ironPerson.save()
             message.channel.send({ content: `You selected ${ironPerson.name} to go ${word}!`})
