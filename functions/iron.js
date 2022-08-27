@@ -291,6 +291,7 @@ const chooseOrder = async (captain = {}, team, channel, format) => {
         'fifth'
 
     const position = count + 1
+    console.log('position', position)
         
     if (ironPeople.length === 1) {
         const ironPerson = ironPeople[0]

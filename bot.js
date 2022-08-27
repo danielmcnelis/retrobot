@@ -2477,6 +2477,7 @@ try {
 
         const info = await Info.findOne({ where: { element: 'iron' }})
         if (info.status === 'drafting' && !alreadyIn) return message.channel.send({ content: 'Please wait until after the drafting process is complete to join the iron.' })
+        if (info.status === 'confirming' && alreadyIn) return message.channel.send({ content: 'Sorry, you cannot leave the iron during the confirmation process.' })
         if (info.status === 'drafting' && alreadyIn) return message.channel.send({ content: 'Sorry, you cannot leave the iron during the drafting process.' })
         
         if (!alreadyIn) {
