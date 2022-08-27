@@ -321,7 +321,7 @@ const chooseOrder = async (captain = {}, team, channel, format) => {
         }
     }
 
-    const time = 20000 * players.length
+    const time = 30000 * players.length
     const filter = m => m.author.id === playerId
 	const message = await member.send({ content: `${captain.name}, You have ${time / 1000}s to choose who will go ${word} for Team ${team}:\n${players.join('\n')}`})
 	return await message.channel.awaitMessages({ 
