@@ -1919,6 +1919,7 @@ try {
         const loserHasTourRole = await isTourPlayer(server, loser)
         const winnerHasTourRole = await isTourPlayer(server, winner)
         const activeTournament = await Tournament.count({ where: { state: 'underway', serverId: mgid } }) 
+        console.log('loserHasTourRole && winnerHasTourRole && activeTournament', loserHasTourRole && winnerHasTourRole && activeTournament)
         let isTournamentMatch
         let winningEntry
         let losingEntry
@@ -1931,8 +1932,10 @@ try {
         console.log('loserHasIronRole', loserHasIronRole)
         console.log('winnerHasIronRole', winnerHasIronRole)
         console.log('activeIron', activeIron)
+        console.log('loserHasIronRole && winnerHasIronRole && activeIron', loserHasIronRole && winnerHasIronRole && activeIron)
 
         if (loserHasTourRole && winnerHasTourRole && activeTournament) {
+            console.log('IF: loserHasTourRole && winnerHasTourRole && activeTournament', loserHasTourRole && winnerHasTourRole && activeTournament)
             const loserEntries = await Entry.findAll({ where: { playerId: losingPlayer.id }, include: Tournament })
             const winnerEntries = await Entry.findAll({ where: { playerId: winningPlayer.id }, include: Tournament })
             if (loserEntries.length && winnerEntries.length) {
@@ -1993,6 +1996,7 @@ try {
                 }
             }
         } else if (loserHasIronRole && winnerHasIronRole && activeIron) {
+            console.log('IF: loserHasIronRole && winnerHasIronRole && activeIron', loserHasIronRole && winnerHasIronRole && activeIron)
             const teamA = [...await Iron.findAll({ 
                 where: {
                     format: format.name,
@@ -2001,6 +2005,8 @@ try {
                 },
                 order: [["position", "ASC"]]
             })]
+
+            console.log('teamA.length', teamA.length)
         
             const teamB = [...await Iron.findAll({ 
                 where: {
@@ -2010,9 +2016,13 @@ try {
                 },
                 order: [["position", "ASC"]]
             })]
-                    
+
+            console.log('teamB.length', teamB.length)
+  
             const ironPersonA = teamA[0]
+            console.log('ironPersonA', ironPersonA)
             const ironPersonB = teamB[0]
+            console.log('ironPersonB', ironPersonB)
 
             if (winningPlayer.id === ironPersonA.playerId && losingPlayer.id === ironPersonB.playerId) {
                 isIronMatch = true
@@ -2029,6 +2039,7 @@ try {
             }
         }
             
+        console.log('isIronMatch', isIronMatch)
         const origEloWinner = winnerStats.elo || 500.00
         const origEloLoser = loserStats.elo || 500.00
         const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origEloWinner - origEloLoser) / 400))))))
