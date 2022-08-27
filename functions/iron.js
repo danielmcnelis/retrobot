@@ -76,12 +76,7 @@ const confirmIron = async (channel, format) => {
             const remainingEntries = await Iron.findAll({ where: { format: format.name }})
             for (let i = 0; i < remainingEntries.length; i++) {
                 const entry = remainingEntries[i]
-                entry.team = null
-                entry.captain = null
-                entry.position = null
-                entry.paired = false
                 entry.confirmed = false
-                entry.eliminated = false
                 await entry.save()
             }
             
@@ -210,8 +205,8 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         ironPerson.team = team
         await ironPerson.save()
         channel.send({ content: `<@${ironPerson.playerId}> has been assigned to ${captain.name}'s Team!`})
-        chooseOrder(captainA, channel, format)
-        chooseOrder(captainB, channel, format)
+        chooseOrder(captainA, 'A', channel, format)
+        chooseOrder(captainB, 'B', channel, format)
         return
     } else {
         channel.send({ content: `<@${captain.playerId}>, Please select a player:\n${players.join('\n')}`})
@@ -269,14 +264,12 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
 }
 
 //CHOOSE ORDER
-const chooseOrder = async (captain = {}, channel, format) => {
+const chooseOrder = async (captain = {}, team, channel, format) => {
     const guild = client.guilds.cache.get("414551319031054346")
     const playerId = captain.playerId
     const member = guild.members.cache.get(playerId)
     if (!member) return channel.send(`Unable to message ${captain.name}.`)
     
-    const team = captain.team
-
     const ironPeople = [...await Iron.findAll({ where: {
         format: format.name,
         team: team,
@@ -337,7 +330,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
 
         if (index === false || (index + 1) > players.length) {
             message.channel.send({ content: `Invalid selection.`})
-            return setTimeout(() => chooseOrder(captain, channel, format), 1000)
+            return setTimeout(() => chooseOrder(captain, team, channel, format), 1000)
         } else {
             const selection = players[index]
             const name = selection.slice(selection.indexOf(`) - `) + 4)
@@ -352,7 +345,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
             ironPerson.position = position
             await ironPerson.save()
             message.channel.send({ content: `You selected ${ironPerson.name} to go ${word}!`})
-            return setTimeout(() => chooseOrder(captain, channel, format), 2000)
+            return setTimeout(() => chooseOrder(captain, team, channel, format), 2000)
         }
 	}).catch(async (err) => {
 		console.log(err)
@@ -367,7 +360,7 @@ const chooseOrder = async (captain = {}, channel, format) => {
         ironPerson.position = position
         await ironPerson.save()
         message.channel.send({ content: `Sorry, time's up. ${ironPerson.name} was randomly selected to go ${word}.`})
-        return setTimeout(() => chooseOrder(captain, channel, format), 2000)
+        return setTimeout(() => chooseOrder(captain, team, channel, format), 2000)
 	})
 }
 
