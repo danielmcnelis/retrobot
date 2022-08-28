@@ -2495,25 +2495,33 @@ try {
                     message.channel.send({ content: `You joined the Iron queue. ${emojis.iron}`})
                 } else if (info.status === 'active') {
                     const teamACount = await Iron.count({ 
-                        format: format.name,
-                        team: 'A'
+                        where: {
+                            format: format.name,
+                            team: 'A'
+                        }
                     })
 
                     const teamAElim = await Iron.count({ 
-                        format: format.name,
-                        team: 'A',
-                        eliminated: true
+                        where: {
+                            format: format.name,
+                            team: 'A',
+                            eliminated: true
+                        }
                     })
 
                     const teamBCount = await Iron.count({ 
-                        format: format.name,
-                        team: 'B'
+                        where: {
+                            format: format.name,
+                            team: 'B'
+                        }
                     })
 
                     const teamBElim = await Iron.count({ 
-                        format: format.name,
-                        team: 'B',
-                        eliminated: true
+                        where: {
+                            format: format.name,
+                            team: 'B',
+                            eliminated: true
+                        }
                     })
 
                     if ((teamBCount === teamACount && teamBElim >= teamAElim) || teamBCount < teamACount) {
