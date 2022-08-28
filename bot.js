@@ -2477,8 +2477,7 @@ try {
 
         const info = await Info.findOne({ where: { element: 'iron' }})
         if (info.status === 'drafting' && !alreadyIn) return message.channel.send({ content: 'Please wait until after the drafting process is complete to join the iron.' })
-        if (info.status === 'confirming' && alreadyIn) return message.channel.send({ content: 'Sorry, you cannot leave the iron during the confirmation process.' })
-        if (info.status === 'drafting' && alreadyIn) return message.channel.send({ content: 'Sorry, you cannot leave the iron during the drafting process.' })
+        if (info.status !== 'pending' && alreadyIn) return message.channel.send({ content: 'Sorry, you cannot leave the iron after it has started.' })
         
         if (!alreadyIn) {
             const count = await Iron.count({ where: { format: format.name }})
@@ -2503,7 +2502,7 @@ try {
                     const teamAElim = await Iron.count({ 
                         format: format.name,
                         team: 'A',
-                        eliminate: true
+                        eliminated: true
                     })
 
                     const teamBCount = await Iron.count({ 
@@ -2514,7 +2513,7 @@ try {
                     const teamBElim = await Iron.count({ 
                         format: format.name,
                         team: 'B',
-                        eliminate: true
+                        eliminated: true
                     })
 
                     if ((teamBCount === teamACount && teamBElim >= teamAElim) || teamBCount < teamACount) {
