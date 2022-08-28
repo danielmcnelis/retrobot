@@ -2534,6 +2534,7 @@ try {
                             position: teamBCount + 1
                         })
 
+                        message.member.roles.add(roles['Format Library'].ironRole)
                         return message.channel.send({ content: `You joined the Iron for Team B. ${emojis.iron}`})
                     } else {
                         await Iron.create({ 
@@ -2545,6 +2546,7 @@ try {
                             position: teamACount + 1
                         })
 
+                        message.member.roles.add(roles['Format Library'].ironRole)
                         return message.channel.send({ content: `You joined the Iron for Team A. ${emojis.iron}`})
                     }
                 }
