@@ -476,7 +476,7 @@ const isNewMember = async (serverId, discordId) => {
 }
 
 //IS NEW USER?
-const isNewUser = async (id) => !await Player.count({ where: { id } })
+const isNewUser = async (discordId) => !await Player.count({ where: { discordId: discordId } })
 
 //IS TOURNAMENT PLAYER?
 const isTourPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].tourRole)
