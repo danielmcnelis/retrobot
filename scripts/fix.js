@@ -51,32 +51,6 @@ const fixFormats = async () => {
     return console.log(`fixed ${b} stats, ${c} matches`)
 }
 
-const fixDecks = async () => {
-    let b = 0
-    let e = 0
-    const decks = await Deck.findAll()
-
-    for (let i = 0; i < decks.length; i++) {
-        try {
-            const d = decks[i]
-            const name = capitalize(d.name, true)
-            const deckType = capitalize(d.type, true)
-            const deckCategory = capitalize(d.category, true)
-            const format = capitalize(d.format, true)
-            d.format = format
-            d.name = name
-            d.category = deckCategory
-            d.type = deckType
-            await d.save()
-            b++
-        } catch (err) {
-            e++
-            console.log(err)
-        }
-    }
-
-    return console.log(`fixed ${b} decks, encountered ${e} errors`)
-}
 
 const fixDeckTypes = async () => {
     let b = 0
