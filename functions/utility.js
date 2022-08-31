@@ -324,12 +324,10 @@ const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, card
 
 //ASSIGN ROLES
 const assignRoles = async (guild, member) => {
-    console.log('assignRoles() member.user.id', member.user.id)
-    console.log('assignRoles() guild.id', guild.id)
     const membership = await Membership.findOne({ where: { '$player.discordId$': member.user.id, serverId: guild.id }, include: Player })
+    if (!membership) return
     membership.active = true
     await membership.save()
-    if (!membership) return
     const roles = await Role.findAll({ where: { membershipId: membership.id } })
     roles.forEach(async (r) => { 
         try {
@@ -475,7 +473,7 @@ const isMod = (server, member) => server && member && member.roles.cache.some(ro
 const isIronPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].ironRole)
 
 //IS NEW MEMBER?
-const isNewMember = async (serverId, discordId) => !!await Membership.count({ where: { serverId, '$player.discordId$': discordId }, include: Player })
+const isNewMember = async (serverId, discordId) => !await Membership.count({ where: { serverId, '$player.discordId$': discordId }, include: Player })
 
 //IS NEW USER?
 const isNewUser = async (discordId) => !await Player.count({ where: { discordId: discordId } })

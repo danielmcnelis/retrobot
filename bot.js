@@ -952,7 +952,11 @@ try {
             ''
 
         const membership = await Membership.findOne({ where: { '$player.discordId$': maid, serverId: mgid }, include: Player })
-        if (!membership) return message.channel.send({ content: `You are not in the database.`})
+        if (!membership) {
+            createMembership(message.guild, message.member)
+            return message.channel.send({ content: `You are not in the database.`})
+        }
+        
         if (!message.member.roles.cache.some(role => role.id === roleId)) {
             try {
                 await message.member.roles.add(roleId)
