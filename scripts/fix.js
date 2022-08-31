@@ -452,8 +452,8 @@ const fixServers = async () => {
     for (let i = 0; i < servers.length; i++) {
         try {
             const d = servers[i]
-            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
-            d.playerId = player.id
+            const player = await Player.findOne({ where: { discordId: d.ownerId.toString() }})
+            d.ownerId = player.id
             await d.save()
             a++
         } catch (err) {
@@ -491,8 +491,8 @@ const fixStats = async () => {
 // fixMatches()
 // fixMemberships()
 // fixRatedPools()
-// fixServers()
-fixStats()
+fixServers()
+// fixStats()
 
 // fixBlogposts()
 // composeThumbnails()
