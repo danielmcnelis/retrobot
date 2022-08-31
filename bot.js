@@ -1788,8 +1788,10 @@ try {
         const winningPlayer = await Player.findOne({ where: { discordId: winnerDiscordId } })
         console.log('!!winningPlayer', !!winningPlayer)
         console.log('winningPlayer.id', winningPlayer.id)
-        console.log('{ playerId: winningPlayer.Id, format: format.name, serverId: serverId }', { playerId: winningPlayer.Id, format: format.name, serverId: serverId })
-        const wCount = await Stats.count({ where: { playerId: winningPlayer.Id, format: format.name, serverId: serverId } })
+        const banana = winningPlayer.Id
+        console.log('banana', banana)
+        console.log('{ playerId: banana, format: format.name, serverId: serverId }', { playerId: banana, format: format.name, serverId: serverId })
+        const wCount = await Stats.count({ where: { playerId: banana, format: format.name, serverId: serverId } })
         console.log('wCount', wCount)
         if (!wCount) await Stats.create({ playerId: winningPlayer.id, format: format.name, serverId: serverId, internal: server.internalLadder })
         const winnerStats = await Stats.findOne({ where: { playerId: winningPlayer.id, format: format.name, serverId: serverId } })
