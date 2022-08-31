@@ -119,8 +119,8 @@ try {
     const cmd = marr[0] ? marr[0].toLowerCase() : ''
     const args = marr[1] ? marr.slice(1) : ''
     const maid = message.author.id
-    const hiddenPlayers = [...await Player.findAll({ where: { hidden: true }})].map((p) => p.id)
-    if (hiddenPlayers.includes(maid) || message.mentions.users.first() && bList.includes(message.mentions.users.first().id)) return
+    const hiddenPlayers = [...await Player.findAll({ where: { hidden: true }})].map((p) => p.discordId)
+    if (hiddenPlayers.includes(maid) || message.mentions.users.first() && hiddenPlayers.includes(message.mentions.users.first().id)) return
 
     const mcid = message.channel.id
     const mgid = message.guild ? message.guild.id : null
