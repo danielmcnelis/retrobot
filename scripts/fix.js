@@ -472,7 +472,7 @@ const fixStats = async () => {
     for (let i = 0; i < stats.length; i++) {
         try {
             const d = stats[i]
-            const player = await Stats.findOne({ where: { discordId: d.playerId.toString() }})
+            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
             d.playerId = player.id
             await d.save()
             a++
@@ -485,13 +485,13 @@ const fixStats = async () => {
     return console.log(`updated ${a} stats; encountered ${e} errors`)
 }
 
-fixDecks()
-fixEntries()
-fixIrons()
-fixMatches()
-fixMemberships()
-fixRatedPools()
-fixServers()
+// fixDecks()
+// fixEntries()
+// fixIrons()
+// fixMatches()
+// fixMemberships()
+// fixRatedPools()
+// fixServers()
 fixStats()
 
 // fixBlogposts()
