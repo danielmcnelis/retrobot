@@ -496,7 +496,7 @@ const fixEvents = async () => {
                 where: {
                     [Op.or]: {
                         discordId: event.playerId,
-                        firstName: event.id
+                        firstName: event.playerId
                     }
                 }
             })
