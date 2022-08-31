@@ -143,26 +143,6 @@ const erasePasswords = async () => {
 }
 
 
-const fixStats = async () => {
-    const stats = await Stats.findAll()
-    for (let i = 0; i < stats.length; i++) {
-        const s = stats[i]
-        const games = s.wins + s.losses
-        s.games = games
-        await s.save()
-    }
-}
-
-const fixMatches = async () => {
-    const matches = await Match.findAll()
-    for (let i = 0; i < matches.length; i++) {
-        const m = matches[i]
-        m.serverId = '414551319031054346'
-        m.internal = false
-        await m.save()
-    }
-}
-
 const deleteMemberships = async () => {
     let b = 0
     const memberships = await Membership.findAll({
@@ -180,29 +160,6 @@ const deleteMemberships = async () => {
     return console.log(`destroyed ${b} memberships`)
 }
 
-const fixMemberships = async () => {
-    let b = 0
-    let e = 0
-    const memberships = await Membership.findAll({ where: { serverId: null }})
-
-    for (let i = 0; i < memberships.length; i++) {
-        const m = memberships[i]
-        try {
-            const id = m.guildId
-            console.log('id', id)
-            m.serverId = id
-            await m.save()
-            console.log('m.serverId', m.serverId)
-            b++
-        } catch (err) {
-            console.log(err)
-            await m.destroy()
-            e++
-        }
-    }
-
-    return console.log(`fixed ${b} memberships, encountered ${e} errors and destroyed ${e} memberships`)
-}
 
 const fixInternal = async () => {
     const matches = await Match.findAll({
@@ -372,16 +329,16 @@ const composePreviews = async () => {
     return console.log(`composed ${b} previews`)
 }
 
-const fixBlogposts = async () => {
+const fixDecks = async () => {
     let a = 0
     let e = 0
-    const blogposts = await BlogPost.findAll()
-    for (let i = 0; i < blogposts.length; i++) {
+    const decks = await Deck.findAll()
+    for (let i = 0; i < decks.length; i++) {
         try {
-            const b = blogposts[i]
-            const player = await Player.findOne({ where: { discordId: b.playerId.toString() }})
-            b.playerId = player.id
-            await b.save()
+            const d = decks[i]
+            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
+            d.playerId = player.id
+            await d.save()
             a++
         } catch (err) {
             console.log(err)
@@ -389,10 +346,181 @@ const fixBlogposts = async () => {
         }
     }
 
-    return console.log(`updated ${a} blog posts; encountered ${e} errors`)
+    return console.log(`updated ${a} decks; encountered ${e} errors`)
 }
 
-fixBlogposts()
+const fixEntries = async () => {
+    let a = 0
+    let e = 0
+    const entries = await Entry.findAll()
+    for (let i = 0; i < entries.length; i++) {
+        try {
+            const d = entries[i]
+            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
+            d.playerId = player.id
+            await d.save()
+            a++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
+    }
+
+    return console.log(`updated ${a} entries; encountered ${e} errors`)
+}
+
+const fixIrons = async () => {
+    let a = 0
+    let e = 0
+    const irons = await Entry.findAll()
+    for (let i = 0; i < irons.length; i++) {
+        try {
+            const d = irons[i]
+            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
+            d.playerId = player.id
+            await d.save()
+            a++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
+    }
+
+    return console.log(`updated ${a} irons; encountered ${e} errors`)
+}
+
+const fixMatches = async () => {
+    let a = 0
+    let e = 0
+    const matches = await Match.findAll()
+    for (let i = 0; i < matches.length; i++) {
+        try {
+            const m = matches[i]
+            const winner = await Player.findOne({ where: { discordId: m.winnerId.toString() }})
+            m.winnerId = winner.id
+            const loser = await Player.findOne({ where: { discordId: m.loserId.toString() }})
+            m.loserId = loser.id
+            await m.save()
+            a++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
+    }
+
+    return console.log(`updated ${a} matches; encountered ${e} errors`)
+}
+
+const fixMemberships = async () => {
+    let a = 0
+    let e = 0
+    const memberships = await Membership.findAll()
+    for (let i = 0; i < memberships.length; i++) {
+        try {
+            const d = memberships[i]
+            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
+            d.playerId = player.id
+            await d.save()
+            a++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
+    }
+
+    return console.log(`updated ${a} memberships; encountered ${e} errors`)
+}
+
+const fixRatedDecks = async () => {
+    let a = 0
+    let e = 0
+    const ratedDecks = await RatedDeck.findAll()
+    for (let i = 0; i < ratedDecks.length; i++) {
+        try {
+            const d = ratedDecks[i]
+            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
+            d.playerId = player.id
+            await d.save()
+            a++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
+    }
+
+    return console.log(`updated ${a} rated decks; encountered ${e} errors`)
+}
+
+const fixRatedPools = async () => {
+    let a = 0
+    let e = 0
+    const ratedPools = await RatedPool.findAll()
+    for (let i = 0; i < ratedPools.length; i++) {
+        try {
+            const d = ratedPools[i]
+            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
+            d.playerId = player.id
+            await d.save()
+            a++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
+    }
+
+    return console.log(`updated ${a} rated pools; encountered ${e} errors`)
+}
+
+const fixServers = async () => {
+    let a = 0
+    let e = 0
+    const servers = await Server.findAll()
+    for (let i = 0; i < servers.length; i++) {
+        try {
+            const d = servers[i]
+            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
+            d.playerId = player.id
+            await d.save()
+            a++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
+    }
+
+    return console.log(`updated ${a} servers; encountered ${e} errors`)
+}
+
+const fixStats = async () => {
+    let a = 0
+    let e = 0
+    const stats = await Stats.findAll()
+    for (let i = 0; i < stats.length; i++) {
+        try {
+            const d = stats[i]
+            const player = await Stats.findOne({ where: { discordId: d.playerId.toString() }})
+            d.playerId = player.id
+            await d.save()
+            a++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
+    }
+
+    return console.log(`updated ${a} stats; encountered ${e} errors`)
+}
+
+fixDecks()
+fixEntries()
+fixIrons()
+fixMatches()
+fixMemberships()
+fixRatedPools()
+fixServers()
+fixStats()
+
+// fixBlogposts()
 // composeThumbnails()
 // composePreviews()
 // downloadDuelingBookAvatar('692063231988072479', '3904')
