@@ -1785,10 +1785,12 @@ try {
         
         const serverId = server.internalLadder ? server.id : '414551319031054346'
         const winningPlayer = await Player.findOne({ where: { discordId: winnerDiscordId } })
+        console.log('!!winningPlayer', !!winningPlayer)
         const wCount = await Stats.count({ where: { playerId: winningPlayer.Id, format: format.name, serverId: serverId } })
         if (!wCount) await Stats.create({ playerId: winningPlayer.id, format: format.name, serverId: serverId, internal: server.internalLadder })
         const winnerStats = await Stats.findOne({ where: { playerId: winningPlayer.id, format: format.name, serverId: serverId } })
         const losingPlayer = await Player.findOne({ where: { discordId: loserDiscordId } })
+        console.log('!!losingPlayer', !!losingPlayer)
         const lCount = await Stats.count({ where: { playerId: losingPlayer.id, format: format.name, serverId: serverId } })
         if (!lCount) await Stats.create({ playerId: losingPlayer.id, format: format.name, serverId: serverId, internal: server.internalLadder })
         const loserStats = await Stats.findOne({ where: { playerId: losingPlayer.id, format: format.name, serverId: serverId } })
