@@ -487,8 +487,8 @@ const fixStats = async () => {
 
 // fixDecks()
 // fixEntries()
-// fixIrons()
-fixMatches()
+fixIrons()
+// fixMatches()
 // fixMemberships()
 // fixRatedPools()
 // fixServers()
