@@ -1786,23 +1786,13 @@ try {
         
         const serverId = server.internalLadder ? server.id : '414551319031054346'
         const winningPlayer = await Player.findOne({ where: { discordId: winnerDiscordId } })
-        console.log('!!winningPlayer', !!winningPlayer)
-        console.log('winningPlayer.id', winningPlayer.id)
-        const banana = winningPlayer.Id
-        console.log('banana', banana)
-        console.log('{ playerId: banana, format: format.name, serverId: serverId }', { playerId: banana, format: format.name, serverId: serverId })
-        const wCount = await Stats.count({ where: { playerId: banana, format: format.name, serverId: serverId } })
-        console.log('wCount', wCount)
+        const wCount = await Stats.count({ where: { playerId: winningPlayer.id, format: format.name, serverId: serverId } })
         if (!wCount) await Stats.create({ playerId: winningPlayer.id, format: format.name, serverId: serverId, internal: server.internalLadder })
         const winnerStats = await Stats.findOne({ where: { playerId: winningPlayer.id, format: format.name, serverId: serverId } })
-        console.log('!!winnerStats', !!winnerStats)
         const losingPlayer = await Player.findOne({ where: { discordId: loserDiscordId } })
-        console.log('!!losingPlayer', !!losingPlayer)
         const lCount = await Stats.count({ where: { playerId: losingPlayer.id, format: format.name, serverId: serverId } })
-        console.log('lCount', lCount)
         if (!lCount) await Stats.create({ playerId: losingPlayer.id, format: format.name, serverId: serverId, internal: server.internalLadder })
         const loserStats = await Stats.findOne({ where: { playerId: losingPlayer.id, format: format.name, serverId: serverId } })
-        console.log('!!loserStats', !!loserStats)
 
         if (!losingPlayer || !loserStats) return message.channel.send({ content: `Sorry, <@${loserDiscordId}> is not in the database.`})
         if (!winningPlayer || !winnerStats) return message.channel.send({ content: `Sorry, <@${winnerDiscordId}> is not in the database.`})
