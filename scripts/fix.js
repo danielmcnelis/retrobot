@@ -379,18 +379,25 @@ const fixMemberships = async () => {
     const memberships = await Membership.findAll()
     for (let i = 0; i < memberships.length; i++) {
         try {
-            const d = memberships[i]
-            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
-            d.playerId = player.id
-            await d.save()
-            a++
+            const membership = memberships[i]
+            const count = await Membership.count({
+                where: {
+                    playerId: membership.playerId,
+                    guildName: membership.guildName
+                }
+            })
+
+            if (count > 1) {
+                await membership.destroy()
+                a++
+            }
         } catch (err) {
             console.log(err)
             e++
         }
     }
 
-    return console.log(`updated ${a} memberships; encountered ${e} errors`)
+    return console.log(`purged ${a} duplicate memberships; encountered ${e} errors`)
 }
 
 const fixRatedDecks = async () => {
@@ -501,11 +508,11 @@ const fixEvents = async () => {
     return console.log(`fixed ${b} events; encountered ${e} errors`)
 }
 
-fixDecks()
+// fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()
-// fixMemberships()
+fixMemberships()
 // fixRatedPools()
 // fixServers()
 // fixStats()
