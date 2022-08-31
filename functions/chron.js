@@ -3,6 +3,7 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const sharp = require('sharp')
+const roles = require('../static/roles.json')
 const { Card, Entry, Tournament, Match, Membership, Player, Print, RatedDeck, Role, Server, Set, Stats } = require('../db')
 const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
@@ -110,7 +111,7 @@ const conductCensus = async (client) => {
                     await createPlayer(member)
                 }
 
-                const membership = await Membership.count({ where: { playerId: member.user.id, serverId: guild.id } })
+                const membership = await Membership.count({ where: { '$player.discordId$': member.user.id, serverId: guild.id }, include: Player })
                 if (!membership) {
                     memberCount++
                     await createMembership(guild, member)
@@ -253,9 +254,8 @@ const purgeTourRoles = async (client) => {
     for (let s = 0; s < servers.length; s++) {
         try {
             const server = servers[s]
-            const roles = roles[server.name]
-            if (!roles) continue
-            const roleId = roles.tourRole
+            if (!roles[server.name]) continue
+            const roleId = roles[server.name].tourRole
             const guild = client.guilds.cache.get(server.id)
             const membersMap = await guild.members.fetch()
             const members = [...membersMap.values()]
@@ -653,6 +653,7 @@ const updateServers = async (client) => {
     for (let i = 0; i < servers.length; i++) {
         const server = servers[i]
         const guild = client.guilds.cache.get(server.id)
+        const owner = await Player.findOne({ where: { discordId: guild.ownerId }})
 
         if (!guild) {
             console.log(`could not find guild: ${server.name}`)
@@ -671,9 +672,9 @@ const updateServers = async (client) => {
             await server.save()
         }
 
-        if (server.ownerId !== guild.ownerId) {
-            console.log(`updating guild owner from ${server.ownerId} => ${guild.ownerId}`)
-            server.ownerId = guild.ownerId
+        if (owner && server.ownerId !== owner.id) {
+            console.log(`updating server owner from ${server.ownerId} => ${owner.id}`)
+            server.ownerId = owner.id
             await server.save()
         }
     }
