@@ -376,6 +376,8 @@ const createPlayer = async (member) => {
 //CREATE MEMBERSHIP
 const createMembership = async (guild, member) => {
     try {
+        const count = await Player.count({ where: { discordId: member.user.id }})
+        if (!count) await createPlayer(member)
         const player = await Player.findOne({ where: { discordId: member.user.id }})
 
         await Membership.create({
