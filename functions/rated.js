@@ -37,7 +37,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
         filter,
         max: 1,
         time: 5 * 60 * 1000
-    }).then(async (collected) => {f
+    }).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
         if (yescom.includes(response)) {
             const pairStillExists = await RatedPool.count({ where: { id: newRatedPool.id }})
