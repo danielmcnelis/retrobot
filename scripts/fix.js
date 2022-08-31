@@ -117,24 +117,6 @@ const erasePasswords = async () => {
 }
 
 
-const deleteMemberships = async () => {
-    let b = 0
-    const memberships = await Membership.findAll({
-        where: {
-            guildName: 'Discord Bots'
-        }
-    })
-
-    for (let i = 0; i < memberships.length; i++) {
-        const m = memberships[i]
-        await m.destroy()
-        b++
-    }
-
-    return console.log(`destroyed ${b} memberships`)
-}
-
-
 const fixInternal = async () => {
     const matches = await Match.findAll({
         where: {

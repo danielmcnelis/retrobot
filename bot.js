@@ -85,7 +85,7 @@ client.on('guildMemberRemove', async (member) => {
         if (!server || !hasPartnerAccess(server)) return
         const channel = guild.channels.cache.get(channels[guild.name].welcomeChannel)
         channel.send({ content: `Oh dear. ${member.user.username} has left the server. ${emojis.sad}`})
-        const membership = await Membership.findOne({ where: { playerId: member.user.id, serverId: guild.id }})
+        const membership = await Membership.findOne({ where: { '$player.discordId$': member.user.id, serverId: guild.id }, include: Player })
         membership.active = false
         await membership.save()
     } catch (err) {

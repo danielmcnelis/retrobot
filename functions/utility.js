@@ -324,7 +324,7 @@ const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, card
 
 //ASSIGN ROLES
 const assignRoles = async (guild, member) => {
-    const membership = await Membership.findOne({ where: { playerId: member.user.id, serverId: guild.id }})
+    const membership = await Membership.findOne({ where: { '$player.discordId$': member.user.id, serverId: guild.id }, include: Player })
     membership.active = true
     await membership.save()
     if (!membership) return
@@ -357,11 +357,12 @@ const convertArrayToObject = (arr = []) => {
 
 //CREATE PLAYER
 const createPlayer = async (member) => {
+    console.log('createPlayer() member', member)
     if (member && !member.user.bot) {
         try {
             await Player.create({
-                discordId: `${member.user.id}`,
                 name: `${member.user.username}`,
+                discordId: `${member.user.id}`,
                 discriminator: `${member.user.discriminator}`
             })
         } catch (err) {
