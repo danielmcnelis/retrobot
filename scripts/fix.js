@@ -1,7 +1,7 @@
 
 
 const { Op } = require('sequelize')
-const { BlogPost, Card, Deck, DeckType, Event, Format, Match, Matchup, Membership, Player, Server, Stats, Status  } = require('../db')
+const { BlogPost, Card, Deck, DeckType, DeckThumb, Entry, Event, Format, Info, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('../db')
 const { capitalize } = require('../functions/utility')
 const axios = require('axios')
 const Canvas = require('canvas')
@@ -372,9 +372,23 @@ const composePreviews = async () => {
     return console.log(`composed ${b} previews`)
 }
 
-composeThumbnails()
-composePreviews()
+const fixBlogposts = async () => {
+    let a = 0
+    const blogposts = await BlogPost.findAll()
+    for (let i = 0; i < blogposts.length; i++) {
+        const b = blogposts[i]
+        const player = await Player.findOne({ where: { discordId: b.playerId }})
+        b.playerId = player.id
+        await b.save()
+        a++
+    }
 
+    return console.log(`updated ${a} blog posts`)
+}
+
+fixBlogposts()
+// composeThumbnails()
+// composePreviews()
 // downloadDuelingBookAvatar('692063231988072479', '3904')
 // findMissingBlogPostPFPs()
 // fixInternal()
