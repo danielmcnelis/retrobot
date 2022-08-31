@@ -374,6 +374,7 @@ const composePreviews = async () => {
 
 const fixBlogposts = async () => {
     let a = 0
+    let e = 0
     const blogposts = await BlogPost.findAll()
     for (let i = 0; i < blogposts.length; i++) {
         try {
