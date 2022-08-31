@@ -19,7 +19,7 @@ const { getIssues } = require('./deck')
 
 const getPotentialPairConfirmation = async (client, format, potentialPair, newRatedPool, commonGuildId) => {
     const guild = client.guilds.cache.get(commonGuildId)
-    const member = await guild.members.fetch(potentialPair.playerId)
+    const member = await guild.members.fetch(potentialPair.player.discordId)
     if (!member) return
 
     try {
@@ -30,14 +30,14 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
         return message.channel.send(`Sorry, something went wrong. I've removed you from the Rated ${newRatedPool.format} Format player pool.`)
     }
 
-    const filter = m => m.author.id === potentialPair.playerId
+    const filter = m => m.author.id === potentialPair.player.discordId
     const message = await member.user.send({ content: `I've found a Rated ${format.name} Format ${format.emoji} opponent for you. Do you still wish to play?`})
     if (!message) return
     return await message.channel.awaitMessages({
         filter,
         max: 1,
         time: 5 * 60 * 1000
-    }).then(async (collected) => {
+    }).then(async (collected) => {f
         const response = collected.first().content.toLowerCase()
         if (yescom.includes(response)) {
             const pairStillExists = await RatedPool.count({ where: { id: newRatedPool.id }})
@@ -50,9 +50,9 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             const commonServer = await Server.findOne({ where: { id: commonGuildId }})
             const channelId = commonServer.format ? channels[commonServer.name].ratedChannel : format.channel
             const channel = guild.channels.cache.get(channelId)
-            const player = await Player.findOne({ where: { id: potentialPair.playerId }})
+            const player = potentialPair.player
             const opponent = await Player.findOne({ where: { id: newRatedPool.playerId }})
-            const opposingMember = await guild.members.fetch(opponent.id)
+            const opposingMember = await guild.members.fetch(opponent.discordId)
 
             opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${player.tag}\nDuelingBook: ${player.duelingBook}`)
             message.channel.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.tag}\nDuelingBook: ${opponent.duelingBook}`)
@@ -73,7 +73,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
                     format: { [Op.iLike]: format.name }, 
                     games: { [Op.gte]: 3 },
                     serverId: '414551319031054346',
-                    '$player.blacklisted$': false
+                    '$player.hidden$': false
                 },
                 include: [Player],
                 order: [['elo', 'DESC']] 
@@ -84,7 +84,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             const p2Index = allStats.findIndex((s) => s.playerId === opponent.id)
             const p2Rank = p2Index >= 0 ? `#${p2Index + 1} ` : ''
 
-            return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: ${p2Rank}<@${opponent.id}> (DB: ${opponent.duelingBook}) vs. ${p1Rank}<@${player.id}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
+            return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: ${p2Rank}<@${opponent.discordId}> (DB: ${opponent.duelingBook}) vs. ${p1Rank}<@${player.discordId}> (DB: ${player.duelingBook}). Good luck to both duelists.`})
         } else {
             await potentialPair.destroy()
             return message.channel.send(`Not a problem. I've removed you from the Rated ${format.name} Format ${format.emoji} player pool.`)

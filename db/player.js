@@ -5,29 +5,34 @@ const { db } = require('./db')
 const Player = db.define('players', {
     id: {
         primaryKey: true,
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
     },
     name: {
         type: Sequelize.STRING
     },
-    tag: {
+    discriminator: {
+        type: Sequelize.STRING
+    },
+    discordId: {
         type: Sequelize.STRING
     },
     duelingBook: {
         type: Sequelize.STRING
     },
-    realName: {
+    firstName: {
         type: Sequelize.STRING
     },
-    password: {
+    lastName: {
+        type: Sequelize.STRING
+    },
+    hash: {
         type: Sequelize.STRING
     },
     admin: {
         type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        allowNull: true
+        defaultValue: false
     },
-    blacklisted: {
+    hidden: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     },

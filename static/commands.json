@@ -1,6 +1,5 @@
 {
   "activitycom": ["!a", "!activity", "!active", "!act"],
-  "banscom": ["!banlist", "!bans", "!list"],
   "botcom": ["!bot", "!guide", "!help"],
   "bracketcom": [
     "!b",
@@ -17,7 +16,7 @@
   "flipcom": ["!flip", "!coin"],
   "h2hcom": ["!h2h", "!head2head", "!headtohead"],
   "histcom": ["!h", "!hist", "!history"],
-  "infocom": ["!info", "!format", "!overview", "!intro"],
+  "infocom": ["!banlist", "!bans", "!list", "!info", "!format", "!overview", "!intro"],
   "ironcom": ["!iron", "!fe"],
   "joincom": ["!j", "!join", "!resubmit", "!in", "!play", "!enter"],
   "legalcom": [

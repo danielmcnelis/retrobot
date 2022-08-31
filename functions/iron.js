@@ -12,7 +12,7 @@ const confirmIron = async (channel, format) => {
     info.status = 'confirming'
     await info.save()
     channel.send({ content: `Iron players, please check your DMs!`})
-    const entries = await Iron.findAll({ where: { format: format.name }})
+    const entries = await Iron.findAll({ where: { format: format.name }, include: Player})
     getIronConfirmation(entries[0], channel, format)
     getIronConfirmation(entries[1], channel, format)
     getIronConfirmation(entries[2], channel, format)
@@ -96,10 +96,10 @@ const confirmIron = async (channel, format) => {
 //GET IRON CONFIRMATION
 const getIronConfirmation = async (entry, channel, format) => {
     const guild = client.guilds.cache.get("414551319031054346")
-    const playerId = entry.playerId
-    const member = guild.members.cache.get(playerId)
-    if (!member || playerId !== member.user.id) return channel.send({ content: `${entry.name} cannot be sent DMs.` })
-    const filter = m => m.author.id === playerId
+    const discordId = entry.player.discordId
+    const member = guild.members.cache.get(discordId)
+    if (!member || discordId !== member.user.id) return channel.send({ content: `${entry.name} cannot be sent DMs.` })
+    const filter = m => m.author.id === discordId
 	const message = await member.send({ content: `Do you still wish to play in the ${format.name} Iron? ${format.emoji} ${emojis.iron}`}).catch((err) => console.log(err))
     if (!message || !message.channel) return false
 	await message.channel.awaitMessages({ 
@@ -132,7 +132,7 @@ const getIronConfirmation = async (entry, channel, format) => {
 const assignIronRoles = (entries) => {
     const guild = client.guilds.cache.get("414551319031054346")
     entries.forEach((entry) => {
-        const member = guild.members.cache.get(entry.playerId)
+        const member = guild.members.cache.get(entry.player.discordId)
         member.roles.add(roles['Format Library'].ironRole)
     })
 }
@@ -162,7 +162,8 @@ const assignCaptains = async (entries, channel, format) => {
         where: {
             format: format.name,
             playerId: captains[0]
-        }
+        },
+        include: Player
     })
 
     captainA.captain = true
@@ -173,14 +174,15 @@ const assignCaptains = async (entries, channel, format) => {
         where: {
             format: format.name,
             playerId: captains[1]
-        }
+        },
+        include: Player
     })
 
     captainB.captain = true
     captainB.team = 'B'
     await captainB.save()
 
-    channel.send({ content: `<@${captainA.playerId}> and <@${captainB.playerId}> are captains. You have 30 seconds to make each pick.`})
+    channel.send({ content: `<@${captainA.player.discordId}> and <@${captainB.player.discordId}> are captains. You have 60 seconds to make each pick.`})
     draftTeams(1, captainA, captainB, channel, format)
 }
 
@@ -195,7 +197,8 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
             format: format.name,
             captain: false,
             team: null
-        }
+        },
+        include: Player
     })]
 
     const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
@@ -204,16 +207,16 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
         const ironPerson = ironPeople[0]
         ironPerson.team = team
         await ironPerson.save()
-        channel.send({ content: `<@${ironPerson.playerId}> has been assigned to ${captain.name}'s Team!`})
+        channel.send({ content: `<@${ironPerson.player.discordId}> has been assigned to ${captain.name}'s Team!`})
         chooseOrder(captainA, 'A', channel, format)
         chooseOrder(captainB, 'B', channel, format)
         return
     } else {
-        channel.send({ content: `<@${captain.playerId}>, Please select a player:\n${players.join('\n')}`})
+        channel.send({ content: `<@${captain.player.discordId}>, Please select a player:\n${players.join('\n')}`})
         return await channel.awaitMessages({ 
             filter,
             max: 1,
-            time: 30000
+            time: 60000
         }).then(async (collected) => {
             const response = collected.first().content.toLowerCase()
             const index = response.includes('1') ? 0 :
@@ -238,7 +241,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
     
                 ironPerson.team = team
                 await ironPerson.save()
-                channel.send({ content: `${captain.name} selected <@${ironPerson.playerId}>!`})
+                channel.send({ content: `${captain.name} selected <@${ironPerson.player.discordId}>!`})
                 return setTimeout(() => draftTeams(pick + 1, captainA, captainB, channel, format), 2000)
             }
         }).catch(async (err) => {
@@ -257,7 +260,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
     
             ironPerson.team = team
             await ironPerson.save()
-            channel.send({ content: `<@${ironPerson.playerId}> was randomly assigned to ${captain.name}'s Team!`})
+            channel.send({ content: `<@${ironPerson.player.discordId}> was randomly assigned to ${captain.name}'s Team!`})
             return setTimeout(() => draftTeams(pick + 1, captainA, captainB, channel, format), 2000)
         })
     }	
@@ -266,8 +269,8 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
 //CHOOSE ORDER
 const chooseOrder = async (captain = {}, team, channel, format) => {
     const guild = client.guilds.cache.get("414551319031054346")
-    const playerId = captain.playerId
-    const member = guild.members.cache.get(playerId)
+    const discordId = captain.player.discordId
+    const member = guild.members.cache.get(discordId)
     if (!member) return channel.send(`Unable to message ${captain.name}.`)
     
     const ironPeople = [
@@ -322,7 +325,7 @@ const chooseOrder = async (captain = {}, team, channel, format) => {
     }
 
     const time = 30000 * players.length
-    const filter = m => m.author.id === playerId
+    const filter = m => m.author.id === discordId
 	const message = await member.send({ content: `${captain.name}, You have ${time / 1000}s to choose who will go ${word} for Team ${team}:\n${players.join('\n')}`})
 	return await message.channel.awaitMessages({ 
         filter,
@@ -375,6 +378,7 @@ const postPairing = async (channel, format) => {
             team: 'A',
             eliminated: false
         },
+        include: Player,
         order: [["position", "ASC"]]
     })]
 
@@ -384,14 +388,15 @@ const postPairing = async (channel, format) => {
             team: 'B',
             eliminated: false
         },
+        include: Player,
         order: [["position", "ASC"]]
     })]
     
     if (!teamA.length) {
-        const participants = await Iron.findAll({ where: { format: format.name }}) || []
+        const participants = await Iron.findAll({ where: { format: format.name }, include: Player }) || []
         for (let i = 0; i < participants.length; i++) {
             const participant = participants[i]
-            const member = channel.guild.members.cache.get(participant.playerId)
+            const member = channel.guild.members.cache.get(participant.player.discordId)
             try {
                 await participant.destroy()
                 member.roles.remove(roles['Format Library'].ironRole)
@@ -405,10 +410,10 @@ const postPairing = async (channel, format) => {
     }
 
     if (!teamB.length) {
-        const participants = await Iron.findAll({ where: { format: format.name }}) || []
+        const participants = await Iron.findAll({ where: { format: format.name }, include: Player }) || []
         for (let i = 0; i < participants.length; i++) {
             const participant = participants[i]
-            const member = channel.guild.members.cache.get(participant.playerId)
+            const member = channel.guild.members.cache.get(participant.player.discordId)
             try {
                 await participant.destroy()
                 member.roles.remove(roles['Format Library'].ironRole)
@@ -423,7 +428,7 @@ const postPairing = async (channel, format) => {
 
     return channel.send({ content:
         `${emojis.iron} --- Iron Match #${matchNo} --- ${emojis.iron}` + 
-        `\n<@${teamA[0].playerId}> vs <@${teamB[0].playerId}>`
+        `\n<@${teamA[0].player.discordId}> vs <@${teamB[0].player.discordId}>`
     })
 }
 

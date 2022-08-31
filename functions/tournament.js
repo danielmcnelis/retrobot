@@ -126,11 +126,11 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
 }
 
 // SELECT TOURNAMENT
-const selectTournament = async (message, tournaments, playerId) => {
+const selectTournament = async (message, tournaments, discordId) => {
     if (tournaments.length === 0) return false
     if (tournaments.length === 1) return tournaments[0]
     const options = tournaments.map((tournament, index) => `(${index + 1}) ${tournament.name}`)
-    const filter = m => m.author.id === playerId
+    const filter = m => m.author.id === discordId
     message.channel.send({ content: `Please select a tournament:\n${options.join('\n').toString()}`})
     return await message.channel.awaitMessages({
         filter,
@@ -606,8 +606,8 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
         
         if (!winnerNextMatch || (winnerNextMatch && loserNextMatch !== winnerNextMatch)) {
             setTimeout(() => {
-                if (!winnerNextMatch) return message.channel.send({ content: `<@${winningPlayer.id}>, You won the tournament! Congratulations on your stellar performance! ${legend}`})
-                else if (winnerNextOpponent) return message.channel.send({ content: `New Match: <@${winningPlayer.id}> (DB: ${winningPlayer.duelingBook}) vs. <@${winnerNextOpponent.playerId}> (DB: ${winnerNextOpponent.player.duelingBook}). Good luck to both duelists.`})
+                if (!winnerNextMatch) return message.channel.send({ content: `<@${winningPlayer.discordId}>, You won the tournament! Congratulations on your stellar performance! ${legend}`})
+                else if (winnerNextOpponent) return message.channel.send({ content: `New Match: <@${winningPlayer.discordId}> (DB: ${winningPlayer.duelingBook}) vs. <@${winnerNextOpponent.discordId}> (DB: ${winnerNextOpponent.player.duelingBook}). Good luck to both duelists.`})
                 else if (winnerMatchWaitingOn && winnerWaitingOnP1 && winnerWaitingOnP2) {
                     return message.channel.send({ content: `${winningPlayer.name}, You are waiting for the result of ${winnerWaitingOnP1.player.name} (DB: ${winnerWaitingOnP1.player.duelingBook}) vs ${winnerWaitingOnP2.player.name} (DB: ${winnerWaitingOnP2.player.duelingBook}).`})
                 }

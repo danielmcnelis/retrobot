@@ -360,9 +360,9 @@ const createPlayer = async (member) => {
     if (member && !member.user.bot) {
         try {
             await Player.create({
-                id: `${member.user.id}`,
+                discordId: `${member.user.id}`,
                 name: `${member.user.username}`,
-                tag: `${member.user.tag}`
+                discriminator: `${member.user.discriminator}`
             })
         } catch (err) {
             console.log(err)
@@ -373,9 +373,11 @@ const createPlayer = async (member) => {
 //CREATE MEMBERSHIP
 const createMembership = async (guild, member) => {
     try {
+        const player = await Player.findOne({ where: { discordId: member.user.id }})
+
         await Membership.create({
             guildName: guild.name,
-            playerId: `${member.user.id}`,
+            playerId: player.id,
             serverId: guild.id
         })
     } catch (err) {
@@ -468,10 +470,13 @@ const isMod = (server, member) => server && member && member.roles.cache.some(ro
 const isIronPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].ironRole)
 
 //IS NEW MEMBER?
-const isNewMember = async (server, serverId, playerId) => server && server.access !== 'limited' && !await Membership.count({ where: { serverId, playerId } })
+const isNewMember = async (serverId, discordId) => {
+    const player = await Player.findOne({ where: { discordId: discordId }}) 
+    if (await Membership.count({ where: { serverId, playerId: player.id } })) return false
+}
 
 //IS NEW USER?
-const isNewUser = async (server, id) => server && server.access !== 'limited' && !await Player.count({ where: { id } })
+const isNewUser = async (id) => !await Player.count({ where: { id } })
 
 //IS TOURNAMENT PLAYER?
 const isTourPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].tourRole)
@@ -494,9 +499,9 @@ const shuffleArray = (arr) => {
 
 //TRACK STATS
 const trackStats = async (server, id, format) => {
-    if (await isNewUser(server, id)) {
+    if (await isNewUser(id)) {
         const member = { user: { id: id } }
-        await createPlayer(server, member)
+        await createPlayer(member)
         return trackStats(server, id, format)
     } else {
         await Stats.create({

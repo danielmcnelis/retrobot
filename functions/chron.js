@@ -3,8 +3,7 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const sharp = require('sharp')
-const roles = require('../static/roles.json')
-const { Card, Entry, Tournament, Membership, Player, Print, RatedDeck, Role, Server, Set, Stats, Match } = require('../db')
+const { Card, Entry, Tournament, Match, Membership, Player, Print, RatedDeck, Role, Server, Set, Stats } = require('../db')
 const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
 const { Op } = require('sequelize')
@@ -37,7 +36,7 @@ const updateAvatars = async (client) => {
                     const user = member.user
                     const avatar = user.avatar
                     if (!avatar) continue
-                    const player = await Player.findOne({ where: { id: memberId }})
+                    const player = await Player.findOne({ where: { discordId: memberId }})
         
                     if (player && player.avatar !== avatar) {
                         player.avatar = avatar
@@ -59,7 +58,7 @@ const updateAvatars = async (client) => {
                     const image = await Canvas.loadImage(png)
                     context.drawImage(image, 0, 0, 128, 128)
                     const buffer = canvas.toBuffer('image/png')
-                    fs.writeFileSync(`../formatlibrary/public/images/pfps/${player.id}.png`, buffer)
+                    fs.writeFileSync(`../formatlibrary/public/images/pfps/${player.discordId}.png`, buffer)
                     console.log(`saved new pfp for ${player.name}`)
                     count++
                 } catch (err) {
@@ -99,12 +98,12 @@ const conductCensus = async (client) => {
             for (let i = 0; i < members.length; i++) {
                 const member = members[i]
                 if (member.user.bot) continue
-                const player = await Player.findOne({ where: { id: member.user.id } })
-                if (player && ( player.name !== member.user.username || player.tag !== member.user.tag )) {
+                const player = await Player.findOne({ where: { discordId: member.user.id } })
+                if (player && ( player.name !== member.user.username || player.discriminator !== member.user.discriminator )) {
                     updateCount++
                     await player.update({
                         name: member.user.username,
-                        tag: member.user.tag
+                        discriminator: member.user.discriminator
                     })
                 } else if (!player && !member.user.bot) {
                     createCount++
@@ -119,7 +118,7 @@ const conductCensus = async (client) => {
 
                 for (let j = 0; j < member._roles.length; j ++) {
                     const roleId = member._roles[j]
-                    const membership = await Membership.findOne({ where: { playerId: member.user.id, serverId: guild.id } })
+                    const membership = await Membership.findOne({ where: { '$player.discordId': member.user.id, serverId: guild.id }, include: Player })
                     if (!membership) break
                     const count = await Role.count({ where: { membershipId: membership.id, roleId: roleId }})
                     if (!count) {
@@ -135,15 +134,15 @@ const conductCensus = async (client) => {
             }
 
             const memberIds = members.map((m) => m.user.id)
-            const memberships = await Membership.findAll({ where: { serverId: guild.id } }) || []
+            const memberships = await Membership.findAll({ where: { serverId: guild.id }, include: Player }) || []
             for (let i = 0; i < memberships.length; i++) {
                 try {
                     const m = memberships[i]
-                    if (m.active === true && !memberIds.includes(m.playerId)) {
+                    if (m.active === true && !memberIds.includes(m.player.discordId)) {
                         m.active = false
                         await m.save()
                         inactivatedCount++
-                    } else if (m.active === false && memberIds.includes(m.playerId)) {
+                    } else if (m.active === false && memberIds.includes(m.player.discordId)) {
                         m.active = true
                         await m.save()
                         reactivatedCount++
@@ -175,7 +174,7 @@ const markInactives = async () => {
     let b = 0
     const oneYearAgo = new Date() - (365 * 24 * 60 * 60 * 1000)
     const stats = await Stats.findAll({ where: { inactive: {[Op.not]: true }}, include: Player })
-    console.log('stats.length', stats.length)
+
     for (let i = 0; i < stats.length; i++) {
         const s = stats[i]
         const count = await Match.count({ 
@@ -200,7 +199,7 @@ const markInactives = async () => {
     }
 
     console.log(`Inactivated ${b} stats rows in the database.`)
-    return setTimeout(() => purgeEntries(), (24 * 60 * 60 * 1000))
+    return setTimeout(() => markInactives(), (24 * 60 * 60 * 1000))
 }
 
 // PURGE ENTRIES
@@ -267,10 +266,10 @@ const purgeTourRoles = async (client) => {
 
                 const count = await Entry.count({
                     where: {
-                        playerId: member.user.id,
+                        '$player.discordId': member.user.id,
                         '$tournament.serverId$': server.id
                     },
-                    include: Tournament
+                    include: [Player, Tournament]
                 })
 
                 if (member && !count) {

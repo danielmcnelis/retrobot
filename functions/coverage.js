@@ -3,7 +3,7 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const { Op } = require('sequelize')
-const { BlogPost, Card, Deck, DeckType, Event, Format, Player, Tournament } = require('../db')
+const { BlogPost, Card, Deck, DeckType, Event, Format, Player } = require('../db')
 const { capitalize, dateToVerbose } = require('./utility')
 const { getDeckType } = require('./deck')
 
@@ -24,8 +24,8 @@ const createDecks = async (message, event, tournament, useTags = true) => {
         const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${tournament.server.challongeAPIKey}`)
         if (!data) return
         const participants = data.map((d) => d.participant.name)
-        const players = await Player.findAll({ where: { tag: {[Op.not]: null } }})
-        const shortenedTags = useTags ? players.map((p) => p.tag.replace(/\s/gi, '_').replace(/[^\w\s]/gi, '_')) :
+        const players = await Player.findAll({ where: { discriminator: {[Op.not]: null } }})
+        const shortenedTags = useTags ? players.map((p) => p.name.replace(/[^-?|!.'$\w\s]/gi, '_') + p.discriminator) :
                                         players.map((p) => p.name.replace(/[^-?|!.'$\w\s]/gi, '_'))
 
         fs.readdir(`./decks/${tournament.community}/${tournament.name}/`, async (err, files) => {
