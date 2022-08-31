@@ -119,7 +119,7 @@ const conductCensus = async (client) => {
 
                 for (let j = 0; j < member._roles.length; j ++) {
                     const roleId = member._roles[j]
-                    const membership = await Membership.findOne({ where: { '$player.discordId': member.user.id, serverId: guild.id }, include: Player })
+                    const membership = await Membership.findOne({ where: { '$player.discordId$': member.user.id, serverId: guild.id }, include: Player })
                     if (!membership) break
                     const count = await Role.count({ where: { membershipId: membership.id, roleId: roleId }})
                     if (!count) {
@@ -256,6 +256,7 @@ const purgeTourRoles = async (client) => {
             const server = servers[s]
             if (!roles[server.name]) continue
             const roleId = roles[server.name].tourRole
+            if (!roleId) continue
             const guild = client.guilds.cache.get(server.id)
             const membersMap = await guild.members.fetch()
             const members = [...membersMap.values()]
@@ -653,6 +654,9 @@ const updateServers = async (client) => {
     for (let i = 0; i < servers.length; i++) {
         const server = servers[i]
         const guild = client.guilds.cache.get(server.id)
+        if (!guild) {
+            console.log(`${server.name} cannot be found in the client cache`)
+        }
         const owner = await Player.findOne({ where: { discordId: guild.ownerId }})
 
         if (!guild) {
