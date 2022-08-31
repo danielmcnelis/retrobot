@@ -1772,7 +1772,8 @@ try {
         const loserDiscordId = userIds.length > 1 ? userIds[1] : args.length > 1 ? args[1] : null	
         if (!winnerDiscordId || !loserDiscordId) return message.channel.send({ content: `Please specify 2 players.`})
         if (winnerDiscordId === loserDiscordId) return message.channel.send({ content: `Please specify 2 different players.`})
-
+        console.log('winnerDiscordId', winnerDiscordId)
+        console.log('loserDiscordId', loserDiscordId)
         const winner = await message.guild.members.fetch(winnerDiscordId)
         const loser = await message.guild.members.fetch(loserDiscordId)
         if ((winner && winner.user.bot) ||  (loser && loser.user.bot)  ) return message.channel.send({ content: `Sorry, Bots do not play ${format.name} Format... *yet*.`})
@@ -1786,6 +1787,7 @@ try {
         const serverId = server.internalLadder ? server.id : '414551319031054346'
         const winningPlayer = await Player.findOne({ where: { discordId: winnerDiscordId } })
         console.log('!!winningPlayer', !!winningPlayer)
+        console.log('winningPlayer.id', winningPlayer.id)
         const wCount = await Stats.count({ where: { playerId: winningPlayer.Id, format: format.name, serverId: serverId } })
         console.log('wCount', wCount)
         if (!wCount) await Stats.create({ playerId: winningPlayer.id, format: format.name, serverId: serverId, internal: server.internalLadder })
