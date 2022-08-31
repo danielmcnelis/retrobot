@@ -310,7 +310,13 @@ const fixDecks = async () => {
     for (let i = 0; i < decks.length; i++) {
         try {
             const d = decks[i]
-            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
+            const player = await Player.findOne({ where: { 
+                [Op.or]: {
+                    discordId: d.playerId.toString(),
+                    firstName: d.playerId
+                }
+            }})
+            
             d.playerId = player.id
             await d.save()
             a++
@@ -513,7 +519,7 @@ const fixEvents = async () => {
     return console.log(`fixed ${b} events; encountered ${e} errors`)
 }
 
-// fixDecks()
+fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()
@@ -522,7 +528,7 @@ const fixEvents = async () => {
 // fixServers()
 // fixStats()
 // fixRatedDecks()
-fixEvents()
+// fixEvents()
 
 // fixBlogposts()
 // composeThumbnails()
