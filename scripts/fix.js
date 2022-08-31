@@ -346,7 +346,7 @@ const fixEntries = async () => {
 const fixIrons = async () => {
     let a = 0
     let e = 0
-    const irons = await Entry.findAll()
+    const irons = await Iron.findAll()
     for (let i = 0; i < irons.length; i++) {
         try {
             const d = irons[i]
