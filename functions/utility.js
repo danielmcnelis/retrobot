@@ -324,6 +324,8 @@ const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, card
 
 //ASSIGN ROLES
 const assignRoles = async (guild, member) => {
+    console.log('assignRoles() member.user.id', member.user.id)
+    console.log('assignRoles() guild.id', guild.id)
     const membership = await Membership.findOne({ where: { '$player.discordId$': member.user.id, serverId: guild.id }, include: Player })
     membership.active = true
     await membership.save()
