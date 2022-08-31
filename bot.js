@@ -45,14 +45,14 @@ client.on('ready', async() => {
 
     const midnightCountdown = 1 || getMidnightCountdown()
     setTimeout(() => purgeEntries(), midnightCountdown)
-    setTimeout(() => markInactives(), midnightCountdown + (1 * 60 * 1000))
-    setTimeout(() => purgeTourRoles(client), midnightCountdown + (2 * 60 * 1000))
-    setTimeout(() => purgeRatedDecks(), midnightCountdown + (3 * 60 * 1000))
-    setTimeout(() => updateServers(client), midnightCountdown + (4 * 60 * 1000))
-    setTimeout(() => conductCensus(client), midnightCountdown + (5 * 60 * 1000))
-    setTimeout(() => updateAvatars(client), midnightCountdown + (8 * 60 * 1000))
-    setTimeout(() => updateSets(), midnightCountdown + (11 * 60 * 1000))
-    setTimeout(() => downloadNewCards(), midnightCountdown + (14 * 60 * 1000))
+    setTimeout(() => purgeTourRoles(client), midnightCountdown + (0.25 * 60 * 1000))
+    setTimeout(() => markInactives(), midnightCountdown + (0.5 * 60 * 1000))
+    setTimeout(() => updateServers(client), midnightCountdown + (0.75 * 60 * 1000))
+    setTimeout(() => conductCensus(client), midnightCountdown + (1 * 60 * 1000))
+    setTimeout(() => updateAvatars(client), midnightCountdown + (5.5 * 60 * 1000))
+    setTimeout(() => updateSets(), midnightCountdown + (8 * 60 * 1000))
+    setTimeout(() => downloadNewCards(), midnightCountdown + (10 * 60 * 1000))
+    setTimeout(() => purgeRatedDecks(), midnightCountdown + (12 * 60 * 1000))
 })
 
 // WELCOME
@@ -956,7 +956,7 @@ try {
             createMembership(message.guild, message.member)
             return message.channel.send({ content: `You are not in the database.`})
         }
-        
+
         if (!message.member.roles.cache.some(role => role.id === roleId)) {
             try {
                 await message.member.roles.add(roleId)

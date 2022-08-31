@@ -48,7 +48,7 @@ const updateAvatars = async (client) => {
                     }
                     
                     const {data} = await axios.get(
-                        `https://cdn.discordapp.com/avatars/${player.id}/${avatar}.webp`, {
+                        `https://cdn.discordapp.com/avatars/${player.discordId}/${avatar}.webp`, {
                             responseType: 'arraybuffer',
                         }
                     )
@@ -85,6 +85,10 @@ const conductCensus = async (client) => {
         try {
             const server = servers[s]
             const guild = client.guilds.cache.get(server.id)
+            if (!guild) {
+                console.log(`cannot find cached guild for ${server.name}`)
+                continue
+            }
             const membersMap = await guild.members.fetch()
             const members = [...membersMap.values()]
             const rolesMap = guild.roles.cache
