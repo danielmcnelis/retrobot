@@ -2239,14 +2239,14 @@ try {
                 const yourRecentOpponents = [...await Match.findAll({
                     where: {
                         [Op.or]: {
-                            winnerId: maid,
-                            loserId: maid
+                            winnerId: player.id,
+                            loserId: player.id
                         },
                         format: format.name,
                         createdAt: {[Op.gte]: oneHourAgo }
                     }
                 })].map((m) => {
-                    if (maid === m.winnerId) {
+                    if (player.id === m.winnerId) {
                         return m.loserId
                     } else {
                         return m.winnerId
