@@ -3,10 +3,6 @@ const Sequelize = require('sequelize')
 const { db } = require('./db')
 
 const Player = db.define('players', {
-    id: {
-        primaryKey: true,
-        type: Sequelize.INTEGER
-    },
     name: {
         type: Sequelize.STRING
     },
