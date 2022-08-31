@@ -376,14 +376,19 @@ const fixBlogposts = async () => {
     let a = 0
     const blogposts = await BlogPost.findAll()
     for (let i = 0; i < blogposts.length; i++) {
-        const b = blogposts[i]
-        const player = await Player.findOne({ where: { discordId: b.playerId }})
-        b.playerId = player.id
-        await b.save()
-        a++
+        try {
+            const b = blogposts[i]
+            const player = await Player.findOne({ where: { discordId: b.playerId.toString() }})
+            b.playerId = player.id
+            await b.save()
+            a++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
     }
 
-    return console.log(`updated ${a} blog posts`)
+    return console.log(`updated ${a} blog posts; encountered ${e} errors`)
 }
 
 fixBlogposts()
