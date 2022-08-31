@@ -470,10 +470,7 @@ const isMod = (server, member) => server && member && member.roles.cache.some(ro
 const isIronPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].ironRole)
 
 //IS NEW MEMBER?
-const isNewMember = async (serverId, discordId) => {
-    const player = await Player.findOne({ where: { discordId: discordId }}) 
-    if (await Membership.count({ where: { serverId, playerId: player.id } })) return false
-}
+const isNewMember = async (serverId, discordId) => !!await Membership.count({ where: { serverId, '$player.discordId$': discordId }, include: Player })
 
 //IS NEW USER?
 const isNewUser = async (discordId) => !await Player.count({ where: { discordId: discordId } })
