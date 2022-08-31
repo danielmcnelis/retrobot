@@ -59,5 +59,10 @@
   "Game Over YGO": {
     "ratedChannel": "1009975175577612390",
     "botSpamChannel": "1009975175577612390"
+  },
+  "HATFormat.com": {
+    "ratedChannel": "927760598660440195",
+    "botSpamChannel": "927760598488465452",
+    "welcomeChannel": "927760598312316998"
   }
 }
