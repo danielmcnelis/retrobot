@@ -198,9 +198,9 @@ try {
                 const winnerId = match.winnerId
                 const loserId = match.loserId
                 const winningPlayer = await Player.findOne({ where: { discordId: winnerId }})
-                const winnerStats = await Stats.findOne({ where: { '$player.discordId': winnerId, format: format.name, serverId: serverId }, include: Player })
+                const winnerStats = await Stats.findOne({ where: { '$player.discordId$': winnerId, format: format.name, serverId: serverId }, include: Player })
                 const losingPlayer = await Player.findOne({ where: { discordId: loserId }})
-                const loserStats = await Stats.findOne({ where: { '$player.discordId': loserId, format: format.name, serverId: serverId }, include: Player })
+                const loserStats = await Stats.findOne({ where: { '$player.discordId$': loserId, format: format.name, serverId: serverId }, include: Player })
     
                 if (!winningPlayer || !winnerStats) {
                     await trackStats(server, winnerId, format.name)
@@ -860,7 +860,7 @@ try {
     // DROP
     if(commands.dropcom.includes(cmd)) {
         if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
-        const tournaments = [...await Entry.findAll({ where: { '$player.discordId': maid }, include: [Player, Tournament] })].map((e) => e.tournament).filter((t) => t.serverId === message.guild.id)
+        const tournaments = [...await Entry.findAll({ where: { '$player.discordId$': maid }, include: [Player, Tournament] })].map((e) => e.tournament).filter((t) => t.serverId === message.guild.id)
         if (!tournaments.length) return message.channel.send({ content: `You are not in an active tournament.`})
         const tournament = await selectTournament(message, tournaments, maid)
         let success = (tournament.state === 'pending' || tournament.state === 'standby')
@@ -880,7 +880,7 @@ try {
             if (!success) return message.channel.send({ content: `If you played a match, please report the result before dropping. Otherwise ask a Moderator to remove you.`})
         }
 
-        const entry = await Entry.findOne({ where: { '$player.discordId': maid, tournamentId: tournament.id }, include: Player })
+        const entry = await Entry.findOne({ where: { '$player.discordId$': maid, tournamentId: tournament.id }, include: Player })
         if (!entry) return message.channel.send({ content: `You are not in an active tournament.`})
         return removeParticipant(server, message, message.member, entry, tournament, true)
     }
@@ -895,7 +895,7 @@ try {
         const tournaments = [...await Entry.findAll({ where: { discordId: discordId }, include: Tournament })].map((e) => e.tournament).filter((t) => t.serverId === message.guild.id)
         if (!tournaments.length) return message.channel.send({ content: `That user is not in any tournaments.`})
         const tournament = await selectTournament(message, tournaments, maid)
-        const entry = await Entry.findOne({ where: { '$player.discordId': discordId, tournamentId: tournament.id }, include: Player})
+        const entry = await Entry.findOne({ where: { '$player.discordId$': discordId, tournamentId: tournament.id }, include: Player})
         if (!entry) return message.channel.send({ content: `That user is not in any tournaments.`})
         return removeParticipant(server, message, member, entry, tournament, false)
     }
@@ -951,7 +951,7 @@ try {
             server.name === 'Vegas (April 2014) Format' ? 'Duelist' :
             ''
 
-        const membership = await Membership.findOne({ where: { '$player.discordId': maid, serverId: mgid }, include: Player })
+        const membership = await Membership.findOne({ where: { '$player.discordId$': maid, serverId: mgid }, include: Player })
         if (!membership) return message.channel.send({ content: `You are not in the database.`})
         if (!message.member.roles.cache.some(role => role.id === roleId)) {
             try {
@@ -1772,8 +1772,6 @@ try {
         const loserDiscordId = userIds.length > 1 ? userIds[1] : args.length > 1 ? args[1] : null	
         if (!winnerDiscordId || !loserDiscordId) return message.channel.send({ content: `Please specify 2 players.`})
         if (winnerDiscordId === loserDiscordId) return message.channel.send({ content: `Please specify 2 different players.`})
-        console.log('winnerDiscordId', winnerDiscordId)
-        console.log('loserDiscordId', loserDiscordId)
         const winner = await message.guild.members.fetch(winnerDiscordId)
         const loser = await message.guild.members.fetch(loserDiscordId)
         if ((winner && winner.user.bot) ||  (loser && loser.user.bot)  ) return message.channel.send({ content: `Sorry, Bots do not play ${format.name} Format... *yet*.`})
