@@ -485,15 +485,44 @@ const fixStats = async () => {
     return console.log(`updated ${a} stats; encountered ${e} errors`)
 }
 
+const fixEvents = async () => {
+    let b = 0
+    let e = 0
+    const events = await Event.findAll()
+    for (let i = 0; i < events.length; i++) {
+        try {
+            const event = events[i]
+            const player = await Player.findOne({
+                where: {
+                    [Op.or]: {
+                        discordId: event.playerId,
+                        firstName: event.id
+                    }
+                }
+            })
+
+            event.playerId = player.id
+            await event.save()
+            b++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
+    }
+
+    return console.log(`fixed ${b} events; encountered ${e} errors`)
+}
+
 // fixDecks()
 // fixEntries()
-fixIrons()
+// fixIrons()
 // fixMatches()
 // fixMemberships()
 // fixRatedPools()
 // fixServers()
 // fixStats()
 // fixRatedDecks()
+fixEvents()
 
 // fixBlogposts()
 // composeThumbnails()
