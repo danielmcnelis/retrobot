@@ -2107,7 +2107,7 @@ try {
         const yourRatedDecks = await RatedDeck.findAll({
             where: {
                 format: format.name,
-                playerId: maid
+                playerId: player.id
             },
             order: [['updatedAt', 'DESC']]
         }) || []
@@ -2166,7 +2166,7 @@ try {
             where: {
                 name: player.name,
                 format: format.name,
-                playerId: maid
+                playerId: player.id
             }
         })
 
@@ -2176,7 +2176,7 @@ try {
             name: player.name,
             format: format.name,
             status: 'pending',
-            playerId: maid
+            playerId: player.id
         })
 
         if (!newRatedPool) return
@@ -2184,7 +2184,7 @@ try {
         try {
             const potentialPairs = await RatedPool.findAll({ 
                 where: { 
-                    playerId: {[Op.not]: maid },
+                    playerId: {[Op.not]: player.id },
                     status: 'pending',
                     format: format.name
                 },
