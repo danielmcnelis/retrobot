@@ -1725,10 +1725,10 @@ try {
         await loserStats.save()
 
         const match = await Match.create({
-            winnerId: winningPlayer.id,
             winner: winningPlayer.name,
-            loserId: losingPlayer.id,
+            winnerId: winningPlayer.id,
             loser: losingPlayer.name,
+            loserId: losingPlayer.id,
             tournament: isTournamentMatch,
             format: format.name,
             delta: delta,
@@ -2015,8 +2015,8 @@ try {
         if (!player1DiscordId) return message.channel.send({ content: "Please specify at least 1 other player."})
         if (player1DiscordId === player2DiscordId) return message.channel.send({ content: `Please specify 2 different players.`})
 
-        const player1 = await Player.findOne({ where: { id: player1DiscordId } })
-        const player2 = await Player.findOne({ where: { id: player2DiscordId } })
+        const player1 = await Player.findOne({ where: { discordId: player1DiscordId } })
+        const player2 = await Player.findOne({ where: { discordId: player2DiscordId } })
         
         if (!player1 && player2DiscordId === maid) return message.channel.send({ content: `That user is not in the database.`})
         if (!player1 && player2DiscordId !== maid) return message.channel.send({ content: `The first user is not in the database.`})

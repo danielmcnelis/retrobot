@@ -6,13 +6,13 @@ const Match = db.define('matches', {
     format: {
         type: Sequelize.STRING
     },
-    winner_name: {
+    winner: {
         type: Sequelize.STRING
     },
     winnerId: {
         type: Sequelize.STRING
     },
-    loser_name: {
+    loser: {
         type: Sequelize.STRING
     },
     loserId: {
