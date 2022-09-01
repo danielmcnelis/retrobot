@@ -256,6 +256,7 @@ const purgeRatedDecks = async () => {
 const purgeTourRoles = async (client) => {
     const servers = await Server.findAll()
     for (let s = 0; s < servers.length; s++) {
+        let b = 0
         try {
             const server = servers[s]
             if (!roles[server.name]) continue
@@ -279,12 +280,15 @@ const purgeTourRoles = async (client) => {
 
                 if (member && !count) {
                     console.log(`removing tour role from ${member.user.username}`)
+                    b++
                     member.roles.remove(roleId).catch((err) => console.log(err))
                 }
             }
         } catch (err) {
             console.log(err)
         }
+
+        console.log(`removed ${b} old tour roles from ${s.name}`)
     }
 
     return setTimeout(() => purgeTourRoles(client), (24 * 60 * 60 * 1000))

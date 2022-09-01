@@ -6,10 +6,25 @@ const Player = db.define('players', {
     name: {
         type: Sequelize.STRING
     },
+    email: {
+        type: Sequelize.STRING
+    },
+    googleName: {
+        type: Sequelize.STRING
+    },
+    googlePfp: {
+        type: Sequelize.STRING
+    },
+    discordName: {
+        type: Sequelize.STRING
+    },
     discriminator: {
         type: Sequelize.STRING
     },
     discordId: {
+        type: Sequelize.STRING
+    },
+    discordAvatar: {
         type: Sequelize.STRING
     },
     duelingBook: {
@@ -31,9 +46,6 @@ const Player = db.define('players', {
     hidden: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
-    },
-    avatar: {
-        type: Sequelize.STRING
     }
 })
 
