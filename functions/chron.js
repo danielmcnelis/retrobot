@@ -283,11 +283,11 @@ const purgeTourRoles = async (client) => {
                     member.roles.remove(roleId).catch((err) => console.log(err))
                 }
             }
+
+            console.log(`removed ${b} old tour roles from ${server.name}`)
         } catch (err) {
             console.log(err)
         }
-
-        console.log(`removed ${b} old tour roles from ${s.name}`)
     }
 
     return setTimeout(() => purgeTourRoles(client), (24 * 60 * 60 * 1000))
