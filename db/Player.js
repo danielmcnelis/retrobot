@@ -9,9 +9,6 @@ const Player = db.define('players', {
     email: {
         type: Sequelize.STRING
     },
-    avatar: {
-        type: Sequelize.STRING,
-    },
     discordName: {
         type: Sequelize.STRING
     },

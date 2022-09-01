@@ -357,7 +357,6 @@ const convertArrayToObject = (arr = []) => {
 
 //CREATE PLAYER
 const createPlayer = async (member) => {
-    console.log('createPlayer()')
     if (member && !member.user.bot) {
         try {
             await Player.create({

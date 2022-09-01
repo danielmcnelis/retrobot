@@ -509,17 +509,50 @@ const fixEvents = async () => {
     return console.log(`fixed ${b} events; encountered ${e} errors`)
 }
 
+const fixPlayers = async () => {
+    const irlPlayers = await Player.findAll({
+        where: {
+            firstName: {[Op.not]: null},
+            lastName: null
+        }
+    })
+
+    for (let i = 0; i < irlPlayers.length; i++) {
+        const player = irlPlayers[i]
+        const arr = player.firstName.split(" ")
+        player.firstName = arr[0]
+        player.lastName = arr.slice(1).join(" ")
+        await player.save()
+    }
+
+    console.log(`fixed ${irlPlayers.length} irl players`)
+
+    const discordPlayers = await Player.findAll({
+        where: {
+            discordId: {[Op.not]: null}
+        }
+    })
+
+    for (let i = 0; i < discordPlayers.length; i++) {
+        const player = discordPlayers[i]
+        player.discordName = player.name
+        await player.save()
+    }
+
+    return console.log(`fixed ${discordPlayers.length} discord players`)
+}
+
+fixPlayers()
 // fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()
-fixMemberships()
+// fixMemberships()
 // fixRatedPools()
 // fixServers()
 // fixStats()
 // fixRatedDecks()
 // fixEvents()
-
 // fixBlogposts()
 // composeThumbnails()
 // composePreviews()
