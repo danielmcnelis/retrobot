@@ -35,12 +35,12 @@ const updateAvatars = async (client) => {
                     const memberId = memberIds[i]
                     const member = membersMap.get(memberId)
                     const user = member.user
-                    const avatar = user.avatar
-                    if (!avatar) continue
+                    const discordPfp = user.discordPfp
+                    if (!discordPfp) continue
                     const player = await Player.findOne({ where: { discordId: memberId }})
         
-                    if (player && player.avatar !== avatar) {
-                        player.avatar = avatar
+                    if (player && player.discordPfp !== discordPfp) {
+                        player.discordPfp = discordPfp
                         await player.save()
                         count++
                     } else {
@@ -48,7 +48,7 @@ const updateAvatars = async (client) => {
                     }
                     
                     const {data} = await axios.get(
-                        `https://cdn.discordapp.com/avatars/${player.discordId}/${avatar}.webp`, {
+                        `https://cdn.discordapp.com/avatars/${player.discordId}/${discordPfp}.webp`, {
                             responseType: 'arraybuffer',
                         }
                     )

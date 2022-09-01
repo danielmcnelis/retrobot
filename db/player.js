@@ -9,11 +9,8 @@ const Player = db.define('players', {
     email: {
         type: Sequelize.STRING
     },
-    googleName: {
-        type: Sequelize.STRING
-    },
-    googlePfp: {
-        type: Sequelize.STRING
+    avatar: {
+        type: Sequelize.STRING,
     },
     discordName: {
         type: Sequelize.STRING
@@ -24,10 +21,22 @@ const Player = db.define('players', {
     discordId: {
         type: Sequelize.STRING
     },
-    discordAvatar: {
+    discordPfp: {
+        type: Sequelize.STRING
+    },
+    googleName: {
+        type: Sequelize.STRING
+    },
+    googleId: {
+        type: Sequelize.STRING
+    },
+    googlePfp: {
         type: Sequelize.STRING
     },
     duelingBook: {
+        type: Sequelize.STRING
+    },
+    duelingBookPfp: {
         type: Sequelize.STRING
     },
     firstName: {
