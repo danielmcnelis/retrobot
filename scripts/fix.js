@@ -376,7 +376,7 @@ const fixMatches = async () => {
 const fixMemberships = async () => {
     let a = 0
     let e = 0
-    const memberships = await Membership.findAll()
+    const memberships = await Membership.findAll({ include: Player })
     for (let i = 0; i < memberships.length; i++) {
         try {
             const membership = memberships[i]
@@ -388,6 +388,7 @@ const fixMemberships = async () => {
             })
 
             if (count > 1) {
+                console.log(`destroying ${membership.player.name}'s duplicate membership to ${membership.guildName}`)
                 await membership.destroy()
                 a++
             }
