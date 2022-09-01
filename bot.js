@@ -43,7 +43,7 @@ client.on('ready', async() => {
         console.log(err)
     }
 
-    const midnightCountdown = 1 || getMidnightCountdown()
+    const midnightCountdown = getMidnightCountdown()
     setTimeout(() => purgeEntries(), midnightCountdown)
     setTimeout(() => purgeTourRoles(client), midnightCountdown + (0.25 * 60 * 1000))
     setTimeout(() => markInactives(), midnightCountdown + (0.5 * 60 * 1000))
