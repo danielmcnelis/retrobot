@@ -354,14 +354,21 @@ const fixIrons = async () => {
 const fixMatches = async () => {
     let a = 0
     let e = 0
-    const matches = await Match.findAll()
+    const matches = await Match.findAll({
+        where: {
+            [Op.or]: {
+                winner: null,
+                loser: null
+            }
+        }
+    })
     for (let i = 0; i < matches.length; i++) {
         try {
             const m = matches[i]
-            const winner = await Player.findOne({ where: { discordId: m.winnerId.toString() }})
-            m.winnerId = winner.id
-            const loser = await Player.findOne({ where: { discordId: m.loserId.toString() }})
-            m.loserId = loser.id
+            const winningPlayer = await Player.findOne({ where: { id: m.winnerId }})
+            m.winner = winningPlayer.name
+            const losingPlayer = await Player.findOne({ where: { id: m.loserId }})
+            m.loser = losingPlayer.name
             await m.save()
             a++
         } catch (err) {
@@ -542,11 +549,11 @@ const fixPlayers = async () => {
     return console.log(`fixed ${discordPlayers.length} discord players`)
 }
 
-fixPlayers()
+// fixPlayers()
 // fixDecks()
 // fixEntries()
 // fixIrons()
-// fixMatches()
+fixMatches()
 // fixMemberships()
 // fixRatedPools()
 // fixServers()
