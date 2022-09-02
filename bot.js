@@ -294,23 +294,21 @@ try {
     // DUELINGBOOK NAME
     if (commands.dbcom.includes(cmd)) {
         const query = marr.length > 1 ? marr.slice(1, marr.length).join(' ') : null
+        console.log('query', query)
         const member = message.mentions.members.first() || null
         const discordId = member ? member.user.id : null
         const players = [...await Player.findAll({ 
             where: { 
+                discordName: {[Op.not]: null},
                 [Op.or]: {
                     discordId: discordId,
-                    discordName: { 
-                        [Op.not]: null,
-                        [Op.iLike]: query
-                    }
+                    discordName: {[Op.iLike]: query}
                 }
             },
             order: [['updatedAt', 'DESC']]
         })]
 
         console.log('players.length', players.length)
-
         const queriedPlayer = players[0]
 
         const queryIsAuthor = queriedPlayer && queriedPlayer.discordId === maid
