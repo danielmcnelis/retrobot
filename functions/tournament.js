@@ -597,7 +597,7 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
 
         setTimeout(() => {
             if (loserEliminated) return message.channel.send({ content: `${losingPlayer.name}, You are eliminated from the tournament. Better luck next time!`})
-            else if (loserNextOpponent) return message.channel.send({ content: `New Match: <@${losingPlayer.id}> (DB: ${losingPlayer.duelingBook}) vs. <@${loserNextOpponent.playerId}> (DB: ${loserNextOpponent.player.duelingBook}). Good luck to both duelists.`})
+            else if (loserNextOpponent) return message.channel.send({ content: `New Match: <@${losingPlayer.discordId}> (DB: ${losingPlayer.duelingBook}) vs. <@${loserNextOpponent.discordId}> (DB: ${loserNextOpponent.player.duelingBook}). Good luck to both duelists.`})
             else if (loserMatchWaitingOn && loserWaitingOnP1 && loserWaitingOnP2) {
                 return message.channel.send({ content: `${losingPlayer.name}, You are waiting for the result of ${loserWaitingOnP1.player.name} (DB: ${loserWaitingOnP1.player.duelingBook}) vs ${loserWaitingOnP2.player.name} (DB: ${loserWaitingOnP2.player.duelingBook}).`})
             }

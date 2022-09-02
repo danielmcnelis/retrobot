@@ -25,7 +25,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
         if (!data) return
         const participants = data.map((d) => d.participant.name)
         const players = await Player.findAll({ where: { discriminator: {[Op.not]: null } }})
-        const shortenedTags = useTags ? players.map((p) => p.name.replace(/[^-?|!.'$\w\s]/gi, '_') + p.discriminator) :
+        const shortenedTags = useTags ? players.map((p) => p.name.replace(/[^-?|!.'$\w\s]/gi, '_') + '_' + p.discriminator) :
                                         players.map((p) => p.name.replace(/[^-?|!.'$\w\s]/gi, '_'))
 
         fs.readdir(`./decks/${tournament.community}/${tournament.name}/`, async (err, files) => {
@@ -162,7 +162,6 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                                     (size > 224 && placement <= 32) ||
                                     false
 
-                                console.log('event.formatId', event.formatId)
                                 await Deck.create({
                                     type: deckType.name,
                                     category: deckType.category,
