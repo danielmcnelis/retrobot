@@ -301,11 +301,9 @@ try {
                 [Op.or]: {
                     discordId: discordId,
                     discordName: { 
-                        [Op.and]: {
-                            [Op.not]: null,
-                            [Op.iLike]: query
-                        }
-                     }
+                        [Op.not]: null,
+                        [Op.iLike]: query
+                    }
                 }
             },
             order: [['updatedAt', 'DESC']]
