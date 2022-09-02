@@ -28,6 +28,8 @@ const createDecks = async (message, event, tournament, useTags = true) => {
         const shortenedTags = useTags ? players.map((p) => p.name.replace(/[^-?|!.'$\w\s]/gi, '_') + '_' + p.discriminator) :
                                         players.map((p) => p.name.replace(/[^-?|!.'$\w\s]/gi, '_'))
 
+        console.log('shortenedTags', shortenedTags)
+
         fs.readdir(`./decks/${tournament.community}/${tournament.name}/`, async (err, files) => {
             if (err) {
                 console.log(err)
@@ -85,6 +87,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                     // if (query === 'IAMZ1_5635') query = 'Sohaib_DB_IAMZ1__5635'
                     // if (query === 'Randage_8521') query = 'Randage_0001'
                     // if (query === 'brahimpoke_3361') query = 'brahimtrish_3361'
+                    console.log('query', query)
                     const i = shortenedTags.indexOf(query)
                     if (i === -1) {
                         console.log(`no Player found with the Discord tag: ${query}`)
