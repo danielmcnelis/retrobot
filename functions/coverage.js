@@ -145,9 +145,11 @@ const createDecks = async (message, event, tournament, useTags = true) => {
 
                             if (!count) {
                                 console.log('file', file)
+                                const path = `./decks/${tournament.community}/${tournament.name}/${file}`
+                                console.log('path', path)
                                 const participant = data[j].participant
                                 const placement = parseInt(participant.final_rank, 10)
-                                const raw = fs.readFileSync(`./decks/${tournament.community}/${tournament.name}/${file}`, 'utf8')
+                                const raw = fs.readFileSync(path, 'utf8')
                                 const dname = await getDeckType({ name: tournament.community }, player, tournament.formatName, tournament.name)
                                 const deckType = await DeckType.findOne({ 
                                     where: { 
