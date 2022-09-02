@@ -300,7 +300,7 @@ try {
             where: { 
                 [Op.or]: {
                     discordId: discordId,
-                    name: { [Op.iLike]: query }
+                    discordName: { [Op.iLike]: query }
                 }
             },
             order: [['updatedAt', 'DESC']]
