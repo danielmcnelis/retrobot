@@ -43,7 +43,7 @@ client.on('ready', async() => {
         console.log(err)
     }
 
-    const midnightCountdown = getMidnightCountdown()
+    const midnightCountdown = 1 || getMidnightCountdown()
     setTimeout(() => purgeEntries(), midnightCountdown)
     setTimeout(() => purgeTourRoles(client), midnightCountdown + (0.25 * 60 * 1000))
     setTimeout(() => markInactives(), midnightCountdown + (0.5 * 60 * 1000))
@@ -294,7 +294,6 @@ try {
     // DUELINGBOOK NAME
     if (commands.dbcom.includes(cmd)) {
         const query = marr.length > 1 ? marr.slice(1, marr.length).join(' ') : null
-        console.log('query', query)
         const member = message.mentions.members.first() || null
         const discordId = member ? member.user.id : null
         const players = [...await Player.findAll({ 
@@ -308,9 +307,7 @@ try {
             order: [['updatedAt', 'DESC']]
         })]
 
-        console.log('players.length', players.length)
         const queriedPlayer = players[0]
-
         const queryIsAuthor = queriedPlayer && queriedPlayer.discordId === maid
         if (!queryIsAuthor && queriedPlayer && queriedPlayer.duelingBook) return message.channel.send({ content: `${queriedPlayer.name}'s DuelingBook username is: ${queriedPlayer.duelingBook}.`})
         if (!queryIsAuthor && queriedPlayer && !queriedPlayer.duelingBook) return message.channel.send({ content: `${queriedPlayer.name} does not have a DuelingBook username in our database.`})
