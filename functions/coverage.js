@@ -94,7 +94,6 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                     } else {
                         const player = players[i]
                         let pname = player.name
-                        console.log('pname', pname)
                         // if (pname.includes('liliku')) pname = 'eff04'
                         // if (pname.includes('FrenchAlpha')) pname = 'Jean'
                         // if (pname.includes(`selim`)) pname = 'selim'
@@ -144,9 +143,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                             })
 
                             if (!count) {
-                                console.log('file', file)
                                 const path = `./decks/${tournament.community}/${tournament.name}/${file}`
-                                console.log('path', path)
                                 const participant = data[j].participant
                                 const placement = parseInt(participant.final_rank, 10)
                                 const raw = fs.readFileSync(path, 'utf8')
