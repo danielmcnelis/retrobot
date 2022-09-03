@@ -842,7 +842,7 @@ try {
             mentioned.roles.add(roles[server.name].tourRole).catch((err) => console.log(err))
             const deckAttachments = await drawDeck(ydk) || []                
             message.author.send({ content: `Thanks! I have all the information we need for ${player.name}! FYI, here is their deck list:`, files: [...deckAttachments] }).catch((err) => console.log(err))
-            return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.id}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+            return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
         } else {
           try {
               await entry.update({ url: url, ydk: ydk })
@@ -1985,7 +1985,7 @@ try {
             if (winnerParticipantId) break
         }
 
-        const winningPlayer = await Player.findOne({ where: { '$entry.participantId': winnerParticipantId, '$entry.tournamentId': tournament.id }, include: Entry })
+        const winningPlayer = await Player.findOne({ where: { '$entry.participantId$': winnerParticipantId, '$entry.tournamentId$': tournament.id }, include: Entry })
         if (!winningPlayer) return message.channel.send({ content: `Error: could not find opponent.`})
 
         const success = await processMatchResult(server, message, winningPlayer, noShowPlayer, tournament, true)
