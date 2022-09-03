@@ -1985,9 +1985,9 @@ try {
             if (winnerParticipantId) break
         }
 
-        const winningPlayer = await Player.findOne({ where: { required: true, duplicating: false, '$entry.participantId$': winnerParticipantId, '$entry.tournamentId$': tournament.id }, include: Entry })
-        if (!winningPlayer) return message.channel.send({ content: `Error: could not find opponent.`})
-
+        const winningEntry = await Entry.findOne({ where: { participantId: winnerParticipantId, tournamentId: tournament.id }, include: Player })
+        if (!winningEntry) return message.channel.send({ content: `Error: could not find opponent.`})
+        const winningPlayer = winningEntry.player
         const success = await processMatchResult(server, message, winningPlayer, noShowPlayer, tournament, true)
         if (!success) return
 
