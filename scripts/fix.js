@@ -571,7 +571,7 @@ const downloadYDKs = async () => {
                 formatName: e.tournament.formatName,
                 ydk: ydk,
                 eventName: e.tournament.name,
-                display: display,
+                display: false,
                 community: e.tournament.community,
                 playerId: e.playerId
             })
