@@ -549,11 +549,50 @@ const fixPlayers = async () => {
     return console.log(`fixed ${discordPlayers.length} discord players`)
 }
 
+const downloadYDKs = async () => {
+    let z = 0
+    let b = 0
+    const entries = await Entry.findAll({ include: Tournament })
+
+    for (let i = 0; i < entries.length; i++) {
+        try {
+            const e = entries[i]
+            const url = e.url
+            const id = url.slice(url.indexOf('?id=') + 4)
+            const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${id}`)
+            if (!data) return false
+            const main = data.main.map((e) => e.serial_number)
+            const side = data.side.map((e) => e.serial_number)
+            const extra = data.extra.map((e) => e.serial_number)
+            const ydk = ['created by...', '#main', ...main, '#extra', ...extra, '!side', ...side, ''].join('\n')
+    
+            await Deck.create({
+                builder: e.pilot,
+                formatName: e.tournament.formatName,
+                ydk: ydk,
+                eventName: e.tournament.name,
+                display: display,
+                community: e.tournament.community,
+                playerId: e.playerId
+            })
+
+            b++
+        } catch (err) {
+            console.log(err)
+            z++
+        }
+    }
+
+    return console.log(`saved ${b} decks; encountered ${z} errors`)
+}
+
+downloadYDKs()
+
 // fixPlayers()
 // fixDecks()
 // fixEntries()
 // fixIrons()
-fixMatches()
+// fixMatches()
 // fixMemberships()
 // fixRatedPools()
 // fixServers()
