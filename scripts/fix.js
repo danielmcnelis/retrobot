@@ -592,7 +592,7 @@ const saveYDKs = async () => {
         const deck = decks[i]
         const player = deck.player
         try {
-            const tag = player.name.replace(/[^\ws]/gi, "_").replace(/ /g,'') + player.discriminator
+            const tag = player.name.replace(/[^\ws]/gi, "_").replace(/ /g,'') + '_' + player.discriminator
             fs.writeFile(`../decks/EdisonFormat.com/DD01/${tag}.ydk`, deck.ydk, (err) => {
                 if (err) {
                     console.log(err)
