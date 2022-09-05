@@ -36,7 +36,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
             } else {
                 console.log('files', files)
                 files.forEach(async (file, index) => {
-                    let query = file.slice(0, -4)
+                    let query = file.slice(0, -3)
                     // if (query === 'noahmowdy985') query = 'ChainStrike'
                     // if (query === 'Ithrowitintomylunch_!') query = 'Ithrowitintomylunch__'
                     // if (query === 'don_t copy') query = `don't copy`
