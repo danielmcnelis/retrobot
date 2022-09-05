@@ -37,7 +37,6 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                 console.log('files', files)
                 files.forEach(async (file, index) => {
                     let query = file.slice(0, -4)
-                    query = query.slice(0, -4) + '_' + query.slice(-4)
                     // if (query === 'noahmowdy985') query = 'ChainStrike'
                     // if (query === 'Ithrowitintomylunch_!') query = 'Ithrowitintomylunch__'
                     // if (query === 'don_t copy') query = `don't copy`
@@ -88,7 +87,6 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                     // if (query === 'IAMZ1_5635') query = 'Sohaib_DB_IAMZ1__5635'
                     // if (query === 'Randage_8521') query = 'Randage_0001'
                     // if (query === 'brahimpoke_3361') query = 'brahimtrish_3361'
-                    console.log('query', query)
                     const i = shortenedTags.indexOf(query)
                     if (i === -1) {
                         console.log(`no Player found with the Discord tag: ${query}`)
@@ -144,7 +142,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                             })
 
                             if (!count) {
-                                const path = `./decks/${tournament.community}/${tournament.name}/${query}.ydk`
+                                const path = `./decks/${tournament.community}/${tournament.name}/${file}`
                                 const participant = data[j].participant
                                 const placement = parseInt(participant.final_rank, 10)
                                 const raw = fs.readFileSync(path, 'utf8')
