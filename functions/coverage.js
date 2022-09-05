@@ -144,7 +144,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                             })
 
                             if (!count) {
-                                const path = `./decks/${tournament.community}/${tournament.name}/${file}`
+                                const path = `./decks/${tournament.community}/${tournament.name}/${query}.ydk`
                                 const participant = data[j].participant
                                 const placement = parseInt(participant.final_rank, 10)
                                 const raw = fs.readFileSync(path, 'utf8')
