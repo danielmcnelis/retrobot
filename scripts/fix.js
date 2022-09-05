@@ -586,8 +586,28 @@ const downloadYDKs = async () => {
     return console.log(`saved ${b} decks; encountered ${z} errors`)
 }
 
-downloadYDKs()
+const saveYDKs = async () => {
+    const decks = await Deck.findAll({ where: { eventName: 'DD1' }, include: Player })
+    for (let i = 0; i < decks.length; i++) {
+        const deck = decks[i]
+        const player = deck.player
+        try {
+            const tag = player.name.replace(/[^\ws]/gi, "_").replace(/ /g,'') + player.discriminator
+            fs.writeFile(`./decks/EdisonFormat.com/DD01/${tag}.ydk`, ydk, (err) => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log(`${player.name}'s deck was saved!`)
+                }
+            })
+        } catch (err) {
+            console.log(err)
+        }
+    }
+}
 
+saveYDKs()
+// downloadYDKs()
 // fixPlayers()
 // fixDecks()
 // fixEntries()
