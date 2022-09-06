@@ -2332,11 +2332,9 @@ try {
                 }
             }
         })
-
-        console.log('2336 format', format)
         
         if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
-        return resetIron(message.channel, format.name)
+        return resetIron(message.channel, format)
     }
 
     // IRON
