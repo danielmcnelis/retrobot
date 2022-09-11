@@ -6,23 +6,17 @@ const Matchup = db.define('matchups', {
     format: {
         type: Sequelize.STRING
     },
-    winning_deck_name: {
+    winningDeck: {
         type: Sequelize.STRING
     },
-    winning_deck_type: {
+    winningDeckId: {
         type: Sequelize.STRING
     },
-    winning_deck_category: {
+    losingDeck: {
         type: Sequelize.STRING
     },
-    losing_deck_name: {
-        type: Sequelize.STRING
-    },
-    losing_deck_type: {
-        type: Sequelize.STRING
-    },
-    losing_deck_category: {
-        type: Sequelize.STRING
+    loserDeckId: {
+        type: Sequelize.INTEGER
     }
 })
 

@@ -43,12 +43,6 @@ const Event = db.define('events', {
     community: {
         type: Sequelize.STRING
     },
-    logo: {
-        type: Sequelize.STRING
-    },
-    emoji: {
-        type: Sequelize.STRING
-    },
     startDate: {
         type: Sequelize.DATE
     },

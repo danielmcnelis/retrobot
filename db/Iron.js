@@ -30,6 +30,10 @@ const Iron = db.define('irons', {
     confirmed: {
         type: Sequelize.BOOLEAN,   
         defaultValue: false
+    },
+    status: {
+        type: Sequelize.STRING,   
+        defaultValue: 'pending'
     }
 })
 

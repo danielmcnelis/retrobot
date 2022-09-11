@@ -3,14 +3,12 @@ const Sequelize = require('sequelize')
 const { db } = require('./db')
 
 const Entry = db.define('entries', {
-    pilot: {
+    playerName: {
         type: Sequelize.STRING
     },
-    url: {
-        type: Sequelize.STRING
-    },
-    ydk: {
-        type: Sequelize.TEXT
+    active: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
     },
     wins: {
         type: Sequelize.INTEGER,
@@ -25,6 +23,9 @@ const Entry = db.define('entries', {
     },
     playerId: {
         type: Sequelize.STRING
+    },
+    deckId: {
+        type: Sequelize.INTEGER
     },
     tournamentId: {
         type: Sequelize.STRING

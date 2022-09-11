@@ -10,7 +10,7 @@ const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
 
 // DATABASE IMPORTS
-const { Card, Entry, Event, Format, Info, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
+const { Card, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
 // FUNCTION IMPORTS
 const { conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
@@ -470,10 +470,21 @@ try {
                     try {
                         const entry = entries[i]
                         const discordId = entry.player.discordId
+                        const playerId = entry.player.id
                         await entry.destroy()
+                        
                         const member = await message.guild.members.fetch(discordId)
                         if (!member) continue
-                        member.roles.remove(roles[server.name].tourRole)
+
+                        const count = await Entry.count({ 
+                            where: {
+                                playerId: playerId,
+                                '$tournament.serverId$': server.id
+                            },
+                            include: Tournament,
+                        })
+
+                        if (!count) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
                     } catch (err) {
                         console.log(err)
                     }
@@ -1606,7 +1617,7 @@ try {
 
         const loserHasIronRole = isIronPlayer(server, message.member)
         const winnerHasIronRole = isIronPlayer(server, winner)
-        const activeIron = await Info.count({ where: { element: 'iron', status: 'active' }})
+        const activeIron = await Iron.count({ where: { format: format.name, status: 'active' }})
         let isIronMatch
 
         if (loserHasTourRole && winnerHasTourRole && activeTournament) {
@@ -1738,12 +1749,6 @@ try {
 
         if (isTournamentMatch && winningEntry && losingEntry && tournament && match) {
             await Matchup.create({
-                winning_deck_name: '',
-                winning_deck_type: '',
-                winning_deck_category: '',
-                losing_deck_name: '',
-                losing_deck_type: '',
-                losing_deck_category: '',
                 matchId: match.id,
                 format: format.name,
                 tournamentId: tournament.id
@@ -1938,12 +1943,6 @@ try {
 
         if (isTournamentMatch && winningEntry && losingEntry && tournament && match) {
             await Matchup.create({
-                winning_deck_name: '',
-                winning_deck_type: '',
-                winning_deck_category: '',
-                losing_deck_name: '',
-                losing_deck_type: '',
-                losing_deck_category: '',
                 matchId: match.id,
                 format: format.name,
                 tournamentId: tournament.id
@@ -2359,16 +2358,19 @@ try {
             } 
         })
 
-        const info = await Info.findOne({ where: { element: 'iron' }})
-        if (info.status === 'drafting' && !alreadyIn) return message.channel.send({ content: 'Please wait until after the drafting process is complete to join the iron.' })
-        if (info.status !== 'pending' && alreadyIn) return message.channel.send({ content: 'Sorry, you cannot leave the iron after it has started.' })
+        const isPending = await Iron.count({ where: { format: format.name, status: 'pending' }})
+        const isConfirming = await Iron.count({ where: { format: format.name, status: 'confirming' }})
+        const isDrafting = await Iron.count({ where: { format: format.name, status: 'drafting' }})
+        const isActive = await Iron.count({ where: { format: format.name, status: 'active' }})
+        if (isDrafting && !alreadyIn) return message.channel.send({ content: 'Please wait until after the drafting process is complete to join the iron.' })
+        if (!isPending && alreadyIn) return message.channel.send({ content: 'Sorry, you cannot leave the iron after it has started.' })
         
         if (!alreadyIn) {
             const count = await Iron.count({ where: { format: format.name }})
             if (count >= 10) {
                 return message.channel.send({ content: `Sorry, ${message.author.username}, the ${format.name} ${format.emoji} Iron is full.`})
             } else if (count < 10 && count >= 6) {
-                if (info.status === 'confirming') {
+                if (isConfirming) {
                     await Iron.create({ 
                         name: message.author.username,
                         playerId: player.id,
@@ -2377,7 +2379,7 @@ try {
                     })
     
                     message.channel.send({ content: `You joined the Iron queue. ${emojis.iron}`})
-                } else if (info.status === 'active') {
+                } else if (isActive) {
                     const teamACount = await Iron.count({ 
                         where: {
                             format: format.name,

@@ -1,5 +1,5 @@
 
-const { Info, Iron, Player, Stats } = require('../db')
+const { Iron, Player, Stats } = require('../db')
 const { yescom } = require('../static/commands.json')
 const emojis = require('../static/emojis.json')
 const roles = require('../static/roles.json')
@@ -8,9 +8,6 @@ const { Op } = require('sequelize')
 
 //CONFIRM IRON
 const confirmIron = async (channel, format) => {
-    const info = await Info.findOne({ where: { element: 'iron' }})
-    info.status = 'confirming'
-    await info.save()
     channel.send({ content: `Iron players, please check your DMs!`})
     const entries = await Iron.findAll({ where: { format: format.name }, include: Player})
     getIronConfirmation(entries[0], channel, format)
@@ -26,15 +23,14 @@ const confirmIron = async (channel, format) => {
                 format: format.name,
                 confirmed: false
             } })
-    
-            const active = await Info.count({ where: {
-                element: 'iron',
-                status: {[Op.not]: 'confirming'}
-            } })
 
-            if (!count && !active) {
-                info.status = 'drafting'
-                await info.save()
+            if (!count) {
+                for (let j = 0; j < entries.length; j++) {
+                    const entry = entries[j]
+                    entry.status = 'drafting'
+                    await entry.save()
+                }
+
                 assignIronRoles(entries)
                 setTimeout(() => {
                     channel.send({ content: `<@&${roles['Format Library'].ironRole}>, square-up gamers! The Iron starts in 10 seconds. ${emojis.cavebob}`})
@@ -50,15 +46,7 @@ const confirmIron = async (channel, format) => {
             confirmed: false
         } })
 
-        const active = await Info.count({ where: {
-            element: 'iron',
-            status: {[Op.not]: 'confirming'}
-        } })
-
-        if (count && !active) {
-            info.status = 'pending'
-            await info.save()
-
+        if (count) {
             const missingEntries = await Iron.findAll({ 
                 where: { 
                     format: format.name,
@@ -81,9 +69,13 @@ const confirmIron = async (channel, format) => {
             }
             
             return channel.send({ content: `Unfortunately, The ${format.name} Iron cannot begin without 6f players. ${format.emoji} ${emojis.iron}\n\nThe following players have been removed from the queue:\n${missingNames.sort().join("\n")}`})
-        } else if (!count && !active) {
-            info.status = 'drafting'
-            await info.save()
+        } else if (!count) {
+            for (let j = 0; j < entries.length; j++) {
+                const entry = entries[j]
+                entry.status = 'drafting'
+                await entry.save()
+            }
+
             assignIronRoles(entries)
             setTimeout(() => {
                 channel.send({ content: `<@&${roles['Format Library'].ironRole}>, square-up gamers! The Iron starts in 10 seconds. ${emojis.cavebob}`})
@@ -95,6 +87,8 @@ const confirmIron = async (channel, format) => {
 
 //GET IRON CONFIRMATION
 const getIronConfirmation = async (entry, channel, format) => {
+    entry.status = 'confirming'
+    await entry.save()
     const guild = client.guilds.cache.get("414551319031054346")
     const discordId = entry.player.discordId
     const member = guild.members.cache.get(discordId)
@@ -109,8 +103,8 @@ const getIronConfirmation = async (entry, channel, format) => {
 	}).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
 
-        const count = await Info.count({ where: {
-            element: 'iron',
+        const count = await Iron.count({ where: {
+            format: format.name,
             status: 'confirming'
         } })
 
@@ -315,9 +309,13 @@ const chooseOrder = async (captain = {}, team, channel, format) => {
         })
 
         if (!count) {
-            const info = await Info.findOne({ where: { element: 'iron' }})
-            info.status = 'active'
-            await info.save()
+            const entries = await Iron.findAll({ where: { format: format.name }})
+            for (let i = 0; i < entries.length; i++) {
+                const entry = entries[i]
+                entry.status = 'active'
+                await entry.save()
+            }
+
             return postStory(channel, format)
         } else {
             return
@@ -465,13 +463,17 @@ const postStory = async (channel, format) => {
 const resetIron = async (channel, format) => {
     const entries = await Iron.findAll({ where: { format: format.name }})
     for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i]
-        await entry.destroy()
+        try {
+            const entry = entries[i]
+            const member = channel.guild.members.cache.get(participant.player.discordId)    
+            await participant.destroy()
+            member.roles.remove(roles['Format Library'].ironRole)
+            await entry.destroy()
+        } catch (err) {
+            console.log(err)
+        }
     }
 
-    const info = await Info.findOne({ where: { element: 'iron' }})
-    info.status = 'pending'
-    await info.save()
     return channel.send({ content: `The ${format.name} Iron has been reset. ${format.emoji} ${emojis.iron}` })
 }
 

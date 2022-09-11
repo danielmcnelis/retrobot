@@ -271,6 +271,7 @@ const purgeTourRoles = async (client) => {
 
                 const count = await Entry.count({
                     where: {
+                        active: true,
                         '$player.discordId$': member.user.id,
                         '$tournament.serverId$': server.id
                     },

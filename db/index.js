@@ -8,7 +8,6 @@ const DeckType = require('./DeckType')
 const Entry = require('./Entry')
 const Event = require('./Event')
 const Format = require('./Format')
-const Info = require('./Info')
 const Iron = require('./Iron')
 const Match = require('./Match')
 const Matchup = require('./Matchup')
@@ -37,6 +36,9 @@ Player.hasMany(Entry)
 
 Entry.belongsTo(Tournament)
 Tournament.hasMany(Entry)
+
+Entry.belongsTo(Deck)
+Deck.hasOne(Entry)
 
 //EVENT
 Event.hasMany(Deck)
@@ -123,7 +125,6 @@ module.exports = {
   Entry,
   Event,
   Format,
-  Info,
   Iron,
   Match,
   Matchup,

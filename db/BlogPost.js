@@ -9,19 +9,8 @@ const BlogPost = db.define('blogposts', {
   content: {
       type: Sequelize.TEXT
   },
-  author: {
-    type: Sequelize.STRING
-  },
   format: {
     type: Sequelize.STRING
-  },
-  rating: {
-    type: Sequelize.INTEGER,
-    defaultValue: 0
-  },
-  views: {
-    type: Sequelize.INTEGER,
-    defaultValue: 0
   },
   publishDate: {
     type: Sequelize.STRING

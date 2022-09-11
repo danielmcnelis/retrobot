@@ -255,11 +255,13 @@ const removeParticipant = async (server, message, member, entry, tournament, dro
 
         if (success) {
             const playerId = entry.playerId
-            await entry.destroy()
+            entry.active = false
+            await entry.save()
             
             const count = await Entry.count({ 
                 where: {
                     playerId: playerId,
+                    active: true,
                     '$tournament.serverId$': server.id
                 },
                 include: Tournament,
@@ -508,8 +510,8 @@ const getGameCount = async (message, tournament, noshow) => {
 
 //PROCESS MATCH RESULT
 const processMatchResult = async (server, message, winningPlayer, losingPlayer, tournament, noshow = false) => {
-    const losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
-    const winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id } })
+    const losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id }, include: Player })
+    const winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id }, include: Player })
     if (!losingEntry || !winningEntry) {
         message.channel.send({ content: `Sorry I could not find your tournament in the database.`})
         return false
@@ -575,12 +577,15 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
             false
 
         if (loserEliminated) {
-            const playerId = losingEntry.playerId
-            await losingEntry.destroy()
+            const playerId = losingEntry.player.discordId
             const member = message.guild.members.cache.get(playerId)
+            losingEntry.active = false
+            await losingEntry.save()
+
             const count = await Entry.count({
                 where: {
                     playerId: playerId,
+                    active: true,
                     '$tournament.serverId$': server.id
                 },
                 include: Tournament
