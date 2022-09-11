@@ -12,10 +12,6 @@ const Iron = db.define('irons', {
     team: {
         type: Sequelize.STRING
     },
-    paired: {
-        type: Sequelize.BOOLEAN,   
-        defaultValue: false
-    },
     eliminated: {
         type: Sequelize.BOOLEAN,   
         defaultValue: false
