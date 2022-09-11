@@ -577,8 +577,9 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
             false
 
         if (loserEliminated) {
-            const playerId = losingEntry.player.discordId
-            const member = message.guild.members.cache.get(playerId)
+            const playerId = losingEntry.player.id
+            const discordId = losingEntry.player.discordId
+            const member = message.guild.members.cache.get(discordId)
             losingEntry.active = false
             await losingEntry.save()
 
