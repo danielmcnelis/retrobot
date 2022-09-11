@@ -1811,7 +1811,7 @@ try {
 
         const loserHasIronRole = isIronPlayer(server, loser)
         const winnerHasIronRole = isIronPlayer(server, winner)
-        const activeIron = await Info.count({ where: { element: 'iron', status: 'active' }})
+        const activeIron = await Iron.count({ where: { format: format.name, status: 'active' }})
         let isIronMatch
 
         if (loserHasTourRole && winnerHasTourRole && activeTournament) {
