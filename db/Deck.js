@@ -12,8 +12,14 @@ const Deck = db.define('decks', {
   builder: {
     type: Sequelize.STRING
   },
+  playerId: {
+      type: Sequelize.STRING
+  },
   formatName: {
     type: Sequelize.STRING
+  },
+  formatId: {
+    type: Sequelize.INTEGER
   },
   ydk: {
     type: Sequelize.TEXT
@@ -24,6 +30,12 @@ const Deck = db.define('decks', {
   eventDate: {
       type: Sequelize.DATE
   },
+  eventId: {
+      type: Sequelize.INTEGER
+  },
+  community: {
+    type: Sequelize.STRING
+  },
   placement: {
     type: Sequelize.INTEGER
   },
@@ -31,8 +43,9 @@ const Deck = db.define('decks', {
     type: Sequelize.BOOLEAN,
     defaultValue: true
   },
-  community: {
-    type: Sequelize.STRING
+  rating: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
   },
   downloads: {
     type: Sequelize.INTEGER,
@@ -41,19 +54,6 @@ const Deck = db.define('decks', {
   views: {
     type: Sequelize.INTEGER,
     defaultValue: 0
-  },
-  rating: {
-    type: Sequelize.INTEGER,
-    defaultValue: 0
-  },
-  playerId: {
-      type: Sequelize.STRING
-  },
-  eventId: {
-      type: Sequelize.INTEGER
-  },
-  formatId: {
-    type: Sequelize.INTEGER
   }
 })
 

@@ -243,7 +243,7 @@ try {
             const tournaments = await Tournament.findAll({
                 where: {
                     serverId: mgid,
-                    createdAt: { [Op.gte]: "2022-03-01 00:00:00.000+00" },
+                    createdAt: { [Op.gte]: "2022-07-01 00:00:00.000+00" },
                 },
                 order: [["createdAt", "ASC"]],
             })
