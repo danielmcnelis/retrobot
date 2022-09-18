@@ -311,26 +311,6 @@ const fixDecks = async () => {
     return console.log(`updated ${a} decks; encountered ${e} errors`)
 }
 
-const fixEntries = async () => {
-    let a = 0
-    let e = 0
-    const entries = await Entry.findAll()
-    for (let i = 0; i < entries.length; i++) {
-        try {
-            const d = entries[i]
-            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
-            d.playerId = player.id
-            await d.save()
-            a++
-        } catch (err) {
-            console.log(err)
-            e++
-        }
-    }
-
-    return console.log(`updated ${a} entries; encountered ${e} errors`)
-}
-
 const fixIrons = async () => {
     let a = 0
     let e = 0
@@ -606,7 +586,21 @@ const saveYDKs = async () => {
     }
 }
 
-saveYDKs()
+const fixEntries = async () => {
+    let b = 0
+    const entries = await Entry.findAll({ include: Player })
+    for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i]
+        entry.playerName = entry.player.name
+        await entry.save()
+        b++
+    }
+
+    return console.log(`fixed ${b} entries`)
+}
+
+fixEntries()
+// saveYDKs()
 // downloadYDKs()
 // fixPlayers()
 // fixDecks()
