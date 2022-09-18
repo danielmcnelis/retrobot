@@ -30,9 +30,6 @@ const Entry = db.define('entries', {
     playerId: {
         type: Sequelize.STRING
     },
-    deckId: {
-        type: Sequelize.INTEGER
-    },
     tournamentId: {
         type: Sequelize.STRING
     }
