@@ -6,6 +6,12 @@ const Entry = db.define('entries', {
     playerName: {
         type: Sequelize.STRING
     },
+    url: {
+        type: Sequelize.STRING
+    },
+    ydk: {
+        type: Sequelize.TEXT
+    },
     active: {
         type: Sequelize.BOOLEAN,
         defaultValue: true
