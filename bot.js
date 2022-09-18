@@ -744,16 +744,36 @@ try {
               message.author.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament! FYI, this is the deck you submitted:`, files: [...deckAttachments] }).catch((err) => console.log(err))
               return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
             }
+        } else if (entry.active === false) {
+            try {                                
+                const { participant } = await postParticipant(server, tournament, player)
+                if (!participant) return message.channel.send({ content: `Error: Unable to register on Challonge for ${tournament.name} ${tournament.logo}.`})
+                
+                await entry.update({
+                    url: url,
+                    ydk: ydk,
+                    participantId: participant.id,
+                    active: true
+                })
+            } catch (err) {
+                console.log(err)
+                return message.author.send({ content: `Error: Could not access database.`})
+            } finally {
+                const deckAttachments = await drawDeck(ydk) || []
+                message.member.roles.add(roles[server.name].tourRole).catch((err) => console.log(err))
+                message.author.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament! FYI, this is the deck you submitted:`, files: [...deckAttachments] }).catch((err) => console.log(err))
+                return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+            }
         } else {
             try {
-              await entry.update({ url: url, ydk: ydk })
+                await entry.update({ url: url, ydk: ydk })
             } catch (err) {
-              console.log(err)
-              return message.author.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
+                console.log(err)
+                return message.author.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
             } finally {
-              const deckAttachments = await drawDeck(ydk) || []
-              message.author.send({ content: `Thanks! I have your updated deck list for the tournament:`, files: [...deckAttachments] }).catch((err) => console.log(err))
-              return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> resubmitted their deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+                const deckAttachments = await drawDeck(ydk) || []
+                message.author.send({ content: `Thanks! I have your updated deck list for the tournament:`, files: [...deckAttachments] }).catch((err) => console.log(err))
+                return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> resubmitted their deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
             }
         }
     }
