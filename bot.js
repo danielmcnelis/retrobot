@@ -527,26 +527,14 @@ try {
         if (tournament.state === 'complete') return message.channel.send({ content: `This tournament has already ended.`})
 
         try {
-            const { status } = await axios({
-                method: 'post',
-                url: `https://api.challonge.com/v1/tournaments/${tournament.id}/finalize.json?api_key=${server.challongeAPIKey}`
-            })
+            // const { status } = await axios({
+            //     method: 'post',
+            //     url: `https://api.challonge.com/v1/tournaments/${tournament.id}/finalize.json?api_key=${server.challongeAPIKey}`
+            // })
+
+            const status = 200
     
             if (status && status === 200) {
-                const entries = await Entry.findAll({ where: { tournamentId: tournament.id }, include: Player })
-                for (let i = 0; i < entries.length; i++) {
-                    try {
-                        const entry = entries[i]
-                        const discordId = entry.player.discordId	
-                        await entry.destroy()
-                        const member = await message.guild.members.fetch(discordId)
-                        if (!member) continue
-                        member.roles.remove(roles[server.name].tourRole)
-                    } catch (err) {
-                        console.log(err)
-                    }
-                }
-
                 const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${server.challongeAPIKey}`)
                 let winnerParticipantId = null
                 for (let i = 0; i < data.length; i++) {
@@ -577,6 +565,20 @@ try {
                     logo: tournament.logo,
                     emoji: tournament.emoji
                 })
+
+                const entries = await Entry.findAll({ where: { tournamentId: tournament.id }, include: Player })
+                for (let i = 0; i < entries.length; i++) {
+                    try {
+                        const entry = entries[i]
+                        const discordId = entry.player.discordId	
+                        await entry.destroy()
+                        const member = await message.guild.members.fetch(discordId)
+                        if (!member) continue
+                        member.roles.remove(roles[server.name].tourRole)
+                    } catch (err) {
+                        console.log(err)
+                    }
+                }
     
                 await tournament.update({
                     state: 'complete'
