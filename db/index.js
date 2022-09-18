@@ -37,9 +37,6 @@ Player.hasMany(Entry)
 Entry.belongsTo(Tournament)
 Tournament.hasMany(Entry)
 
-Entry.belongsTo(Deck)
-Deck.hasOne(Entry)
-
 //EVENT
 Event.hasMany(Deck)
 Deck.belongsTo(Event)
