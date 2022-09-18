@@ -15,7 +15,7 @@ const Matchup = db.define('matchups', {
     losingDeck: {
         type: Sequelize.STRING
     },
-    loserDeckId: {
+    losingDeckId: {
         type: Sequelize.INTEGER
     }
 })

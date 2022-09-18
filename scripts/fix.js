@@ -567,7 +567,7 @@ const downloadYDKs = async () => {
             const ydk = ['created by...', '#main', ...main, '#extra', ...extra, '!side', ...side, ''].join('\n')
     
             await Deck.create({
-                builder: e.pilot,
+                builder: e.playerName,
                 formatName: e.tournament.formatName,
                 ydk: ydk,
                 eventName: e.tournament.name,

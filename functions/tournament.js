@@ -163,7 +163,7 @@ const createSheetData = async (tournament) => {
     entries.forEach((e) => {
         typeData[e.deck_type] ? typeData[e.deck_type]++ : typeData[e.deck_type] = 1
         catData[e.deck_category] ? catData[e.deck_category]++ : catData[e.deck_category] = 1
-        sheet1Data.push([e.pilot, e.deck_name, e.deck_type, e.url])            
+        sheet1Data.push([e.playerName, e.deck_name, e.deck_type, e.url])            
     })
 
     let typeDataArr = Object.entries(typeData).sort((b, a) => b[0].localeCompare(a[0]))
@@ -302,13 +302,14 @@ const seed = async (server, message, tournament) => {
         const playerId = entry.playerId
         const stats = await Stats.findOne({ where: { format, playerId, serverId: '414551319031054346' } })
         if (stats) {
-            expEntries.push([entry.participantId, entry.pilot, stats.elo])
+            expEntries.push([entry.participantId, entry.playerName, stats.elo])
         } else {
-            newbieEntries.push([entry.participantId, entry.pilot, null])
+            newbieEntries.push([entry.participantId, entry.playerName, null])
         }
     }
 
-    const seeds = [...expEntries.sort((a, b) => b[2] - a[2]), ...shuffleArray(newbieEntries)]    
+    const seeds = [...expEntries.sort((a, b) => b[2] - a[2]), ...shuffleArray(newbieEntries)]  
+    console.log('seeds', seeds)  
     let count = 0
     const results = []
     for (let i = 0; i < seeds.length; i++) {
@@ -334,6 +335,8 @@ const seed = async (server, message, tournament) => {
     }
 
     for (let i = 0; i < results.length; i += 30) message.channel.send({ content: results.slice(i, i + 30).join('\n').toString()})
+    console.log('count', count)
+    console.log('seeds.length', seeds.length)
     return count === seeds.length
 }
 

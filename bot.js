@@ -175,65 +175,17 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (!isProgrammer(message.member)) return message.channel.send({ content: `🧪`}) 
-        const formats = await Format.findAll()
-        for (let i = 0; i < formats.length; i++) {
-            const format = formats[i]
-            const serverId = '414551319031054346'
-            const all_stats = await Stats.findAll({ where: { format: format.name, serverId: serverId } })
-    
-            for (let i = 0; i < all_stats.length; i++) {
-                const stats = all_stats[i]
-                stats.testElo = 500.00
-                stats.backupElo = null
-                stats.wins = 0
-                stats.losses = 0
-                stats.games = 0
-                await stats.save()
-            }
-            
-            const allMatches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [["createdAt", "ASC"]]})
-            message.channel.send({ content: `Recalculating data from ${allMatches.length} ${format.name} ${format.emoji} matches. Please wait...`})
-            for (let i = 0; i < allMatches.length; i++) {
-                const match = allMatches[i]
-                const winnerId = match.winnerId
-                const loserId = match.loserId
-                const winningPlayer = await Player.findOne({ where: { discordId: winnerId }})
-                const winnerStats = await Stats.findOne({ where: { '$player.discordId$': winnerId, format: format.name, serverId: serverId }, include: Player })
-                const losingPlayer = await Player.findOne({ where: { discordId: loserId }})
-                const loserStats = await Stats.findOne({ where: { '$player.discordId$': loserId, format: format.name, serverId: serverId }, include: Player })
-    
-                if (!winningPlayer || !winnerStats) {
-                    await trackStats(server, winnerId, format.name)
-                    i--
-                    continue
-                }
-    
-                if (!losingPlayer || !loserStats) {
-                    await trackStats(server, loserId, format.name)
-                    i--
-                    continue
-                }
-    
-                const origEloWinner = winnerStats.testElo || 500.00
-                const origEloLoser = loserStats.testElo || 500.00
-                const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origEloWinner - origEloLoser) / 400))))))
-                
-                winnerStats.testElo = origEloWinner + delta
-                winnerStats.backupElo = origEloWinner
-                winnerStats.wins++
-                winnerStats.games++
-                await winnerStats.save()
-    
-                loserStats.testElo = origEloLoser - delta
-                loserStats.backupElo = origEloLoser
-                loserStats.losses++
-                loserStats.games++
-                await loserStats.save()
-    
-                console.log(`${format.name} Match ${i+1}: ${winningPlayer.name} > ${losingPlayer.name}`)
-            }
-        }
-        
+        const tournaments = await Tournament.findAll({
+            where: {
+                state: 'pending',
+                serverId: mgid
+            },
+            order: [["createdAt", "ASC"]],
+        })
+
+        const tournament = await selectTournament(message, tournaments, maid)
+        const success = await seed(server, message, tournament)
+        console.log('success', success)
         return message.channel.send({ content: emojis.yellow })
     }
 
@@ -603,7 +555,7 @@ try {
                 }
 
                 const winningEntry = await Entry.findOne({ where: { participantId: parseInt(winnerParticipantId) }})
-                const winner = winningEntry ? winningEntry.pilot : null
+                const winner = winningEntry ? winningEntry.playerName : null
                 const playerId = winningEntry ? winningEntry.playerId : null
 
                 const format = await Format.findOne({ where: {
@@ -773,7 +725,7 @@ try {
               if (!participant) return message.channel.send({ content: `Error: Unable to register on Challonge for ${tournament.name} ${tournament.logo}.`})
               
               await Entry.create({
-                  pilot: player.name,
+                  playerName: player.name,
                   url: url,
                   ydk: ydk,
                   participantId: participant.id,
@@ -838,7 +790,7 @@ try {
               if (!participant) return message.author.send({ content: `Error: Could not access tournament: ${tournament.name}`}).catch((err) => console.log(err))
               
               await Entry.create({
-                pilot: player.name,
+                playerName: player.name,
                 url: url,
                 ydk: ydk,
                 participantId: participant.id,
