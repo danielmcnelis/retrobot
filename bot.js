@@ -527,12 +527,10 @@ try {
         if (tournament.state === 'complete') return message.channel.send({ content: `This tournament has already ended.`})
 
         try {
-            // const { status } = await axios({
-            //     method: 'post',
-            //     url: `https://api.challonge.com/v1/tournaments/${tournament.id}/finalize.json?api_key=${server.challongeAPIKey}`
-            // })
-
-            const status = 200
+            const { status } = await axios({
+                method: 'post',
+                url: `https://api.challonge.com/v1/tournaments/${tournament.id}/finalize.json?api_key=${server.challongeAPIKey}`
+            })
     
             if (status && status === 200) {
                 const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${server.challongeAPIKey}`)
