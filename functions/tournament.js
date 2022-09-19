@@ -254,10 +254,14 @@ const removeParticipant = async (server, message, member, entry, tournament, dro
         })
 
         if (success) {
+            if (tournament.state === 'pending') {
+                await entry.destroy()
+            } else {
+                entry.active = false
+                await entry.save()
+            }
+
             const playerId = entry.playerId
-            entry.active = false
-            await entry.save()
-            
             const count = await Entry.count({ 
                 where: {
                     playerId: playerId,

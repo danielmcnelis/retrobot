@@ -844,8 +844,7 @@ try {
     if(commands.dropcom.includes(cmd)) {
         if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
         const player = await Player.findOne({ where: { discordId: maid }})
-        console.log('player.id', player.id)
-
+        if (!player) return message.channel.send({ content: `You are not in the database.`})
         const tournaments = [...await Entry.findAll({ where: { '$player.discordId$': maid }, include: [Player, Tournament] })].map((e) => e.tournament).filter((t) => t.serverId === message.guild.id)
         if (!tournaments.length) return message.channel.send({ content: `You are not in an active tournament.`})
         const tournament = await selectTournament(message, tournaments, maid)
@@ -859,13 +858,7 @@ try {
                 order: [["createdAt", "DESC"]] 
             })
 
-            console.log('matches.length', matches.length)
-
             matches.forEach((match) => {
-                console.log('match.id', match.id)
-                console.log('player.id', player.id)
-                console.log('match.winnerId', match.winnerId)
-                console.log('match.loserId', match.loserId)
                 if (match.winnerId === player.id || match.loserId === player.id) success = true 
             })
 
@@ -1736,6 +1729,18 @@ try {
             })
         }
 
+        const ratedPoolsToUpdate = await RatedPool.findAll({
+            where: {
+                playerId: {[Op.or]: [winningPlayer.id, losingPlayer.id]},
+                status: 'inactive'
+            }
+        }) || []
+
+        for (let d = 0; d < ratedPoolsToUpdate.length; d++) {
+            const rPTU = ratedPoolsToUpdate[d]
+            await rPTU.update({ status: 'pending' })
+        }
+
         return message.channel.send({ content: `${losingPlayer.name}, your ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss to ${winningPlayer.name} has been recorded.`})
     }
 
@@ -1930,6 +1935,18 @@ try {
             })
         }
 
+        const ratedPoolsToUpdate = await RatedPool.findAll({
+            where: {
+                playerId: {[Op.or]: [winningPlayer.id, losingPlayer.id]},
+                status: 'inactive'
+            }
+        }) || []
+
+        for (let d = 0; d < ratedPoolsToUpdate.length; d++) {
+            const rPTU = ratedPoolsToUpdate[d]
+            await rPTU.update({ status: 'pending' })
+        }
+
         return message.channel.send({ content: `A manual ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss by ${losingPlayer.name} to ${winningPlayer.name} has been recorded.`})		
     }
 
@@ -2089,7 +2106,8 @@ try {
                 format: format.name,
                 playerId: player.id
             },
-            order: [['updatedAt', 'DESC']]
+            order: [['updatedAt', 'DESC']],
+            limit: 20
         }) || []
 
         let ratedDeck = await getPreviousRatedDeck(message.author, yourRatedDecks, format)
@@ -2142,24 +2160,18 @@ try {
         const deckAttachments = await drawDeck(ratedDeck.ydk) || []
         message.channel.send({content: `Okay, ${player.name}, you will be using this deck if you are paired:` , files: [...deckAttachments] })
         
-        const oldRatedPool = await RatedPool.findOne({
+        const ratedPool = await RatedPool.findOne({
             where: {
                 name: player.name,
                 format: format.name,
                 playerId: player.id
             }
-        })
-
-        if (oldRatedPool) await oldRatedPool.destroy()
-
-        const newRatedPool = await RatedPool.create({
+        }) || await RatedPool.create({
             name: player.name,
             format: format.name,
             status: 'pending',
             playerId: player.id
         })
-
-        if (!newRatedPool) return
 
         try {
             const potentialPairs = await RatedPool.findAll({ 
@@ -2215,6 +2227,7 @@ try {
     
                 if (!commonGuildId) continue
                 const now = new Date()
+                const oneMinuteAgo = new Date(now - (1 * 60 * 1000))
                 const oneHourAgo = new Date(now - (60 * 60 * 1000))
     
                 const yourRecentOpponents = [...await Match.findAll({
@@ -2236,8 +2249,51 @@ try {
     
                 if (yourRecentOpponents.includes(potentialPair.playerId)) {
                     continue
+                } else if (potentialPair.createdAt < oneMinuteAgo) {
+                    getPotentialPairConfirmation(client, format, potentialPair, ratedPool, commonGuildId)
+                    continue
                 } else {
-                    getPotentialPairConfirmation(client, format, potentialPair, newRatedPool, commonGuildId)
+                    const commonServer = await Server.findOne({ where: { id: commonGuildId }})
+                    const channelId = commonServer.format ? channels[commonServer.name].ratedChannel : format.channel
+                    const channel = guild.channels.cache.get(channelId)
+                    const player = potentialPair.player
+                    const opponent = await Player.findOne({ where: { id: ratedPool.playerId }})
+                    const opposingMember = await guild.members.fetch(opponent.discordId)
+        
+                    opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${player.name + '#' + player.discriminator}\nDuelingBook: ${player.duelingBook}`)
+                    message.channel.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.name + '#' + opponent.discriminator}\nDuelingBook: ${opponent.duelingBook}`)
+                    
+                    await potentialPair.destroy()
+                    await ratedPool.destroy()
+
+                    const ratedPoolsToDeactivate = await RatedPool.findAll({
+                        where: {
+                            playerId: {[Op.or]: [player.id, opponent.id]}
+                        }
+                    }) || []
+        
+                    for (let d = 0; d < ratedPoolsToDeactivate.length; d++) {
+                        const rPTD = ratedPoolsToDeactivate[d]
+                        await rPTD.update({ status: 'inactive' })
+                    }
+        
+                    const allStats = await Stats.findAll({ 
+                        where: {
+                            format: { [Op.iLike]: format.name }, 
+                            games: { [Op.gte]: 3 },
+                            serverId: '414551319031054346',
+                            '$player.hidden$': false
+                        },
+                        include: [Player],
+                        order: [['elo', 'DESC']] 
+                    }) || []
+        
+                    const p1Index = allStats.findIndex((s) => s.playerId === player.id)
+                    const p1Rank = p1Index >= 0 ? `#${p1Index + 1} ` : ''
+                    const p2Index = allStats.findIndex((s) => s.playerId === opponent.id)
+                    const p2Rank = p2Index >= 0 ? `#${p2Index + 1} ` : ''
+        
+                    return channel.send({ content: `New Rated ${format.name} Format ${format.emoji} Match: ${p2Rank}<@${opponent.discordId}> (DB: ${opponent.duelingBook}) vs. ${p1Rank}<@${player.discordId}> (DB: ${player.duelingBook}). Good luck to both duelists.`})   
                 }
             }
         } catch (err) {

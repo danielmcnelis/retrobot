@@ -17,7 +17,7 @@ const { yescom } = require('../static/commands.json')
 const { getIssues } = require('./deck')
 
 
-const getPotentialPairConfirmation = async (client, format, potentialPair, newRatedPool, commonGuildId) => {
+const getPotentialPairConfirmation = async (client, format, potentialPair, ratedPool, commonGuildId) => {
     const guild = client.guilds.cache.get(commonGuildId)
     const member = await guild.members.fetch(potentialPair.player.discordId)
     if (!member) return
@@ -27,7 +27,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
         await potentialPair.save()
     } catch (err) {
         console.log(err)
-        return message.channel.send(`Sorry, something went wrong. I've removed you from the Rated ${newRatedPool.format} Format player pool.`)
+        return message.channel.send(`Sorry, something went wrong. I've removed you from the Rated ${ratedPool.format} Format player pool.`)
     }
 
     const filter = m => m.author.id === potentialPair.player.discordId
@@ -40,7 +40,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
     }).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
         if (yescom.includes(response)) {
-            const pairStillExists = await RatedPool.count({ where: { id: newRatedPool.id }})
+            const pairStillExists = await RatedPool.count({ where: { id: ratedPool.id }})
             if (!pairStillExists) {
                 potentialPair.status = 'pending'
                 await potentialPair.save()
@@ -51,21 +51,24 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
             const channelId = commonServer.format ? channels[commonServer.name].ratedChannel : format.channel
             const channel = guild.channels.cache.get(channelId)
             const player = potentialPair.player
-            const opponent = await Player.findOne({ where: { id: newRatedPool.playerId }})
+            const opponent = await Player.findOne({ where: { id: ratedPool.playerId }})
             const opposingMember = await guild.members.fetch(opponent.discordId)
 
             opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${player.name + '#' + player.discriminator}\nDuelingBook: ${player.duelingBook}`)
             message.channel.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.name + '#' + opponent.discriminator}\nDuelingBook: ${opponent.duelingBook}`)
             
-            const ratedPoolsToDestroy = await RatedPool.findAll({
+            await potentialPair.destroy()
+            await ratedPool.destroy()
+
+            const ratedPoolsToDeactivate = await RatedPool.findAll({
                 where: {
                     playerId: {[Op.or]: [player.id, opponent.id]}
                 }
             }) || []
 
-            for (let d = 0; d < ratedPoolsToDestroy.length; d++) {
-                const rPTD = ratedPoolsToDestroy[d]
-                await rPTD.destroy()
+            for (let d = 0; d < ratedPoolsToDeactivate.length; d++) {
+                const rPTD = ratedPoolsToDeactivate[d]
+                await rPTD.update({ status: 'inactive' })
             }
 
             const allStats = await Stats.findAll({ 
@@ -92,7 +95,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, newRa
     }).catch(async (err) => {
         console.log(err)
         await potentialPair.destroy()
-        return message.channel.send(`Sorry, time's up. I've removed you from the Rated ${newRatedPool.format} Format player pool.`)
+        return message.channel.send(`Sorry, time's up. I've removed you from the Rated ${ratedPool.format} Format player pool.`)
     })   
 }
 
