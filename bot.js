@@ -843,6 +843,9 @@ try {
     // DROP
     if(commands.dropcom.includes(cmd)) {
         if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        const player = await Player.findOne({ where: { discordId: maid }})
+        console.log('player.id', player.id)
+
         const tournaments = [...await Entry.findAll({ where: { '$player.discordId$': maid }, include: [Player, Tournament] })].map((e) => e.tournament).filter((t) => t.serverId === message.guild.id)
         if (!tournaments.length) return message.channel.send({ content: `You are not in an active tournament.`})
         const tournament = await selectTournament(message, tournaments, maid)
@@ -856,8 +859,14 @@ try {
                 order: [["createdAt", "DESC"]] 
             })
 
+            console.log('matches.length', matches.length)
+
             matches.forEach((match) => {
-                if (match.winnerId === maid || match.loserId === maid) success = true 
+                console.log('match.id', match.id)
+                console.log('player.id', player.id)
+                console.log('match.winnerId', match.winnerId)
+                console.log('match.loserId', match.loserId)
+                if (match.winnerId === player.id || match.loserId === player.id) success = true 
             })
 
             if (!success) return message.channel.send({ content: `If you played a match, please report the result before dropping. Otherwise ask a Moderator to remove you.`})
