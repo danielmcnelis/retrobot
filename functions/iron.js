@@ -19,6 +19,13 @@ const confirmIron = async (channel, format) => {
 
     for (let i = 1; i < 12; i ++) {
         setTimeout(async () => {
+            const confirming = await Iron.count({ where: { 
+                format: format.name,
+                status: 'confirming'
+            }})
+
+            if (!confirming) return
+
             const count = await Iron.count({ where: {
                 format: format.name,
                 confirmed: false
@@ -41,6 +48,13 @@ const confirmIron = async (channel, format) => {
     }
 
     return setTimeout(async () => {
+        const confirming = await Iron.count({ where: { 
+            format: format.name,
+            status: 'confirming'
+        }})
+
+        if (!confirming) return
+
         const count = await Iron.count({ where: {
             format: format.name,
             confirmed: false
