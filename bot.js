@@ -2253,6 +2253,7 @@ try {
                 } else {
                     const commonServer = await Server.findOne({ where: { id: commonGuildId }})
                     const channelId = commonServer.format ? channels[commonServer.name].ratedChannel : format.channel
+                    const guild = client.guilds.cache.get(commonGuildId)
                     const channel = guild.channels.cache.get(channelId)
                     const player = potentialPair.player
                     const opponent = await Player.findOne({ where: { id: ratedPool.playerId }})
