@@ -480,6 +480,30 @@ const isNewUser = async (discordId) => !await Player.count({ where: { discordId:
 //IS TOURNAMENT PLAYER?
 const isTourPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].tourRole)
 
+// SELECT MATCH
+const selectMatch = async (message, matches, discordId) => {
+    if (matches.length === 0) return false
+    if (matches.length === 1) return matches[0]
+    const options = matches.map((match, index) => `(${index + 1}) ${match.winner} > ${match.loser}`)
+    const filter = m => m.author.id === discordId
+    message.channel.send({ content: `Please select a match to undo:\n${options.join('\n').toString()}`})
+    return await message.channel.awaitMessages({
+        filter,
+        max: 1,
+        time: 15000
+    }).then((collected) => {
+        const num = parseInt(collected.first().content.match(/\d+/))
+        if (!num || !matches[num - 1]) {
+            message.channel.send({ content: `Sorry, ${collected.first().content} is not a valid option.`})
+            return null
+        }
+        else return matches[num - 1]
+    }).catch((err) => {
+        console.log(err)
+        return null
+    })
+}
+
 //SHUFFLE ARRAY
 const shuffleArray = (arr) => {
     let i = arr.length
@@ -538,6 +562,7 @@ module.exports = {
     hasFullAccess,
     ordinalize,
     search,
+    selectMatch,
     shuffleArray,
     trackStats,
     urlize

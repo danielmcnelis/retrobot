@@ -21,7 +21,7 @@ const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
 const { getDropFormats, getNewRatedDeck, getPreviousRatedDeck, getRatedFormat, getPotentialPairConfirmation } = require('./functions/rated.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getTournamentChannel, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
-const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasAffiliateAccess, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, trackStats, drawDeck, urlize } = require('./functions/utility.js')
+const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasAffiliateAccess, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, selectMatch, trackStats, drawDeck, urlize } = require('./functions/utility.js')
 
 // STATIC IMPORTS
 const channels = require('./static/channels.json')
@@ -2044,22 +2044,20 @@ try {
 
         const serverId = server.internalLadder ? server.id : '414551319031054346'
         if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
-        const allMatches = await Match.findAll({ where: { format: format.name, serverId: serverId }})
-        const lastMatch = allMatches.slice(-1)[0]
-        const winnerId = lastMatch.winnerId
-        const loserId = lastMatch.loserId
+        const matches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [['createdAt', 'DESC']]})
+        const authorIsMod = isMod(server, message.member)
+        const match = authorIsMod ? await selectMatch(message, matches.slice(0, 10), maid) : matches[0]
+        const winnerId = match.winnerId
+        const loserId = match.loserId
         const winningPlayer = await Player.findOne({ where: { id: winnerId } })
         const winnerStats = await Stats.findOne({ where: { playerId: winningPlayer.id, format: format.name, serverId: serverId } })
         const losingPlayer = await Player.findOne({ where: { id: loserId } })
         const loserStats = await Stats.findOne({ where: { playerId: losingPlayer.id, format: format.name, serverId: serverId } })
-        
-        const prompt = (isMod(server, message.member) ? '' : ' Please get a Moderator to help you.')
-        if (maid !== losingPlayer.discordId && !isMod(server, message.member)) return message.channel.send({ content: `You did not participate in the last recorded match.${prompt}`})
-
-        if (!winnerStats.backupElo && maid !== losingPlayer.discordId) return message.channel.send({ content: `${winningPlayer.name} has no backup stats.${prompt}`})
-        if (!winnerStats.backupElo && maid === losingPlayer.discordId) return message.channel.send({ content: `Your last opponent, ${winningPlayer.name}, has no backup stats.${prompt}`})
-        if (!loserStats.backupElo && maid !== losingPlayer.discordId) return message.channel.send({ content: `${losingPlayer.name} has no backup stats.${prompt}`})
-        if (!loserStats.backupElo && maid === losingPlayer.discordId) return message.channel.send({ content: `You have no backup stats.${prompt}`})
+        if (maid !== losingPlayer.discordId && !authorIsMod) return message.channel.send({ content: `You did not participate in the last recorded match. Please get a Moderator to help you.`})
+        if (!winnerStats.backupElo && authorIsMod) message.channel.send({ content: `${winningPlayer.name} has no backup stats: Remember to do a **!recalc** when you are finished.`})
+        if (!loserStats.backupElo && authorIsMod) message.channel.send({ content: `${losingPlayer.name} has no backup stats: Remember to do a **!recalc** when you are finished.`})
+        if (!winnerStats.backupElo && !authorIsMod) return message.channel.send({ content: `Your last opponent, ${winningPlayer.name}, has no backup stats. Please get a Moderator to help you.`})
+        if (!loserStats.backupElo && !authorIsMod) return message.channel.send({ content: `You have no backup stats. Please get a Moderator to help you.`})
 
         winnerStats.elo = winnerStats.backupElo
         winnerStats.backupElo = null
@@ -2073,7 +2071,7 @@ try {
         loserStats.games--
         await loserStats.save()
 
-        await lastMatch.destroy()
+        await match.destroy()
         return message.channel.send({ content: `The last ${server.internalLadder ? 'Internal ' : ''}${format.name} match in which ${winningPlayer.name} defeated ${losingPlayer.name} has been erased. ${format.emoji}`})
     }
 
