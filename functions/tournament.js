@@ -297,7 +297,7 @@ const removeParticipant = async (server, message, member, entry, tournament, dro
 const seed = async (server, message, tournament) => {
     message.channel.send({ content: `Seeding in progress, please wait.`})
     const format = tournament.formatName
-    const entries = await Entry.findAll({ where: { tournamentId: tournament.id } })    
+    const entries = await Entry.findAll({ where: { active: true, tournamentId: tournament.id } })    
     const expEntries = []
     const newbieEntries = []
 
