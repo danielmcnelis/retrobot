@@ -334,7 +334,7 @@ const seed = async (server, message, tournament) => {
             results.push(`${name} is now the ${i+1} seed.`)
             count++
         } catch (err) {
-            console.log(err)
+            console.log(`error processing ${name} (participantId: ${participantId}) as the ${i+1} seed.`)
         }   
     }
 
