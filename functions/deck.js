@@ -172,7 +172,7 @@ const checkDeckList = async (member, format) => {
 
 //GET DECK TYPE
 const getDeckType = async (server, player, format, tournamentName = 'other') => {
-    const file = `./decks/${server.name}/${tournamentName}/${player.name.replace(/[^\ws]/gi, "_").replace(/ /g,'') + '_' + player.discriminator}.ydk`
+    const file = `./decks/${server.name}/${tournamentName}/${player.name.replace(/[^\ws]/gi, "_").replace(/ /g,'') + player.discriminator}.ydk`
     const raw = fs.readFileSync(file, 'utf8')
     if (!raw) return
     const main = raw.split('#extra')[0]
