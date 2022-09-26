@@ -294,6 +294,49 @@ const purgeTourRoles = async (client) => {
     return setTimeout(() => purgeTourRoles(client), (24 * 60 * 60 * 1000))
 }
 
+// ASSIGN TOURNAMENT PARTICIPANT ROLES
+const assignTourRoles = async (client) => {
+    const servers = await Server.findAll()
+    for (let s = 0; s < servers.length; s++) {
+        let b = 0
+        try {
+            const server = servers[s]
+            if (!roles[server.name]) continue
+            const roleId = roles[server.name].tourRole
+            if (!roleId) continue
+            const guild = client.guilds.cache.get(server.id)
+            const membersMap = await guild.members.fetch()
+            const members = [...membersMap.values()]
+
+            for (let i = 0; i < members.length; i++) {
+                const member = members[i]
+                if (member._roles.includes(roleId)) continue
+
+                const count = await Entry.count({
+                    where: {
+                        active: true,
+                        '$player.discordId$': member.user.id,
+                        '$tournament.serverId$': server.id
+                    },
+                    include: [Player, Tournament]
+                })
+
+                if (member && count) {
+                    console.log(`assigning tour role to ${member.user.username}`)
+                    b++
+                    member.roles.add(roleId).catch((err) => console.log(err))
+                }
+            }
+
+            console.log(`assigned ${b} tour roles on ${server.name}`)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    return setTimeout(() => assignTourRoles(client), (24 * 60 * 60 * 1000))
+}
+
 // FIND NEW PRINTS
 const findNewPrints = async (set, groupId) => {
     let b = 0
@@ -696,6 +739,7 @@ const updateServers = async (client) => {
 
 
 module.exports = {
+    assignTourRoles,
     conductCensus,
     downloadNewCards,
     getMidnightCountdown,

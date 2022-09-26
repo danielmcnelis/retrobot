@@ -13,7 +13,7 @@ const { Op } = require('sequelize')
 const { Card, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
 // FUNCTION IMPORTS
-const { conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
+const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { createDecks, composeBlogPost, composeThumbnails, selectCoverage } = require('./functions/coverage.js')
 const { checkDeckList, getDeckFormat, getIssues } = require( './functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
@@ -45,9 +45,10 @@ client.on('ready', async() => {
 
     const midnightCountdown = getMidnightCountdown()
     setTimeout(() => purgeEntries(), midnightCountdown)
-    setTimeout(() => purgeTourRoles(client), midnightCountdown + (0.25 * 60 * 1000))
-    setTimeout(() => markInactives(), midnightCountdown + (0.5 * 60 * 1000))
-    setTimeout(() => updateServers(client), midnightCountdown + (0.75 * 60 * 1000))
+    setTimeout(() => purgeTourRoles(client), midnightCountdown + (0.2 * 60 * 1000))
+    setTimeout(() => assignTourRoles(client), midnightCountdown + (0.4 * 60 * 1000))
+    setTimeout(() => markInactives(), midnightCountdown + (0.6 * 60 * 1000))
+    setTimeout(() => updateServers(client), midnightCountdown + (0.8 * 60 * 1000))
     setTimeout(() => updateSets(), midnightCountdown + (1 * 60 * 1000))
     setTimeout(() => downloadNewCards(), midnightCountdown + (2 * 60 * 1000))
     setTimeout(() => conductCensus(client), midnightCountdown + (3 * 60 * 1000))
@@ -175,18 +176,7 @@ try {
     // TEST 
     if (cmd === `!test`) {
         if (!isProgrammer(message.member)) return message.channel.send({ content: `🧪`}) 
-        const tournaments = await Tournament.findAll({
-            where: {
-                state: 'pending',
-                serverId: mgid
-            },
-            order: [["createdAt", "ASC"]],
-        })
-
-        const tournament = await selectTournament(message, tournaments, maid)
-        const success = await seed(server, message, tournament)
-        console.log('success', success)
-        return message.channel.send({ content: emojis.yellow })
+        assignTourRoles(client)
     }
 
     // FIX
