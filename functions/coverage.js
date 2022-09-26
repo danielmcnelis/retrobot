@@ -25,8 +25,8 @@ const createDecks = async (message, event, tournament, useTags = true) => {
         if (!data) return
         const participants = data.map((d) => d.participant.name)
         const players = await Player.findAll({ where: { discriminator: {[Op.not]: null } }})
-        const shortenedTags = useTags ? players.map((p) => p.name.replace(/ [^-?|!.'$\w\s]/gi, '_')  + p.discriminator) :
-                                        players.map((p) => p.name.replace(/ [^-?|!.'$\w\s]/gi, '_'))
+        const shortenedTags = useTags ? players.map((p) => p.name.replace(/[^\ws]/gi, '_') + p.discriminator) :
+                                        players.map((p) => p.name.replace(/[^\ws]/gi, '_'))
 
         console.log('shortenedTags', shortenedTags)
 
