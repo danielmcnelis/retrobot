@@ -67,9 +67,6 @@ Membership.belongsTo(Server)
 Server.hasMany(Membership)
 
 //PLAYER
-Player.hasMany(BlogPost)
-BlogPost.belongsTo(Player)
-
 Player.hasMany(Deck)
 Deck.belongsTo(Player)
 
