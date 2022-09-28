@@ -517,7 +517,7 @@ try {
         const tournament = await selectTournament(message, tournaments, maid)
         if (!tournament) return message.channel.send(`Could not find tournmanet.`)
 
-        if (!args[0] || isNaN(minutes)) {
+        if (!args[0] || isNaN(parseInt(args[0]))) {
             const now = new Date()
             const difference = tournament.deadline - now
             const hours = Math.floor(difference / (1000 * 60 * 60))
