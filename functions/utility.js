@@ -123,7 +123,7 @@ const search = async (query, fuzzyCards, format) => {
     const firstPrint = print ? `${rarities[print.rarity]} ${print.set.setName}` : null 
 
     const legal = format && card.tcgDate && (card.tcgDate <= format.date || format.name === 'Traditional' || format.name === 'Current')
-    const position = format.name === 'Traditional' && legal && status && status.restriction === 'Forbidden' ? 'limited' :
+    const position = format && format.name === 'Traditional' && legal && status && status.restriction === 'Forbidden' ? 'limited' :
         legal && status ? status.restriction :
         legal && !status ? 'unlimited' :
         'not legal'
