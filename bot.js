@@ -495,14 +495,59 @@ try {
     // TIMER
     if (cmd === `!timer`) {
         if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
-        if (!isMod(server, message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
-        const minutes = parseInt(args[0])
-        if (!args[0] || isNaN(minutes)) return message.channel.send(`Please specify the number of minutes to set the timer.`)
-        message.channel.send(`<@&${roles[server.name].tourRole}> The next round begins now! You have ${minutes} minutes to complete your match.`)
+
+        const format = await Format.findOne({
+            where: {
+                [Op.or]: {
+                    name: {[Op.iLike]: server.format },
+                    channel: mcid
+                }
+            }
+        })
         
-        return setTimeout(() => {
-            return message.channel.send(`<@&${roles[server.name].tourRole}> Time is up in the round!`)
-        }, minutes * 60 * 1000)
+        const tournaments = await Tournament.findAll({ 
+            where: { 
+                state: 'underway', 
+                formatName: format ? format.name : {[Op.not]: null},
+                serverId: mgid
+            }, 
+            order: [['createdAt', 'ASC']] 
+        })
+
+        const tournament = await selectTournament(message, tournaments, maid)
+        if (!tournament) return message.channel.send(`Could not find tournmanet.`)
+
+        if (!args[0] || isNaN(minutes)) {
+            const now = new Date()
+            const difference = tournament.deadline - now
+            const hours = Math.floor(difference / (1000 * 60 * 60))
+            const word1 = hours === 1 ? 'hour' : 'hours'
+            const minutes = Math.floor((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
+            const word2 = minutes === 1 ? 'minute' : 'minutes'
+            return message.channel.send(`Remaining time: ${hours} ${word1} and ${minutes} ${word2}.`)
+        } else {
+            if (!isMod(server, message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
+            
+            const multiplier = message.content.includes('day') ? 60 * 24 :
+                message.content.includes('hour') ? 60 :
+                1
+
+            const timestamp = Date.now()
+            const timeRemaining = parseInt(args[0]) * multiplier * 60 * 1000
+            const deadline = new Date(timestamp + timeRemaining)
+            await tournament.update({ deadline })
+            const now = new Date()
+            const difference = tournament.deadline - now
+            const hours = Math.floor(difference / (1000 * 60 * 60))
+            const word1 = hours === 1 ? 'hour' : 'hours'
+            const minutes = Math.floor((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
+            const word2 = minutes === 1 ? 'minute' : 'minutes'
+            message.channel.send(`< @&${roles[server.name].tourRole}> The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match.`)
+            
+            return setTimeout(() => {
+                return message.channel.send(`< @&${roles[server.name].tourRole}> Time is up in the round!`)
+            }, timeRemaining)
+        }
     }
 
     // END

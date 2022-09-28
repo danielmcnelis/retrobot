@@ -22,6 +22,9 @@ const Tournament = db.define('tournaments', {
     state: {
         type: Sequelize.STRING
     },
+    deadline: {
+        type: Sequelize.DATE
+    },
     community: {
         type: Sequelize.STRING
     },
