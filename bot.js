@@ -542,10 +542,10 @@ try {
             const word1 = hours === 1 ? 'hour' : 'hours'
             const minutes = Math.ceil((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
             const word2 = minutes === 1 ? 'minute' : 'minutes'
-            message.channel.send(`< @&${roles[server.name].tourRole}> The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match.`)
+            message.channel.send(`<@&${roles[server.name].tourRole}> The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match.`)
             
             return setTimeout(() => {
-                return message.channel.send(`< @&${roles[server.name].tourRole}> Time is up in the round!`)
+                return message.channel.send(`<@&${roles[server.name].tourRole}> Time is up in the round!`)
             }, timeRemaining)
         }
     }
