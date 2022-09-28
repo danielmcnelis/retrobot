@@ -528,8 +528,8 @@ try {
         } else {
             if (!isMod(server, message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
             
-            const multiplier = message.content.includes('day') ? 60 * 24 :
-                message.content.includes('hour') ? 60 :
+            const multiplier = message.content.includes('d') ? 60 * 24 :
+                message.content.includes('h') ? 60 :
                 1
 
             const timestamp = Date.now()
@@ -538,9 +538,9 @@ try {
             await tournament.update({ deadline })
             const now = new Date()
             const difference = tournament.deadline - now
-            const hours = Math.ceiling(difference / (1000 * 60 * 60))
+            const hours = Math.ceil(difference / (1000 * 60 * 60))
             const word1 = hours === 1 ? 'hour' : 'hours'
-            const minutes = Math.ceiling((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
+            const minutes = Math.ceil((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
             const word2 = minutes === 1 ? 'minute' : 'minutes'
             message.channel.send(`< @&${roles[server.name].tourRole}> The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match.`)
             
