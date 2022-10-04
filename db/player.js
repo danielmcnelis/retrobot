@@ -56,8 +56,7 @@ const Player = db.define('players', {
         defaultValue: false
     },
     oldId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
+        type: Sequelize.INTEGER
     }
 })
 
