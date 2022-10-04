@@ -5,6 +5,7 @@ const { db } = require('./db')
 const Player = db.define('players', {
     id: {
         type: Sequelize.STRING,
+        primaryKey: true,
         unique: true
     },
     name: {
