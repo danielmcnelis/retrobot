@@ -3,7 +3,7 @@ const Sequelize = require('sequelize')
 const { db } = require('./db')
 
 const Player = db.define('players', {
-    uuid: {
+    id: {
         type: Sequelize.STRING,
         unique: true
     },
