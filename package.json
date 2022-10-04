@@ -36,11 +36,13 @@
   "bundleDependencies": false,
   "dependencies": {
     "axios": "^0.24.0",
+    "bcrypt": "^5.0.1",
     "canvas": "^2.9.1",
     "discord.js": "^13.5.1",
     "fuzzyset": "^1.0.7",
     "google-spreadsheet": "^3.2.0",
     "googleapis": "^92.0.0",
+    "nanoid": "^4.0.0",
     "pg": "^8.7.1",
     "quickchart-js": "^2.0.3",
     "sequelize": "^6.12.5",

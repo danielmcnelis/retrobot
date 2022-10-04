@@ -2293,9 +2293,10 @@ try {
                     const player = potentialPair.player
                     const opponent = await Player.findOne({ where: { id: ratedPool.playerId }})
                     const opposingMember = await guild.members.fetch(opponent.discordId)
-        
-                    opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${player.name + '#' + player.discriminator}\nDuelingBook: ${player.duelingBook}`)
-                    message.channel.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.name + '#' + opponent.discriminator}\nDuelingBook: ${opponent.duelingBook}`)
+                    console.log('opposingMember bot.js', opposingMember)
+
+                    opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${player.name + '#' + player.discriminator}\nDuelingBook: ${player.duelingBook}`).catch((err) => console.log(err))
+                    message.channel.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.name + '#' + opponent.discriminator}\nDuelingBook: ${opponent.duelingBook}`).catch((err) => console.log(err))
                     
                     await potentialPair.destroy()
                     await ratedPool.destroy()

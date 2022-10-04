@@ -360,7 +360,9 @@ const convertArrayToObject = (arr = []) => {
 const createPlayer = async (member) => {
     if (member && !member.user.bot) {
         try {
+            const id = await Player.generateId()
             await Player.create({
+                id: id,
                 name: `${member.user.username}`,
                 discordId: `${member.user.id}`,
                 discriminator: `${member.user.discriminator}`

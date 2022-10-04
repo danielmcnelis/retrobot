@@ -3,6 +3,10 @@ const Sequelize = require('sequelize')
 const { db } = require('./db')
 
 const Player = db.define('players', {
+    uuid: {
+        type: Sequelize.STRING,
+        unique: true
+    },
     name: {
         type: Sequelize.STRING
     },
@@ -49,9 +53,18 @@ const Player = db.define('players', {
     hidden: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
+    },
+    oldId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
     }
 })
 
+Player.generateId = async () => {
+    const base58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+    return import('nanoid').then(({ customAlphabet }) => customAlphabet(base58, 22)())
+  }
+  
 Player.findByDiscordId = (id) => Player.findOne({ where: { discordId: id }})
 
 Player.discordLogin = async (user) => {
