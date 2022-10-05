@@ -2293,7 +2293,7 @@ try {
                     const player = potentialPair.player
                     const opponent = await Player.findOne({ where: { id: ratedPool.playerId }})
                     const opposingMember = await guild.members.fetch(opponent.discordId)
-                    console.log('opposingMember bot.js', opposingMember)
+                    console.log('opposingMember.user bot.js', opposingMember.user)
 
                     opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${player.name + '#' + player.discriminator}\nDuelingBook: ${player.duelingBook}`).catch((err) => console.log(err))
                     message.channel.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.name + '#' + opponent.discriminator}\nDuelingBook: ${opponent.duelingBook}`).catch((err) => console.log(err))
