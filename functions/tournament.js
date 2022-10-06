@@ -138,6 +138,7 @@ const selectTournament = async (message, tournaments, discordId) => {
         time: 15000
     }).then(collected => {
         const num = parseInt(collected.first().content.match(/\d+/))
+        console.log('num', num)
         if (!num || !tournaments[num - 1]) {
             message.channel.send({ content: `Sorry, ${collected.first().content} is not a valid option.`})
             return null

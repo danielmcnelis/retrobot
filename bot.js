@@ -193,6 +193,7 @@ try {
             const tournament = await selectTournament(message, tournaments, maid)
             if (!tournament) return message.channel.send({ content: `There are no tournaments.` })
             const { name } = tournament
+            console.log('name', name)
 
             try {
                 await checkExpiryDate(server)
