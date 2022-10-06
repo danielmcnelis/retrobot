@@ -943,6 +943,7 @@ try {
         if (!entry) return message.channel.send({ content: `${isAuthor ? "You are" : "That player is"} not registered for ${tournament.name}.`})
 
         message.channel.send({ content: `Please check your DMs.` })
+        console.log('entry.ydk', entry.ydk)
         const deckAttachments = await drawDeck(entry.ydk) || []
         return message.author.send({ content: `${isAuthor ? `${player.name}\'s` : 'Your'} deck for ${tournament.name} is:\n<${entry.url}>`, files: [...deckAttachments]}).catch((err) => console.log(err))
     }
@@ -2293,7 +2294,6 @@ try {
                     const player = potentialPair.player
                     const opponent = await Player.findOne({ where: { id: ratedPool.playerId }})
                     const opposingMember = await guild.members.fetch(opponent.discordId)
-                    console.log('opposingMember.user bot.js', opposingMember.user)
 
                     opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${player.name + '#' + player.discriminator}\nDuelingBook: ${player.duelingBook}`).catch((err) => console.log(err))
                     message.channel.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.name + '#' + opponent.discriminator}\nDuelingBook: ${opponent.duelingBook}`).catch((err) => console.log(err))
