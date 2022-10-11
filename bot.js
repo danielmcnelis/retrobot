@@ -259,6 +259,14 @@ try {
         return message.channel.send(`${summary.join('\n')}\n\nMatch History:\n${matchHistory.join('\n')}`)        
     }
 
+    if (cmd === `!test`) {
+        const data = require('./static/matches.json')
+        console.log('data', data)
+        const matches = JSON.parse(data)
+        console.log('matches', matches)
+    }
+
+
     // FIX
     if (cmd === `!fix`) {
         if (isProgrammer(message.member)) {
