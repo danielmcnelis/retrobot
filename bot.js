@@ -254,11 +254,12 @@ try {
             }
         }
 
+        const rawBuccholz = scores.reduce((accum, val) => accum += val, 0)
         scores.sort()
         const highest = scores.pop()
         const lowest = scores.shift()
         const medianBuccholz = scores.reduce((accum, val) => accum += val, 0)
-        const summary = [`Player: ${entry.playerName}`, `Record: ${entry.wins}-${entry.losses}`, `Raw Buccholz: ${medianBuccholz}`, `Median-Buccholz: ${medianBuccholz} (-${highest}, -${lowest})`, `Wins vs. Tied Opponents: ${winsVsTiedOpponents}`]
+        const summary = [`Player: ${entry.playerName}`, `Record: ${entry.wins}-${entry.losses}`, `Raw Buccholz: ${rawBuccholz}`, `Median-Buccholz: ${medianBuccholz} (-${highest}, -${lowest})`, `Wins vs. Tied Opponents: ${winsVsTiedOpponents}`]
 
         return message.channel.send(`${summary.join('\n')}\n\nMatch History:\n${matchHistory.join('\n')}`)        
     }
