@@ -210,10 +210,9 @@ try {
             }
         }
         
-        const data = require('./static/matches.json')
-        const matches = JSON.parse(data)
-        matches.push(match)
-        fs.writeFileSync(`./static/matches.json`, matches).catch((err) => console.log(err))
+        const matches = require('./static/matches.json')
+        const data = JSON.stringify(matches)
+        fs.writeFileSync(`./static/matches.json`, data).catch((err) => console.log(err))
         return message.channel.send(`Added new match data: ${winningPlayer.name} > ${losingPlayer.name}`)
     }
 
