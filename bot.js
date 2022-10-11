@@ -242,13 +242,13 @@ try {
                 const opposingEntry = await Entry.findOne({ where: { participantId: m.loser_id }})
                 if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
                 if (opposingEntry.wins === wins) winsVsTiedOpponents++
-                medianBuccholz += opposingEntry.wins
-                matchHistory.push(`Round ${m.round}: Win vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Med-Buccholz +${opposingEntry.wins}, WinsVsTied +${opposingEntry.wins === wins ? '1' : '0'}`)
+                medianBuccholz += (opposingEntry.wins - opposingEntry.losses)
+                matchHistory.push(`Round ${m.round}: Win vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Med-Buccholz +${opposingEntry.wins - opposingEntry.losses}, WinsVsTied +${opposingEntry.wins === wins ? '1' : '0'}`)
             } else if (m.loser_id === participantId) {
                 const opposingEntry = await Entry.findOne({ where: { participantId: m.winner_id }})
                 if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
-                medianBuccholz += opposingEntry.wins
-                matchHistory.push(`Round ${m.round}: Loss vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Med-Buccholz +${opposingEntry.wins}, WinsVsTied +0`)
+                medianBuccholz += (opposingEntry.wins - opposingEntry.losses)
+                matchHistory.push(`Round ${m.round}: Loss vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Med-Buccholz +${opposingEntry.wins - opposingEntry.losses}, WinsVsTied +0`)
             } else {
                 continue
             }
