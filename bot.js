@@ -178,7 +178,8 @@ try {
         const matches = require('./static/matches.json')
         const query = marr.length > 1 ? marr.slice(1, marr.length).join(' ') : null
         const entry = await Entry.findOne({ where: {
-            playerName: query
+            playerName: query,
+            tournamentId: '11784604'
         }})
 
         if (!entry) return message.channel.send(`Could not find ${query} among FLC27 entries.`)
@@ -191,15 +192,15 @@ try {
         let medianBuccholz = 0
 
         for (let i = 0; i < matches.length; i++) {
-            const m = matches[i]
+            const m = matches[i].match
 
-            if (m.winner_id && m.winner_id.toString() === participantId) {
+            if (m.winner_id === participantId) {
                 const opposingEntry = await Entry.findOne({ where: { participantId: m.loser_id }})
                 if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
                 if (opposingEntry.wins === wins) winsVsTiedOpponents++
                 medianBuccholz += opposingEntry.wins
                 matchHistory.push(`Round ${m.round}: Win vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Med-Buccholz +${opposingEntry.wins}, WinsVsTied +${opposingEntry.wins === wins ? '1' : '0'}`)
-            } else if (m.loser_id && m.loser_id.toString() === participantId) {
+            } else if (m.loser_id === participantId) {
                 const opposingEntry = await Entry.findOne({ where: { participantId: m.winner_id }})
                 if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
                 medianBuccholz += opposingEntry.wins
