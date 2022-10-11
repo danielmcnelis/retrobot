@@ -193,13 +193,13 @@ try {
         for (let i = 0; i < matches.length; i++) {
             const m = matches[i]
 
-            if (m.winner_id.toString() === participantId) {
+            if (m.winner_id && m.winner_id.toString() === participantId) {
                 const opposingEntry = await Entry.findOne({ where: { participantId: m.loser_id }})
                 if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
                 if (opposingEntry.wins === wins) winsVsTiedOpponents++
                 medianBuccholz += opposingEntry.wins
                 matchHistory.push(`Round ${m.round}: Win vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Med-Buccholz +${opposingEntry.wins}, WinsVsTied +${opposingEntry.wins === wins ? '1' : '0'}`)
-            } else if (m.loser_id.toString() === participantId) {
+            } else if (m.loser_id && m.loser_id.toString() === participantId) {
                 const opposingEntry = await Entry.findOne({ where: { participantId: m.winner_id }})
                 if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
                 medianBuccholz += opposingEntry.wins
