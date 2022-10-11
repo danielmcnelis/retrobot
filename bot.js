@@ -211,6 +211,7 @@ try {
         }
         
         const matches = require('./static/matches.json')
+        matches.push(match)
         const data = JSON.stringify(matches)
         fs.writeFileSync(`./static/matches.json`, data)
         return message.channel.send(`Added new match data: ${winningPlayer.name} > ${losingPlayer.name}`)
