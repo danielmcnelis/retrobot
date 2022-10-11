@@ -204,8 +204,8 @@ try {
 
         const match = {
             match: {
-                winnerId: winningEntry.participantId,
-                loserId: losingEntry.participantId,
+                winner_id: winningEntry.participantId,
+                loser_id: losingEntry.participantId,
                 round: 8
             }
         }
