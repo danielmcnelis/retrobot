@@ -173,10 +173,45 @@ try {
         return postStory(message.channel, format)
     }
 
-    // TEST 
-    if (cmd === `!test`) {
-        if (!isProgrammer(message.member)) return message.channel.send({ content: `🧪`}) 
-        assignTourRoles(client)
+    // CALC 
+    if (cmd === `!calc`) {
+        const matches = require('./static/matches.json')
+        const query = marr.length > 1 ? marr.slice(1, marr.length).join(' ') : null
+        const entry = await Entry.findOne({ where: {
+            playerName: query
+        }})
+
+        if (!entry) return message.channel.send(`Could not find ${query} among FLC27 entries.`)
+
+        const participantId = entry.participantId
+        const wins = entry.wins
+
+        const matchHistory = []
+        let winsVsTiedOpponents = 0
+        let medianBuccholz = 0
+
+        for (let i = 0; i < matches.length; i++) {
+            const m = matches[i]
+
+            if (m.winner_id === participantId) {
+                const opposingEntry = await Entry.findOne({ where: { participantId: m.loser_id }})
+                if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
+                if (opposingEntry.wins === wins) winsVsTiedOpponents++
+                medianBuccholz += opposingEntry.wins
+                matchHistory.push(`Round ${m.round}: Win vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Med-Buccholz +${opposingEntry.wins}, WinsVsTied +${opposingEntry.wins === wins ? '1' : '0'}`)
+            } else if (m.loser_id === participantId) {
+                const opposingEntry = await Entry.findOne({ where: { participantId: m.winner_id }})
+                if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
+                medianBuccholz += opposingEntry.wins
+                matchHistory.push(`Round ${m.round}: Loss vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Med-Buccholz +${opposingEntry.wins}, WinsVsTied +0`)
+            } else {
+                continue
+            }
+        }
+
+        const summary = [`Player: ${entry.playerName}`, `Record: ${entry.wins}-${entry.losses}`, `Median-Buccholz: ${medianBuccholz}`, `Wins vs. Tied Opponents: ${winsVsTiedOpponents}`]
+
+        return message.channel.send(`${summary.join('\n')}\n\nMatch History:\n${matchHistory.join('\n')}`)        
     }
 
     // FIX
