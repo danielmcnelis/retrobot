@@ -232,8 +232,8 @@ try {
         const wins = entry.wins
 
         const matchHistory = []
+        const scores = []
         let winsVsTiedOpponents = 0
-        let medianBuccholz = 0
 
         for (let i = 0; i < matches.length; i++) {
             const m = matches[i].match
@@ -242,19 +242,23 @@ try {
                 const opposingEntry = await Entry.findOne({ where: { participantId: m.loser_id }})
                 if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
                 if (opposingEntry.wins === wins) winsVsTiedOpponents++
-                medianBuccholz += (opposingEntry.wins - opposingEntry.losses)
-                matchHistory.push(`Round ${m.round}: Win vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Med-Buccholz +${opposingEntry.wins - opposingEntry.losses}, WinsVsTied +${opposingEntry.wins === wins ? '1' : '0'}`)
+                scores.push(opposingEntry.wins)
+                matchHistory.push(`Round ${m.round}: Win vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Buccholz +${opposingEntry.wins}, WinsVsTied +${opposingEntry.wins === wins ? '1' : '0'}`)
             } else if (m.loser_id === participantId) {
                 const opposingEntry = await Entry.findOne({ where: { participantId: m.winner_id }})
                 if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
-                medianBuccholz += (opposingEntry.wins - opposingEntry.losses)
-                matchHistory.push(`Round ${m.round}: Loss vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Med-Buccholz +${opposingEntry.wins - opposingEntry.losses}, WinsVsTied +0`)
+                scores.push(opposingEntry.wins)
+                matchHistory.push(`Round ${m.round}: Loss vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Buccholz +${opposingEntry.wins}, WinsVsTied +0`)
             } else {
                 continue
             }
         }
 
-        const summary = [`Player: ${entry.playerName}`, `Record: ${entry.wins}-${entry.losses}`, `Median-Buccholz: ${medianBuccholz}`, `Wins vs. Tied Opponents: ${winsVsTiedOpponents}`]
+        scores.sort()
+        const highest = scores.pop()
+        const lowest = scores.shift()
+        const medianBuccholz = scores.reduce((accum, val) => accum += val, 0)
+        const summary = [`Player: ${entry.playerName}`, `Record: ${entry.wins}-${entry.losses}`, `Raw Buccholz: ${medianBuccholz}`, `Median-Buccholz: ${medianBuccholz} (-${highest}, -${lowest})`, `Wins vs. Tied Opponents: ${winsVsTiedOpponents}`]
 
         return message.channel.send(`${summary.join('\n')}\n\nMatch History:\n${matchHistory.join('\n')}`)        
     }
