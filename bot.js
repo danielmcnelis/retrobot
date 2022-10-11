@@ -173,6 +173,49 @@ try {
         return postStory(message.channel, format)
     }
 
+    // FIX
+    if (cmd === `!add`) {
+        if (!isProgrammer(message.member)) return message.channel.send(`You do not have permission to do that.`)
+        
+        const usersMap = message.mentions.users
+        const userIds = [...usersMap.keys()]	
+        const winnerDiscordId = message.mentions.users.first() ? message.mentions.users.first().id : args.length > 0 ? args[0] : null
+        const loserDiscordId = userIds.length > 1 ? userIds[1] : args.length > 1 ? args[1] : null	
+
+        const winningPlayer = await Player.findOne({ where: { discordId: winnerDiscordId }})
+        if (!winnerDiscordId || !winningPlayer) return message.channel.send(`Could not find winner.`)
+
+        const losingPlayer = await Player.findOne({ where: { discordId: loserDiscordId }})
+        if (!loserDiscordId || !losingPlayer) return message.channel.send(`Could not find loser.`)
+
+        const winningEntry = await Entry.findOne({ where: {
+            playerName: winningPlayer.discordName,
+            tournamentId: '11784604'
+        }}) 
+
+        if (!winningEntry) return message.channel.send(`Could not find ${winningPlayer.name} among FLC27 entries.`)
+
+        const losingEntry = await Entry.findOne({ where: {
+            playerName: losingPlayer.discordName,
+            tournamentId: '11784604'
+        }}) 
+
+        if (!losingEntry) return message.channel.send(`Could not find ${losingPlayer.name} among FLC27 entries.`)
+
+        const match = {
+            match: {
+                winnerId: winningEntry.participantId,
+                loserId: losingEntry.participantId,
+                round: 8
+            }
+        }
+        
+        let matches = require('./static/matches.json')
+        matches.push(match)
+        fs.writeFileSync(`./static/matches.json`, matches).catch((err) => console.log(err))
+        return message.channel.send(`Added new match data: ${winningPlayer.name} > ${losingPlayer.name}`)
+    }
+
     // CALC 
     if (cmd === `!calc`) {
         const matches = require('./static/matches.json')
