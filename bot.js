@@ -217,6 +217,27 @@ try {
         return message.channel.send(`Added new match data: ${winningPlayer.name} > ${losingPlayer.name}`)
     }
 
+    // DELET
+    if (cmd === `!delet`) {
+        if (!isProgrammer(message.member)) return message.channel.send(`You do not have permission to do that.`)
+        const matches = require('./static/matches.json')
+        const delet = matches.pop()
+        
+        const winningEntry = await Entry.findOne({ where: {
+            participantId: delet.match.winner_id,
+            tournamentId: '11784604'
+        }}) 
+
+        const losingEntry = await Entry.findOne({ where: {
+            participantId: delet.match.loser_id,
+            tournamentId: '11784604'
+        }}) 
+
+        const data = JSON.stringify(matches)
+        fs.writeFileSync(`./static/matches.json`, data)
+        return message.channel.send(`Deleted match data: ${winningEntry.playerName} > ${losingEntry.playerName}`)
+    }
+
     // CALC 
     if (cmd === `!calc`) {
         const matches = require('./static/matches.json')
