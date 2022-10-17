@@ -615,6 +615,8 @@ const downloadNewCards = async () => {
                 card.ocgDate = datum.misc_info[0].ocg_date ? datum.misc_info[0].ocg_date : null
                 await card.save()
                 console.log(`New name: ${card.name} is now: ${datum.name}`)
+                await downloadCardImage(datum.id)
+                console.log(`IMAGE SAVED`)
             } else if (card && (!card.tcgDate || !card.tcgLegal) && datum.misc_info[0].tcg_date) {
                 t++
                 card.name = datum.name
@@ -623,6 +625,8 @@ const downloadNewCards = async () => {
                 card.tcgLegal = true
                 await card.save()
                 console.log(`New TCG Card: ${card.name}`)
+                await downloadCardImage(datum.id)
+                console.log(`IMAGE SAVED`)
             } else if (card && (!card.ocgDate || !card.ocgLegal) && datum.misc_info[0].ocg_date) {
                 o++
                 card.name = datum.name
@@ -631,6 +635,8 @@ const downloadNewCards = async () => {
                 card.ocgLegal = true
                 await card.save()
                 console.log(`New OCG Card: ${card.name}`)
+                await downloadCardImage(datum.id)
+                console.log(`IMAGE SAVED`)
             }
         } catch (err) {
             e++
