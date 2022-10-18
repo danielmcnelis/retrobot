@@ -37,6 +37,27 @@ const Server = db.define('servers', {
     },
     googleToken: {
         type: Sequelize.TEXT
+    },
+    botSpamChannel: {
+        type: Sequelize.STRING
+    },
+    ratedChannel: {
+        type: Sequelize.STRING
+    },
+    welcomeChannel: {
+        type: Sequelize.STRING
+    },
+    adminRole: {
+        type: Sequelize.STRING
+    },
+    modRole: {
+        type: Sequelize.STRING
+    },
+    rankedRole: {
+        type: Sequelize.STRING
+    },
+    tourRole: {
+        type: Sequelize.STRING
     }
 })
 

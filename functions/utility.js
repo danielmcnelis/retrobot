@@ -466,13 +466,13 @@ const hasFullAccess = (server) => server && server.access === 'full'
 const isProgrammer = (member) => member && member.user.id === '194147938786738176'
 
 //IS ADMIN?
-const isAdmin = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].adminRole)
+const isAdmin = (server, member) => server && member && member.roles.cache.some(role => role.id === server.adminRole)
 
 //IS MOD?
-const isMod = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].modRole || role.id === roles[server.name].adminRole)
+const isMod = (server, member) => server && member && member.roles.cache.some(role => role.id === server.modRole || role.id === server.adminRole)
 
 //IS IRON PLAYER?
-const isIronPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].ironRole)
+const isIronPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === server.ironRole)
 
 //IS NEW MEMBER?
 const isNewMember = async (serverId, discordId) => !await Membership.count({ where: { serverId, '$player.discordId$': discordId }, include: Player })
@@ -481,7 +481,7 @@ const isNewMember = async (serverId, discordId) => !await Membership.count({ whe
 const isNewUser = async (discordId) => !await Player.count({ where: { discordId: discordId } })
 
 //IS TOURNAMENT PLAYER?
-const isTourPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === roles[server.name].tourRole)
+const isTourPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === server.tourRole)
 
 // SELECT MATCH
 const selectMatch = async (message, matches, discordId) => {

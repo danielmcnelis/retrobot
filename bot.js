@@ -62,7 +62,7 @@ client.on('guildMemberAdd', async (member) => {
         const guild = member.guild
         const server = await Server.findOne({ where: { id: guild.id }})
         if (!server || !hasAffiliateAccess(server)) return
-        const channel = guild.channels.cache.get(channels[guild.name].welcomeChannel)
+        const channel = guild.channels.cache.get(server.welcomeChannel)
         if (await isNewUser(member.user.id)) await createPlayer(member) 
         if (await isNewMember(guild.id, member.user.id)) {
             await createMembership(guild, member)
@@ -84,7 +84,7 @@ client.on('guildMemberRemove', async (member) => {
         const guild = member.guild
         const server = await Server.findOne({ where: { id: guild.id }})
         if (!server || !hasPartnerAccess(server)) return
-        const channel = guild.channels.cache.get(channels[guild.name].welcomeChannel)
+        const channel = guild.channels.cache.get(server.welcomeChannel)
         channel.send({ content: `Oh dear. ${member.user.username} has left the server. ${emojis.sad}`})
         const membership = await Membership.findOne({ where: { '$player.discordId$': member.user.id, serverId: guild.id }, include: Player })
         membership.active = false
@@ -318,7 +318,7 @@ try {
             try {
                 await checkExpiryDate(server)
                 await uploadDeckFolder(server, name)
-                return message.channel.send({ content: `Your tournament files have been uploaded! ${emojis[server.name]}` })
+                return message.channel.send({ content: `Your tournament files have been uploaded! ${server.logo}` })
             } catch (err) {
                 console.log(err)
                 return message.channel.send({ content: `Error. Check bot logs.` })
@@ -402,15 +402,14 @@ try {
 
         const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
         const name = args[0].replace(/[^\ws]/gi, "_").replace(/ /g,'')
-        const emoji = name.includes('FLC') ? emojis.FL :
-            name.includes('RBET') ? emojis.subs :
+        const emoji = name.includes('RBET') ? emojis.subs :
             name.includes('YRS') ? emojis.mlady :
             name.includes('DLC') ? emojis.lmfao :
             name.includes('DDS') ? emojis.stoned :
             name.includes('ETC') ? emojis.lipton :
             name.includes('ACS') ? emojis.toad :
             name.includes('KGP') ? emojis.UredU :
-            emojis[server.name] || emojis.legend
+            server.logo || emojis.legend
 
         try {
             const { status, data } = await axios({
@@ -1064,7 +1063,6 @@ try {
         if (!entry) return message.channel.send({ content: `${isAuthor ? "You are" : "That player is"} not registered for ${tournament.name}.`})
 
         message.channel.send({ content: `Please check your DMs.` })
-        console.log('entry.ydk', entry.ydk)
         const deckAttachments = await drawDeck(entry.ydk) || []
         return message.author.send({ content: `${isAuthor ? `${player.name}\'s` : 'Your'} deck for ${tournament.name} is:\n<${entry.url}>`, files: [...deckAttachments]}).catch((err) => console.log(err))
     }
@@ -1544,7 +1542,7 @@ try {
                 })
                 
                 const url = await chart.getShortUrl()
-                const channel = client.channels.cache.get(channels[server.name].botSpamChannel)
+                const channel = client.channels.cache.get(server.botSpamChannel)
                 if (!channel) {
                     return message.channel.send({ content: `Error: could not find bot-spam channel.`})
                 } else if (i === 0) {
@@ -2240,7 +2238,7 @@ try {
         const format = await getRatedFormat(message)
         if (!format) return message.channel.send({ content: `Please specify a valid format.`})
         
-        const yourGuildIds = [...await Membership.findAll({ 
+        const yourServers = [...await Membership.findAll({ 
             where: { 
                 playerId: player.id,
                 active: true,
@@ -2250,7 +2248,9 @@ try {
             }, 
             include: Server,
             order: [[Server, 'createdAt', 'ASC']] 
-        })].map((m) => m.serverId) || []
+        })].map((m) => m.server) || []
+        
+        const yourGuildIds = yourServers.map((s) => s.id) || []
 
         if (!yourGuildIds.length) return message.channel.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${format.emoji}`)
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.author, player)
@@ -2340,13 +2340,13 @@ try {
             }) || []
     
             if (!potentialPairs.length) {
-                for (let y = 0; y < yourGuildIds.length; y++) {
+                for (let y = 0; y < yourServers.length; y++) {
                     try {
-                        const yGId = yourGuildIds[y]
-                        const guild = client.guilds.cache.get(yGId)
-                        const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
+                        const server = yourServers[y]
+                        const guild = client.guilds.cache.get(server.id)
+                        const channelId = server.id === '414551319031054346' ? format.channel : server.ratedChannel
                         const channel = guild.channels.cache.get(channelId)
-                        const tag = guild.id === '414551319031054346' ? `<@&${format.role}> ` : ''
+                        const tag = server.id === '414551319031054346' ? `<@&${format.role}> ` : ''
                         channel.send(`${tag}Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
                     } catch (err) {
                         console.log(err)
@@ -2409,7 +2409,7 @@ try {
                     continue
                 } else {
                     const commonServer = await Server.findOne({ where: { id: commonGuildId }})
-                    const channelId = commonServer.format ? channels[commonServer.name].ratedChannel : format.channel
+                    const channelId = commonServer.ratedChannel || format.channel
                     const guild = client.guilds.cache.get(commonGuildId)
                     const channel = guild.channels.cache.get(channelId)
                     const player = potentialPair.player
@@ -2456,13 +2456,13 @@ try {
             console.log(err)            
         }
 
-        for (let y = 0; y < yourGuildIds.length; y++) {
+        for (let y = 0; y < yourServers.length; y++) {
             try {
-                const yGId = yourGuildIds[y]
-                const guild = client.guilds.cache.get(yGId)
-                const channelId = guild.id === '414551319031054346' ? format.channel : channels[guild.name].ratedChannel
+                const server = yourServers[y]
+                const guild = client.guilds.cache.get(server.id)
+                const channelId = server.id === '414551319031054346' ? format.channel : server.ratedChannel
                 const channel = guild.channels.cache.get(channelId)
-                const tag = guild.id === '414551319031054346' ? `<@&${format.role}> ` : ''
+                const tag = server.id === '414551319031054346' ? `<@&${format.role}> ` : ''
                 channel.send(`${tag}Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
             } catch (err) {
                 console.log(err)
