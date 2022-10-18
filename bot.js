@@ -546,7 +546,7 @@ try {
                             include: Tournament,
                         })
 
-                        if (!count) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
+                        if (!count) member.roles.remove(server.tourRole).catch((err) => console.log(err))
                     } catch (err) {
                         console.log(err)
                     }
@@ -662,10 +662,10 @@ try {
             const word1 = hours === 1 ? 'hour' : 'hours'
             const minutes = Math.ceil((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
             const word2 = minutes === 1 ? 'minute' : 'minutes'
-            message.channel.send(`<@&${roles[server.name].tourRole}> The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match.`)
+            message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match.`)
             
             return setTimeout(() => {
-                return message.channel.send(`<@&${roles[server.name].tourRole}> Time is up in the round!`)
+                return message.channel.send(`<@&${server.tourRole}> Time is up in the round!`)
             }, timeRemaining)
         }
     }
@@ -727,7 +727,7 @@ try {
                         await entry.destroy()
                         const member = await message.guild.members.fetch(discordId)
                         if (!member) continue
-                        member.roles.remove(roles[server.name].tourRole)
+                        member.roles.remove(server.tourRole)
                     } catch (err) {
                         console.log(err)
                     }
@@ -893,7 +893,7 @@ try {
               return message.author.send({ content: `Error: Could not access database.`})
             } finally {
               const deckAttachments = await drawDeck(ydk) || []
-              message.member.roles.add(roles[server.name].tourRole).catch((err) => console.log(err))
+              message.member.roles.add(server.tourRole).catch((err) => console.log(err))
               message.author.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament! FYI, this is the deck you submitted:`, files: [...deckAttachments] }).catch((err) => console.log(err))
               return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
             }
@@ -913,7 +913,7 @@ try {
                 return message.author.send({ content: `Error: Could not access database.`})
             } finally {
                 const deckAttachments = await drawDeck(ydk) || []
-                message.member.roles.add(roles[server.name].tourRole).catch((err) => console.log(err))
+                message.member.roles.add(server.tourRole).catch((err) => console.log(err))
                 message.author.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament! FYI, this is the deck you submitted:`, files: [...deckAttachments] }).catch((err) => console.log(err))
                 return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
             }
@@ -977,7 +977,7 @@ try {
               return message.author.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
             } 
 
-            mentioned.roles.add(roles[server.name].tourRole).catch((err) => console.log(err))
+            mentioned.roles.add(server.tourRole).catch((err) => console.log(err))
             const deckAttachments = await drawDeck(ydk) || []                
             message.author.send({ content: `Thanks! I have all the information we need for ${player.name}! FYI, here is their deck list:`, files: [...deckAttachments] }).catch((err) => console.log(err))
             return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
@@ -1080,7 +1080,7 @@ try {
         })
 
         if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
-        const roleId = hasFullAccess(server) ? format.role : roles[server.name].rankedRole
+        const roleId = hasFullAccess(server) ? format.role : server.rankedRole
         if (!roleId) return
         const roleName = hasFullAccess(server) ? `${format.name} Players` : 
             server.name === 'GoatFormat.com' ? 'Ranked Players' :
@@ -2118,7 +2118,7 @@ try {
         const noShowPlayer = await Player.findOne({ where: { discordId: noShowDiscordId } })
         if (!noShowPlayer) return message.channel.send({ content: `Sorry, <@${noShowDiscordId}> is not in the database.`})
         const tournaments = [...await Entry.findAll({ where: { playerId: noShowPlayer.id }, include: Tournament })].map((e) => e.tournament).filter((t) => t.serverId === message.guild.id)
-        if (!tournaments.length || !noshow.roles.cache.some(role => role.id === roles[server.name].tourRole)) return message.channel.send({ content: `Sorry, ${noShowPlayer.name} is not any tournaments.`})
+        if (!tournaments.length || !noshow.roles.cache.some(role => role.id === server.tourRole)) return message.channel.send({ content: `Sorry, ${noShowPlayer.name} is not any tournaments.`})
      
         const tournament = await selectTournament(message, tournaments, maid)
         if (!tournament) return
@@ -2613,7 +2613,8 @@ try {
                             position: teamBCount + 1
                         })
 
-                        message.member.roles.add(roles['Format Library'].ironRole)
+                        //ADD FORMAT LIBRARY IRON ROLE
+                        message.member.roles.add('948006324237643806')
                         return message.channel.send({ content: `You joined the Iron for Team B. ${emojis.iron}`})
                     } else {
                         await Iron.create({ 
@@ -2625,7 +2626,8 @@ try {
                             position: teamACount + 1
                         })
 
-                        message.member.roles.add(roles['Format Library'].ironRole)
+                        // ADD FORMAT LIBRARY IRON ROLE
+                        message.member.roles.add('948006324237643806')
                         return message.channel.send({ content: `You joined the Iron for Team A. ${emojis.iron}`})
                     }
                 }

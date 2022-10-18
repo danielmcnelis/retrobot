@@ -40,7 +40,7 @@ const confirmIron = async (channel, format) => {
 
                 assignIronRoles(entries)
                 setTimeout(() => {
-                    channel.send({ content: `<@&${roles['Format Library'].ironRole}>, square-up gamers! The Iron starts in 10 seconds. ${emojis.cavebob}`})
+                    channel.send({ content: `<@&948006324237643806>, square-up gamers! The Iron starts in 10 seconds. ${emojis.cavebob}`})
                 }, 1000)
                 return setTimeout(() => assignCaptains(entries, channel, format), 11000)
             }
@@ -92,7 +92,7 @@ const confirmIron = async (channel, format) => {
 
             assignIronRoles(entries)
             setTimeout(() => {
-                channel.send({ content: `<@&${roles['Format Library'].ironRole}>, square-up gamers! The Iron starts in 10 seconds. ${emojis.cavebob}`})
+                channel.send({ content: `<@&948006324237643806>, square-up gamers! The Iron starts in 10 seconds. ${emojis.cavebob}`})
             }, 1000)
             return setTimeout(() => assignCaptains(entries, channel, format), 11000)
         }
@@ -141,7 +141,7 @@ const assignIronRoles = (entries) => {
     const guild = client.guilds.cache.get("414551319031054346")
     entries.forEach((entry) => {
         const member = guild.members.cache.get(entry.player.discordId)
-        member.roles.add(roles['Format Library'].ironRole)
+        member.roles.add('948006324237643806')
     })
 }
 
@@ -411,7 +411,7 @@ const postPairing = async (channel, format) => {
             const member = channel.guild.members.cache.get(participant.player.discordId)
             try {
                 await participant.destroy()
-                member.roles.remove(roles['Format Library'].ironRole)
+                member.roles.remove('948006324237643806')
             } catch (err) {
                 console.log(err)
             }
@@ -428,7 +428,7 @@ const postPairing = async (channel, format) => {
             const member = channel.guild.members.cache.get(participant.player.discordId)
             try {
                 await participant.destroy()
-                member.roles.remove(roles['Format Library'].ironRole)
+                member.roles.remove('948006324237643806')
             } catch (err) {
                 console.log(err)
             }
@@ -481,7 +481,7 @@ const resetIron = async (channel, format) => {
             const entry = entries[i]
             const member = channel.guild.members.cache.get(participant.player.discordId)    
             await participant.destroy()
-            member.roles.remove(roles['Format Library'].ironRole)
+            member.roles.remove('948006324237643806')
             await entry.destroy()
         } catch (err) {
             console.log(err)

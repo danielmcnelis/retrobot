@@ -272,7 +272,7 @@ const removeParticipant = async (server, message, member, entry, tournament, dro
                 include: Tournament,
             })
 
-            if (!count) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
+            if (!count) member.roles.remove(server.tourRole).catch((err) => console.log(err))
         
             if (drop) {
                 return message.channel.send({ content: `I removed you from the tournament. Better luck next time!`})
@@ -600,7 +600,7 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
                 include: Tournament
             })
 
-            if (member && !count) member.roles.remove(roles[server.name].tourRole).catch((err) => console.log(err))
+            if (member && !count) member.roles.remove(server.tourRole).catch((err) => console.log(err))
         }
 
         const loserNextMatch = loserEliminated ? null : findNextMatch(updatedMatchesArr, matchId, losingEntry.participantId)

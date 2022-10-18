@@ -3,7 +3,6 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const sharp = require('sharp')
-const roles = require('../static/roles.json')
 const { Card, Entry, Tournament, Match, Membership, Player, Print, RatedDeck, Role, Server, Set, Stats } = require('../db')
 const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
@@ -258,8 +257,7 @@ const purgeTourRoles = async (client) => {
         let b = 0
         try {
             const server = servers[s]
-            if (!roles[server.name]) continue
-            const roleId = roles[server.name].tourRole
+            const roleId = server.tourRole
             if (!roleId) continue
             const guild = client.guilds.cache.get(server.id)
             const membersMap = await guild.members.fetch()
@@ -301,8 +299,7 @@ const assignTourRoles = async (client) => {
         let b = 0
         try {
             const server = servers[s]
-            if (!roles[server.name]) continue
-            const roleId = roles[server.name].tourRole
+            const roleId = server.tourRole
             if (!roleId) continue
             const guild = client.guilds.cache.get(server.id)
             const membersMap = await guild.members.fetch()
