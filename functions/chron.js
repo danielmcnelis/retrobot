@@ -709,34 +709,35 @@ const updateSets = async () => {
 const updateServers = async (client) => {
     const servers = await Server.findAll()
     for (let i = 0; i < servers.length; i++) {
-        const server = servers[i]
-        const guild = client.guilds.cache.get(server.id)
-        if (!guild) {
-            console.log(`${server.name} cannot be found in the client cache`)
-        }
-        const owner = await Player.findOne({ where: { discordId: guild.ownerId }})
-
-        if (!guild) {
-            console.log(`could not find guild: ${server.name}`)
-            continue
-        }
-
-        if (server.name !== guild.name) {
-            console.log(`updating server name from ${server.name} => ${guild.name}`)
-            server.name = guild.name
-            await server.save()
-        }
-
-        if (server.size !== guild.memberCount) {
-            console.log(`updating server size from ${server.size} => ${guild.memberCount}`)
-            server.size = guild.memberCount
-            await server.save()
-        }
-
-        if (owner && server.ownerId !== owner.id) {
-            console.log(`updating server owner from ${server.ownerId} => ${owner.id}`)
-            server.ownerId = owner.id
-            await server.save()
+        try {
+            const server = servers[i]
+            const guild = client.guilds.cache.get(server.id)
+            if (!guild) {
+                console.log(`${server.name} cannot be found in the client cache`)
+                continue
+            }
+    
+            const owner = await Player.findOne({ where: { discordId: guild.ownerId }})
+    
+            if (server.name !== guild.name) {
+                console.log(`updating server name from ${server.name} => ${guild.name}`)
+                server.name = guild.name
+                await server.save()
+            }
+    
+            if (server.size !== guild.memberCount) {
+                console.log(`updating server size from ${server.size} => ${guild.memberCount}`)
+                server.size = guild.memberCount
+                await server.save()
+            }
+    
+            if (owner && server.ownerId !== owner.id) {
+                console.log(`updating server owner from ${server.ownerId} => ${owner.id}`)
+                server.ownerId = owner.id
+                await server.save()
+            }
+        } catch (err) {
+            console.log(err)
         }
     }
 
