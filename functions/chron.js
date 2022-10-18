@@ -367,7 +367,12 @@ const findNewPrints = async (set, groupId) => {
                         .replace(' (Secret)', '')
                         .replace(' (Shatterfoil)', '')
                         .replace(' (Starfoil)', '')
+                        .replace(' (Starlight Rare)', '')
                         .replace(' (Duel Terminal)', '')
+                        .replace(' (Red)', '')
+                        .replace(' (Blue)', '')
+                        .replace(' (Green)', '')
+                        .replace(' (Purple)', '')
                         .replace(' (The Sacred Cards)', '')
                         .replace(' (Dark Duel Stories)', '')
                         .replace(' (Forbidden Memories)', '')
@@ -665,9 +670,14 @@ const updateSets = async () => {
 
                 if (set && !set.tcgPlayerGroupId) {
                     const tcgPlayerGroupId = await getNewGroupId(set.id)
-                    console.log(`updating group Id for ${set.setName} from ${set.tcgPlayerGroupId} to ${tcgPlayerGroupId}`)
-                    set.tcgPlayerGroupId = tcgPlayerGroupId
-                    await set.save()
+                    if (!tcgPlayerGroupId) {
+                        console.log(`no tcgPlayerGroupId for ${set.setName}`)
+                        continue
+                    } else {
+                        console.log(`updating group Id for ${set.setName} from ${set.tcgPlayerGroupId} to ${tcgPlayerGroupId}`)
+                        set.tcgPlayerGroupId = tcgPlayerGroupId
+                        await set.save()
+                    }
                 }
 
                 if (set && set.tcgPlayerGroupId && (set.tcgDate.startsWith('2022') || set.size !== datum.num_of_cards)) {
