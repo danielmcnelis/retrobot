@@ -663,14 +663,14 @@ const updateSets = async () => {
                     }
                 })
 
-                if (!set.tcgPlayerGroupId) {
+                if (set && !set.tcgPlayerGroupId) {
                     const tcgPlayerGroupId = await getNewGroupId(set.id)
-                    console.log(`updating group Id for ${set.name} from ${set.tcgPlayerGroupId} to ${tcgPlayerGroupId}`)
+                    console.log(`updating group Id for ${set.setName} from ${set.tcgPlayerGroupId} to ${tcgPlayerGroupId}`)
                     set.tcgPlayerGroupId = tcgPlayerGroupId
                     await set.save()
                 }
 
-                if (set && (set.tcgDate.startsWith('2022') || set.size !== datum.num_of_cards)) {
+                if (set && set.tcgPlayerGroupId && (set.tcgDate.startsWith('2022') || set.size !== datum.num_of_cards)) {
                     console.log(`updating size of ${set.setName} from ${set.size} to ${datum.num_of_cards}`)
                     set.size = datum.num_of_cards
                     await set.save()
