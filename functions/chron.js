@@ -414,7 +414,7 @@ const findNewPrints = async (set, groupId) => {
 
 // GET NEW GROUP ID
 const getNewGroupId = async (setId) => {
-    const size = 600
+    const size = 1000
     const categoryId = `2`
     for (let offset = 0; offset < size; offset += 100) {
         const endpoint = `https://api.tcgplayer.com/catalog/categories/${categoryId}/groups?offset=${offset}&limit=100`
@@ -662,7 +662,14 @@ const updateSets = async () => {
                         setName: {[Op.iLike]: datum.set_name }
                     }
                 })
-    
+
+                if (!set.tcgPlayerGroupId) {
+                    const tcgPlayerGroupId = await getNewGroupId(set.id)
+                    console.log(`updating group Id for ${set.name} from ${set.tcgPlayerGroupId} to ${tcgPlayerGroupId}`)
+                    set.tcgPlayerGroupId = tcgPlayerGroupId
+                    await set.save()
+                }
+
                 if (set && (set.tcgDate.startsWith('2022') || set.size !== datum.num_of_cards)) {
                     console.log(`updating size of ${set.setName} from ${set.size} to ${datum.num_of_cards}`)
                     set.size = datum.num_of_cards
