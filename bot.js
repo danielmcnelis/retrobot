@@ -288,10 +288,10 @@ try {
     // TEST
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            setTimeout(() => updateServers(client), (0.8 * 60 * 1000))
-            setTimeout(() => updateSets(), (1 * 60 * 1000))
-            setTimeout(() => downloadNewCards(), (2 * 60 * 1000))
-            setTimeout(() => conductCensus(client),  (3 * 60 * 1000))
+            // setTimeout(() => updateServers(client), (0.8 * 60 * 1000))
+            setTimeout(() => updateSets(), (0 * 60 * 1000))
+            // setTimeout(() => downloadNewCards(), (2 * 60 * 1000))
+            // setTimeout(() => conductCensus(client),  (3 * 60 * 1000))
             return message.channel.send(emojis.yellow)
         } else {
             return message.channel.send('🧪')
