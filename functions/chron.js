@@ -369,6 +369,7 @@ const findNewPrints = async (set, groupId) => {
                         .replace(' (Starfoil)', '')
                         .replace(' (Starlight Rare)', '')
                         .replace(' (Duel Terminal)', '')
+                        .replace(' (CR)', '')
                         .replace(' (Red)', '')
                         .replace(' (Blue)', '')
                         .replace(' (Green)', '')
@@ -680,7 +681,7 @@ const updateSets = async () => {
                     }
                 }
 
-                if (set && set.tcgPlayerGroupId && (set.tcgDate.startsWith('2022') || set.size !== datum.num_of_cards)) {
+                if (set && set.tcgPlayerGroupId && (set.tcgDate.startsWith('20') || set.size !== datum.num_of_cards)) {
                     console.log(`updating size of ${set.setName} from ${set.size} to ${datum.num_of_cards}`)
                     set.size = datum.num_of_cards
                     await set.save()
