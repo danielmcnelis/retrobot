@@ -472,7 +472,7 @@ const isAdmin = (server, member) => server && member && member.roles.cache.some(
 const isMod = (server, member) => server && member && member.roles.cache.some(role => role.id === server.modRole || role.id === server.adminRole)
 
 //IS IRON PLAYER?
-const isIronPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === server.ironRole)
+const isIronPlayer = (server, member) => server && member && member.roles.cache.some(role => role.id === '948006324237643806')
 
 //IS NEW MEMBER?
 const isNewMember = async (serverId, discordId) => !await Membership.count({ where: { serverId, '$player.discordId$': discordId }, include: Player })
