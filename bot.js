@@ -646,7 +646,7 @@ try {
             
             if (hours < 0) {
                 const word2 = minutes === 59 ? 'minute' : 'minutes'
-                message.channel.send(`Remaining time: ${60 + minutes} ${word2}.`)
+                message.channel.send(`Remaining time: ${60 - minutes} ${word2}.`)
             } else {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
                 return message.channel.send(`Remaining time: ${hours} ${word1} and ${minutes} ${word2}.`)
@@ -670,7 +670,7 @@ try {
             
             if (hours < 0) {
                 const word2 = minutes === 59 ? 'minute' : 'minutes'
-                message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${60 + minutes} ${word2} to complete your match.`)
+                message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${60 - minutes} ${word2} to complete your match.`)
             } else {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
                 message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match.`)
