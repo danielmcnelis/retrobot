@@ -627,7 +627,7 @@ try {
         
         const tournaments = await Tournament.findAll({ 
             where: { 
-                state: 'underway', 
+                state: {[Op.or]: ['pending', 'standby', 'underway']}, 
                 formatName: format ? format.name : {[Op.not]: null},
                 serverId: mgid
             }, 
@@ -635,7 +635,7 @@ try {
         })
 
         const tournament = await selectTournament(message, tournaments, maid)
-        if (!tournament) return message.channel.send(`Could not find tournmanet.`)
+        if (!tournament) return message.channel.send(`Could not find tournament.`)
 
         if (!args[0] || isNaN(parseInt(args[0]))) {
             const now = new Date()
