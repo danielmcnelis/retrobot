@@ -656,6 +656,9 @@ try {
             if (hours < 0) {
                 const word2 = minutes === 59 ? 'minute' : 'minutes'
                 message.channel.send(`Remaining time: ${60 - minutes} ${word2}.`)
+            } else if (hours === 0) {
+                const word2 = minutes === 1 ? 'minute' : 'minutes'
+                return message.channel.send(`Remaining time: ${minutes} ${word2}.`)
             } else {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
                 return message.channel.send(`Remaining time: ${hours} ${word1} and ${minutes} ${word2}.`)
