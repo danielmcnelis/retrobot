@@ -80,6 +80,7 @@ const getIssues = async (deckArr, format) => {
     const keys = Object.keys(deck)
     for (let i = 0; i < keys.length; i++) {
         let konamiCode = keys[i]
+        if (konamiCode === '00000000' && format.name === 'Current') continue
         while (konamiCode.length < 8) konamiCode = '0' + konamiCode 
         if (!cardIds.includes(konamiCode)) {
             const card = await Card.findOne({ where: { konamiCode: konamiCode } })
