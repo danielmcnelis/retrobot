@@ -643,8 +643,9 @@ try {
             const hours = Math.floor(difference / (1000 * 60 * 60))
             const word1 = hours === 1 ? 'hour' : 'hours'
             const minutes = Math.floor((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
-            if (minutes < 0) {
-                const word2 = minutes === -59 ? 'minute' : 'minutes'
+            
+            if (hours < 0) {
+                const word2 = minutes === 59 ? 'minute' : 'minutes'
                 message.channel.send(`Remaining time: ${60 + minutes} ${word2}.`)
             } else {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
@@ -667,8 +668,8 @@ try {
             const word1 = hours === 1 ? 'hour' : 'hours'
             const minutes = Math.ceil((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
             
-            if (minutes < 0) {
-                const word2 = minutes === -59 ? 'minute' : 'minutes'
+            if (hours < 0) {
+                const word2 = minutes === 59 ? 'minute' : 'minutes'
                 message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${60 + minutes} ${word2} to complete your match.`)
             } else {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
