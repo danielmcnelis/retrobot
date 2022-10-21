@@ -640,10 +640,19 @@ try {
         if (!args[0] || isNaN(parseInt(args[0]))) {
             const now = new Date()
             const difference = tournament.deadline - now
-            const hours = Math.floor(difference / (1000 * 60 * 60))
+
+            if (difference < 60 * 1000) return message.channel.send(`Remaining time: less than 1 minute.`)
+            if (difference < 0) return message.channel.send(`The deadline has passed.`)
+
+            let hours = Math.floor(difference / (1000 * 60 * 60))
             const word1 = hours === 1 ? 'hour' : 'hours'
-            const minutes = Math.floor((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
+            let minutes = Math.round((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
             
+            if (minutes === 60) {
+                hours++
+                minutes = 0
+            }
+
             if (hours < 0) {
                 const word2 = minutes === 59 ? 'minute' : 'minutes'
                 message.channel.send(`Remaining time: ${60 - minutes} ${word2}.`)
@@ -664,10 +673,15 @@ try {
             await tournament.update({ deadline })
             const now = new Date()
             const difference = tournament.deadline - now
-            const hours = Math.ceil(difference / (1000 * 60 * 60))
+            let hours = Math.floor(difference / (1000 * 60 * 60))
             const word1 = hours === 1 ? 'hour' : 'hours'
-            const minutes = Math.ceil((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
+            let minutes = Math.round((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
             
+            if (minutes === 60) {
+                hours++
+                minutes = 0
+            }
+
             if (hours < 0) {
                 const word2 = minutes === 59 ? 'minute' : 'minutes'
                 message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${60 - minutes} ${word2} to complete your match.`)
