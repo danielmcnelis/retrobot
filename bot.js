@@ -640,9 +640,9 @@ try {
         if (!args[0] || isNaN(parseInt(args[0]))) {
             const now = new Date()
             const difference = tournament.deadline - now
-
-            if (difference < 60 * 1000) return message.channel.send(`Remaining time: less than 1 minute.`)
+            
             if (difference < 0) return message.channel.send(`The deadline has passed.`)
+            if (difference < 60 * 1000) return message.channel.send(`Remaining time: less than 1 minute.`)
 
             let hours = Math.floor(difference / (1000 * 60 * 60))
             const word1 = hours === 1 ? 'hour' : 'hours'
