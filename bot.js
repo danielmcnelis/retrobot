@@ -640,7 +640,7 @@ try {
         if (!args[0] || isNaN(parseInt(args[0]))) {
             const now = new Date()
             const difference = tournament.deadline - now
-            
+
             if (difference < 0) return message.channel.send(`The deadline has passed.`)
             if (difference < 60 * 1000) return message.channel.send(`Remaining time: less than 1 minute.`)
 
@@ -685,6 +685,9 @@ try {
             if (hours < 0) {
                 const word2 = minutes === 59 ? 'minute' : 'minutes'
                 message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${60 - minutes} ${word2} to complete your match.`)
+            } else if (hours === 0) {
+                const word2 = minutes === 1 ? 'minute' : 'minutes'
+                message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${minutes} ${word2} to complete your match.`)
             } else {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
                 message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match.`)
