@@ -13,7 +13,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
     try {    
         // const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${tournament.server.challongeAPIKey}`)
         // if (!res) return
-        // const size = res.data.tournament.participants_count
+        const size = event.size || res.data.tournament.participants_count
         // const startDate = `${res.data.tournament.started_at.slice(0, 10)} ${res.data.tournament.started_at.slice(11, 26)}`
         // const endDate = `${res.data.tournament.completed_at.slice(0, 10)} ${res.data.tournament.completed_at.slice(11, 26)}`
         // event.size = size
@@ -56,7 +56,7 @@ const createDecks = async (message, event, tournament, useTags = true) => {
                             if (!count) {
                                 const path = `./decks/${tournament.community}/${tournament.name}/${file}`
                                 const participant = data[j].participant
-                                const placement = parseInt(participant.final_rank, 10)
+                                const placement = parseInt(participant.final_rank, 10) || index + 1
                                 const raw = fs.readFileSync(path, 'utf8')
                                 const dname = await getDeckType({ name: tournament.community }, player, tournament.formatName, tournament.name)
                                 const deckType = await DeckType.findOne({ 
