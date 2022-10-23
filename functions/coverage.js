@@ -11,15 +11,15 @@ const { getDeckType } = require('./deck')
 const createDecks = async (message, event, tournament, useTags = true) => {
     let b = 0 
     try {    
-        const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${tournament.server.challongeAPIKey}`)
-        if (!res) return
-        const size = res.data.tournament.participants_count
-        const startDate = `${res.data.tournament.started_at.slice(0, 10)} ${res.data.tournament.started_at.slice(11, 26)}`
-        const endDate = `${res.data.tournament.completed_at.slice(0, 10)} ${res.data.tournament.completed_at.slice(11, 26)}`
-        event.size = size
-        event.startDate = startDate
-        event.endDate = endDate
-        await event.save()
+        // const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${tournament.server.challongeAPIKey}`)
+        // if (!res) return
+        // const size = res.data.tournament.participants_count
+        // const startDate = `${res.data.tournament.started_at.slice(0, 10)} ${res.data.tournament.started_at.slice(11, 26)}`
+        // const endDate = `${res.data.tournament.completed_at.slice(0, 10)} ${res.data.tournament.completed_at.slice(11, 26)}`
+        // event.size = size
+        // event.startDate = startDate
+        // event.endDate = endDate
+        // await event.save()
 
         const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${tournament.server.challongeAPIKey}`)
         if (!data) return
@@ -27,8 +27,6 @@ const createDecks = async (message, event, tournament, useTags = true) => {
         const players = await Player.findAll({ where: { discriminator: {[Op.not]: null } }})
         const shortenedTags = useTags ? players.map((p) => p.name.replace(/[^\ws]/gi, '_') + p.discriminator) :
                                         players.map((p) => p.name.replace(/[^\ws]/gi, '_'))
-
-        console.log('shortenedTags', shortenedTags)
 
         fs.readdir(`./decks/${tournament.community}/${tournament.name}/`, async (err, files) => {
             if (err) {
