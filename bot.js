@@ -67,7 +67,7 @@ client.on('guildMemberAdd', async (member) => {
         if (await isNewMember(guild.id, member.user.id)) {
             await createMembership(guild, member)
             if (!channel) return
-            return channel.send({ content: `${member}, Welcome to the ${guild.name} ${server.logo} Discord server. ${server.emoji}`})
+            return channel.send({ content: `${member}, Welcome to the ${guild.name} ${server.logo} Discord server. ${server.emoji|| emojis.legend}`})
         } else {
             await assignRoles(guild, member)
             if (!channel) return
