@@ -295,7 +295,7 @@ try {
             //     console.log(err)
             // }
 
-            await message.member.roles.add('1005792706003476570')
+            await message.member.roles.add('968893110132305971')
             return
         } else {
             return message.channel.send('🧪')
