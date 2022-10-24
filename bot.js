@@ -433,7 +433,7 @@ try {
                     type: data.tournament.tournament_type,
                     formatName: format.name,
                     logo: emoji,
-                    emoji: format.emoji,
+                    emoji: server.emoji || format.emoji,
                     url: data.tournament.url,
                     channelId: channelId,
                     serverId: mgid,
@@ -450,7 +450,7 @@ try {
                 return message.channel.send({ content: 
                     `You created a new tournament:` + 
                     `\nName: ${data.tournament.name} ${emoji}` + 
-                    `\nFormat: ${format.name} ${format.emoji}` + 
+                    `\nFormat: ${format.name} ${server.emoji || format.emoji}` + 
                     `\nType: ${capitalize(data.tournament.tournament_type, true)}` +
                     `\nBracket: https://challonge.com/${data.tournament.url}`
                 })
@@ -479,7 +479,7 @@ try {
                         type: data.tournament.tournament_type,
                         formatName: format.name,
                         logo: emoji,
-                        emoji: format.emoji,
+                        emoji: server.emoji || format.emoji,
                         url: data.tournament.url,
                         channelId: channelId,
                         serverId: mgid,
@@ -496,7 +496,7 @@ try {
                     return message.channel.send({ content: 
                         `You created a new tournament:` + 
                         `\nName: ${data.tournament.name} ${emoji}` + 
-                        `\nFormat: ${format.name} ${format.emoji}` + 
+                        `\nFormat: ${format.name} ${server.emoji || format.emoji}` + 
                         `\nType: ${capitalize(data.tournament.tournament_type, true)}` +
                         `\nBracket: https://challonge.com/${data.tournament.url}`
                     })
@@ -801,7 +801,7 @@ try {
             order: [['createdAt', 'ASC']]
         })
 
-        if (!tournaments.length && format) return message.channel.send({ content: `There are no active ${format.name} ${format.emoji} tournaments.`})
+        if (!tournaments.length && format) return message.channel.send({ content: `There are no active ${format.name} ${server.emoji || format.emoji} tournaments.`})
         if (!tournaments.length && !format) return message.channel.send({ content: `There are no active tournaments.`})
         
         const results = []
@@ -891,9 +891,9 @@ try {
             }
         })
 
-        if (!tournament && format && count) return message.channel.send({ content: `Sorry, the ${format.name} ${format.emoji} tournament already started.`})
+        if (!tournament && format && count) return message.channel.send({ content: `Sorry, the ${format.name} ${server.emoji || format.emoji} tournament already started.`})
         if (!tournament && !format && count) return message.channel.send({ content: `Sorry, the tournament already started.`})
-        if (!tournament && format && !count) return message.channel.send({ content: `There is no pending ${format.name} ${format.emoji} tournament.`})
+        if (!tournament && format && !count) return message.channel.send({ content: `There is no pending ${format.name} ${server.emoji || format.emoji} tournament.`})
         if (!tournament && !format && !count) return message.channel.send({ content: `There is no pending tournament.`})
         if (tournament.state === 'standby') return message.channel.send({ content: `Sorry, registration for ${tournament.name} ${tournament.logo} is currently closed.`})
         const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournament.id }})
@@ -1165,7 +1165,7 @@ try {
 
         const { illegalCards, forbiddenCards, limitedCards, semiLimitedCards, unrecognizedCards } = issues
         if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {      
-            let response = [`I'm sorry, ${message.member.user.username}, your deck is not legal for ${format.name} Format. ${format.emoji}`]
+            let response = [`I'm sorry, ${message.member.user.username}, your deck is not legal for ${format.name} Format. ${server.emoji || format.emoji}`]
             if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format:`, ...illegalCards]
             if (forbiddenCards.length) response = [...response, `\nThe following cards are forbidden:`, ...forbiddenCards]
             if (limitedCards.length) response = [...response, `\nThe following cards are limited:`, ...limitedCards]
@@ -1399,7 +1399,7 @@ try {
         const winrate = wins || losses ? `${(100 * wins / (wins + losses)).toFixed(2)}%` : 'N/A'		
 
         return message.channel.send({ content: 
-            `${format.emoji} --- ${format.name} Stats --- ${format.emoji}`
+            `${server.emoji || format.emoji} --- ${format.name} Stats --- ${server.emoji || format.emoji}`
             + `${server.internalLadder ? `\nServer: ${server.name}` : ''}`
             + `\nName: ${player.name}`
             + `\nMedal: ${medal}`
@@ -1726,8 +1726,8 @@ try {
         const topStats = allStats.slice(0, x)
         if (!topStats.length) return message.channel.send({ content: `I'm sorry, we don't have any ${format.name} players.`})
         const results = []
-        topStats.length === 1 ? results[0] = `${format.emoji} --- The Best ${server.internalLadder ? 'Internal ' : ''}${format.name} Player --- ${format.emoji}`
-        : results[0] = `${format.emoji} --- Top ${topStats.length} ${server.internalLadder ? 'Internal ' : ''}${format.name} Players --- ${format.emoji}`
+        topStats.length === 1 ? results[0] = `${server.emoji || format.emoji} --- The Best ${server.internalLadder ? 'Internal ' : ''}${format.name} Player --- ${server.emoji || format.emoji}`
+        : results[0] = `${server.emoji || format.emoji} --- Top ${topStats.length} ${server.internalLadder ? 'Internal ' : ''}${format.name} Players --- ${server.emoji || format.emoji}`
         for (let i = 0; i < topStats.length; i++) results[i+1] = `${(i+1)}. ${getMedal(topStats[i].elo)} ${topStats[i].player.name}`
         if (!server.internalLadder) results.push(`\nFull Leaderboard: https://formatlibrary.com/leaderboards/${urlize(format.name)}`)
         for (let i = 0; i < results.length; i += 30) message.channel.send({ content: results.slice(i, i+30).join('\n').toString() })
@@ -1874,7 +1874,7 @@ try {
                 await ironPersonA.save()
                 setTimeout(() => postStory(message.channel, format), 5000)
             } else {
-                return message.channel.send({ content: `Sorry, ${winningPlayer.name} is not your ${format.name} Iron opponent. ${format.emoji} ${emojis.iron}`})
+                return message.channel.send({ content: `Sorry, ${winningPlayer.name} is not your ${format.name} Iron opponent. ${server.emoji || format.emoji} ${emojis.iron}`})
             }
         }
             
@@ -1928,7 +1928,7 @@ try {
             await rPTU.update({ status: 'pending' })
         }
 
-        return message.channel.send({ content: `${losingPlayer.name}, your ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss to ${winningPlayer.name} has been recorded.`})
+        return message.channel.send({ content: `${losingPlayer.name}, your ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${server.emoji || format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss to ${winningPlayer.name} has been recorded.`})
     }
 
     // MANUAL
@@ -2080,7 +2080,7 @@ try {
                 await ironPersonA.save()
                 setTimeout(() => postStory(message.channel, format), 5000)
             } else {
-                return message.channel.send({ content: `Sorry, ${winningPlayer.name} is not ${losingPlayer.name}'s ${format.name} Iron opponent. ${format.emoji} ${emojis.iron}`})
+                return message.channel.send({ content: `Sorry, ${winningPlayer.name} is not ${losingPlayer.name}'s ${format.name} Iron opponent. ${server.emoji || format.emoji} ${emojis.iron}`})
             }
         }
             
@@ -2134,7 +2134,7 @@ try {
             await rPTU.update({ status: 'pending' })
         }
 
-        return message.channel.send({ content: `A manual ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss by ${losingPlayer.name} to ${winningPlayer.name} has been recorded.`})		
+        return message.channel.send({ content: `A manual ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${server.emoji || format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss by ${losingPlayer.name} to ${winningPlayer.name} has been recorded.`})		
     }
 
     // NO SHOW
@@ -2211,7 +2211,7 @@ try {
         const p2Wins = await Match.count({ where: { winnerId: player2.id, loserId: player1.id, format: format.name } })
         
         return message.channel.send({ content: 
-            `${format.emoji} --- H2H ${format.name} Results --- ${format.emoji}`+
+            `${server.emoji || format.emoji} --- H2H ${format.name} Results --- ${server.emoji || format.emoji}`+
             `\n${player1.name} has won ${p1Wins}x`+
             `\n${player2.name} has won ${p2Wins}x`
         })
@@ -2259,7 +2259,7 @@ try {
         await loserStats.save()
 
         await match.destroy()
-        return message.channel.send({ content: `The last ${server.internalLadder ? 'Internal ' : ''}${format.name} match in which ${winningPlayer.name} defeated ${losingPlayer.name} has been erased. ${format.emoji}`})
+        return message.channel.send({ content: `The last ${server.internalLadder ? 'Internal ' : ''}${format.name} match in which ${winningPlayer.name} defeated ${losingPlayer.name} has been erased. ${server.emoji || format.emoji}`})
     }
 
     // RATED PLAY
@@ -2284,7 +2284,7 @@ try {
         
         const yourGuildIds = yourServers.map((s) => s.id) || []
 
-        if (!yourGuildIds.length) return message.channel.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${format.emoji}`)
+        if (!yourGuildIds.length) return message.channel.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${server.emoji || format.emoji}`)
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.author, player)
         if (!dbName) return
 
@@ -2310,7 +2310,7 @@ try {
                     const issues = await getIssues(deckArr, format)
                     const { illegalCards, forbiddenCards, limitedCards, semiLimitedCards, unrecognizedCards } = issues
                     if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {      
-                        let response = [`I'm sorry, ${message.author.username}, your deck is not legal for ${format.name} Format. ${format.emoji}`]
+                        let response = [`I'm sorry, ${message.author.username}, your deck is not legal for ${format.name} Format. ${server.emoji || format.emoji}`]
                         if (illegalCards.length) response = [...response, `\nThe following cards are not included in this format:`, ...illegalCards]
                         if (forbiddenCards.length) response = [...response, `\nThe following cards are forbidden:`, ...forbiddenCards]
                         if (limitedCards.length) response = [...response, `\nThe following cards are limited:`, ...limitedCards]
@@ -2379,7 +2379,7 @@ try {
                         const channelId = server.id === '414551319031054346' ? format.channel : server.ratedChannel
                         const channel = guild.channels.cache.get(channelId)
                         const tag = server.id === '414551319031054346' ? `<@&${format.role}> ` : ''
-                        channel.send(`${tag}Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
+                        channel.send(`${tag}Somebody joined the ${format.name} Format ${server.emoji || format.emoji} Rated Pool! ${emojis.megaphone}`)
                     } catch (err) {
                         console.log(err)
                     }
@@ -2495,7 +2495,7 @@ try {
                 const channelId = server.id === '414551319031054346' ? format.channel : server.ratedChannel
                 const channel = guild.channels.cache.get(channelId)
                 const tag = server.id === '414551319031054346' ? `<@&${format.role}> ` : ''
-                channel.send(`${tag}Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
+                channel.send(`${tag}Somebody joined the ${format.name} Format ${server.emoji || format.emoji} Rated Pool! ${emojis.megaphone}`)
             } catch (err) {
                 console.log(err)
             }
@@ -2593,7 +2593,7 @@ try {
         if (!alreadyIn) {
             const count = await Iron.count({ where: { format: format.name }})
             if (count >= 10) {
-                return message.channel.send({ content: `Sorry, ${message.author.username}, the ${format.name} ${format.emoji} Iron is full.`})
+                return message.channel.send({ content: `Sorry, ${message.author.username}, the ${format.name} ${server.emoji || format.emoji} Iron is full.`})
             } else if (count < 10 && count >= 6) {
                 if (isConfirming) {
                     await Iron.create({ 
@@ -2702,8 +2702,8 @@ try {
         
         if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const queue = [...await Iron.findAll({ where: { format: format.name }})].map((i) => i.name)
-        if (!queue.length) return message.channel.send({ content: `The ${format.name} ${format.emoji} Iron queue is empty. ${emojis.iron}`})
-        return message.channel.send({ content: `${format.name} ${format.emoji} Iron Queue:\n` + queue.join('\n').toString() })
+        if (!queue.length) return message.channel.send({ content: `The ${format.name} ${server.emoji || format.emoji} Iron queue is empty. ${emojis.iron}`})
+        return message.channel.send({ content: `${format.name} ${server.emoji || format.emoji} Iron Queue:\n` + queue.join('\n').toString() })
     }
 
     //COVERAGE
