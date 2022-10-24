@@ -285,17 +285,18 @@ try {
         return message.channel.send(`${summary.join('\n')}\n\nMatch History:\n${matchHistory.join('\n')}`)        
     }
 
-    // BAN
-    if (cmd === `!ban`) {
+    // TEST
+    if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            try {
-                const user = message.mentions.users.first() // returns the user object if an user mention exists​
-                await message.guild.ban(user)
-            } catch (err) {
-                console.log(err)
-            }
+            // try {
+            //     const user = message.mentions.users.first() // returns the user object if an user mention exists​
+            //     await message.guild.ban(user)
+            // } catch (err) {
+            //     console.log(err)
+            // }
 
-            return message.channel.send(emojis.yellow)
+            await message.member.roles.add('1005792706003476570')
+            return
         } else {
             return message.channel.send('🧪')
         }
