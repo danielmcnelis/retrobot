@@ -285,13 +285,16 @@ try {
         return message.channel.send(`${summary.join('\n')}\n\nMatch History:\n${matchHistory.join('\n')}`)        
     }
 
-    // TEST
-    if (cmd === `!test`) {
+    // BAN
+    if (cmd === `!ban`) {
         if (isProgrammer(message.member)) {
-            // setTimeout(() => updateServers(client), (0.8 * 60 * 1000))
-            setTimeout(() => updateSets(), (0 * 60 * 1000))
-            // setTimeout(() => downloadNewCards(), (2 * 60 * 1000))
-            // setTimeout(() => conductCensus(client),  (3 * 60 * 1000))
+            try {
+                const user = message.mentions.users.first() // returns the user object if an user mention exists​
+                await message.guild.ban(user)
+            } catch (err) {
+                console.log(err)
+            }
+
             return message.channel.send(emojis.yellow)
         } else {
             return message.channel.send('🧪')
