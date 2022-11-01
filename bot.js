@@ -10,7 +10,7 @@ const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
 
 // DATABASE IMPORTS 
-const { Card, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
+const { Card, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
 
 // FUNCTION IMPORTS
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
@@ -2290,10 +2290,11 @@ try {
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.author, player)
         if (!dbName) return
 
-        const yourRatedDecks = await RatedDeck.findAll({
+        const yourRatedDecks = await Deck.findAll({
             where: {
                 format: format.name,
-                playerId: player.id
+                playerId: player.id,
+                url: {[Op.not]: null}
             },
             order: [['updatedAt', 'DESC']],
             limit: 20

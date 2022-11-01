@@ -3,7 +3,7 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const sharp = require('sharp')
-const { Card, Entry, Tournament, Match, Membership, Player, Print, RatedDeck, Role, Server, Set, Stats } = require('../db/index.js')
+const { Card, Entry, Tournament, Match, Membership, Player, Print, Role, Server, Set, Stats } = require('../db/index.js')
 const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
 const { Op } = require('sequelize')
@@ -225,10 +225,10 @@ const purgeEntries = async () => {
 // PURGE RATED DECKS
 const purgeRatedDecks = async () => {
     let d = 0
-    const ratedDecks = await RatedDeck.findAll({ order: [['createdAt', 'DESC']] })
+    const ratedDecks = await Deck.findAll({ where: { url: {[Op.not]: null}}, order: [['createdAt', 'DESC']] })
     for (let i = 0; i < ratedDecks.length; i++) {
         const rd = ratedDecks[i]
-        const count = await RatedDeck.count({ where: { url: rd.url }})
+        const count = await Deck.count({ where: { url: rd.url }})
         if (count > 1) {
             console.log(`deleting ${rd.builder} duplicate: ${rd.url}`)
             await rd.destroy()

@@ -6,7 +6,7 @@ const axios = require('axios')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Format, Player, RatedDeck, RatedPool, Stats, Server } = require('../db/index.js')
+const { Format, Player, RatedPool, Stats, Server } = require('../db/index.js')
 
 //STATIC IMPORTS
 const channels = require('../static/channels')
@@ -224,7 +224,7 @@ const getNewRatedDeck = async (user, player, format) => {
              } else {
                 user.send({ content: `Thanks, ${user.username}, your deck is perfectly legal. ${emojis.legend}`}).catch((err) => console.log(err))
                 const deckName = await askForDeckName(user, player) || 'Unnamed Deck'
-                const newRatedDeck = await RatedDeck.create({
+                const newRatedDeck = await Deck.create({
                     builder: player.name,
                     format: format.name,
                     name: deckName,
