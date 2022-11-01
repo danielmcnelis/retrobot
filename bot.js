@@ -2292,7 +2292,7 @@ try {
 
         const yourRatedDecks = await Deck.findAll({
             where: {
-                format: format.name,
+                formatName: format.name,
                 playerId: player.id,
                 url: {[Op.not]: null}
             },
