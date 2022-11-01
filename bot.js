@@ -1205,7 +1205,7 @@ try {
 	        .setDescription('A Yu-Gi-Oh! Bot powered by FormatLibrary.com.\n' )
 	        .setURL('https://discord.com/invite/formatlibrary')
 	        .setAuthor({ name: 'Jazz#2704', iconURL: 'https://i.imgur.com/wz5TqmR.png', url: 'https://discord.com/invite/formatlibrary' })
-            .setThumbnail('https://formatlibrary.com/images/logos/Format%20Library.png')
+            .setThumbnail('https://formatlibrary.com/assets/images/logos/Format%20Library.png')
             .addField('How to Use This Bot', '\nThe following commands can be used for any format in the appropriate server, channels, or via DM.')
         	.addField('Cards', '\n{ Card Name } - Look up a card. For example, { Dark Magician }. \n')
         	.addField('Rated Pools', '\n!rated - DM to join a rated pool. \n!exit - DM to leave a rated pool. \n!pools - DM to view your rated pools. \n')
@@ -1230,7 +1230,7 @@ try {
 	        .setDescription('A Rankings and Tournament Bot powered by FormatLibrary.com.\n' )
 	        .setURL('https://discord.com/invite/formatlibrary')
 	        .setAuthor({ name: 'Jazz#2704', iconURL: 'https://i.imgur.com/wz5TqmR.png', url: 'https://discord.com/invite/formatlibrary' })
-            .setThumbnail('https://formatlibrary.com/images/logos/Format%20Library.png')
+            .setThumbnail('https://formatlibrary.com/assets/images/logos/Format%20Library.png')
         	.addField('Ranked Play', '\n!manual - (@winner + @loser) - Manually record a match result. \n!undo - Undo the most recent loss, even if you did not report it.')
             .addField('Tournaments', '\n!create - (tournament name) - Create a new tournament.  \n!signup - (@user) - Directly add a player to a bracket. \n!noshow - (@user) - Report a no-show. \n!deck - (@user) - Check a player\'s tournament deck. \n!remove - (@user) - Remove a player from a bracket. \n!start - Start a tournament. \n!end - (tournament name) - End a tournament. \n!timer - (x) - Start a timer for X minutes.')
 
