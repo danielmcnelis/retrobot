@@ -2,7 +2,6 @@
 const Sequelize = require('sequelize')
 const db = require('./db')
 
-
 const Format = db.define('formats', {
   name: {
     type: Sequelize.STRING,

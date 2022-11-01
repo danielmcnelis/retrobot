@@ -6,7 +6,13 @@ const Card = require('./Card')
 const Format = require('./Format')
 const Player = require('./Player')
 const Status = require('./Status')
-const { arrayToObject } = require('../functions/utility.js')
+
+//CONVERT ARRAY TO OBJECT
+const convertArrayToObject = (arr = []) => {
+    const obj = {}
+    arr.forEach(e => obj[e] ? obj[e]++ : obj[e] = 1)
+    return obj
+}
 
 const Deck = db.define('decks', {
   name: {

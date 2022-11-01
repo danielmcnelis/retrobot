@@ -3,8 +3,6 @@ const Sequelize = require('sequelize')
 const db = require('./db')
 const Print = require('./Print')
 
-console.log('db.define', db.define)
-
 const Card = db.define('cards', {
   name: {
     type: Sequelize.STRING,
