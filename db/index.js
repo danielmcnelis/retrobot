@@ -27,6 +27,12 @@ const Tournament = require('./Tournament')
 const Upvote = require('./Upvote')
 const Video = require('./Video')
 
+console.log('!!db', !!db)
+console.log('!!Print', !!Print)
+console.log('Print', Print)
+console.log('!!Card', !!Card)
+console.log('Card', Card)
+
 //ARTICLE
 Article.belongsTo(Player)
 Player.hasMany(Article)
@@ -129,7 +135,6 @@ Player.hasMany(Upvote)
 Video.belongsTo(Player)
 Player.hasMany(Video)
 
-console.log('Card', Card)
 
 module.exports = {
   db,
