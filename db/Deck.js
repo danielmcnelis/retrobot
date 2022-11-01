@@ -5,7 +5,7 @@ const { Card } = require('./Card')
 const { Format } = require('./Format')
 const { Player } = require('./Player')
 const { Status } = require('./Status')
-const { arrayToObject } = require('@fl/utils')
+const { arrayToObject } = require('../functions/utility')
 
 const Deck = db.define('decks', {
   name: {
