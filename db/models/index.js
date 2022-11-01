@@ -1,7 +1,9 @@
 
-const { db } = require('./db')
+const { db } = require('../db')
+const Article = require('./Article')
 const BlogPost = require('./BlogPost')
 const Card = require('./Card')
+const Cube = require('./Cube')
 const Deck = require('./Deck')
 const DeckThumb = require('./DeckThumb')
 const DeckType = require('./DeckType')
@@ -22,6 +24,12 @@ const Set = require('./Set')
 const Stats = require('./Stats')
 const Status = require('./Status')
 const Tournament = require('./Tournament')
+const Upvote = require('./Upvote')
+const Video = require('./Video')
+
+//ARTICLE
+Article.belongsTo(Player)
+Player.hasMany(Article)
 
 //DECKTYPE
 DeckType.hasMany(Deck)
@@ -43,6 +51,13 @@ Deck.belongsTo(Event)
 
 Event.belongsTo(Tournament)
 Tournament.hasOne(Event)
+
+//FORMAT
+Format.hasMany(Deck)
+Deck.belongsTo(Format)
+
+Format.hasMany(Event)
+Event.belongsTo(Format)
 
 //IRON
 Iron.belongsTo(Player)
@@ -67,17 +82,14 @@ Membership.belongsTo(Server)
 Server.hasMany(Membership)
 
 //PLAYER
+Player.hasMany(Cube)
+Cube.belongsTo(Player)
+
 Player.hasMany(Deck)
 Deck.belongsTo(Player)
 
 Player.hasMany(Event)
 Event.belongsTo(Player)
-
-Format.hasMany(Event)
-Event.belongsTo(Format)
-
-Player.hasMany(RatedDeck)
-RatedDeck.belongsTo(Player)
 
 //PRINT
 Print.belongsTo(Card)
@@ -109,10 +121,20 @@ Card.hasMany(Status)
 Tournament.belongsTo(Server)
 Server.hasMany(Tournament)
 
+//UPVOTE
+Upvote.belongsTo(Player)
+Player.hasMany(Upvote)
+
+//VIDEO
+Video.belongsTo(Player)
+Player.hasMany(Video)
+
 module.exports = {
   db,
+  Article,
   BlogPost,
   Card,
+  Cube,
   Deck,
   DeckThumb,
   DeckType,
@@ -125,12 +147,14 @@ module.exports = {
   Membership,
   Player,
   Print,
+  Role,
   RatedDeck,
   RatedPool,
-  Role,
   Server,
   Set,
   Stats,
   Status,
-  Tournament
+  Tournament,
+  Upvote,
+  Video
 }
