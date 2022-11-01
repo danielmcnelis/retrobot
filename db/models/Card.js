@@ -1,7 +1,7 @@
 
 const Sequelize = require('sequelize')
 const { db } = require('../db')
-// const Print = require('./Print')
+const Print = require('./Print')
 
 const Card = db.define('cards', {
   name: {
