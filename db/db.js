@@ -15,8 +15,6 @@ const db = new Sequelize(
   }
 )
 
-console.log('db', db)
-
 module.exports = {
   db
 }
