@@ -6,7 +6,7 @@ const axios = require('axios')
 const {Op} = require('sequelize')
 
 //DATABASE IMPORTS
-const { Entry, Format, Player, Stats, Tournament } = require('../db')
+const { Entry, Format, Player, Stats, Tournament } = require('../db/index.js')
 
 //FUNCTION IMPORTS
 const { getIssues, saveYDK } = require('./deck.js')
