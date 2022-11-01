@@ -6,6 +6,9 @@ const RatedDeck = db.define('ratedDecks', {
   builder: {
     type: Sequelize.STRING
   },
+  playerId: {
+    type: Sequelize.STRING
+  },
   format: {
     type: Sequelize.STRING
   },

@@ -9,6 +9,9 @@ const Article = db.define('articles', {
   author: {
     type: Sequelize.STRING
   },
+  playerId: {
+    type: Sequelize.STRING
+  },
   content: {
     type: Sequelize.TEXT
   },

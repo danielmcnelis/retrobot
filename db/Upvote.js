@@ -3,6 +3,9 @@ const Sequelize = require('sequelize')
 const db = require('./db')
 
 const Upvote = db.define('upvotes', {
+  playerId: {
+    type: Sequelize.STRING
+  },
   contentType: {
     type: Sequelize.STRING
   },

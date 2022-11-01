@@ -628,19 +628,20 @@ const copyRatedDecksToDecks = async () => {
 }
 
 const fixBlogs = async () => {
-    let a =0
+    let a = 0
     const blogposts = await BlogPost.findAll() 
-    for (let i = 0; i< blogposts.length; i++) {
+    for (let i = 0; i < blogposts.length; i++) {
         const b = blogposts[i]
-        b.content.replaceAll('/images/', '/assets/images/')
+        b.content = b.content.replaceAll('/images/', '/assets/images/')
         await b.save()
         a++
     }
 
     return console.log(`fixed ${a} blogposts`)
 }
+
 fixBlogs()
-// copyRatedDecksToDecks()
+copyRatedDecksToDecks()
 // fixEntries()
 // saveYDKs()
 // downloadYDKs()
