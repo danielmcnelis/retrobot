@@ -3,7 +3,7 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const { Op } = require('sequelize')
-const { BlogPost, Card, Deck, DeckType, Event, Format, Player } = require('../../fl/libs/models/src/index.js')
+const { BlogPost, Card, Deck, DeckType, Event, Format, Player } = require('../../fl/libs/models/src/index.ts')
 const { capitalize, dateToVerbose } = require('./utility')
 const { getDeckType } = require('./deck')
 

@@ -6,7 +6,7 @@ const axios = require('axios')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Format, Player, RatedDeck, RatedPool, Stats, Server } = require('../../fl/libs/models/src/index.js')
+const { Format, Player, RatedDeck, RatedPool, Stats, Server } = require('../../fl/libs/models/src/index.ts')
 
 //STATIC IMPORTS
 const channels = require('../static/channels')

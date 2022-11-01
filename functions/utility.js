@@ -8,7 +8,7 @@ const Discord = require('discord.js')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Card, Membership, Player, Print, Role, Set, Stats, Status } = require('../../fl/libs/models/src/index.js')
+const { Card, Membership, Player, Print, Role, Set, Stats, Status } = require('../../fl/libs/models/src/index.ts')
 
 //STATIC IMPORTS
 const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend, god, ATK, DEF,
