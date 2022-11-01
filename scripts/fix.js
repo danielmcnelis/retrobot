@@ -599,7 +599,37 @@ const fixEntries = async () => {
     return console.log(`fixed ${b} entries`)
 }
 
-fixEntries()
+// COPY RATED DECKS TO DECKS
+const copyRatedDecksToDecks = async () => {
+    let b = 0
+    const ratedDecks = await RatedDeck.findAll()
+    for (let i = 0; i < ratedDecks.length; i++) {
+        try {
+            const rd = ratedDecks[i]
+            const format = await Format.findOne({ where: { name: rd.format }})
+    
+            const deck = await Deck.create({
+                name: rd.name,
+                builder: rd.builder,
+                playerId: rd.playerId,
+                formatName: format.name,
+                formatId: format.id,
+                ydk: rd.ydk,
+                display: false
+            })
+        
+            if (deck) b++
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    return console.log(`copied ${b} rated decks to the decks table`)
+}
+
+copyRatedDecksToDecks()
+
+// fixEntries()
 // saveYDKs()
 // downloadYDKs()
 // fixPlayers()
