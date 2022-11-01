@@ -1,6 +1,6 @@
 
 const Sequelize = require('sequelize')
-const { db } = require('../db')
+const db = require('./db')
 
 const Format = db.define('formats', {
   name: {
@@ -37,5 +37,7 @@ const Format = db.define('formats', {
     defaultValue: false
   }
 })
+
+console.log('Format', Format)
 
 module.exports = Format

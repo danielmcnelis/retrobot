@@ -1,65 +1,125 @@
 
 const Sequelize = require('sequelize')
-const { Format } = require('./Format')
-const { Player } = require('./Player')
-const { db } = require('../db')
+const db = require('./db')
+const Print = require('./Print')
 
-const Event = db.define('events', {
+const Card = db.define('cards', {
   name: {
+    type: Sequelize.STRING,
+    unique: true,
+    allowNull: false
+  },
+  konamiCode: {
     type: Sequelize.STRING
   },
-  abbreviation: {
+  ypdId: {
     type: Sequelize.STRING
   },
-  formatName: {
+  tcgLegal: {
+    type: Sequelize.BOOLEAN
+  },
+  ocgLegal: {
+    type: Sequelize.BOOLEAN
+  },
+  category: {
     type: Sequelize.STRING
   },
-  formatId: {
-    type: Sequelize.INTEGER
-  },
-  referenceUrl: {
+  icon: {
     type: Sequelize.STRING
   },
-  display: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
+  normal: {
+    type: Sequelize.BOOLEAN
   },
-  tournamentId: {
+  effect: {
+    type: Sequelize.BOOLEAN
+  },
+  fusion: {
+    type: Sequelize.BOOLEAN
+  },
+  ritual: {
+    type: Sequelize.BOOLEAN
+  },
+  synchro: {
+    type: Sequelize.BOOLEAN
+  },
+  xyz: {
+    type: Sequelize.BOOLEAN
+  },
+  pendulum: {
+    type: Sequelize.BOOLEAN
+  },
+  link: {
+    type: Sequelize.BOOLEAN
+  },
+  flip: {
+    type: Sequelize.BOOLEAN
+  },
+  gemini: {
+    type: Sequelize.BOOLEAN
+  },
+  spirit: {
+    type: Sequelize.BOOLEAN
+  },
+  toon: {
+    type: Sequelize.BOOLEAN
+  },
+  tuner: {
+    type: Sequelize.BOOLEAN
+  },
+  union: {
+    type: Sequelize.BOOLEAN
+  },
+  attribute: {
     type: Sequelize.STRING
-  },
-  winner: {
-    type: Sequelize.STRING
-  },
-  playerId: {
-    type: Sequelize.STRING
-  },
-  size: {
-    type: Sequelize.INTEGER
   },
   type: {
     type: Sequelize.STRING
   },
-  series: {
-    type: Sequelize.BOOLEAN
+  level: {
+    type: Sequelize.INTEGER
   },
-  community: {
+  rating: {
+    type: Sequelize.INTEGER
+  },
+  arrows: {
     type: Sequelize.STRING
   },
-  startDate: {
-    type: Sequelize.DATE
+  scale: {
+    type: Sequelize.INTEGER
   },
-  endDate: {
-    type: Sequelize.DATE
+  atk: {
+    type: Sequelize.STRING
+  },
+  def: {
+    type: Sequelize.STRING
+  },
+  description: {
+    type: Sequelize.TEXT
+  },
+  tcgDate: {
+    type: Sequelize.STRING
+  },
+  ocgDate: {
+    type: Sequelize.STRING
+  },
+  color: {
+    type: Sequelize.STRING
+  },
+  extraDeck: {
+    type: Sequelize.BOOLEAN
+  },
+  sortPriority: {
+    type: Sequelize.INTEGER
   }
 })
 
-Event.countResults = async (filter = {}) => {
+Card.countResults = async (filter = {}, booster) => {
     filter = Object.entries(filter).reduce((reduced, [key, by]) => {
         let value = by.value
         if (typeof value === 'string') value.replaceAll('%20', ' ')
         let operator = by.operator
-        if (['display', 'series'].includes(key)) { value = value.toLowerCase() === 'true' }
-        if (['size', 'tournamentId', 'formatId'].includes(key)) { value = parseInt(value) }
+        if (['tcgLegal', 'ocgLegal', 'normal', 'effect', 'fusion', 'ritual', 'synchro', 'xyz', 'pendulum', 'link', 'flip', 'gemini', 'spirit', 'toon', 'tuner', 'union', 'extraDeck'].includes(key)) { value = value.toLowerCase() === 'true' }
+        if (['level', 'rating', 'scale', 'sortPriority'].includes(key) && operator !== 'btw') { value = parseInt(value) }
         
         if (operator === 'eq') {
             operator = Op.eq
@@ -91,25 +151,27 @@ Event.countResults = async (filter = {}) => {
         return reduced
     }, {})
 
-    const query = filter.name
-    delete filter.name
-    if (query) filter = {[Op.or]: [{name: query}, {abbreviation: query}], ...filter}
+    let include = []
+    if (booster) {
+        filter['$prints.cardCode$'] = {[Op.iLike]: booster + '%' }        
+        include = [{ model: Print } ]
+    }
 
-    const count = await Event.count({ 
-        where: filter
-    })
-
+    const count = await Card.count({ 
+        where: filter,
+        include: include
+     })
     return count
 }
 
-Event.find = async (filter = {}, limit = 12, page = 1, sort = []) => {
+Card.find = async (filter = {}, booster, limit = 10, page = 1, sort = []) => {
     filter = Object.entries(filter).reduce((reduced, [key, by]) => {
         let value = by.value
         if (typeof value === 'string') value.replaceAll('%20', ' ')
         let operator = by.operator
-        if (['display'].includes(key)) { value = value.toLowerCase() === 'true' }
-        if (['deckTypeId', 'downloads', 'views', 'rating'].includes(key)) { value = parseInt(value) }
-       
+        if (['tcgLegal', 'ocgLegal', 'normal', 'effect', 'fusion', 'ritual', 'synchro', 'xyz', 'pendulum', 'link', 'flip', 'gemini', 'spirit', 'toon', 'tuner', 'union', 'extraDeck'].includes(key)) { value = value.toLowerCase() === 'true' }
+        if (['level', 'rating', 'scale', 'sortPriority'].includes(key) && operator !== 'btw') { value = parseInt(value) }
+
         if (operator === 'eq') {
             operator = Op.eq
         } else if (operator === 'not') {
@@ -140,21 +202,19 @@ Event.find = async (filter = {}, limit = 12, page = 1, sort = []) => {
         return reduced
     }, {})
 
-    const query = filter.name
-    delete filter.name
-    if (query) filter = {[Op.or]: [{name: query}, {abbreviation: query}], ...filter}
+    if (booster) filter['$prints.cardCode$'] = {[Op.iLike]: booster + '%' }
 
-    const events = await Event.findAll({
+    const cards = await Card.findAll({
         where: filter,
         offset: (page - 1) * limit,
         limit: limit,
         subQuery: false,
-        attributes: { exclude: ['tournamentId', 'type', 'series', 'createdAt', 'updatedAt'] },        
-        include: [{ model: Player, attributes: ['name', 'discordId'] }, {model: Format, attributes: ['name', 'icon']}],
+        attributes: { exclude: ['tcgLegal', 'ocgLegal', 'ocgDate', 'createdAt', 'updatedAt'] },
+        include: [{ model: Print, separate: !booster, attributes: ['id'] }],
         order: sort
     })
 
-    return events
+    return cards
 }
 
-module.exports = Event
+module.exports = Card

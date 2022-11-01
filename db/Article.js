@@ -1,6 +1,6 @@
 
 const Sequelize = require('sequelize')
-const { db } = require('../db')
+const db = require('./db')
 
 const Article = db.define('articles', {     
   title: {
@@ -27,5 +27,6 @@ const Article = db.define('articles', {
     defaultValue: 0
   }
 })
+
 
 module.exports = Article
