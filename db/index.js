@@ -11,6 +11,7 @@ const Entry = require('./Entry')
 const Event = require('./Event')
 const Format = require('./Format')
 console.log('Format index.js ln13', Format)
+console.log('Format.belongsTo ln14', Format.belongsTo)
 const Iron = require('./Iron')
 const Match = require('./Match')
 const Matchup = require('./Matchup')
@@ -131,7 +132,6 @@ Video.belongsTo(Player)
 Player.hasMany(Video)
 
 module.exports = {
-  db,
   Article,
   BlogPost,
   Card,
