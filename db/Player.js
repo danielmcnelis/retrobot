@@ -4,7 +4,7 @@ const { db } = require('./db')
 const bcrypt = require('bcrypt')
 const { customAlphabet } = require('nanoid')
 
-export const Player = db.define('players', {
+const Player = db.define('players', {
   id: {
       type: Sequelize.STRING,
       primaryKey: true,
@@ -188,3 +188,5 @@ Player.generateId = async () => {
   }
   
   Player.prototype.hide = () => this.update({ hidden: true })
+
+  module.exports = Player

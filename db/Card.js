@@ -3,7 +3,7 @@ const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 const { Print } = require('./Print')
 
-export const Card = db.define('cards', {
+const Card = db.define('cards', {
   name: {
     type: Sequelize.STRING,
     unique: true,
@@ -216,3 +216,5 @@ Card.find = async (filter = {}, booster, limit = 10, page = 1, sort = []) => {
 
     return cards
 }
+
+module.exports = Card

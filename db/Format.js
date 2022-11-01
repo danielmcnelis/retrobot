@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Format = db.define('formats', {
+const Format = db.define('formats', {
   name: {
     type: Sequelize.STRING,
     unique: true,
@@ -37,3 +37,5 @@ export const Format = db.define('formats', {
     defaultValue: false
   }
 })
+
+module.exports = Format

@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const DeckThumb = db.define('deckThumbs', {
+const DeckThumb = db.define('deckThumbs', {
   name: {
     type: Sequelize.STRING
   },
@@ -35,3 +35,5 @@ export const DeckThumb = db.define('deckThumbs', {
     type: Sequelize.STRING
   }
 })
+
+module.exports = DeckThumb

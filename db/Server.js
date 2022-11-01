@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Server = db.define('servers', {
+const Server = db.define('servers', {
   id: {
     primaryKey: true,
     type: Sequelize.STRING
@@ -60,3 +60,5 @@ export const Server = db.define('servers', {
       type: Sequelize.STRING
   }
 })
+
+module.exports = Server

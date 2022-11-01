@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Print = db.define('prints', {
+const Print = db.define('prints', {
   cardName: {
     type: Sequelize.STRING
   },
@@ -32,3 +32,5 @@ export const Print = db.define('prints', {
     type: Sequelize.INTEGER
   }
 })
+
+module.exports = Print

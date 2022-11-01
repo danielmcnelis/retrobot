@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Stats = db.define('stats', {
+const Stats = db.define('stats', {
   format: {
     type: Sequelize.STRING
   },
@@ -36,3 +36,5 @@ export const Stats = db.define('stats', {
       type: Sequelize.STRING
   }
 })
+
+module.exports = Stats

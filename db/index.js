@@ -16,6 +16,7 @@ const { Matchup } = require('./Matchup')
 const { Membership } = require('./Membership')
 const { Player } = require('./Player')
 const { Print } = require('./Print')
+const { RatedDeck } = require('./RatedDeck')
 const { RatedPool } = require('./RatedPool')
 const { Role } = require('./Role')
 const { Server } = require('./Server')
@@ -129,6 +130,7 @@ Video.belongsTo(Player)
 Player.hasMany(Video)
 
 module.exports = {
+  db,
   Article,
   BlogPost,
   Card,
@@ -146,6 +148,8 @@ module.exports = {
   Player,
   Print,
   Role,
+  RatedDeck,
+  RatedPool,
   Server,
   Set,
   Stats,

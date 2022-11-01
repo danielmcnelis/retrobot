@@ -4,7 +4,7 @@ import { Format } from './Format'
 import { Player } from './Player'
 const { db } = require('./db')
 
-export const Event = db.define('events', {
+const Event = db.define('events', {
   name: {
     type: Sequelize.STRING
   },
@@ -156,3 +156,5 @@ Event.find = async (filter = {}, limit = 12, page = 1, sort = []) => {
 
     return events
 }
+
+module.exports = Event

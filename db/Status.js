@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Status = db.define('statuses', {
+const Status = db.define('statuses', {
   name: {
     type: Sequelize.STRING
   },
@@ -13,3 +13,5 @@ export const Status = db.define('statuses', {
     type: Sequelize.STRING
   }
 })
+
+module.exports = Status

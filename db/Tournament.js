@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Tournament = db.define('tournaments', {
+const Tournament = db.define('tournaments', {
   id: {
     primaryKey: true,
     type: Sequelize.STRING
@@ -41,3 +41,5 @@ export const Tournament = db.define('tournaments', {
     type: Sequelize.STRING
   }
 })
+
+module.exports = Tournament

@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const BlogPost = db.define('blogposts', {
+const BlogPost = db.define('blogposts', {
   title: {
     type: Sequelize.STRING
   },
@@ -19,3 +19,5 @@ export const BlogPost = db.define('blogposts', {
     type: Sequelize.DATE
   }
 })
+
+module.exports = BlogPost

@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const DeckType = db.define('deckTypes', {
+const DeckType = db.define('deckTypes', {
   name: {
     type: Sequelize.STRING
   },
@@ -10,3 +10,5 @@ export const DeckType = db.define('deckTypes', {
     type: Sequelize.STRING
   }
 })
+
+module.exports = DeckType

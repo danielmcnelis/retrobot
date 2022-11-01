@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Match = db.define('matches', {
+const Match = db.define('matches', {
     format: {
         type: Sequelize.STRING
     },
@@ -31,3 +31,5 @@ export const Match = db.define('matches', {
         defaultValue: false
     }
 })
+
+module.exports = Match

@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Video = db.define('videos', {     
+const Video = db.define('videos', {     
   title: {
     type: Sequelize.STRING
   },
@@ -22,3 +22,5 @@ export const Video = db.define('videos', {
     type: Sequelize.STRING
   }
 })
+
+module.exports = Video

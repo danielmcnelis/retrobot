@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Set = db.define('sets', {
+const Set = db.define('sets', {
   setName: {
     type: Sequelize.STRING
   },
@@ -25,3 +25,5 @@ export const Set = db.define('sets', {
     type: Sequelize.INTEGER
   }
 })
+
+module.exports = Set

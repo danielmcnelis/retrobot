@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const RatedPool = db.define('ratedPools', {
+const RatedPool = db.define('ratedPools', {
     name: {
         type: Sequelize.STRING
     },
@@ -17,3 +17,5 @@ export const RatedPool = db.define('ratedPools', {
         type: Sequelize.STRING
     }
 })
+
+module.exports = RatedPool

@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Article = db.define('articles', {     
+const Article = db.define('articles', {     
   title: {
     type: Sequelize.STRING
   },
@@ -27,3 +27,5 @@ export const Article = db.define('articles', {
     defaultValue: 0
   }
 })
+
+module.exports = Article

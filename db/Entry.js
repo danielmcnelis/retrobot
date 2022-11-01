@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Entry = db.define('entries', {
+const Entry = db.define('entries', {
     playerName: {
         type: Sequelize.STRING
     },
@@ -34,3 +34,5 @@ export const Entry = db.define('entries', {
         type: Sequelize.STRING
     }
 })
+
+module.exports = Entry

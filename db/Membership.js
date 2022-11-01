@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Membership = db.define('memberships', {
+const Membership = db.define('memberships', {
     guildName: {
         type: Sequelize.STRING
     },
@@ -11,3 +11,5 @@ export const Membership = db.define('memberships', {
         defaultValue: true
     }
 })
+
+module.exports = Membership

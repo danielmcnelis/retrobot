@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Matchup = db.define('matchups', {
+const Matchup = db.define('matchups', {
     format: {
         type: Sequelize.STRING
     },
@@ -19,3 +19,5 @@ export const Matchup = db.define('matchups', {
         type: Sequelize.INTEGER
     }
 })
+
+module.exports = Matchup

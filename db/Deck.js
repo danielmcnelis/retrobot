@@ -7,7 +7,7 @@ const { Player } = require('./Player')
 const { Status } = require('./Status')
 const { arrayToObject } = require('@fl/utils')
 
-export const Deck = db.define('decks', {
+const Deck = db.define('decks', {
   name: {
     type: Sequelize.STRING
   },
@@ -205,3 +205,5 @@ Deck.generateShareLink = async () => {
     const base52 = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
     return import('nanoid').then(({ customAlphabet }) => customAlphabet(base52, 8)())
 }
+
+module.exports = Deck

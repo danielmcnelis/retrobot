@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Upvote = db.define('upvotes', {
+const Upvote = db.define('upvotes', {
   contentType: {
     type: Sequelize.STRING
   },
@@ -19,3 +19,5 @@ export const Upvote = db.define('upvotes', {
     type: Sequelize.INTEGER
   }
 })
+
+module.exports = Upvote

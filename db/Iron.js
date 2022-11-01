@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Iron = db.define('irons', {
+const Iron = db.define('irons', {
     name: {
         type: Sequelize.STRING
     },
@@ -35,3 +35,5 @@ export const Iron = db.define('irons', {
         type: Sequelize.STRING
     }
 })
+
+module.exports = Iron

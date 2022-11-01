@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize')
 const { db } = require('./db')
 
-export const Cube = db.define('cubes', {
+const Cube = db.define('cubes', {
   name: {
     type: Sequelize.STRING
   },
@@ -41,3 +41,5 @@ export const Cube = db.define('cubes', {
     type: Sequelize.DATE
   }
 })
+
+module.exports = Cube
