@@ -602,21 +602,25 @@ const fixEntries = async () => {
 // COPY RATED DECKS TO DECKS
 const copyRatedDecksToDecks = async () => {
     let b = 0
-    const ratedDecks = await RatedDeck.findAll()
+    const ratedDecks = await RatedDeck.findAll({ include: Player })
     for (let i = 0; i < ratedDecks.length; i++) {
         try {
             const rd = ratedDecks[i]
+            console.log('rd.dataValues', rd.dataValues)
             const format = await Format.findOne({ where: { name: rd.format }})
     
             const deck = await Deck.create({
                 name: rd.name,
                 builder: rd.builder,
-                playerId: rd.playerId,
+                playerId: rd.player.id,
                 formatName: format.name,
                 formatId: format.id,
+                url: rd.url,
                 ydk: rd.ydk,
                 display: false
             })
+
+            console.log('deck.dataValues', deck.dataValues)
         
             if (deck) b++
         } catch (err) {
@@ -640,7 +644,7 @@ const fixBlogs = async () => {
     return console.log(`fixed ${a} blogposts`)
 }
 
-fixBlogs()
+// fixBlogs()
 copyRatedDecksToDecks()
 // fixEntries()
 // saveYDKs()
