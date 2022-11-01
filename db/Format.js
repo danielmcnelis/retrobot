@@ -2,7 +2,6 @@
 const Sequelize = require('sequelize')
 const db = require('./db')
 
-console.log('db.define', db.define)
 
 const Format = db.define('formats', {
   name: {
