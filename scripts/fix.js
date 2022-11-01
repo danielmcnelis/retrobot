@@ -627,8 +627,20 @@ const copyRatedDecksToDecks = async () => {
     return console.log(`copied ${b} rated decks to the decks table`)
 }
 
-copyRatedDecksToDecks()
+const fixBlogs = async () => {
+    let a =0
+    const blogposts = await BlogPost.findAll() 
+    for (let i = 0; i< blogposts.length; i++) {
+        const b = blogposts[i]
+        b.content.replaceAll('/images/', '/assets/images/')
+        await b.save()
+        a++
+    }
 
+    return console.log(`fixed ${a} blogposts`)
+}
+fixBlogs()
+// copyRatedDecksToDecks()
 // fixEntries()
 // saveYDKs()
 // downloadYDKs()
