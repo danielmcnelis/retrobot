@@ -135,6 +135,7 @@ Player.hasMany(Upvote)
 Video.belongsTo(Player)
 Player.hasMany(Video)
 
+console.log('db', db)
 
 module.exports = {
   db,
