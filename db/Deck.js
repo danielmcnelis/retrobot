@@ -1,10 +1,11 @@
 
-const { Op, Sequelize } = require('sequelize')
+const Sequelize = require('sequelize')
+const { Op } = require('sequelize')
 const { db } = require('./db')
-const { Card } = require('./Card')
-const { Format } = require('./Format')
-const { Player } = require('./Player')
-const { Status } = require('./Status')
+const Card = require('./Card')
+const Format = require('./Format')
+const Player = require('./Player')
+const Status = require('./Status')
 const { arrayToObject } = require('../functions/utility')
 
 const Deck = db.define('decks', {
