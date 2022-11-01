@@ -1,5 +1,5 @@
 
-const { Iron, Player, Stats } = require('../db')
+const { Iron, Player, Stats } = require('../../fl/libs/models/src/index.js')
 const { yescom } = require('../static/commands.json')
 const emojis = require('../static/emojis.json')
 const roles = require('../static/roles.json')

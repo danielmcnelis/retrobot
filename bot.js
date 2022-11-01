@@ -10,7 +10,7 @@ const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
 
 // DATABASE IMPORTS
-const { Card, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
+const { Card, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('../fl/libs/models/src/index.js')
 
 // FUNCTION IMPORTS
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
@@ -294,9 +294,7 @@ try {
             // } catch (err) {
             //     console.log(err)
             // }
-
-            await message.member.roles.add('968893110132305971')
-            return
+            return message.channel.send('🧪')
         } else {
             return message.channel.send('🧪')
         }
