@@ -8,7 +8,7 @@ const fs = require('fs')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-import { Card, Format, Status } from '../../fl/libs/models/src/index.ts'
+const { Card, Format, Status } = require('../db')
 
 //FUNCTION IMPORTS
 const { convertArrayToObject } = require('./utility.js')

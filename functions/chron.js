@@ -3,7 +3,7 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const sharp = require('sharp')
-import { Card, Entry, Tournament, Match, Membership, Player, Print, RatedDeck, Role, Server, Set, Stats } from '../../fl/libs/models/src/index.ts'
+const { Card, Entry, Tournament, Match, Membership, Player, Print, RatedDeck, Role, Server, Set, Stats } = require('../db')
 const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
 const { Op } = require('sequelize')

@@ -1,7 +1,7 @@
 
 
 const { Op } = require('sequelize')
-import { BlogPost, Card, Deck, DeckType, DeckThumb, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } from '../../fl/libs/models/src/index.ts'
+const { BlogPost, Card, Deck, DeckType, DeckThumb, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('../db')
 const { capitalize } = require('../functions/utility')
 const axios = require('axios')
 const Canvas = require('canvas')
