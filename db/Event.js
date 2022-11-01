@@ -1,7 +1,7 @@
 
 const Sequelize = require('sequelize')
-const { Format } = require('./Format')
-const { Player } = require('./Player')
+const Format = require('./Format')
+const Player = require('./Player')
 const db = require('./db')
 
 const Event = db.define('events', {

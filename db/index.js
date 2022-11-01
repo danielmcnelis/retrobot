@@ -132,6 +132,7 @@ Video.belongsTo(Player)
 Player.hasMany(Video)
 
 module.exports = {
+  db,
   Article,
   BlogPost,
   Card,
