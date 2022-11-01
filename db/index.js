@@ -102,6 +102,9 @@ Set.hasMany(Print)
 RatedPool.belongsTo(Player)
 Player.hasMany(RatedPool)
 
+RatedDeck.belongsTo(Player)
+Player.hasMany(RatedDeck)
+
 //ROLE
 Role.belongsTo(Membership)
 Membership.hasMany(Role)
