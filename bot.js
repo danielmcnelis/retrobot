@@ -288,13 +288,7 @@ try {
     // TEST
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            // try {
-            //     const user = message.mentions.users.first() // returns the user object if an user mention exists​
-            //     await message.guild.ban(user)
-            // } catch (err) {
-            //     console.log(err)
-            // }
-            return message.channel.send('🧪')
+            return message.channel.send(`https://formatlibrary.s3.us-east-2.amazonaws.com/images/emojis/consolation.png`)
         } else {
             return message.channel.send('🧪')
         }
