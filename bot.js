@@ -1199,7 +1199,7 @@ try {
 	        .setDescription('A Yu-Gi-Oh! Bot powered by FormatLibrary.com.\n' )
 	        .setURL('https://discord.com/invite/formatlibrary')
 	        .setAuthor({ name: 'Jazz#2704', iconURL: 'https://i.imgur.com/wz5TqmR.png', url: 'https://discord.com/invite/formatlibrary' })
-            .setThumbnail('https://formatlibrary.com/assets/images/logos/Format%20Library.png')
+            .setThumbnail('https://formatlibrary.s3.us-east-2.amazonaws.com/images/logos/Format%20Library.png')
             .addField('How to Use This Bot', '\nThe following commands can be used for any format in the appropriate server, channels, or via DM.')
         	.addField('Cards', '\n{ Card Name } - Look up a card. For example, { Dark Magician }. \n')
         	.addField('Rated Pools', '\n!rated - DM to join a rated pool. \n!exit - DM to leave a rated pool. \n!pools - DM to view your rated pools. \n')

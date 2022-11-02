@@ -188,9 +188,7 @@ const search = async (query, fuzzyCards, format) => {
 			` ${!card.link ? `DEF: ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
 			null
 	
-	const attachment = fs.existsSync(`../formatlibrary/public/images/cards/${card.ypdId}.jpg`) ?
-		new Discord.MessageAttachment(`../formatlibrary/public/images/cards/${card.ypdId}.jpg`, `${card.ypdId}.jpg`) :
-		false
+	const attachment = new Discord.MessageAttachment(`https://formatlibrary.s3.us-east-2.amazonaws.com/images/cards/${card.ypdId}.jpg`, `${card.ypdId}.jpg`)
 
 	const thumbnail = attachment ? `attachment://${card.ypdId}.jpg` : `https://ygoprodeck.com/pics/${card.ypdId}.jpg`    
     const cardEmbed = new Discord.MessageEmbed()
@@ -308,7 +306,7 @@ const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, card
                 const card = cardsArr[i]
                 const row = Math.floor(i / cardsPerRow)
                 const col = i % cardsPerRow
-                const image = await Canvas.loadImage(`https://formatlibrary.com/assets/images/cards/${card.ypdId}.jpg`)
+                const image = await Canvas.loadImage(`https://formatlibrary.s3.us-east-2.amazonaws.com/images/cards/${card.ypdId}.jpg`)
                 context.drawImage(image, width * col, row * height, width, height)
             } catch (err) {
                 console.log(err)
