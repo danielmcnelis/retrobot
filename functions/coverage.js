@@ -208,8 +208,8 @@ const composeBlogPost = async (message, abbreviation) => {
                         `<p className="blogpost-date">${blogTitleDate}</p>` +
                     `</div>` +
                 `<div className="blogpost-title-emojis">` +
-                    `<img className="blogpost-format-icon" src="/images/emojis/${format.icon}.png"/>` +
-                    `<img className="blogpost-event-icon" src="/images/emojis/event.png"/>` +
+                    `<img className="blogpost-format-icon" src="https://formatlibrary.s3.us-east-2.amazonaws.com/images/emojis/${format.icon}.png"/>` +
+                    `<img className="blogpost-event-icon" src="https://formatlibrary.s3.us-east-2.amazonaws.com/images/emojis/event.png"/>` +
                 `</div>` +
             `</div>` +
             `<div className="blogpost-content-flexbox">` +
@@ -218,12 +218,12 @@ const composeBlogPost = async (message, abbreviation) => {
                 `</p>` +
                 `<div className="blogpost-images-flexbox">` +
                     `<div className="blogpost-pfp-community-flexbox">` +
-                        `<img className="blogpost-pfp" src="/images/pfps/${winner.discordId || winner.name}.png" />` +
-                        `<img className="blogpost-community"  src="/images/logos/${event.community}.png" />` +
+                        `<img className="blogpost-pfp" src="https://formatlibrary.s3.us-east-2.amazonaws.com/images//pfps/${winner.discordId || winner.name}.png" />` +
+                        `<img className="blogpost-community"  src="https://formatlibrary.s3.us-east-2.amazonaws.com/images//logos/${event.community}.png" />` +
                     `</div>` +
                     `<div className="blogpost-deck-box">` + 
                         `<a className="blogpost-deck-link" href="/decks/${deck.id}">` +
-                            `<img className="blogpost-deck" src="/images/decks/previews/${deck.id}.png" />` +
+                            `<img className="blogpost-deck" src="https://formatlibrary.s3.us-east-2.amazonaws.com/images//decks/previews/${deck.id}.png" />` +
                         `</a>` +
                     `</div>` +
                 `</div>` +

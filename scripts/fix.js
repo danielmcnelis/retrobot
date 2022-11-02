@@ -636,7 +636,7 @@ const fixBlogs = async () => {
     const blogposts = await BlogPost.findAll() 
     for (let i = 0; i < blogposts.length; i++) {
         const b = blogposts[i]
-        b.content = b.content.replaceAll('/images/', '/assets/images/')
+        b.content = b.content.replaceAll('/assets/images/', 'https://formatlibrary.s3.us-east-2.amazonaws.com/images/')
         await b.save()
         a++
     }
@@ -644,8 +644,8 @@ const fixBlogs = async () => {
     return console.log(`fixed ${a} blogposts`)
 }
 
-// fixBlogs()
-copyRatedDecksToDecks()
+fixBlogs()
+// copyRatedDecksToDecks()
 // fixEntries()
 // saveYDKs()
 // downloadYDKs()
