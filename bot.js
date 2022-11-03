@@ -288,7 +288,8 @@ try {
     // TEST
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            return message.channel.send(`https://formatlibrary.s3.us-east-2.amazonaws.com/images/emojis/consolation.png`)
+            updateAvatars(client)
+            return message.channel.send(emojis.yellow)
         } else {
             return message.channel.send('🧪')
         }

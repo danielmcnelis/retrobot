@@ -46,20 +46,20 @@ const updateAvatars = async (client) => {
                         continue
                     }
                     
-                    const {data} = await axios.get(
-                        `https://cdn.discordapp.com/avatars/${player.discordId}/${discordPfp}.webp`, {
-                            responseType: 'arraybuffer',
-                        }
-                    )
+                    // const {data} = await axios.get(
+                    //     `https://cdn.discordapp.com/avatars/${player.discordId}/${discordPfp}.webp`, {
+                    //         responseType: 'arraybuffer',
+                    //     }
+                    // )
 
-                    const png = await sharp(data).toFormat('png').toBuffer()
-                    const canvas = Canvas.createCanvas(128, 128)
-                    const context = canvas.getContext('2d')
-                    const image = await Canvas.loadImage(png)
-                    context.drawImage(image, 0, 0, 128, 128)
-                    const buffer = canvas.toBuffer('image/png')
-                    fs.writeFileSync(`../formatlibrary/public/images/pfps/${player.discordId}.png`, buffer)
-                    console.log(`saved new pfp for ${player.name}`)
+                    // const png = await sharp(data).toFormat('png').toBuffer()
+                    // const canvas = Canvas.createCanvas(128, 128)
+                    // const context = canvas.getContext('2d')
+                    // const image = await Canvas.loadImage(png)
+                    // context.drawImage(image, 0, 0, 128, 128)
+                    // const buffer = canvas.toBuffer('image/png')
+                    // fs.writeFileSync(`../formatlibrary/public/images/pfps/${player.discordId}.png`, buffer)
+                    // console.log(`saved new pfp for ${player.name}`)
                     count++
                 } catch (err) {
                     console.log(err)
