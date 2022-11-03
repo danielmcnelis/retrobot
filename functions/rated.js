@@ -226,7 +226,8 @@ const getNewRatedDeck = async (user, player, format) => {
                 const deckName = await askForDeckName(user, player) || 'Unnamed Deck'
                 const newRatedDeck = await Deck.create({
                     builder: player.name,
-                    format: format.name,
+                    formatName: format.name,
+                    formatId: format.id,
                     name: deckName,
                     url: `https://duelingbook.com/deck?id=${id}`,
                     ydk: ydk,
