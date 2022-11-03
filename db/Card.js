@@ -217,6 +217,4 @@ Card.find = async (filter = {}, booster, limit = 10, page = 1, sort = []) => {
     return cards
 }
 
-console.log('Card', Card)
-
 module.exports = Card

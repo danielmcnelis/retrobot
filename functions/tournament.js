@@ -340,8 +340,6 @@ const seed = async (server, message, tournament) => {
     }
 
     for (let i = 0; i < results.length; i += 30) message.channel.send({ content: results.slice(i, i + 30).join('\n').toString()})
-    console.log('count', count)
-    console.log('seeds.length', seeds.length)
     return count === seeds.length
 }
 

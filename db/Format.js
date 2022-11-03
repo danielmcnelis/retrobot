@@ -38,6 +38,4 @@ const Format = db.define('formats', {
   }
 })
 
-console.log('Format', Format)
-
 module.exports = Format

@@ -42,7 +42,7 @@
     "fuzzyset": "^1.0.7",
     "google-spreadsheet": "^3.2.0",
     "googleapis": "^92.0.0",
-    "nanoid": "^4.0.0",
+    "nanoid": "^3.3.4",
     "pg": "^8.7.1",
     "quickchart-js": "^2.0.3",
     "sequelize": "^6.12.5",

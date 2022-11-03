@@ -288,18 +288,17 @@ const composePreviews = async () => {
 const fixDecks = async () => {
     let a = 0
     let e = 0
-    const decks = await Deck.findAll()
+    const decks = await Deck.findAll({
+        where: {
+            eventId: {[Op.not]: null}
+        },
+        include: Event
+    })
+    
     for (let i = 0; i < decks.length; i++) {
         try {
             const d = decks[i]
-            const player = await Player.findOne({ where: { 
-                [Op.or]: {
-                    discordId: d.playerId.toString(),
-                    firstName: d.playerId
-                }
-            }})
-            
-            d.playerId = player.id
+            d.publishDate = d.event.endDate
             await d.save()
             a++
         } catch (err) {
@@ -635,22 +634,47 @@ const fixBlogs = async () => {
     let a = 0
     const blogposts = await BlogPost.findAll() 
     for (let i = 0; i < blogposts.length; i++) {
-        const b = blogposts[i]
-        b.content = b.content.replaceAll('/assets/images/', 'https://formatlibrary.s3.us-east-2.amazonaws.com/images/')
-        await b.save()
-        a++
+        try {
+            const b = blogposts[i]
+            b.content = b.content.replaceAll('/assets/', 'https://formatlibrary.s3.us-east-2.amazonaws.com/')
+            await b.save()
+
+            const discordId = b.content.slice(
+                b.content.indexOf('/images/pfps/') + 13,
+                b.content.indexOf('.png" /><img className="blogpost-community"')
+            )
+
+            const player = await Player.findOne({
+                where: {
+                    discordId: discordId,
+                    discordPfp: {[Op.not]: null}
+                }
+            })
+            
+            if (!player) continue
+
+            b.content = b.content.replace(
+                `src="https://formatlibrary.s3.us-east-2.amazonaws.com/images/pfps/${discordId}.png"`, 
+                `src="https://cdn.discordapp.com/avatars/${discordId}/${player.discordPfp}.webp"`
+            )
+            
+            await b.save()
+            a++
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     return console.log(`fixed ${a} blogposts`)
 }
 
-fixBlogs()
+// fixBlogs()
 // copyRatedDecksToDecks()
 // fixEntries()
 // saveYDKs()
 // downloadYDKs()
 // fixPlayers()
-// fixDecks()
+fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()
