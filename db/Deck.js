@@ -36,6 +36,9 @@ const Deck = db.define('decks', {
   formatId: {
     type: Sequelize.INTEGER
   },
+  origin: {
+    type: Sequelize.STRING
+  },
   ydk: {
     type: Sequelize.TEXT
   },

@@ -298,7 +298,7 @@ const fixDecks = async () => {
     for (let i = 0; i < decks.length; i++) {
         try {
             const d = decks[i]
-            d.publishDate = d.event.endDate
+            d.origin = d.eventId ? 'event' : 'user' 
             await d.save()
             a++
         } catch (err) {
