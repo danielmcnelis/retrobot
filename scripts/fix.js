@@ -288,12 +288,7 @@ const composePreviews = async () => {
 const fixDecks = async () => {
     let a = 0
     let e = 0
-    const decks = await Deck.findAll({
-        where: {
-            eventId: {[Op.not]: null}
-        },
-        include: Event
-    })
+    const decks = await Deck.findAll()
     
     for (let i = 0; i < decks.length; i++) {
         try {
