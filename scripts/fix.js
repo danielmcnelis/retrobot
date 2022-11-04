@@ -631,7 +631,7 @@ const fixBlogs = async () => {
     for (let i = 0; i < blogposts.length; i++) {
         try {
             const b = blogposts[i]
-            b.content = b.content.replaceAll('/assets/', 'https://formatlibrary.s3.us-east-2.amazonaws.com/')
+            b.content = b.content.replaceAll('/assets/', 'https://cdn.formatlibrary.com/')
             await b.save()
 
             const discordId = b.content.slice(
@@ -649,7 +649,7 @@ const fixBlogs = async () => {
             if (!player) continue
 
             b.content = b.content.replace(
-                `src="https://formatlibrary.s3.us-east-2.amazonaws.com/images/pfps/${discordId}.png"`, 
+                `src="https://cdn.formatlibrary.com/images/pfps/${discordId}.png"`, 
                 `src="https://cdn.discordapp.com/avatars/${discordId}/${player.discordPfp}.webp"`
             )
             

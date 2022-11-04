@@ -6,7 +6,7 @@ const axios = require('axios')
 const sharp = require('sharp')
 
 // SAVE PFPs
-const savePfps = async (client) => {
+const savePfps = async () => {
     let count = 0
     const blogposts = await BlogPost.findAll()
     for (let s = 0; s < blogposts.length; s++) {
