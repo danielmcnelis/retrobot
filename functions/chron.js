@@ -509,7 +509,7 @@ const downloadCardImage = async (id) => {
         responseType: 'stream'
     })
 
-    data.pipe(fs.createWriteStream(`../formatlibrary/public/images/cards/${id}.jpg`))
+    data.pipe(fs.createWriteStream(`../cards/${id}.jpg`))
 }
 
 // DOWNLOAD NEW CARDS

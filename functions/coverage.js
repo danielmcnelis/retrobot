@@ -189,7 +189,7 @@ const composeBlogPost = async (message, abbreviation) => {
             const card = main[i]
             const row = Math.floor(i / 10)
             const col = i % 10
-            const image = await Canvas.loadImage(`../formatlibrary/public/images/cards/${card.ypdId}.jpg`) 
+            const image = await Canvas.loadImage(`https://cdn.formatlibrary.com/images/cards/${card.ypdId}.jpg`) 
             context.drawImage(image, (card_width + 1) * col, row * (card_height + 1), card_width, card_height)
         }
     
@@ -218,12 +218,12 @@ const composeBlogPost = async (message, abbreviation) => {
                 `</p>` +
                 `<div className="blogpost-images-flexbox">` +
                     `<div className="blogpost-pfp-community-flexbox">` +
-                        `<img className="blogpost-pfp" src="https://cdn.formatlibrary.com/images//pfps/${winner.discordId || winner.name}.png" />` +
-                        `<img className="blogpost-community"  src="https://cdn.formatlibrary.com/images//logos/${event.community}.png" />` +
+                        `<img className="blogpost-pfp" src="https://cdn.formatlibrary.com/images/pfps/${winner.discordId || winner.name}.png" />` +
+                        `<img className="blogpost-community"  src="https://cdn.formatlibrary.com/images/logos/${event.community}.png" />` +
                     `</div>` +
                     `<div className="blogpost-deck-box">` + 
                         `<a className="blogpost-deck-link" href="/decks/${deck.id}">` +
-                            `<img className="blogpost-deck" src="https://cdn.formatlibrary.com/images//decks/previews/${deck.id}.png" />` +
+                            `<img className="blogpost-deck" src="https://cdn.formatlibrary.com/images/decks/previews/${deck.id}.png" />` +
                         `</a>` +
                     `</div>` +
                 `</div>` +
@@ -241,7 +241,7 @@ const composeBlogPost = async (message, abbreviation) => {
         })
     
         const buffer = canvas.toBuffer('image/png')
-        fs.writeFileSync(`../formatlibrary/public/images/decks/previews/${deck.id}.png`, buffer)
+        fs.writeFileSync(`../decks/previews/${deck.id}.png`, buffer)
         return message.channel.send(`Composed blogpost for ${abbreviation}.`)
     } catch (err) {
         console.log(err)
@@ -299,12 +299,12 @@ const composeThumbnails = async (message, event) => {
                 const card = main[i]
                 const row = Math.floor(i / 10)
                 const col = i % 10
-                const image = await Canvas.loadImage(`../formatlibrary/public/images/cards/${card.ypdId}.jpg`) 
+                const image = await Canvas.loadImage(`https://cdn.formatlibrary.com/images/cards/${card.ypdId}.jpg`) 
                 context.drawImage(image, card_width * col, row * card_height, card_width, card_height)
             }
             
             const buffer = canvas.toBuffer('image/png')
-            fs.writeFileSync(`../formatlibrary/public/images/decks/thumbnails/${deck.id}.png`, buffer)
+            fs.writeFileSync(`../decks/thumbnails/${deck.id}.png`, buffer)
             console.log('saved deck thumbnail')
         }
     

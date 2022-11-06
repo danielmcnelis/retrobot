@@ -156,7 +156,7 @@ const downloadDuelingBookAvatar = async (playerId, cardId) => {
     const image = await Canvas.loadImage(png)
     context.drawImage(image, 0, 0, 128, 128)
     const buffer = canvas.toBuffer('image/png')
-    fs.writeFileSync(`../formatlibrary/public/images/pfps/${playerId}.png`, buffer)
+    fs.writeFileSync(`../pfps/${playerId}.png`, buffer)
     console.log(`saved new pfp for ${playerId}`)
 }
 
@@ -210,7 +210,7 @@ const composeThumbnails = async () => {
             }
             
             const buffer = canvas.toBuffer('image/png')
-            fs.writeFileSync(`../../formatlibrary/public/images/decks/thumbnails/${deck.id}.png`, buffer)
+            fs.writeFileSync(`../decks/thumbnails/${deck.id}.png`, buffer)
             console.log('saved deck thumbnail')
             b++
         } catch (err) {
@@ -269,12 +269,12 @@ const composePreviews = async () => {
                 const card = main[i]
                 const row = Math.floor(i / 10)
                 const col = i % 10
-                const image = await Canvas.loadImage(`../../formatlibrary/public/images/cards/${card.ypdId}.jpg`) 
+                const image = await Canvas.loadImage(`https://cdn.formatlibrary.com/images/cards/${card.ypdId}.jpg`) 
                 context.drawImage(image, (card_width + 1) * col, row * (card_height + 1), card_width, card_height)
             }
         
             const buffer = canvas.toBuffer('image/png')
-            fs.writeFileSync(`../../formatlibrary/public/images/decks/previews/${deck.id}.png`, buffer)
+            fs.writeFileSync(`../decks/previews/${deck.id}.png`, buffer)
             console.log(`composed preview`)
             b++
         } catch (err) {
