@@ -316,11 +316,8 @@ const composeThumbnails = async (message, event) => {
                 }
             })
 
-            const { Location: uri} = await s3
-                .upload({ Bucket: 'formatlibrary', Key: `images/decks/thumbnails/${deck.id}.png`, Body: buffer })
-                .promise()
-                console.log('uri', uri)
-                process.exit()
+            const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/decks/thumbnails/${deck.id}.png`, Body: buffer }).promise()
+            console.log('uri', uri)
         }
     
         return message.channel.send(`Composed deck thumbnails for ${event}.`)
