@@ -7,7 +7,7 @@ const { Op } = require('sequelize')
 const { BlogPost, Card, Deck, DeckType, Event, Format, Player }  = require('../db/index.js')
 const { capitalize, dateToVerbose } = require('./utility')
 const { getDeckType } = require('./deck')
-const { s3 } = require('../secrets.json')
+const { S3Keys } = require('../secrets.json')
 
 
 // CREATE DECKS
@@ -309,10 +309,10 @@ const composeThumbnails = async (message, event) => {
             const buffer = canvas.toBuffer('image/png')
 
             const s3 = new S3({
-                region: s3.region,
+                region: S3Keys.region,
                 credentials: {
-                    accessKeyId: s3.credentials.accessKeyId,
-                    secretAccessKey: s3.credentials.secretAccessKey
+                    accessKeyId: S3Keys.credentials.accessKeyId,
+                    secretAccessKey: S3Keys.credentials.secretAccessKey
                 }
             })
 
