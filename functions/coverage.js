@@ -2,10 +2,13 @@
 const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
+const { S3 } = require('aws-sdk')
 const { Op } = require('sequelize')
 const { BlogPost, Card, Deck, DeckType, Event, Format, Player }  = require('../db/index.js')
 const { capitalize, dateToVerbose } = require('./utility')
 const { getDeckType } = require('./deck')
+const { s3 } = require('../secrets.json')
+
 
 // CREATE DECKS
 const createDecks = async (message, event, tournament, useTags = true) => {
@@ -304,8 +307,20 @@ const composeThumbnails = async (message, event) => {
             }
             
             const buffer = canvas.toBuffer('image/png')
-            fs.writeFileSync(`../decks/thumbnails/${deck.id}.png`, buffer)
-            console.log('saved deck thumbnail')
+
+            const s3 = new S3({
+                region: s3.region,
+                credentials: {
+                    accessKeyId: s3.credentials.accessKeyId,
+                    secretAccessKey: s3.credentials.secretAccessKey
+                }
+            })
+
+            const { Location: uri} = await s3
+                .upload({ Bucket: 'formatlibrary', Key: `images/decks/thumbnails/${deck.id}.png`, Body: buffer })
+                .promise()
+                console.log('uri', uri)
+                process.exit()
         }
     
         return message.channel.send(`Composed deck thumbnails for ${event}.`)
