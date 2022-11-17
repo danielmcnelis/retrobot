@@ -244,7 +244,15 @@ const composeBlogPost = async (message, abbreviation) => {
         })
     
         const buffer = canvas.toBuffer('image/png')
-        fs.writeFileSync(`../decks/previews/${deck.id}.png`, buffer)
+        const s3 = new S3({
+            region: S3Keys.region,
+            credentials: {
+                accessKeyId: S3Keys.credentials.accessKeyId,
+                secretAccessKey: S3Keys.credentials.secretAccessKey
+            }
+        })
+
+        await s3.upload({ Bucket: 'formatlibrary', Key: `images/decks/previews/${deck.id}.png`, Body: buffer, ACL: 'public-read' }).promise()
         return message.channel.send(`Composed blogpost for ${abbreviation}.`)
     } catch (err) {
         console.log(err)
@@ -316,8 +324,7 @@ const composeThumbnails = async (message, event) => {
                 }
             })
 
-            const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/decks/thumbnails/${deck.id}.png`, Body: buffer }).promise()
-            console.log('uri', uri)
+            await s3.upload({ Bucket: 'formatlibrary', Key: `images/decks/thumbnails/${deck.id}.png`, Body: buffer, ACL: 'public-read' }).promise()
         }
     
         return message.channel.send(`Composed deck thumbnails for ${event}.`)
