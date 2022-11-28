@@ -674,12 +674,10 @@ const fixPfps = async () => {
         }
     })
 
-    await s3.upload({ Bucket: 'formatlibrary'}).promise()
-
-    // s3.listObjectsV2({ Bucket: 'formatlibrary' }, function (err, data) {
-    //     if(err)throw err;
-    //     console.log(data);
-    // });
+    s3.listObjectsV2({ Bucket: 'formatlibrary' }, function (err, data) {
+        if(err)throw err;
+        console.log(data);
+    });
     
     // try {
     //     const data = await s3.listObjects({ Bucket: 'formatlibrary' }).promise()
