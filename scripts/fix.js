@@ -674,7 +674,7 @@ const fixPfps = async () => {
         }
     })
 
-    s3.listObjectsV2({ Bucket: 'formatlibrary', Key: `images/ }, function (err, data) {
+    s3.listObjectsV2({ Bucket: 'formatlibrary', Key: `images/` }, function (err, data) {
         if(err)throw err;
         console.log(data);
     });
