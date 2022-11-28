@@ -674,14 +674,28 @@ const fixPfps = async () => {
         }
     })
 
-    s3.listObjectsV2({ 
-        Bucket: 'formatlibrary',
-        Prefix: 'images/pfps/'
-     }, function (err, data) {
-        if(err)throw err;
-        console.log(data);
-    });
-    
+    const data = []
+    let complete = false
+    let token = null
+    while (!complete) {
+        const { Contents, IsTruncated, NextContinuationToken } = await s3.listObjectsV2({
+            Bucket: 'formatlibrary', 
+            Prefix: 'images/pfps/',
+            ContinuationToken: token,
+        }).promise()
+        
+        data = [...data, ...Contents]
+
+        if (IsTruncated) {
+            token = NextContinuationToken
+        } else {
+            complete = true
+        }
+    }
+
+    console.log('data', data)
+    console.log('data.length', data.length)
+
     // try {
     //     const data = await s3.listObjects({ Bucket: 'formatlibrary' }).promise()
     //     console.log('data', data)
