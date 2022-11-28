@@ -45,37 +45,31 @@ const updateAvatars = async (client) => {
                     if (player && isActive && player.discordPfp !== discordPfp) {
                         player.discordPfp = discordPfp
                         await player.save()
+
+                        const {data} = await axios.get(
+                            `https://cdn.discordapp.com/avatars/${player.discordId}/${discordPfp}.webp`, {
+                                responseType: 'arraybuffer',
+                            }
+                        )
+    
+                        const buffer = await sharp(data).toFormat('png').toBuffer()
+    
+                        const s3 = new S3({
+                            region: S3Keys.region,
+                            credentials: {
+                                accessKeyId: S3Keys.credentials.accessKeyId,
+                                secretAccessKey: S3Keys.credentials.secretAccessKey
+                            }
+                        })
+    
+                        const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/pfps/${player.discordId}.png`, Body: buffer, ContentType: `image/png` }).promise()
+                        console.log('uri', uri)
+                        console.log(`saved new pfp for ${player.name}`)
                         count++
                     } else {
                         continue
                     }
                             
-                    const {data} = await axios.get(
-                        `https://cdn.discordapp.com/avatars/${player.discordId}/${discordPfp}.webp`, {
-                            responseType: 'arraybuffer',
-                        }
-                    )
-
-                    const buffer = await sharp(data).toFormat('png').toBuffer()
-                    // const canvas = Canvas.createCanvas(128, 128)
-                    // const context = canvas.getContext('2d')
-                    // const image = await Canvas.loadImage(png)
-                    // context.drawImage(image, 0, 0, 128, 128)
-                    // const buffer = canvas.toBuffer('image/png')
-                    // fs.writeFileSync(`../formatlibrary/public/images`, buffer)
-
-                    const s3 = new S3({
-                        region: S3Keys.region,
-                        credentials: {
-                            accessKeyId: S3Keys.credentials.accessKeyId,
-                            secretAccessKey: S3Keys.credentials.secretAccessKey
-                        }
-                    })
-
-                    const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/pfps/${player.discordId}.png`, Body: buffer, ContentType: `image/png` }).promise()
-                    console.log('uri', uri)
-                    console.log(`saved new pfp for ${player.name}`)
-                    count++
                 } catch (err) {
                     console.log(err)
                 }   
