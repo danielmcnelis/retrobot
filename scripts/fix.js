@@ -674,7 +674,7 @@ const fixPfps = async () => {
         }
     })
 
-    const data = []
+    let data = []
     let complete = false
     let token = null
     while (!complete) {
@@ -693,8 +693,23 @@ const fixPfps = async () => {
         }
     }
 
-    console.log('data', data)
     console.log('data.length', data.length)
+    
+    for (let i = 0; i < data.length; i++) {
+        const Key = data[i].Key
+        const file = Key.slice(12, -4)
+        console.log('file', file)
+        const player = await Player.findOne({ where: {
+            [Op.or]: {
+                name: file,
+                discordId: file
+            }
+        }})
+
+        const isActive = player?.email || await Deck.count({ where: { playerId: player?.id }}) || await Stats.count({ where: { playerId: player?.id }})
+        console.log('!!player', !!player)
+        console.log('!!isActive', !!isActive)
+    }
 
     // try {
     //     const data = await s3.listObjects({ Bucket: 'formatlibrary' }).promise()
