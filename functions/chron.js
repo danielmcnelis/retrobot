@@ -22,7 +22,7 @@ const getMidnightCountdown = () => {
 
 // UPDATE AVATARS
 const updateAvatars = async (client) => {
-    const servers = await Server.findAll()
+    const servers = await Server.findAll({ order: [['size', 'DESC']]})
     for (let s = 0; s < servers.length; s++) {
         try {
             let count = 0
@@ -30,6 +30,8 @@ const updateAvatars = async (client) => {
             const guild = client.guilds.cache.get(server.id)
             const membersMap = await guild.members.fetch()
             const memberIds = [...membersMap.keys()]
+            console.log('server.name', server.name)
+            console.log('memberIds.length', memberIds.length)
             
             for (let i = 0; i < memberIds.length; i++) {
                 try {
@@ -37,11 +39,17 @@ const updateAvatars = async (client) => {
                     const member = membersMap.get(memberId)
                     const user = member.user
                     const discordPfp = user.discordPfp
+                    console.log('!!discordPfp', !!discordPfp)
                     if (!discordPfp) continue
                     const player = await Player.findOne({ where: { discordId: memberId }})
+                    console.log('!!player', !!player)
                     if (!player) continue
-                    const isActive = player.email || await Stats.count({ where: { playerId: player.id }})
-        
+                    console.log('player.name', player.name)
+                    const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
+                    console.log('!!isActive', !!isActive)
+                    console.log('player.discordPfp', player.discordPfp)
+                    console.log('discordPfp', discordPfp)
+
                     if (player && isActive && player.discordPfp !== discordPfp) {
                         player.discordPfp = discordPfp
                         await player.save()
@@ -69,7 +77,6 @@ const updateAvatars = async (client) => {
                     } else {
                         continue
                     }
-                            
                 } catch (err) {
                     console.log(err)
                 }   
