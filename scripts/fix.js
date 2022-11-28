@@ -674,13 +674,12 @@ const fixPfps = async () => {
         }
     })
 
-    console.log('S3Keys.credentials.accessKeyId', S3Keys.credentials.accessKeyId)
-    console.log('S3Keys.credentials.secretAccessKey', S3Keys.credentials.secretAccessKey)
-        
-    s3.listObjectsV2({ Bucket: 'formatlibrary' }, function (err, data) {
-        if(err)throw err;
-        console.log(data);
-    });
+    await s3.upload({ Bucket: 'formatlibrary'}).promise()
+
+    // s3.listObjectsV2({ Bucket: 'formatlibrary' }, function (err, data) {
+    //     if(err)throw err;
+    //     console.log(data);
+    // });
     
     // try {
     //     const data = await s3.listObjects({ Bucket: 'formatlibrary' }).promise()
