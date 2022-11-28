@@ -673,14 +673,19 @@ const fixPfps = async () => {
             secretAccessKey: S3Keys.credentials.secretAccessKey
         }
     })
+        
+    s3.listObjects({ Bucket: 'formatlibrary' }, function (err, data) {
+        if(err)throw err;
+        console.log(data);
+    });
     
-    try {
-        const data = await s3.ListBucket({ Bucket: 'formatlibrary' }).promise()
-        console.log('data', data)
-        return data
-    } catch (err) {
-        console.log("Error", err)
-    }    
+    // try {
+    //     const data = await s3.listObjects({ Bucket: 'formatlibrary' }).promise()
+    //     console.log('data', data)
+    //     return data
+    // } catch (err) {
+    //     console.log("Error", err)
+    // }    
 
     // const player = await Player.findOne({ where: { discordId: memberId }})
     // const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
