@@ -706,8 +706,10 @@ const fixPfps = async () => {
             }
         }})
 
-        const isActive = player?.email || await Deck.count({ where: { playerId: player?.id }}) || await Stats.count({ where: { playerId: player?.id }})
         console.log('!!player', !!player)
+        if (!player) continue
+
+        const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
         console.log('!!isActive', !!isActive)
     }
 
