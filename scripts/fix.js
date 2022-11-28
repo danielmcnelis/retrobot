@@ -674,7 +674,7 @@ const fixPfps = async () => {
         }
     })
 
-    const { ListObjectsCommand } = require("aws-sdk/client-s3")
+    const { ListObjectsCommand } = require("@aws-sdk/client-s3")
     
     try {
         const data = await s3.send(new ListObjectsCommand({ Bucket: "formatlibrary" }))
