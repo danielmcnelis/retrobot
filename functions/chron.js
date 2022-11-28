@@ -38,24 +38,18 @@ const updateAvatars = async (client) => {
                     const memberId = memberIds[i]
                     const member = membersMap.get(memberId)
                     const user = member.user
-                    const discordPfp = user.discordPfp
-                    console.log('!!discordPfp', !!discordPfp)
-                    if (!discordPfp) continue
+                    const avatar = user.avatar
+                    if (!avatar) continue
                     const player = await Player.findOne({ where: { discordId: memberId }})
-                    console.log('!!player', !!player)
                     if (!player) continue
-                    console.log('player.name', player.name)
                     const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
-                    console.log('!!isActive', !!isActive)
-                    console.log('player.discordPfp', player.discordPfp)
-                    console.log('discordPfp', discordPfp)
 
                     if (player && isActive && player.discordPfp !== discordPfp) {
-                        player.discordPfp = discordPfp
+                        player.discordPfp = avatar
                         await player.save()
 
                         const {data} = await axios.get(
-                            `https://cdn.discordapp.com/avatars/${player.discordId}/${discordPfp}.webp`, {
+                            `https://cdn.discordapp.com/avatars/${player.discordId}/${avatar}.webp`, {
                                 responseType: 'arraybuffer',
                             }
                         )
