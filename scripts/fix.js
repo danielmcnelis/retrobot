@@ -666,6 +666,9 @@ const fixBlogs = async () => {
 }
 
 const fixPfps = async () => {
+    let b = 0
+    let e = 0
+
     const s3 = new S3({
         region: S3Keys.region,
         credentials: {
@@ -696,36 +699,47 @@ const fixPfps = async () => {
     console.log('data.length', data.length)
     
     for (let i = 0; i < data.length; i++) {
-        const Key = data[i].Key
-        const file = Key.slice(12, -4)
-        console.log('file', file)
-        const player = await Player.findOne({ where: {
-            [Op.or]: {
-                name: file,
-                discordId: file
+        try {
+            const Key = data[i].Key
+            const file = Key.slice(12, -4)
+            console.log('file', file)
+            const player = await Player.findOne({ where: {
+                [Op.or]: {
+                    name: file,
+                    discordId: file
+                }
+            }})
+    
+            console.log('!!player', !!player)
+            if (!player) {
+                console.log('DELETE:', Key, `(Not Found)`)
+                await s3.deleteObject({
+                    Bucket: 'formatlibrary', 
+                    Key: Key
+                }).promise()
+
+                b++
+            } 
+    
+            if (!player) continue
+    
+            const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
+    
+            if (!isActive) {
+                console.log('DELETE:', Key, `(${player.name})`)
+                await s3.deleteObject({
+                    Bucket: 'formatlibrary', 
+                    Key: Key
+                }).promise()
+
+                b++
             }
-        }})
-
-        console.log('!!player', !!player)
-        if (!player) {
-            console.log('DELETE:', Key, `(Not Found)`)
-            await s3.deleteObject({
-                Bucket: 'formatlibrary', 
-                Key: Key
-            }).promise()
-        } 
-
-        if (!player) continue
-
-        const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
-
-        if (!isActive) {
-            console.log('DELETE:', Key, `(${player.name})`)
-            await s3.deleteObject({
-                Bucket: 'formatlibrary', 
-                Key: Key
-            }).promise()
+        } catch (err) {
+            console.log(err)
+            e++
         }
+
+        console.log(`Deleted ${b} objects, encountered ${e} errors`)
     }
 
     // try {
