@@ -675,7 +675,7 @@ const fixPfps = async () => {
     })
     
     try {
-        const data = await s3.listObjectsV2({ Bucket: 'formatlibrary' }).promise()
+        const data = await s3.ListBucket({ Bucket: 'formatlibrary' }).promise()
         console.log('data', data)
         return data
     } catch (err) {
