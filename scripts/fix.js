@@ -707,10 +707,25 @@ const fixPfps = async () => {
         }})
 
         console.log('!!player', !!player)
+        if (!player) {
+            console.log('DELETE:', Key, `(Not Found)`)
+            await s3.deleteObject({
+                Bucket: 'formatlibrary', 
+                Key: Key
+            }).promise()
+        } 
+
         if (!player) continue
 
         const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
-        console.log('!!isActive', !!isActive)
+
+        if (!isActive) {
+            console.log('DELETE:', Key, `(${player.name})`)
+            await s3.deleteObject({
+                Bucket: 'formatlibrary', 
+                Key: Key
+            }).promise()
+        }
     }
 
     // try {
