@@ -673,6 +673,9 @@ const fixPfps = async () => {
             secretAccessKey: S3Keys.credentials.secretAccessKey
         }
     })
+
+    console.log('S3Keys.credentials.accessKeyId', S3Keys.credentials.accessKeyId)
+    console.log('S3Keys.credentials.secretAccessKey', S3Keys.credentials.secretAccessKey)
         
     s3.listObjects({ Bucket: 'formatlibrary' }, function (err, data) {
         if(err)throw err;
