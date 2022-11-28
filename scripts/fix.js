@@ -665,7 +665,7 @@ const fixBlogs = async () => {
     return console.log(`fixed ${a} blogposts`)
 }
 
-const fixPfps = async () => {
+const purgePfps = async () => {
     let b = 0
     let e = 0
 
@@ -741,43 +741,60 @@ const fixPfps = async () => {
 
         console.log(`Deleted ${b} objects, encountered ${e} errors`)
     }
+}
 
-    // try {
-    //     const data = await s3.listObjects({ Bucket: 'formatlibrary' }).promise()
-    //     console.log('data', data)
-    //     return data
-    // } catch (err) {
-    //     console.log("Error", err)
-    // }    
+const fixPfps = async () => {
+    let b = 0
+    let e = 0
+    
+    const s3 = new S3({
+        region: S3Keys.region,
+        credentials: {
+            accessKeyId: S3Keys.credentials.accessKeyId,
+            secretAccessKey: S3Keys.credentials.secretAccessKey
+        }
+    })
 
-    // const player = await Player.findOne({ where: { discordId: memberId }})
-    // const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
+    const players = await Player.findAll({
+        where: {
+            discordPfp: {[Op.not]: null}
+        }
+    })
 
-    // if (player && isActive && player.discordPfp !== discordPfp) {
-    //     player.discordPfp = discordPfp
-    //     await player.save()
-    //     count++
-    // } else {
-    //     continue
-    // }
-            
-    // const {data} = await axios.get(
-    //     `https://cdn.discordapp.com/avatars/${player.discordId}/${discordPfp}.webp`, {
-    //         responseType: 'arraybuffer',
-    //     }
-    // )
+    for (let i = 0; i < players.length; i++) {
+        try {
+            const player = players[i]
+            const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
+            if (!isActive) continue
 
-    // const buffer = await sharp(data).toFormat('png').toBuffer()
-    // const canvas = Canvas.createCanvas(128, 128)
-    // const context = canvas.getContext('2d')
-    // const image = await Canvas.loadImage(png)
-    // context.drawImage(image, 0, 0, 128, 128)
-    // const buffer = canvas.toBuffer('image/png')
-    // fs.writeFileSync(`../formatlibrary/public/images`, buffer)
+            const { ETag } = await s3.headObject({ 
+                Bucket: 'formatlibrary',
+                Key: `images/pfps/${player.discordId}`
+                }).promise()
 
-    // const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/pfps/${player.discordId}.png`, Body: buffer, ContentType: `image/png` }).promise()
-    // console.log('uri', uri)
-    // console.log(`saved new pfp for ${player.name}`)
+            if (ETag) {
+                continue   
+            } else {
+                const {data} = await axios.get(
+                    `https://cdn.discordapp.com/avatars/${player.discordId}/${player.discordPfp}.webp`, {
+                        responseType: 'arraybuffer',
+                    }
+                )
+
+                if (!data) continue
+                const buffer = await sharp(data).toFormat('png').toBuffer()
+                const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/pfps/${player.discordId}.png`, Body: buffer, ContentType: `image/png` }).promise()
+                console.log('uri', uri)
+                console.log(`saved new pfp for ${player.name}`)
+                b++
+            }
+        } catch (err) {
+            console.log("Error", err)
+            e++
+        }    
+    }
+
+    return console.log(`saved ${b} pfps, encountered ${e} errors`)
 }
 
 fixPfps()
