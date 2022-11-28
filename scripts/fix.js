@@ -746,7 +746,7 @@ const purgePfps = async () => {
 const fixPfps = async () => {
     let b = 0
     let e = 0
-    
+
     const s3 = new S3({
         region: S3Keys.region,
         credentials: {
@@ -762,19 +762,20 @@ const fixPfps = async () => {
     })
 
     for (let i = 0; i < players.length; i++) {
-        try {
-            const player = players[i]
-            const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
-            if (!isActive) continue
+        const player = players[i]
+        const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
+        if (!isActive) continue
 
+        try {
             const { ETag } = await s3.headObject({ 
                 Bucket: 'formatlibrary',
                 Key: `images/pfps/${player.discordId}`
-                }).promise()
+            }).promise()
 
-            if (ETag) {
-                continue   
-            } else {
+            console.log('ETag', ETag)
+            if (ETag) continue
+        } catch (err) {
+            try {
                 const {data} = await axios.get(
                     `https://cdn.discordapp.com/avatars/${player.discordId}/${player.discordPfp}.webp`, {
                         responseType: 'arraybuffer',
@@ -787,10 +788,10 @@ const fixPfps = async () => {
                 console.log('uri', uri)
                 console.log(`saved new pfp for ${player.name}`)
                 b++
+            } catch (err) {
+                console.log(err)
+                e++
             }
-        } catch (err) {
-            console.log("Error", err)
-            e++
         }    
     }
 
