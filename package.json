@@ -35,7 +35,6 @@
   },
   "bundleDependencies": false,
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.218.0",
     "aws-sdk": "^2.1254.0",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",

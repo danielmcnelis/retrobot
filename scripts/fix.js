@@ -673,12 +673,10 @@ const fixPfps = async () => {
             secretAccessKey: S3Keys.credentials.secretAccessKey
         }
     })
-
-    const { ListObjectsCommand } = require("@aws-sdk/client-s3")
     
     try {
-        const data = await s3.send(new ListObjectsCommand({ Bucket: "formatlibrary" }))
-        console.log("Success", data)
+        const data = await s3.listObjects({ Bucket: "formatlibrary" }).promise()
+        console.log('data', data)
         return data
     } catch (err) {
         console.log("Error", err)
