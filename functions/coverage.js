@@ -252,7 +252,8 @@ const composeBlogPost = async (message, abbreviation) => {
             }
         })
 
-        await s3.upload({ Bucket: 'formatlibrary', Key: `images/decks/previews/${deck.id}.png`, Body: buffer, ACL: 'public-read' }).promise()
+        const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/decks/previews/${deck.id}.png`, Body: buffer, ContentType: `image/png` }).promise()
+        console.log('uri', uri)
         return message.channel.send(`Composed blogpost for ${abbreviation}.`)
     } catch (err) {
         console.log(err)
@@ -315,7 +316,6 @@ const composeThumbnails = async (message, event) => {
             }
             
             const buffer = canvas.toBuffer('image/png')
-
             const s3 = new S3({
                 region: S3Keys.region,
                 credentials: {
@@ -324,7 +324,8 @@ const composeThumbnails = async (message, event) => {
                 }
             })
 
-            await s3.upload({ Bucket: 'formatlibrary', Key: `images/decks/thumbnails/${deck.id}.png`, Body: buffer, ACL: 'public-read' }).promise()
+            const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/decks/thumbnails/${deck.id}.png`, Body: buffer, ContentType: `image/png` }).promise()
+            console.log('uri', uri)
         }
     
         return message.channel.send(`Composed deck thumbnails for ${event}.`)
