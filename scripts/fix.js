@@ -7,6 +7,8 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const sharp = require('sharp')
+const { S3 } = require('aws-sdk')
+const { S3Keys } = require('../secrets.json')
 
 const fixFormats = async () => {
     let b = 0
@@ -663,13 +665,63 @@ const fixBlogs = async () => {
     return console.log(`fixed ${a} blogposts`)
 }
 
+const fixPfps = async () => {
+    const s3 = new S3({
+        region: S3Keys.region,
+        credentials: {
+            accessKeyId: S3Keys.credentials.accessKeyId,
+            secretAccessKey: S3Keys.credentials.secretAccessKey
+        }
+    })
+
+    const { ListObjectsCommand } = require("@aws-sdk/client-s3")
+    
+    try {
+        const data = await s3.send(new ListObjectsCommand({ Bucket: "formatlibrary" }))
+        console.log("Success", data)
+        return data
+    } catch (err) {
+        console.log("Error", err)
+    }    
+
+    // const player = await Player.findOne({ where: { discordId: memberId }})
+    // const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
+
+    // if (player && isActive && player.discordPfp !== discordPfp) {
+    //     player.discordPfp = discordPfp
+    //     await player.save()
+    //     count++
+    // } else {
+    //     continue
+    // }
+            
+    // const {data} = await axios.get(
+    //     `https://cdn.discordapp.com/avatars/${player.discordId}/${discordPfp}.webp`, {
+    //         responseType: 'arraybuffer',
+    //     }
+    // )
+
+    // const buffer = await sharp(data).toFormat('png').toBuffer()
+    // const canvas = Canvas.createCanvas(128, 128)
+    // const context = canvas.getContext('2d')
+    // const image = await Canvas.loadImage(png)
+    // context.drawImage(image, 0, 0, 128, 128)
+    // const buffer = canvas.toBuffer('image/png')
+    // fs.writeFileSync(`../formatlibrary/public/images`, buffer)
+
+    // const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/pfps/${player.discordId}.png`, Body: buffer, ContentType: `image/png` }).promise()
+    // console.log('uri', uri)
+    // console.log(`saved new pfp for ${player.name}`)
+}
+
+fixPfps()
 // fixBlogs()
 // copyRatedDecksToDecks()
 // fixEntries()
 // saveYDKs()
 // downloadYDKs()
 // fixPlayers()
-fixDecks()
+// fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()

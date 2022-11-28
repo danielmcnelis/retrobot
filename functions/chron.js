@@ -7,6 +7,8 @@ const { Card, Entry, Tournament, Match, Membership, Player, Print, Role, Server,
 const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
 const { Op } = require('sequelize')
+const { S3 } = require('aws-sdk')
+const { S3Keys } = require('../secrets.json')
 
 // GET MIDNIGHT COUNTDOWN
 const getMidnightCountdown = () => {
@@ -37,29 +39,42 @@ const updateAvatars = async (client) => {
                     const discordPfp = user.discordPfp
                     if (!discordPfp) continue
                     const player = await Player.findOne({ where: { discordId: memberId }})
+                    if (!player) continue
+                    const isActive = player.email || await Stats.count({ where: { playerId: player.id }})
         
-                    if (player && player.discordPfp !== discordPfp) {
+                    if (player && isActive && player.discordPfp !== discordPfp) {
                         player.discordPfp = discordPfp
                         await player.save()
                         count++
                     } else {
                         continue
                     }
-                    
-                    // const {data} = await axios.get(
-                    //     `https://cdn.discordapp.com/avatars/${player.discordId}/${discordPfp}.webp`, {
-                    //         responseType: 'arraybuffer',
-                    //     }
-                    // )
+                            
+                    const {data} = await axios.get(
+                        `https://cdn.discordapp.com/avatars/${player.discordId}/${discordPfp}.webp`, {
+                            responseType: 'arraybuffer',
+                        }
+                    )
 
-                    // const png = await sharp(data).toFormat('png').toBuffer()
+                    const buffer = await sharp(data).toFormat('png').toBuffer()
                     // const canvas = Canvas.createCanvas(128, 128)
                     // const context = canvas.getContext('2d')
                     // const image = await Canvas.loadImage(png)
                     // context.drawImage(image, 0, 0, 128, 128)
                     // const buffer = canvas.toBuffer('image/png')
-                    // fs.writeFileSync(`../formatlibrary/public/images/pfps/${player.discordId}.png`, buffer)
-                    // console.log(`saved new pfp for ${player.name}`)
+                    // fs.writeFileSync(`../formatlibrary/public/images`, buffer)
+
+                    const s3 = new S3({
+                        region: S3Keys.region,
+                        credentials: {
+                            accessKeyId: S3Keys.credentials.accessKeyId,
+                            secretAccessKey: S3Keys.credentials.secretAccessKey
+                        }
+                    })
+
+                    const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/pfps/${player.discordId}.png`, Body: buffer, ContentType: `image/png` }).promise()
+                    console.log('uri', uri)
+                    console.log(`saved new pfp for ${player.name}`)
                     count++
                 } catch (err) {
                     console.log(err)
