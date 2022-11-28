@@ -44,7 +44,7 @@ const updateAvatars = async (client) => {
                     if (!player) continue
                     const isActive = player.email || await Deck.count({ where: { playerId: player.id }}) || await Stats.count({ where: { playerId: player.id }})
 
-                    if (player && isActive && player.discordPfp !== discordPfp) {
+                    if (player && isActive && player.discordPfp !== avatar) {
                         player.discordPfp = avatar
                         await player.save()
 
