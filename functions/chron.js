@@ -515,11 +515,20 @@ const getColor = (type = '') => {
 const downloadCardImage = async (id) => {
     const {data} = await axios({
         method: 'GET',
-        url: `https://storage.googleapis.com/ygoprodeck.com/pics/${id}.jpg`,
+        url: `https://images.ygoprodeck.com/images/cards/${id}.jpg`,
         responseType: 'stream'
     })
 
-    data.pipe(fs.createWriteStream(`../cards/${id}.jpg`))
+    const s3 = new S3({
+        region: S3Keys.region,
+        credentials: {
+            accessKeyId: S3Keys.credentials.accessKeyId,
+            secretAccessKey: S3Keys.credentials.secretAccessKey
+        }
+    })
+
+    const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/cards/${id}.jpg`, Body: data, ContentType: `image/jpg` }).promise()
+    console.log('uri', uri)
 }
 
 // DOWNLOAD NEW CARDS
