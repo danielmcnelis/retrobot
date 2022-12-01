@@ -183,6 +183,58 @@ const createSheetData = async (tournament) => {
     return data
 }
 
+// GET TOURNAMENT SERIES
+const getTournamentSeries = async (message) => {
+    const filter = m => m.author.id === message.author.id
+	message.channel.send({ content: `Please select a tournament series:`})
+	return await message.channel.awaitMessages({
+        filter,
+		max: 1,
+		time: 15000
+	}).then(collected => {
+		const response = collected.first().content.toLowerCase()
+        if (response.includes(1) || response.startsWith('single')) return 'single elimination'
+        else return false
+	}).catch(err => {
+		console.log(err)
+        message.channel.send({ content: `Sorry, time's up.`})
+	})
+}
+
+// GET TOURNAMENT NAME
+const getTournamentName = async (message) => {
+    const filter = m => m.author.id === message.author.id
+	message.channel.send({ content: `What is the name for this tournament?`})
+	return await message.channel.awaitMessages({
+        filter,
+		max: 1,
+		time: 15000
+	}).then(collected => {
+		const response = collected.first().content.toLowerCase()
+        return false
+	}).catch(err => {
+		console.log(err)
+        message.channel.send({ content: `Sorry, time's up.`})
+	})
+}
+
+// GET TOURNAMENT ABBREVIATION
+const getTournamentAbbreviation = async (message) => {
+    const filter = m => m.author.id === message.author.id
+	message.channel.send({ content: `What is the abbreviation for this tournament?`})
+	return await message.channel.awaitMessages({
+        filter,
+		max: 1,
+		time: 15000
+	}).then(collected => {
+		const response = collected.first().content.toLowerCase()
+        return false
+	}).catch(err => {
+		console.log(err)
+        message.channel.send({ content: `Sorry, time's up.`})
+	})
+}
+
 // GET TOURNAMENT TYPE
 const getTournamentType = async (message) => {
     const filter = m => m.author.id === message.author.id

@@ -1,5 +1,5 @@
 
-// RETROBOT - A RANKINGS & TOURNAMENT MANAGEMENT DISCORD BOT FOR FORMATLIBRARY.COM, GOATFORMAT.COM, & EDISONFORMAT.COM
+// RETROBOT - A RANKINGS & TOURNAMENT MANAGEMENT DISCORD BOT
 
 // MODULE IMPORTS
 const axios = require('axios')
@@ -24,11 +24,9 @@ const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeck
 const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasAffiliateAccess, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, selectMatch, trackStats, drawDeck, urlize } = require('./functions/utility.js')
 
 // STATIC IMPORTS
-const channels = require('./static/channels.json')
 const { client } = require('./static/clients.js')
 const commands = require('./static/commands.json')
 const emojis = require('./static/emojis.json')
-const roles = require('./static/roles.json')
 
 // GLOBAL VARIABLES
 const fuzzyCards = FuzzySet([], false)
@@ -217,26 +215,6 @@ try {
         return message.channel.send(`Added new match data: ${winningPlayer.name} > ${losingPlayer.name}`)
     }
 
-    // DELET
-    if (cmd === `!delet`) {
-        if (!isProgrammer(message.member)) return message.channel.send(`You do not have permission to do that.`)
-        const matches = require('./static/matches.json')
-        const delet = matches.pop()
-        
-        const winningEntry = await Entry.findOne({ where: {
-            participantId: delet.match.winner_id,
-            tournamentId: '11784604'
-        }}) 
-
-        const losingEntry = await Entry.findOne({ where: {
-            participantId: delet.match.loser_id,
-            tournamentId: '11784604'
-        }}) 
-
-        const data = JSON.stringify(matches)
-        fs.writeFileSync(`./static/matches.json`, data)
-        return message.channel.send(`Deleted match data: ${winningEntry.playerName} > ${losingEntry.playerName}`)
-    }
 
     // CALC 
     if (cmd === `!calc`) {
@@ -398,7 +376,9 @@ try {
         if (!message.guild.channels.cache.get(channelId)) return message.channel.send({ content: `Please specify a valid tournament channel.`})
 
         const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
-        const name = args[0].replace(/[^\ws]/gi, "_").replace(/ /g,'')
+        const name = args[0].replace(/[^\ws]/gi, "_").replace(/ /g,'') || await getTournamentName()
+        const abbreviation = await getTournamentAbbreviation()
+        
         const emoji = name.includes('RBET') ? emojis.subs :
             name.includes('YRS') ? emojis.mlady :
             name.includes('DLC') ? emojis.lmfao :

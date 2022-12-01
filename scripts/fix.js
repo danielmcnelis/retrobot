@@ -633,28 +633,7 @@ const fixBlogs = async () => {
     for (let i = 0; i < blogposts.length; i++) {
         try {
             const b = blogposts[i]
-            b.content = b.content.replaceAll('/assets/', 'https://cdn.formatlibrary.com/')
-            await b.save()
-
-            const discordId = b.content.slice(
-                b.content.indexOf('/images/pfps/') + 13,
-                b.content.indexOf('.png" /><img className="blogpost-community"')
-            )
-
-            const player = await Player.findOne({
-                where: {
-                    discordId: discordId,
-                    discordPfp: {[Op.not]: null}
-                }
-            })
-            
-            if (!player) continue
-
-            b.content = b.content.replace(
-                `src="https://cdn.formatlibrary.com/images/pfps/${discordId}.png"`, 
-                `src="https://cdn.discordapp.com/avatars/${discordId}/${player.discordPfp}.webp"`
-            )
-            
+            b.content = b.content.replaceAll('https://formatlibrary.s3.us-east-2.amazonaws.com/', 'https://cdn.formatlibrary.com/')
             await b.save()
             a++
         } catch (err) {
@@ -798,8 +777,8 @@ const fixPfps = async () => {
     return console.log(`saved ${b} pfps, encountered ${e} errors`)
 }
 
-fixPfps()
-// fixBlogs()
+// fixPfps()
+fixBlogs()
 // copyRatedDecksToDecks()
 // fixEntries()
 // saveYDKs()
