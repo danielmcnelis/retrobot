@@ -1746,7 +1746,11 @@ try {
         if (!winningPlayer || !winnerStats) return message.channel.send({ content: `That user is not in the database.`})
  
         const loserHasTourRole = isTourPlayer(server, message.member)
+        console.log('message.member', message.member)
+        console.log('loserHasTourRole', loserHasTourRole)
         const winnerHasTourRole = isTourPlayer(server, winner)
+        console.log('winner', winner)
+        console.log('winnerHasTourRole', winnerHasTourRole)
         const activeTournament = await Tournament.count({ where: { state: 'underway', serverId: mgid, formatName: format.name } }) 
         let isTournamentMatch
         let winningEntry
@@ -1760,7 +1764,9 @@ try {
 
         if (loserHasTourRole && winnerHasTourRole && activeTournament) {
             const loserEntries = await Entry.findAll({ where: { playerId: losingPlayer.id }, include: Tournament })
+            console.log('loserEntries.length', loserEntries.length)
             const winnerEntries = await Entry.findAll({ where: { playerId: winningPlayer.id }, include: Tournament })
+            console.log('winnerEntries.length', winnerEntries.length)
             if (loserEntries.length && winnerEntries.length) {
                 const loserTournamentIds = []
                 const winnerTournamentIds = []
@@ -1787,6 +1793,7 @@ try {
                 if (commonTournamentIds.length) {
                     for (let i = 0; i < commonTournamentIds.length; i++) {
                         const id = commonTournamentIds[i]
+                        console.log('commonTournamentIds[i]', commonTournamentIds[i])
                         tournament = await Tournament.findOne({ where: { id: id, serverId: mgid }})
                         if (!tournament) continue
                         losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id } })
