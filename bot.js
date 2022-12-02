@@ -376,8 +376,8 @@ try {
         if (!message.guild.channels.cache.get(channelId)) return message.channel.send({ content: `Please specify a valid tournament channel.`})
 
         const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
-        const name = args[0].replace(/[^\ws]/gi, "_").replace(/ /g,'') || await getTournamentName()
-        const abbreviation = await getTournamentAbbreviation()
+        const name = args[0].replace(/[^\ws]/gi, "_").replace(/ /g,'') // || await getTournamentName()
+        // const abbreviation = await getTournamentAbbreviation()
         
         const emoji = name.includes('RBET') ? emojis.subs :
             name.includes('YRS') ? emojis.mlady :
