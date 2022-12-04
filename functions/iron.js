@@ -453,7 +453,7 @@ const postStory = async (channel, format) => {
 
 //RESET IRON
 const resetIron = async (channel, format) => {
-    const irons = await Iron.findAll({ where: { format: format.name, include: Player }})
+    const irons = await Iron.findAll({ where: { format: format.name }, include: Player })
     for (let i = 0; i < irons.length; i++) {
         try {
             const iron = irons[i]
