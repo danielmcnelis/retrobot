@@ -17,7 +17,7 @@
   "h2hcom": ["!h2h", "!head2head", "!headtohead"],
   "histcom": ["!h", "!hist", "!history"],
   "infocom": ["!banlist", "!bans", "!list", "!info", "!format", "!overview", "!intro"],
-  "ironcom": ["!iron", "!fe"],
+  "ironcom": ["!iron", "!fe", "!i"],
   "joincom": ["!j", "!join", "!resubmit", "!in", "!play", "!enter"],
   "legalcom": [
     "!c",

@@ -199,7 +199,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
     const captain = (pick === 1 || pick === 4 || pick === 5 || pick === 8) ? captainB : captainA
     const team = (pick === 1 || pick === 4 || pick === 5 || pick === 8) ? 'B' : 'A'
 
-    const filter = m => m.author.id === captain.playerId
+    const filter = m => m.author.id === captain.player.discordId
     const ironPeople = [...await Iron.findAll({ 
         where: {
             format: format.name,
@@ -228,6 +228,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
             time: 60000
         }).then(async (collected) => {
             const response = collected.first().content.toLowerCase()
+            console.log('response', response)
             const index = response.includes('1') ? 0 :
                 response.includes('2') ? 1 :
                 response.includes('3') ? 2 :
