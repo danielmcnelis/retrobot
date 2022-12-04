@@ -801,7 +801,7 @@ const fixTournmanets = async () => {
         }
     }
 
-    return console.log(`saved ${b} pfps, encountered ${e} errors`)
+    return console.log(`saved ${b} tournaments, encountered ${e} errors`)
 }
 
 fixTournmanets()

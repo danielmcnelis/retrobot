@@ -1,6 +1,6 @@
 
 const axios = require('axios')
-const Canvas = require('canvas')]
+const Canvas = require('canvas')
 const { S3 } = require('aws-sdk')
 const { Op } = require('sequelize')
 const { BlogPost, Card, Deck, DeckType, Entry, Event, Format, Player }  = require('../db/index.js')
