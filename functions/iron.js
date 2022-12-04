@@ -458,8 +458,8 @@ const resetIron = async (channel, format) => {
         try {
             const iron = irons[i]
             const member = channel.guild.members.cache.get(iron.player.discordId)  
-            member.roles.remove('948006324237643806')  
             await iron.destroy()
+            member.roles.remove('948006324237643806')  
         } catch (err) {
             console.log(err)
         }
