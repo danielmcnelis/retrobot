@@ -197,7 +197,7 @@ const assignCaptains = async (entries, channel, format) => {
 //DRAFT TEAMS
 const draftTeams = async (pick, captainA, captainB, channel, format) => {
     const captain = (pick === 1 || pick === 4 || pick === 5 || pick === 8) ? captainB : captainA
-    const team = captain === captainA ? 'A' : 'B'
+    const team = (pick === 1 || pick === 4 || pick === 5 || pick === 8) ? 'B' : 'A'
 
     const filter = m => m.author.id === captain.playerId
     const ironPeople = [...await Iron.findAll({ 
@@ -206,10 +206,11 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
             captain: false,
             team: null
         },
-        include: Player
+        include: Player,
+        order: [["name", "ASC"]]
     })]
 
-    const players = ironPeople.map((p) => p.name).sort().map((p, index) => `(${index + 1}) - ${p}`)
+    const players = ironPeople.map((p, index) => `(${index + 1}) - ${p.name}`)
 
     if (ironPeople.length === 1) {
         const ironPerson = ironPeople[0]
@@ -231,24 +232,18 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
                 response.includes('2') ? 1 :
                 response.includes('3') ? 2 :
                 response.includes('4') ? 3 :
+                response.includes('5') ? 4 :
+                response.includes('6') ? 5 :
+                response.includes('7') ? 6 :
+                response.includes('8') ? 7 :
                 false
     
             if (index === false || (index + 1) > players.length) {
                 channel.send({ content: `Invalid selection.`})
                 return setTimeout(() => draftTeams(pick, captainA, captainB, channel, format), 1000)
             } else {
-                const selection = players[index]
-                const name = selection.slice(selection.indexOf(`) - `) + 4)
-                const ironPerson = await Iron.findOne({
-                    where: {
-                        name: name,
-                        format: format.name,
-                        team: null
-                    }
-                })
-    
-                ironPerson.team = team
-                await ironPerson.save()
+                const ironPerson = ironPeople[index]
+                await ironPerson.update({ team })
                 channel.send({ content: `${captain.name} selected <@${ironPerson.player.discordId}>!`})
                 return setTimeout(() => draftTeams(pick + 1, captainA, captainB, channel, format), 2000)
             }
@@ -256,18 +251,8 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
             console.log(err)
             channel.send({ content: `Sorry, time's up.`})
             const index = Math.floor(Math.random() * players.length)
-            const selection = players[index]
-            const name = selection.slice(selection.indexOf(`) - `) + 4)
-            const ironPerson = await Iron.findOne({
-                where: {
-                    name: name,
-                    format: format.name,
-                    team: null
-                }
-            })
-    
-            ironPerson.team = team
-            await ironPerson.save()
+            const ironPerson = ironPeople[index]
+            await ironPerson.update({ team })
             channel.send({ content: `<@${ironPerson.player.discordId}> was randomly assigned to ${captain.name}'s Team!`})
             return setTimeout(() => draftTeams(pick + 1, captainA, captainB, channel, format), 2000)
         })
@@ -275,7 +260,7 @@ const draftTeams = async (pick, captainA, captainB, channel, format) => {
 }
 
 //CHOOSE ORDER
-const chooseOrder = async (captain = {}, team, channel, format) => {
+const chooseOrder = async (captain, team, channel, format) => {
     const guild = client.guilds.cache.get("414551319031054346")
     const discordId = captain.player.discordId
     const member = guild.members.cache.get(discordId)
@@ -315,19 +300,19 @@ const chooseOrder = async (captain = {}, team, channel, format) => {
         ironPerson.position = position
         await ironPerson.save()
         member.send({ content: `${ironPerson.name} will go ${word}.`})
-        const count = await Iron.count({ 
+
+        const remaining = await Iron.count({ 
             where: {
                 format: format.name,
                 position: null
             }
         })
 
-        if (!count) {
+        if (!remaining) {
             const entries = await Iron.findAll({ where: { format: format.name }})
             for (let i = 0; i < entries.length; i++) {
                 const entry = entries[i]
-                entry.status = 'active'
-                await entry.save()
+                await entry.update({ status: 'active'})
             }
 
             return postStory(channel, format)
@@ -362,16 +347,9 @@ const chooseOrder = async (captain = {}, team, channel, format) => {
         }
 	}).catch(async (err) => {
 		console.log(err)
-        const ironPerson = await Iron.findOne({
-            where: {
-                format: format.name,
-                position: null,
-                team: team
-            }
-        })
-
-        ironPerson.position = position
-        await ironPerson.save()
+        const index = Math.floor(Math.random() * players.length)
+        const ironPerson = ironPeople[index]
+        await ironPerson.update({ position })
         message.channel.send({ content: `Sorry, time's up. ${ironPerson.name} was randomly selected to go ${word}.`})
         return setTimeout(() => chooseOrder(captain, team, channel, format), 2000)
 	})
@@ -475,14 +453,13 @@ const postStory = async (channel, format) => {
 
 //RESET IRON
 const resetIron = async (channel, format) => {
-    const entries = await Iron.findAll({ where: { format: format.name }})
-    for (let i = 0; i < entries.length; i++) {
+    const irons = await Iron.findAll({ where: { format: format.name, include: Player }})
+    for (let i = 0; i < irons.length; i++) {
         try {
-            const entry = entries[i]
-            const member = channel.guild.members.cache.get(participant.player.discordId)    
-            await participant.destroy()
-            member.roles.remove('948006324237643806')
-            await entry.destroy()
+            const iron = irons[i]
+            const member = channel.guild.members.cache.get(iron.player.discordId)  
+            member.roles.remove('948006324237643806')  
+            await iron.destroy()
         } catch (err) {
             console.log(err)
         }

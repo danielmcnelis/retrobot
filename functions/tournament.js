@@ -9,12 +9,11 @@ const {Op} = require('sequelize')
 const { Entry, Format, Player, Stats, Tournament } = require('../db/index.js')
 
 //FUNCTION IMPORTS
-const { getIssues, saveYDK } = require('./deck.js')
+const { getIssues } = require('./deck.js')
 const { capitalize, shuffleArray } = require('./utility.js')
 
 // STATIC IMPORTS
 const { legend, mad } = require('../static/emojis')
-const roles = require('../static/roles')
 
 ////// TOURNAMENT REGISTRATION FUNCTIONS ///////
 
@@ -83,7 +82,6 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
             if (!illegalCards || !forbiddenCards || !limitedCards || !semiLimitedCards || !unrecognizedCards) return false
                 
             if (override) {
-                saveYDK(server.name, player, ydk, tournamentName)
                 member.send({ content: `Thanks, ${member.user.username}, I saved a copy of ${pronoun} deck. ${legend}`}).catch((err) => console.log(err))
                 return { url, ydk }
             } else if (illegalCards.length || forbiddenCards.length || limitedCards.length || semiLimitedCards.length) {
@@ -110,7 +108,6 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
                 member.send({ content: response.toString() }).catch((err) => console.log(err))
                 return false
              } else {
-                saveYDK(server.name, player, ydk, tournamentName)
                 member.send({ content: `Thanks, ${member.user.username}, ${pronoun} deck is perfectly legal. ${legend}`}).catch((err) => console.log(err))
                 return { url, ydk }
             }
@@ -154,33 +151,38 @@ const selectTournament = async (message, tournaments, discordId) => {
 
 // CREATE SHEET DATA
 const createSheetData = async (tournament) => {
-    const entries = await Entry.findAll({ where: { tournamentId: tournament.id}, include: Player })
-    const typeData = {}
-    const catData = {}
-    const sheet1Data = [['Player', 'Deck', 'Type', 'Link']]
-    const sheet2DataA = [['Deck', 'Entries', 'Percent']]
-    const sheet2DataB = [[], ['Category', 'Entries', 'Percent']]
+    try {
+        const entries = await Entry.findAll({ where: { tournamentId: tournament.id}, include: Player })
+        const typeData = {}
+        const catData = {}
+        const sheet1Data = [['Player', 'Deck', 'Type', 'Link']]
+        const sheet2DataA = [['Deck', 'Entries', 'Percent']]
+        const sheet2DataB = [[], ['Category', 'Entries', 'Percent']]
+    
+        entries.forEach((e) => {
+            typeData[e.deck_type] ? typeData[e.deck_type]++ : typeData[e.deck_type] = 1
+            catData[e.deck_category] ? catData[e.deck_category]++ : catData[e.deck_category] = 1
+            sheet1Data.push([e.playerName, e.deck_name, e.deck_type, e.url])            
+        })
+    
+        let typeDataArr = Object.entries(typeData).sort((b, a) => b[0].localeCompare(a[0]))
+        let catDataArr = Object.entries(catData).sort((b, a) => b[0].localeCompare(a[0]))
+    
+        let typeDataArr2 = typeDataArr.map((e) => [e[0], e[1], `${(e[1], e[1] / entries.length * 100).toFixed(2)}%`])
+        let catDataArr2 = catDataArr.map((e) =>[capitalize(e[0]), e[1], `${(e[1], e[1] / entries.length * 100).toFixed(2)}%`])
+    
+        const sheet2Data = [...sheet2DataA, ...typeDataArr2, ...sheet2DataB, ...catDataArr2]
+    
+        const data = {
+            sheet1Data,
+            sheet2Data
+        }
 
-    entries.forEach((e) => {
-        typeData[e.deck_type] ? typeData[e.deck_type]++ : typeData[e.deck_type] = 1
-        catData[e.deck_category] ? catData[e.deck_category]++ : catData[e.deck_category] = 1
-        sheet1Data.push([e.playerName, e.deck_name, e.deck_type, e.url])            
-    })
-
-    let typeDataArr = Object.entries(typeData).sort((b, a) => b[0].localeCompare(a[0]))
-    let catDataArr = Object.entries(catData).sort((b, a) => b[0].localeCompare(a[0]))
-
-    let typeDataArr2 = typeDataArr.map((e) => [e[0], e[1], `${(e[1], e[1] / entries.length * 100).toFixed(2)}%`])
-    let catDataArr2 = catDataArr.map((e) =>[capitalize(e[0]), e[1], `${(e[1], e[1] / entries.length * 100).toFixed(2)}%`])
-
-    const sheet2Data = [...sheet2DataA, ...typeDataArr2, ...sheet2DataB, ...catDataArr2]
-
-    const data = {
-        sheet1Data,
-        sheet2Data
+        return data
+    } catch (err) {
+        console.log(err)
+        return {}
     }
-
-    return data
 }
 
 // GET TOURNAMENT SERIES
@@ -195,40 +197,6 @@ const getTournamentSeries = async (message) => {
 		const response = collected.first().content.toLowerCase()
         if (response.includes(1) || response.startsWith('single')) return 'single elimination'
         else return false
-	}).catch(err => {
-		console.log(err)
-        message.channel.send({ content: `Sorry, time's up.`})
-	})
-}
-
-// GET TOURNAMENT NAME
-const getTournamentName = async (message) => {
-    const filter = m => m.author.id === message.author.id
-	message.channel.send({ content: `What is the name for this tournament?`})
-	return await message.channel.awaitMessages({
-        filter,
-		max: 1,
-		time: 15000
-	}).then(collected => {
-		const response = collected.first().content.toLowerCase()
-        return false
-	}).catch(err => {
-		console.log(err)
-        message.channel.send({ content: `Sorry, time's up.`})
-	})
-}
-
-// GET TOURNAMENT ABBREVIATION
-const getTournamentAbbreviation = async (message) => {
-    const filter = m => m.author.id === message.author.id
-	message.channel.send({ content: `What is the abbreviation for this tournament?`})
-	return await message.channel.awaitMessages({
-        filter,
-		max: 1,
-		time: 15000
-	}).then(collected => {
-		const response = collected.first().content.toLowerCase()
-        return false
 	}).catch(err => {
 		console.log(err)
         message.channel.send({ content: `Sorry, time's up.`})
@@ -346,6 +314,29 @@ const removeParticipant = async (server, message, member, entry, tournament, dro
     }   
 }
 
+// ASK IF SEEDED
+const askIfSeeded = async (message, name) => {
+    const filter = m => m.author.id === message.author.id
+	const message = await message.channel.send({ content: `Do you wish to seed the tournament?` }).catch((err) => console.log(err))
+
+	await message.channel.awaitMessages({ 
+        filter,
+        max: 1,
+		time: 15000
+	}).then(async (collected) => {
+        const response = collected.first().content.toLowerCase()
+        if (yescom.includes(response)) {
+            return true
+        } else {
+            message.channel.send(`Okay, ${name} will not be seeded.`)
+            return false
+        }
+	}).catch((err) => {
+		console.log(err)
+        message.channel.send({ content: `Sorry, time's up.`})
+	})
+}
+
 //SEED
 const seed = async (server, message, tournament) => {
     message.channel.send({ content: `Seeding in progress, please wait.`})
@@ -387,12 +378,13 @@ const seed = async (server, message, tournament) => {
             results.push(`${name} is now the ${i+1} seed.`)
             count++
         } catch (err) {
-            console.log(`error processing ${name} (participantId: ${participantId}) as the ${i+1} seed.`)
-        }   
+            message.channel.send({ content: `Error processing ${name} (participantId: ${participantId}) as the ${i+1} seed.`})
+        }
     }
 
     for (let i = 0; i < results.length; i += 30) message.channel.send({ content: results.slice(i, i + 30).join('\n').toString()})
-    return count === seeds.length
+    if (count !== seeds.length) message.channel.send({ content: `Error seeding tournament. Please fix seeding manually if desired.`})
+    return
 }
 
 
@@ -685,6 +677,7 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
 
 module.exports = {
     askForDBName,
+    askIfSeeded,
     checkPairing,
     createSheetData,
     findNextOpponent,

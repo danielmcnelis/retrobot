@@ -10,15 +10,15 @@ const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
 
 // DATABASE IMPORTS 
-const { Card, Deck, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedPool, Role, Server, Stats, Status, Tournament } = require('./db/index.js')
+const { Deck, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedPool, Role, Server, Stats, Tournament, BlogPost } = require('./db/index.js')
 
 // FUNCTION IMPORTS
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
-const { createDecks, composeBlogPost, composeThumbnails, selectCoverage } = require('./functions/coverage.js')
+const { createDecks, composeBlogPost, composeThumbnails } = require('./functions/coverage.js')
 const { checkDeckList, getDeckFormat, getIssues } = require( './functions/deck.js')
 const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
 const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
-const { getDropFormats, getNewRatedDeck, getPreviousRatedDeck, getRatedFormat, getPotentialPairConfirmation } = require('./functions/rated.js')
+const { getDropFormats, getNewRatedDeck, getPreviousRatedDeck, getRatedFormat, getPotentialPairConfirmation, askIfSeeded } = require('./functions/rated.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getTournamentChannel, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
 const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasAffiliateAccess, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, selectMatch, trackStats, drawDeck, urlize } = require('./functions/utility.js')
@@ -108,11 +108,11 @@ try {
 
     const marr = message.content.split(" ")
  
-    for(let i = 0; i < marr.length; i++) {
-      if (marr[i] === '') { 
-        marr.splice(i, 1)
-        i--
-      }
+    for (let i = 0; i < marr.length; i++) {
+        if (marr[i] === '') { 
+            marr.splice(i, 1)
+            i--
+        }
     }
     
     const cmd = marr[0] ? marr[0].toLowerCase() : ''
@@ -129,7 +129,8 @@ try {
 
     // CARD SEARCH USING CURLY BRACKETS
     if (!message.content.startsWith("!") && message.content.includes(`{`) && message.content.includes(`}`)) { 
-        const query = message.content.slice(message.content.indexOf('{') + 1, message.content.indexOf('}'))
+        const queries = message.content.split(/[{}]/).filter((el, index) => index % 2 === 1)
+
         const format = await Format.findOne({
             where: {
                 [Op.or]: {
@@ -139,13 +140,16 @@ try {
             }
         })
 
-        const { cardEmbed, attachment } = await search(query, fuzzyCards, format)
-        if (!cardEmbed) return message.channel.send({ content: `Could not find card: "${query}".`})
-        if (attachment) {
-            return message.channel.send({ embeds: [cardEmbed], files: [attachment] })
-        } else {
-            return message.channel.send({ embeds: [cardEmbed] })
-        }
+        return queries.forEach(async (query) => {
+            const { cardEmbed, attachment } = await search(query, fuzzyCards, format)
+            if (!cardEmbed) {
+                message.channel.send({ content: `Could not find card: "${query}".`})
+            } else if (attachment) {
+                message.channel.send({ embeds: [cardEmbed], files: [attachment] })
+            } else {
+                return message.channel.send({ embeds: [cardEmbed] })
+            }
+        })
     }
 
     // PING 
@@ -171,98 +175,6 @@ try {
         return postStory(message.channel, format)
     }
 
-    // FIX
-    if (cmd === `!add`) {
-        if (!isProgrammer(message.member)) return message.channel.send(`You do not have permission to do that.`)
-        
-        const usersMap = message.mentions.users
-        const userIds = [...usersMap.keys()]	
-        const winnerDiscordId = message.mentions.users.first() ? message.mentions.users.first().id : args.length > 0 ? args[0] : null
-        const loserDiscordId = userIds.length > 1 ? userIds[1] : args.length > 1 ? args[1] : null	
-
-        const winningPlayer = await Player.findOne({ where: { discordId: winnerDiscordId }})
-        if (!winnerDiscordId || !winningPlayer) return message.channel.send(`Could not find winner.`)
-
-        const losingPlayer = await Player.findOne({ where: { discordId: loserDiscordId }})
-        if (!loserDiscordId || !losingPlayer) return message.channel.send(`Could not find loser.`)
-
-        const winningEntry = await Entry.findOne({ where: {
-            playerName: winningPlayer.discordName,
-            tournamentId: '11784604'
-        }}) 
-
-        if (!winningEntry) return message.channel.send(`Could not find ${winningPlayer.name} among FLC27 entries.`)
-
-        const losingEntry = await Entry.findOne({ where: {
-            playerName: losingPlayer.discordName,
-            tournamentId: '11784604'
-        }}) 
-
-        if (!losingEntry) return message.channel.send(`Could not find ${losingPlayer.name} among FLC27 entries.`)
-
-        const match = {
-            match: {
-                winner_id: winningEntry.participantId,
-                loser_id: losingEntry.participantId,
-                round: 8
-            }
-        }
-        
-        const matches = require('./static/matches.json')
-        matches.push(match)
-        const data = JSON.stringify(matches)
-        fs.writeFileSync(`./static/matches.json`, data)
-        return message.channel.send(`Added new match data: ${winningPlayer.name} > ${losingPlayer.name}`)
-    }
-
-
-    // CALC 
-    if (cmd === `!calc`) {
-        const matches = require('./static/matches.json')
-        const query = marr.length > 1 ? marr.slice(1, marr.length).join(' ') : null
-        const entry = await Entry.findOne({ where: {
-            playerName: query,
-            tournamentId: '11784604'
-        }})
-
-        if (!entry) return message.channel.send(`Could not find ${query} among FLC27 entries.`)
-
-        const participantId = entry.participantId
-        const wins = entry.wins
-
-        const matchHistory = []
-        const scores = []
-        let winsVsTiedOpponents = 0
-
-        for (let i = 0; i < matches.length; i++) {
-            const m = matches[i].match
-
-            if (m.winner_id === participantId) {
-                const opposingEntry = await Entry.findOne({ where: { participantId: m.loser_id }})
-                if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
-                if (opposingEntry.wins === wins) winsVsTiedOpponents++
-                scores.push(opposingEntry.wins)
-                matchHistory.push(`Round ${m.round}: Win vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Buccholz +${opposingEntry.wins}, WinsVsTied +${opposingEntry.wins === wins ? '1' : '0'}`)
-            } else if (m.loser_id === participantId) {
-                const opposingEntry = await Entry.findOne({ where: { participantId: m.winner_id }})
-                if (!opposingEntry) return message.channel.send(`Error: could not find ${entry.playerName}'s opponent in match ${m.id}.`)
-                scores.push(opposingEntry.wins)
-                matchHistory.push(`Round ${m.round}: Loss vs ${opposingEntry.playerName} (${opposingEntry.wins}-${opposingEntry.losses}) - Buccholz +${opposingEntry.wins}, WinsVsTied +0`)
-            } else {
-                continue
-            }
-        }
-
-        const rawBuccholz = scores.reduce((accum, val) => accum += val, 0)
-        scores.sort()
-        const highest = scores.pop()
-        const lowest = scores.shift()
-        const medianBuccholz = scores.reduce((accum, val) => accum += val, 0)
-        const summary = [`Player: ${entry.playerName}`, `Record: ${entry.wins}-${entry.losses}`, `Raw Buccholz: ${rawBuccholz}`, `Median-Buccholz: ${medianBuccholz} (-${highest}, -${lowest})`, `Wins vs. Tied Opponents: ${winsVsTiedOpponents}`]
-
-        return message.channel.send(`${summary.join('\n')}\n\nMatch History:\n${matchHistory.join('\n')}`)        
-    }
-
     // TEST
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
@@ -272,7 +184,6 @@ try {
             return message.channel.send('🧪')
         }
     }
-
 
     // FIX
     if (cmd === `!fix`) {
@@ -288,7 +199,6 @@ try {
             const tournament = await selectTournament(message, tournaments, maid)
             if (!tournament) return message.channel.send({ content: `There are no tournaments.` })
             const { name } = tournament
-            console.log('name', name)
 
             try {
                 await checkExpiryDate(server)
@@ -376,16 +286,37 @@ try {
         if (!message.guild.channels.cache.get(channelId)) return message.channel.send({ content: `Please specify a valid tournament channel.`})
 
         const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
-        const name = args[0].replace(/[^\ws]/gi, "_").replace(/ /g,'') // || await getTournamentName()
-        // const abbreviation = await getTournamentAbbreviation()
-        
-        const emoji = name.includes('RBET') ? emojis.subs :
-            name.includes('YRS') ? emojis.mlady :
-            name.includes('DLC') ? emojis.lmfao :
-            name.includes('DDS') ? emojis.stoned :
-            name.includes('ETC') ? emojis.lipton :
-            name.includes('ACS') ? emojis.toad :
-            name.includes('KGP') ? emojis.UredU :
+
+        const input = args[0].replace(/[^\ws]/gi, "_").replace(/ /g,'')
+
+        const name = input.startsWith('FLC') ? 'Format Library Championship ' + parseInt(input) :
+            input.startsWith('YRS') ? 'Yu-Gi-Oh! Retro Series ' + parseInt(input) :
+            input.startsWith('DLC') ? 'Drama Llama Classic ' + parseInt(input) :
+            input.startsWith('DDS') ? 'Digbic Dig Series ' + parseInt(input) :
+            input.startsWith('ETC') ? 'Ellietincan Cup ' + parseInt(input) :
+            input.startsWith('ACS') ? 'Format Library Championship ' + parseInt(input) :
+            input.startsWith('KGP') ? 'Format Library Championship ' + parseInt(input) :
+            input.startsWith('DCT') ? 'Duelist Crown Tournament ' + parseInt(input) :
+            input.startsWith('DSC') ? 'Dark Side Cup ' + parseInt(input) :
+            input.startsWith('WWC') ? 'Woawa World Cup ' + parseInt(input) :
+            input.startsWith('GASP') ? 'Gigachad Advanced Sneak Preview ' + parseInt(input) :
+            input.startsWith('RWL') ? 'Retro World Locals ' + parseInt(input) :
+            input.startsWith('FWL') ? 'Future World Locals ' + parseInt(input) : 
+            input
+
+        const logo = input.startsWith('FLC') ? emojis.FL :
+            input.startsWith('YRS') ? emojis.mlady :
+            input.startsWith('DLC') ? emojis.lmfao :
+            input.startsWith('DDS') ? emojis.stoned :
+            input.startsWith('ETC') ? emojis.lipton :
+            input.startsWith('ACS') ? emojis.toad :
+            input.startsWith('KGP') ? emojis.UredU :
+            input.startsWith('DCT') ? emojis.king :
+            input.startsWith('DSC') ? emojis.evil :
+            input.startsWith('WWC') ? '🦉 ⚽' :
+            input.startsWith('GASP') ? emojis.gigachad :
+            input.startsWith('RWL') ? emojis.celtic :
+            input.startsWith('FWL') ? emojis.farqred :
             server.logo || emojis.legend
 
         try {
@@ -395,38 +326,33 @@ try {
                 data: {
                     tournament: {
                         name: name,
-                        url: name,
+                        url: input,
                         tournament_type: tournament_type,
-                        gameName: 'Yu-Gi-Oh!'
+                        game_name: 'Yu-Gi-Oh!',
+                        pts_for_match_tie: "0.0"
                     }
                 }
             })
             
-            if (status && data && status === 200) {
+            if (status === 200 && data) {
                 await Tournament.create({ 
                     id: data.tournament.id,
-                    name: data.tournament.name,
-                    state: data.tournament.state,
-                    type: data.tournament.tournament_type,
+                    name: name,
+                    abbreviation: input,
+                    state: 'pending',
+                    type: tournament_type,
                     formatName: format.name,
-                    logo: emoji,
+                    logo: logo,
                     emoji: server.emoji || format.emoji,
                     url: data.tournament.url,
                     channelId: channelId,
                     serverId: mgid,
                     community: server.name
                 })
-            
-                fs.mkdir(`./decks/${server.name}/${name}`, (err) => {
-                    if (err) {
-                        return console.error(err)
-                    }
-                    console.log(`made new directory: ./decks/${server.name}/${name}`)
-                })
 
                 return message.channel.send({ content: 
                     `You created a new tournament:` + 
-                    `\nName: ${data.tournament.name} ${emoji}` + 
+                    `\nName: ${name} ${logo}` + 
                     `\nFormat: ${format.name} ${server.emoji || format.emoji}` + 
                     `\nType: ${capitalize(data.tournament.tournament_type, true)}` +
                     `\nBracket: https://challonge.com/${data.tournament.url}`
@@ -443,36 +369,30 @@ try {
                             name: name,
                             url: str,
                             tournament_type: tournament_type,
-                            gameName: 'Yu-Gi-Oh!',
+                            game_name: 'Yu-Gi-Oh!',
+                            pts_for_match_tie: "0.0"
                         }
                     }
                 })
                 
-                if (status && data && status === 200) {
+                if (status === 200 && data) {
                     await Tournament.create({ 
                         id: data.tournament.id,
                         name: data.tournament.name,
                         state: data.tournament.state,
                         type: data.tournament.tournament_type,
                         formatName: format.name,
-                        logo: emoji,
+                        logo: logo,
                         emoji: server.emoji || format.emoji,
                         url: data.tournament.url,
                         channelId: channelId,
                         serverId: mgid,
                         community: server.name
                     })
-                    
-                    fs.mkdir(`./decks/${server.name}/${name}`, (err) => {
-                        if (err) {
-                            return console.error(err)
-                        }
-                        console.log(`made new directory: ./decks/${server.name}/${name}`)
-                    })
-                    
+
                     return message.channel.send({ content: 
                         `You created a new tournament:` + 
-                        `\nName: ${data.tournament.name} ${emoji}` + 
+                        `\nName: ${data.tournament.name} ${logo}` + 
                         `\nFormat: ${format.name} ${server.emoji || format.emoji}` + 
                         `\nType: ${capitalize(data.tournament.tournament_type, true)}` +
                         `\nBracket: https://challonge.com/${data.tournament.url}`
@@ -491,9 +411,9 @@ try {
         if (!isAdmin(server, message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
         if (!args.length) return message.channel.send({ content: `Please specify the name of the tournament you wish to destroy.`})
 
-        const name = args[0]
-        const tournament = await Tournament.findOne({ where: { name: { [Op.iLike]: name } }, serverId: mgid })
-        if (!tournament) return message.channel.send({ content: `Could not find tournament: "${name}".`})
+        const input = args[0]
+        const tournament = await Tournament.findOne({ where: { abbreviation: { [Op.iLike]: input } }, serverId: mgid })
+        if (!tournament) return message.channel.send({ content: `Could not find tournament: "${input}".`})
         if (tournament.state === 'underway') return message.channel.send({ content: `This tournament is underway, therefore it may only be deleted by the database manager.`})
         if (tournament.state === 'complete') return message.channel.send({ content: `This tournament is complete, therefore it may only be deleted by the database manager.`})
 
@@ -503,7 +423,7 @@ try {
                 url: `https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${server.challongeAPIKey}`
             })
         
-            if (status && status === 200) {
+            if (status === 200) {
                 const entries = await Entry.findAll({ where: { tournamentId: tournament.id }, include: Player })
                 for (let i = 0; i < entries.length; i++) {
                     try {
@@ -540,6 +460,31 @@ try {
         }
     }
 
+    // PURGE
+    if (cmd === `!purge`) {
+        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!isMod(server, message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
+        const tournaments = await Tournament.findAll({ 
+            where: { 
+                state: {
+                    [Op.or]: ['pending', 'standby']
+                },
+                serverId: mgid
+            }, 
+            order: [['createdAt', 'ASC']] 
+        })
+
+		const tournament = await selectTournament(message, tournaments, maid)
+		if (!tournament) return message.channel.send({ content: `There are no pending tournaments.`})
+        const { id } = tournament
+		const unregistered = await Entry.findAll({ where: { participantId: null, tournamentId: id } })
+        for (let i = 0; i < unregistered.length; i++) {
+            const entry = unregistered[i]
+            message.channel.send(`${entry.playerName} was not properly registered and has been purged from the entrants list.`)
+            await entry.destroy()
+        }		
+    }
+
     // START
     if (commands.startcom.includes(cmd)) {
         if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
@@ -556,37 +501,44 @@ try {
 
 		const tournament = await selectTournament(message, tournaments, maid)
 		if (!tournament) return message.channel.send({ content: `There are no pending tournaments.`})
-    const { name, id, url } = tournament
+        const { name, id, url } = tournament
 		const unregCount = await Entry.count({ where: { participantId: null, tournamentId: id } })
-    if (unregCount) return message.channel.send({ content: 'One of more players has not been signed up. Please check the database.'})
+        if (unregCount) return message.channel.send({ content: 'One or more players is not registered with Challonge. Type **!purge** to remove them.'})
 		const entryCount = await Entry.count({ where: { tournamentId: id } })
-		if (!entryCount) return message.channel.send({ content: `Error: missing entrants.`})
-		const { sheet1Data, sheet2Data } = await createSheetData(tournament)
-		const success = await seed(server, message, tournament)
-		if (!success) return message.channel.send({ content: `Error seeding tournament. Please try again or start it manually.`})
+		if (!entryCount) return message.channel.send({ content: `Error: no entrants found.`})
 
-		const { status } = await axios({
-			method: 'post',
-			url: `https://api.challonge.com/v1/tournaments/${tournament.id}/start.json?api_key=${server.challongeAPIKey}`
-		})
+        const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${tournament.server.challongeAPIKey}`)
+        
+        if (data.tournament.state === 'underway') {
+			await tournament.update({ state: 'underway' })
+            return message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
+        } else {
+            const toBeSeeded = await askIfSeeded(message, name)
+            if (toBeSeeded) await seed(server, message, tournament)
 
-		if (status && status === 200) { 
-			tournament.state = 'underway'
-			await tournament.save()
-            await checkExpiryDate(server)
-            try {
-                const { sheets, oAuth2Client } = await connectToSheets()
-                const spreadsheetId = await makeSheet(sheets, `${name} Deck Lists`, sheet1Data)
-                await addSheet(sheets, oAuth2Client, spreadsheetId, 'Summary')
-                await writeToSheet(sheets, spreadsheetId, 'Summary', 'RAW', sheet2Data)
-                await uploadDeckFolder(server, name)
-            } catch (err) {
-                console.log(err)
+            const { status } = await axios({
+                method: 'post',
+                url: `https://api.challonge.com/v1/tournaments/${tournament.id}/start.json?api_key=${server.challongeAPIKey}`
+            })
+    
+            if (status === 200) { 
+                await tournament.update({ state: 'underway' })
+                try {
+                    const { sheet1Data, sheet2Data } = await createSheetData(tournament)
+                    await checkExpiryDate(server)
+                    const { sheets, oAuth2Client } = await connectToSheets()
+                    const spreadsheetId = await makeSheet(sheets, `${name} Deck Lists`, sheet1Data)
+                    await addSheet(sheets, oAuth2Client, spreadsheetId, 'Summary')
+                    await writeToSheet(sheets, spreadsheetId, 'Summary', 'RAW', sheet2Data)
+                    await uploadDeckFolder(server, name)
+                } catch (err) {
+                    console.log(err)
+                }
+                return message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
+            } else {
+                return message.channel.send({ content: `Error connecting to Challonge.`})
             }
-			return message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
-		} else {
-			return message.channel.send({ content: `Error connecting to Challonge account.`})
-		}
+        }
     }
 
     // TIMER
@@ -683,76 +635,141 @@ try {
     if (cmd === `!end`) {
         if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
         if (!isMod(server, message.member)) return message.channel.send({ content: 'You do not have permission to do that.'})
-        if (!args.length) return message.channel.send({ content: `Please specify the name of the tournament you wish to end.`})
-        const name = args[0]
-        const tournament = await Tournament.findOne({ where: { name: { [Op.iLike]: name }}, serverId: mgid })
-        if (!tournament) return message.channel.send({ content: `Could not find tournament: "${name}".`})
+        const input = args[0]
+
+        const tournaments = await Tournament.findAll({ 
+            where: { 
+                state: 'underway',
+                serverId: mgid
+            }, 
+            order: [['createdAt', 'ASC']] 
+        })
+
+        const tournament = await Tournament.findOne({ 
+            where: { 
+                [Op.or]: { 
+                    name: { [Op.iLike]: input }, 
+                    url: { [Op.iLike]: input }
+                }, 
+                serverId: mgid
+            }
+        }) || await selectTournament(message, tournaments, maid)
+        
+        if (!tournament) return message.channel.send({ content: `Could not find tournament: "${input}".`})
         if (tournament.state === 'pending' || tournament.state === 'standby') return message.channel.send({ content: `This tournament has not begun.`})
         if (tournament.state === 'complete') return message.channel.send({ content: `This tournament has already ended.`})
 
         try {
-            const { status } = await axios({
-                method: 'post',
-                url: `https://api.challonge.com/v1/tournaments/${tournament.id}/finalize.json?api_key=${server.challongeAPIKey}`
-            })
+            const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${tournament.server.challongeAPIKey}`)
+            if (data.tournament.state !== 'complete') {
+                const { status } = await axios({
+                    method: 'post',
+                    url: `https://api.challonge.com/v1/tournaments/${tournament.id}/finalize.json?api_key=${server.challongeAPIKey}`
+                })
     
-            if (status && status === 200) {
+                if (status === 200) {   
+                    message.channel.send({ content: `Congrats! The results of ${tournament.name} ${tournament.logo} have been finalized on Challonge.com.`})
+                } else {
+                    message.channel.send({ content: `Unable to finalize ${tournament.name} ${tournament.logo} on Challonge.com.`})
+                }
+            }
+        } catch (err) {
+            console.log(err)
+            message.channel.send({ content: `Unable to connect to Challonge.com.`})
+        }
+
+        let event = await Event.findOne({ where: { tournamentId: tournament.id }})
+
+        if (!event) {
+            event = await Event.create({
+                name: tournament.name,
+                abbreviation: tournament.abbreviation,
+                formatName: tournament.formatName,
+                formatId: tournament.formatId,
+                referenceUrl: `https://challonge.com/${tournament.url}`,
+                display: false,
+                tournamentId: tournament.id,
+                type: tournament.type,
+                community: tournament.community,
+                logo: tournament.logo,
+                emoji: tournament.emoji
+            })
+        }
+
+        if (event && !event.playerId) {
+            try {
                 const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${server.challongeAPIKey}`)
                 let winnerParticipantId = null
                 for (let i = 0; i < data.length; i++) {
                     const participant = data[i].participant
-                    if (participant.final_rank === 1) winnerParticipantId = participant.id
-                }
-
-                const winningEntry = await Entry.findOne({ where: { participantId: parseInt(winnerParticipantId) }})
-                const winner = winningEntry ? winningEntry.playerName : null
-                const playerId = winningEntry ? winningEntry.playerId : null
-
-                const format = await Format.findOne({ where: {
-                    name: {[Op.iLike]: tournament.formatName }
-                }}) || {}
-
-                await Event.create({
-                    name: tournament.name,
-                    abbreviation: tournament.name,
-                    formatName: tournament.formatName,
-                    formatId: format.id,
-                    referenceUrl: `https://challonge.com/${tournament.url}`,
-                    display: true,
-                    tournamentId: tournament.id,
-                    winner: winner,
-                    playerId: playerId,
-                    type: tournament.type,
-                    community: tournament.community,
-                    logo: tournament.logo,
-                    emoji: tournament.emoji
-                })
-
-                const entries = await Entry.findAll({ where: { tournamentId: tournament.id }, include: Player })
-                for (let i = 0; i < entries.length; i++) {
-                    try {
-                        const entry = entries[i]
-                        const discordId = entry.player.discordId	
-                        await entry.destroy()
-                        const member = await message.guild.members.fetch(discordId)
-                        if (!member) continue
-                        member.roles.remove(server.tourRole)
-                    } catch (err) {
-                        console.log(err)
+                    if (participant.final_rank === 1) {
+                        winnerParticipantId = participant.id
+                        break
                     }
                 }
     
-                await tournament.update({
-                    state: 'complete'
+                const winningEntry = await Entry.findOne({ where: { participantId: parseInt(winnerParticipantId) }})
+
+                await event.update({
+                    winner: winningEntry.playerName,
+                    playerId: winningEntry.playerId
                 })
-                
-                return message.channel.send({ content: `Congrats! The results of ${tournament.name} ${tournament.logo} have been finalized.`})
-            } else {
-                return message.channel.send({ content: `Unable to finalize ${tournament.name} ${tournament.logo} on Challonge.com.`})
+
+                console.log(`Marked ${winningEntry.playerName} as the winner of ${event.name}.`)
+            } catch (err) {
+                console.log(err)
             }
-        } catch (err) {
-            console.log(err)
-            return message.channel.send({ content: `Unable to finalize ${tournament.name} ${tournament.logo} on Challonge.com.`})
+        }
+
+        if (event && !event.size) {
+            try {
+                const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${tournament.server.challongeAPIKey}`)
+                const size = event.size || data.tournament.participants_count
+                const startDate = `${data.tournament.started_at.slice(0, 10)} ${data.tournament.started_at.slice(11, 26)}`
+                const endDate = `${data.tournament.completed_at.slice(0, 10)} ${data.tournament.completed_at.slice(11, 26)}`
+
+                await event.update({
+                    size,
+                    startDate,
+                    endDate
+                })
+
+                console.log(`Recorded size, start date, and end date for ${event.name}`)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        let count = await Deck.count({ where: { eventId: event.id }})
+        
+        if (event && event.size > 0 && event.size !== count) {
+            const success = await createDecks(event)
+            if (!success) {
+                return message.channel.send(`Failed to save all decks.`)
+            } else {
+                count = event.size
+            }
+        }
+        
+        if (event && event.size > 0 && event.size === count) {
+            const entries = await Entry.findAll({ where: { tournamentId: tournament.id }, include: Player })
+    
+            for (let i = 0; i < entries.length; i++) {
+                try {
+                    const entry = entries[i]
+                    const discordId = entry.player.discordId	
+                    console.log(`Deleting ${entry.pilot}'s entry for ${event.name}.`)
+                    await entry.destroy()
+                    const member = await message.guild.members.fetch(discordId)
+                    if (!member) continue
+                    member.roles.remove(server.tourRole)
+                } catch (err) {
+                    console.log(err)
+                }
+            }
+
+            await tournament.update({ state: 'complete' })
+            return message.channel.send({ content: `Congrats! The results of ${tournament.name} ${tournament.logo} have been finalized.`})
         }
     }
 
@@ -860,6 +877,13 @@ try {
         })
 
         const tournament = await selectTournament(message, tournaments, maid)
+
+        const event = await Event.findOne({
+            where: {
+                tournamentId: tournament.id
+            }
+        })
+
         const count = await Tournament.count({ 
             where: { 
                 state: 'underway', 
@@ -880,10 +904,10 @@ try {
         
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(message.member, player)
         if (!dbName) return
-        const { url, ydk } = await getDeckList(server, message.member, player, format, tournament.name)
+        const { url, ydk } = await getDeckList(server, message.member, player, format, tournament.name, event)
         if (!url) return
 
-        if (!entry) {  
+        if (!entry) {
             try {                                
               const { participant } = await postParticipant(server, tournament, player)
               if (!participant) return message.channel.send({ content: `Error: Unable to register on Challonge for ${tournament.name} ${tournament.logo}.`})
@@ -1223,7 +1247,6 @@ try {
             'Goat Format Ruleset: https://bit.ly/2VUB3Yx',
             '\n**Discord Servers**',
             'GoatFormat: https://discord.gg/kVeKDwm',
-            'EdisonFormat: https://discord.com/invite/rceESCvNkf',
             'Yu-Gi-Oh! Legacy: https://discord.gg/XUpSqjY',
             'OCG Archives: https://discord.gg/nKDPdxh',
             '\n**YouTube**',
@@ -1232,7 +1255,6 @@ try {
             'GCI: https://bit.ly/36YPeBc',
             'YGOLegacy: https://bit.ly/2SRuLJo',
             'Jazz: https://bit.ly/2Gbr9Pv',
-            'Ed Edd and Edison: https://bit.ly/38sHric',
             'Mascis: https://bit.ly/2Dld65q',
             'Kris Perovic: https://youtube.com/user/yugioverdose',
             '\n**Twitch**',
@@ -1244,7 +1266,6 @@ try {
             '\n**Websites**',
             'Format Library: https://formatlibrary.com/',
             'GoatFormat: https://goatformat.com/',
-            'EdisonFormat: https://edisontformat.com/',
             'GoatStats: https://goatstats.weebly.com/',
             'WGM\'s Blog: https://worldgonemaad.wordpress.com/',
             '\n**Tournament Reports**',
@@ -1261,7 +1282,6 @@ try {
             'Intro to Goat Format by Bonacini: https://bit.ly/2vbxGke',
             'Goat Manifesto by ACP: https://bit.ly/2UwcdfX',
             'A Brief History of Chaos Control by MMF: https://bit.ly/2VUD1Z5',
-            'Anteaus\'s YPD Articles: https://bit.ly/2IwJpCx ',
         ]
         
         return message.author.send(resources.join('\n'))
@@ -2694,18 +2714,41 @@ try {
     //COVERAGE
     if (cmd === `!coverage`) {
         if (!isProgrammer(message.member)) return message.channel.send({ content: "You do not have permission to do that."})
-        const abbreviation = args[0]
-        const event = await Event.findOne({ where: { abbreviation: abbreviation }})
+        const input = args[0]
+        const event = await Event.findOne({ where: { abbreviation: input }})
         if (!event) return message.channel.send(`No event found.`)
-        const coverageType = await selectCoverage(message)
-        if (!coverageType) return
-        
-        if (coverageType.includes('Thumbnail')) return composeThumbnails(message, abbreviation)
-        if (coverageType.includes('BlogPost')) return composeBlogPost(message, abbreviation)
+        let count = await Deck.count({ where: { eventId: event.id }})
+        if (event.size === 0) return message.channel.send(`Please type **!end ${event.abbreviation}** before generating coverage.`)
 
-        const tournament = await Tournament.findOne({ where: { id: event.tournamentId }, include: Server })
-        if (!tournament) return message.channel.send(`No tournament found.`)
-        if (coverageType.includes('Upload Decks')) return createDecks(message, event, tournament)
+        if (event.size > 0 && event.size !== count) {
+            const success = await createDecks(event)
+            if (!success) {
+                return message.channel.send(`Failed to upload all decks.`)
+            } else {
+                count = event.size
+                message.channel.send(`Uploaded ${count} out of ${event.size} decks for ${event.abbreviation}.`)
+                await composeThumbnails(message, abbreviation)
+            }
+        }
+
+        if (event.size > 0 && event.size === count) {
+            const blogpost = await BlogPost.findOne({
+                where: {
+                    title: {
+                        [Op.or]: {
+                            [Op.substring]: event.name,
+                            [Op.substring]: event.abbreviation
+                        }
+                    }
+                }
+            })
+    
+            if (blogpost) {
+                return message.channel.send(`Blog coverage for ${input} already exists.`)
+            } else {
+                return composeBlogPost(message, abbreviation)
+            }
+        }
     }
 
     // COMBINE

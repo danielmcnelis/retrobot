@@ -777,8 +777,36 @@ const fixPfps = async () => {
     return console.log(`saved ${b} pfps, encountered ${e} errors`)
 }
 
+const fixTournmanets = async () => {
+    const tournaments = await Tournament.findAll()
+    let b = 0
+    let e = 0
+
+    for (let i = 0; i < tournaments.length; i++) {
+        try {
+            const tournament = tournaments[i]
+            const format = await Format.findOne({
+                where: {
+                    [Op.or]: {
+                        name: {[Op.iLike]: tournament.formatName}
+                    }
+                }
+            })
+    
+            await tournament.update({ formatId: format.id })
+            b++
+        } catch (err) {
+            e++
+            console.log(err)
+        }
+    }
+
+    return console.log(`saved ${b} pfps, encountered ${e} errors`)
+}
+
+fixTournmanets()
 // fixPfps()
-fixBlogs()
+// fixBlogs()
 // copyRatedDecksToDecks()
 // fixEntries()
 // saveYDKs()

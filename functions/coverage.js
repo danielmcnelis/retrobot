@@ -1,119 +1,91 @@
 
 const axios = require('axios')
-const Canvas = require('canvas')
-const fs = require('fs')
+const Canvas = require('canvas')]
 const { S3 } = require('aws-sdk')
 const { Op } = require('sequelize')
-const { BlogPost, Card, Deck, DeckType, Event, Format, Player }  = require('../db/index.js')
+const { BlogPost, Card, Deck, DeckType, Entry, Event, Format, Player }  = require('../db/index.js')
 const { capitalize, dateToVerbose } = require('./utility')
 const { getDeckType } = require('./deck')
 const { S3Keys } = require('../secrets.json')
 
-
 // CREATE DECKS
-const createDecks = async (message, event, tournament, useTags = true) => {
+const createDecks = async (event) => {
     let b = 0 
-    try {    
-        const res = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${tournament.server.challongeAPIKey}`)
-        if (!res) return
-        const size = event.size || res.data.tournament.participants_count
-        const startDate = `${res.data.tournament.started_at.slice(0, 10)} ${res.data.tournament.started_at.slice(11, 26)}`
-        const endDate = `${res.data.tournament.completed_at.slice(0, 10)} ${res.data.tournament.completed_at.slice(11, 26)}`
-        event.size = size
-        event.startDate = startDate
-        event.endDate = endDate
-        await event.save()
+    let c = 0
+    let e = 0
+    for (let i = 0; i < data.length; i++) {
+        try {
+            const participant = data[i].participant
+            const entry = await Entry.findOne({
+                where: {
+                    participantId: participant.id,
+                    eventId: event.id
+                },
+                include: Player
+            })
 
-        const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${tournament.server.challongeAPIKey}`)
-        if (!data) return
-        const participants = data.map((d) => d.participant.name)
-        const players = await Player.findAll({ where: { discriminator: {[Op.not]: null } }})
-        const shortenedTags = useTags ? players.map((p) => p.name.replace(/[^\ws]/gi, '_') + p.discriminator) :
-                                        players.map((p) => p.name.replace(/[^\ws]/gi, '_'))
+            if (!entry) console.log(`missing entry for participant ${participant.id}`)
+        
+            const count = await Deck.count({
+                where: {
+                    playerId: entry.playerId,
+                    eventId: event.id
+                }
+            })
 
-        fs.readdir(`./decks/${tournament.community}/${tournament.name}/`, async (err, files) => {
-            if (err) {
-                console.log(err)
-            } else {
-                console.log('files', files)
-                files.forEach(async (file, index) => {
-                    let query = file.slice(0, -4)
-                    const i = shortenedTags.indexOf(query)
-                    if (i === -1) {
-                        console.log(`no Player found with the Discord tag: ${query}`)
-                    } else {
-                        const player = players[i]
-                        let pname = player.name
-                        const j = participants.indexOf(pname)
-                        if (j === -1) {
-                            console.log(`no Challonge Participant found for the player: ${pname}`)
-                        } else {
-                            const count = await Deck.count({
-                                where: {
-                                    builder: player.name,
-                                    eventName: event.name,
-                                    eventId: event.id
-                                }
-                            })
+            if (!count) {
+                const placement = parseInt(participant.final_rank, 10)
+                const dname = await getDeckType(entry.ydk, event.format)
 
-                            if (!count) {
-                                const path = `./decks/${tournament.community}/${tournament.name}/${file}`
-                                const participant = data[j].participant
-                                const placement = parseInt(participant.final_rank, 10) || index + 1
-                                const raw = fs.readFileSync(path, 'utf8')
-                                const dname = await getDeckType({ name: tournament.community }, player, tournament.formatName, tournament.name)
-                                const deckType = await DeckType.findOne({ 
-                                    where: { 
-                                        name: {[Op.iLike]: dname } 
-                                    }
-                                }) || ({ name: 'other', category: 'other' })
-
-                                const display = (size <= 8 && placement === 1) ||
-                                    (size > 8 && size <= 16 && placement <= 2) ||
-                                    (size > 16 && size <= 24 && placement <= 3) ||
-                                    (size > 24 && size <= 32 && placement <= 4) ||
-                                    (size > 32 && size <= 48 && placement <= 6) ||
-                                    (size > 48 && size <= 64 && placement <= 8) ||
-                                    (size > 64 && size <= 96 && placement <= 12) ||
-                                    (size > 96 && size <= 128 && placement <= 16) ||
-                                    (size > 128 && size <= 224 && placement <= 24) ||
-                                    (size > 224 && placement <= 32) ||
-                                    false
-
-                                await Deck.create({
-                                    type: deckType.name,
-                                    category: deckType.category,
-                                    builder: player.name,
-                                    formatName: event.formatName,
-                                    formatId: event.formatId,
-                                    ydk: raw,
-                                    placement: placement,
-                                    eventName: event.abbreviation || event.name,
-                                    display: display,
-                                    community: event.community,
-                                    playerId: player.id,
-                                    eventId: event.id,
-                                    deckTypeId: deckType.id,
-                                    eventDate: event.startDate
-                                })
-
-                                b++
-    
-                                console.log(`uploaded ${event.abbreviation || event.name} #${placement} ${deckType.name} deck built by ${player.name}`)
-                            } else {
-                                console.log(`already have ${player.name}'s deck for ${event.name}`)
-                            }
-                        }
+                const deckType = await DeckType.findOne({ 
+                    where: { 
+                        name: {[Op.iLike]: dname } 
                     }
+                }) || ({ name: 'Other', category: 'Other' })
 
-                    if (index === files.length - 1) return message.channel.send(`Uploaded ${b} out of ${size} decks for ${event.name}.`)
+                // const display = (size <= 8 && placement === 1) ||
+                //     (size > 8 && size <= 16 && placement <= 2) ||
+                //     (size > 16 && size <= 24 && placement <= 3) ||
+                //     (size > 24 && size <= 32 && placement <= 4) ||
+                //     (size > 32 && size <= 48 && placement <= 6) ||
+                //     (size > 48 && size <= 64 && placement <= 8) ||
+                //     (size > 64 && size <= 96 && placement <= 12) ||
+                //     (size > 96 && size <= 128 && placement <= 16) ||
+                //     (size > 128 && size <= 224 && placement <= 24) ||
+                //     (size > 224 && placement <= 32) ||
+                //     false
+
+                await Deck.create({
+                    type: deckType.name,
+                    category: deckType.category,
+                    builder: entry.pilot,
+                    formatName: event.formatName,
+                    formatId: event.formatId,
+                    ydk: entry.ydk,
+                    placement: placement,
+                    eventName: event.abbreviation || event.name,
+                    display: false,
+                    community: event.community,
+                    playerId: entry.playerId,
+                    eventId: event.id,
+                    deckTypeId: deckType.id,
+                    eventDate: event.startDate
                 })
+
+                b++
+                console.log(`uploaded ${event.abbreviation || event.name} #${placement} ${deckType.name} deck built by ${entry.pilot}`)
+            } else {
+                c++
+                console.log(`already have ${entry.pilot}'s deck for ${event.name}`)
             }
-        })
-    } catch (err) {
-        console.log(err)
-        return message.channel.send(`Error uploading decks for ${event.name}.`)
+        } catch (err) {
+            e++
+            console.log(err)
+        }
     }
+    
+    console.log(`Uploaded ${b} decks for ${event.name}. Encountered ${e} errors. ${b + c} out of ${size} decks saved thus far.`)
+    return b + c === size
 } 
 
 // COMPOSE BLOG POST
@@ -335,37 +307,8 @@ const composeThumbnails = async (message, event) => {
     }
 }
 
-
-// SELECT COVERAGE
-const selectCoverage = async (message) => {
-    const options = [
-        '(1) Upload Decks',
-        '(2) Compose Deck Thumbnails',
-        '(3) Compose BlogPost'
-    ]
-
-    const filter = m => m.author.id === message.author.id
-    message.channel.send({ content: `What type of coverage would you like to generate?\n${options.join('\n').toString()}`})
-    return await message.channel.awaitMessages({
-        filter,
-        max: 1,
-        time: 15000
-    }).then(collected => {
-        const num = parseInt(collected.first().content.match(/\d+/))
-        if (!num || !options[num - 1]) {
-            message.channel.send({ content: `Sorry, ${collected.first().content} is not a valid option.`})
-            return null
-        }
-        else return options[num - 1]
-    }).catch(err => {
-        console.log(err)
-        return null
-    })
-}
-
 module.exports = {
     composeBlogPost,
     composeThumbnails,
-    createDecks,
-    selectCoverage
+    createDecks
 }
