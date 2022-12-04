@@ -317,7 +317,7 @@ const removeParticipant = async (server, message, member, entry, tournament, dro
 // ASK IF SEEDED
 const askIfSeeded = async (message, name) => {
     const filter = m => m.author.id === message.author.id
-	const message = await message.channel.send({ content: `Do you wish to seed the tournament?` }).catch((err) => console.log(err))
+	message.channel.send({ content: `Do you wish to seed the tournament?` }).catch((err) => console.log(err))
 
 	await message.channel.awaitMessages({ 
         filter,
