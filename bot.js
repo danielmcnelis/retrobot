@@ -2761,7 +2761,7 @@ try {
                 } else {
                     count = event.size
                     message.channel.send(`Uploaded ${count} out of ${event.size} decks for ${event.abbreviation}.`)
-                    await composeThumbnails(message, abbreviation)
+                    await composeThumbnails(message, event.abbreviation)
                 }
             } catch (err) {
                 console.log(err)
@@ -2784,7 +2784,7 @@ try {
             if (blogpost) {
                 return message.channel.send(`Blog coverage for ${input} already exists.`)
             } else {
-                return composeBlogPost(message, abbreviation)
+                return composeBlogPost(message, event.abbreviation)
             }
         }
     }
