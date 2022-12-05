@@ -3,12 +3,11 @@
 
 //MODULE IMPORTS
 const Canvas = require('canvas')
-const fs = require('fs')
 const Discord = require('discord.js')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Card, Membership, Player, Print, Role, Set, Stats, Status } = require('../db/index.js')
+const { Card, Membership, Player, Print, Role, Set, Stats, Status, Tournament } = require('../db/index.js')
 
 //STATIC IMPORTS
 const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend, god, ATK, DEF,
@@ -16,7 +15,7 @@ const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend,
     Counter, Cyberse, Dinosaur, DivineBeast, Dragon, Equip, Fairy, Field, Fiend, Fish, 
     Insect, Link, Machine, Normal, Plant, Psychic, Pyro, QuickPlay, Rank, Reptile, 
     Ritual, Rock, Scale, SeaSerpent, Spell, Spellcaster, Star, Thunder, Trap, Warrior, 
-    WingedBeast, Wyrm, Zombie, forbidden, limited, semi, unlimited
+    WingedBeast, Wyrm, Zombie, forbidden, limited, semi, unlimited, high_alert, vincent
  } = require('../static/emojis')
 const rarities = require('../static/rarities.json')
 const roles = require('../static/roles.json')
@@ -505,6 +504,37 @@ const selectMatch = async (message, matches, discordId) => {
     })
 }
 
+// SET TIMERS
+const setTimers = async (client) => {
+    const now = new Date()
+
+    const tournaments = await Tournament.findAll({
+        where: {
+            deadline: {[Op.not]: null},
+            state: 'underway'
+        }
+    })
+
+    for (let i = 0; i < tournaments.length; i++) {
+        try {
+            const tournament = tournaments[i]
+            const timeRemaining = tournament.deadline - now
+            console.log('tournament.name', tournament.name)
+            console.log('timeRemaining', timeRemaining)
+            const guild = client.guilds.cache.get(tournament.serverId)
+            const channel = guild.channels.cache.get(tournament.channelId)
+            console.log('channel.name', channel.name)
+            console.log(`${high_alert} **Attention ${tournament.name} Participants!** ${high_alert} Time is up in the round! ${vincent}`)
+
+            setTimeout(() => {
+                return channel.send(`${high_alert} **Attention ${tournament.name} Participants!** ${high_alert} Time is up in the round! ${vincent}`)
+            }, timeRemaining)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+}
+
 //SHUFFLE ARRAY
 const shuffleArray = (arr) => {
     let i = arr.length
@@ -564,6 +594,7 @@ module.exports = {
     ordinalize,
     search,
     selectMatch,
+    setTimers,
     shuffleArray,
     trackStats,
     urlize

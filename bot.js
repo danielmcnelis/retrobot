@@ -20,7 +20,7 @@ const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
 const { getDropFormats, getNewRatedDeck, getPreviousRatedDeck, getRatedFormat, getPotentialPairConfirmation, askIfSeeded } = require('./functions/rated.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
 const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getTournamentChannel, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament, sendPairings } = require('./functions/tournament.js')
-const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasAffiliateAccess, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, selectMatch, trackStats, drawDeck, urlize } = require('./functions/utility.js')
+const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasAffiliateAccess, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, selectMatch, setTimers, trackStats, drawDeck, urlize } = require('./functions/utility.js')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
@@ -33,6 +33,12 @@ const fuzzyCards = FuzzySet([], false)
 // READY
 client.on('ready', async() => {
     console.log('RetroBot is online!')
+    try {
+        await setTimers(client)
+    } catch (err) {
+        console.log(err)
+    }
+
     try {
         const names = await fetchCardNames()
         names.forEach((card) => fuzzyCards.add(card))
@@ -511,7 +517,7 @@ try {
         if (data.tournament.state === 'underway') {
 			await tournament.update({ state: 'underway' })
             message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
-            return sendPairings(client, server, tournament)
+            return sendPairings(client, server, tournament, false)
         } else {
             const toBeSeeded = await askIfSeeded(message, name)
             if (toBeSeeded) await seed(server, message, tournament)
@@ -536,7 +542,7 @@ try {
                 }
 
                 message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
-                return sendPairings(client, server, tournament)
+                return sendPairings(client, server, tournament, false)
             } else {
                 return message.channel.send({ content: `Error connecting to Challonge.`})
             }
@@ -618,19 +624,18 @@ try {
 
             if (hours < 0) {
                 const word2 = minutes === 59 ? 'minute' : 'minutes'
-                message.channel.send(`<@ &${server.tourRole}> The next round begins now! You have ${60 - minutes} ${word2} to complete your match.`)
+                message.channel.send(`${emojis.high_alert} **Attention ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${60 - minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
             } else if (hours === 0) {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
-                message.channel.send(`<@ &${server.tourRole}> The next round begins now! You have ${minutes} ${word2} to complete your match.`)
+                message.channel.send(`${emojis.high_alert} **Attention ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
             } else {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
-                message.channel.send(`<@ &${server.tourRole}> The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match.`)
+                message.channel.send(`${emojis.high_alert} **Attention ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
             }
 
-            sendPairings(client, server, tournament)
-
+            sendPairings(client, server, tournament, true)
             return setTimeout(() => {
-                return message.channel.send(`<@ &${server.tourRole}> Time is up in the round!`)
+                return message.channel.send(`${emojis.high_alert} **Attention ${tournament.name} Participants!** ${emojis.high_alert} Time is up in the round! ${emojis.vincent}`)
             }, timeRemaining)
         }
     }
@@ -1842,7 +1847,7 @@ try {
                         isTournamentMatch = true
                         if (tournament.state === 'pending') return message.channel.send({ content: `Sorry, ${tournament.name} has not started yet.`})
                         if (tournament.state !== 'underway') return message.channel.send({ content: `Sorry, ${tournament.name} is not underway.`})
-                        const success = await processMatchResult(server, message, winningPlayer, losingPlayer, tournament)
+                        const success = await processMatchResult(server, message, winner, winningPlayer, message.member, losingPlayer, tournament)
                         if (!success) return
                     } else {
                         return
@@ -2048,7 +2053,7 @@ try {
                         isTournamentMatch = true
                         if (tournament.state === 'pending' || tournament.state === 'standby') return message.channel.send({ content: `Sorry, ${tournament.name} has not started yet.`})
                         if (tournament.state !== 'underway') return message.channel.send({ content: `Sorry, ${tournament.name} is not underway.`})
-                        const success = await processMatchResult(server, message, winningPlayer, losingPlayer, tournament)
+                        const success = await processMatchResult(server, message, winner, winningPlayer, loser, losingPlayer, tournament)
                         if (!success) return
                     } else {
                         return
@@ -2180,7 +2185,7 @@ try {
         const winningEntry = await Entry.findOne({ where: { participantId: winnerParticipantId, tournamentId: tournament.id }, include: Player })
         if (!winningEntry) return message.channel.send({ content: `Error: could not find opponent.`})
         const winningPlayer = winningEntry.player
-        const success = await processMatchResult(server, message, winningPlayer, noShowPlayer, tournament, true)
+        const success = await processMatchResult(server, message, winner, winningPlayer, noshow, noShowPlayer, tournament, true)
         if (!success) return
 
         return message.channel.send({ content: `${noShowPlayer.name}, your Tournament loss to <@${winningPlayer.discordId}> has been recorded as a no-show.`})
