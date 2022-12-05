@@ -20,7 +20,7 @@ const createDecks = async (event, data) => {
             const entry = await Entry.findOne({
                 where: {
                     participantId: participant.id,
-                    eventId: event.id
+                    tournamentId: event.tournamentId
                 },
                 include: Player
             })
