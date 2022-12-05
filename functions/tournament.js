@@ -484,6 +484,7 @@ const getMatches = async (server, tournamentId) => {
         return data
     } catch (err) {
         console.log(err)
+        return []
     }
 }
 
@@ -675,6 +676,59 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
     return true
 }
 
+// SEND PAIRINGS
+const sendPairings = async (client, server, tournament) => {
+    const guild = client.guilds.cache.get(server.id)
+    const matches = await getMatches(server, tournament.id).map((el) => el.match).filter((match) => match.state === 'open')
+    
+    for (let i = 0; i < matches.length; i++) {
+        const match = matches[i]
+        const round = tournament.type === 'double elimination' && match.round < 0 ? `Losers Round ${Math.abs(match.round)}` :
+            tournament.type === 'double elimination' && match.round > 0 ? `Winners Round ${Math.abs(match.round)}` :
+            `Round ${match.round}`
+
+        try {
+            const { player: player1 } = await Entry.findOne({
+                where: {
+                    tournamentId: tournament.id,
+                    participantId: match.player1_id
+                },
+                include: Player
+            })
+    
+            const { player: player2 } = await Entry.findOne({
+                where: {
+                    tournamentId: tournament.id,
+                    participantId: match.player2_id
+                },
+                include: Player
+            })
+    
+            try {
+                const p1Member = await guild.members.fetch(player1.discordId)
+                console.log(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${player2.name + '#' + player2.discriminator}\nDuelingBook: ${player2.duelingBook}`)
+                p1Member.user.send(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${player2.name + '#' + player2.discriminator}\nDuelingBook: ${player2.duelingBook}`)
+            } catch (err) {
+                console.log(err)
+            }
+    
+            try {
+                const p2Member = await guild.members.fetch(player2.discordId)
+                console.log(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${player1.name + '#' + player1.discriminator}\nDuelingBook: ${player1.duelingBook}`)
+                p2Member.user.send(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${player1.name + '#' + player1.discriminator}\nDuelingBook: ${player1.duelingBook}`)
+            } catch (err) {
+                console.log(err)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+
+        
+
+        
+    }
+}
+
 module.exports = {
     askForDBName,
     askIfSeeded,
@@ -693,5 +747,6 @@ module.exports = {
     postParticipant,
     removeParticipant,
     seed,
-    selectTournament
+    selectTournament,
+    sendPairings
 }

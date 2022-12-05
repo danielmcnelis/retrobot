@@ -4,7 +4,6 @@
 // MODULE IMPORTS
 const axios = require('axios')
 const Discord = require('discord.js')
-const fs = require('fs')
 const FuzzySet = require('fuzzyset')
 const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
@@ -20,7 +19,7 @@ const { checkExpiryDate, uploadDeckFolder } = require('./functions/drive.js')
 const { confirmIron, postStory, resetIron } = require('./functions/iron.js')
 const { getDropFormats, getNewRatedDeck, getPreviousRatedDeck, getRatedFormat, getPotentialPairConfirmation, askIfSeeded } = require('./functions/rated.js')
 const { addSheet, connectToSheets, makeSheet, writeToSheet } = require('./functions/sheets.js')
-const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getTournamentChannel, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament } = require('./functions/tournament.js')
+const { askForDBName, checkPairing, findNoShowOpponent, createSheetData, getDeckList, getTournamentChannel, getTournamentFormat, getTournamentType, getMatches, processMatchResult, postParticipant, removeParticipant, seed, selectTournament, sendPairings } = require('./functions/tournament.js')
 const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames, getMedal, generateRandomString, hasAffiliateAccess, hasPartnerAccess, hasFullAccess, isAdmin, isIronPlayer, isMod, isNewMember, isNewUser, isProgrammer, isTourPlayer, search, selectMatch, trackStats, drawDeck, urlize } = require('./functions/utility.js')
 
 // STATIC IMPORTS
@@ -511,7 +510,8 @@ try {
         
         if (data.tournament.state === 'underway') {
 			await tournament.update({ state: 'underway' })
-            return message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
+            message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
+            return sendPairings(client, server, tournament)
         } else {
             const toBeSeeded = await askIfSeeded(message, name)
             if (toBeSeeded) await seed(server, message, tournament)
@@ -534,7 +534,9 @@ try {
                 } catch (err) {
                     console.log(err)
                 }
-                return message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
+
+                message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
+                return sendPairings(client, server, tournament)
             } else {
                 return message.channel.send({ content: `Error connecting to Challonge.`})
             }
@@ -616,17 +618,19 @@ try {
 
             if (hours < 0) {
                 const word2 = minutes === 59 ? 'minute' : 'minutes'
-                message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${60 - minutes} ${word2} to complete your match.`)
+                message.channel.send(`<@ &${server.tourRole}> The next round begins now! You have ${60 - minutes} ${word2} to complete your match.`)
             } else if (hours === 0) {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
-                message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${minutes} ${word2} to complete your match.`)
+                message.channel.send(`<@ &${server.tourRole}> The next round begins now! You have ${minutes} ${word2} to complete your match.`)
             } else {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
-                message.channel.send(`<@&${server.tourRole}> The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match.`)
+                message.channel.send(`<@ &${server.tourRole}> The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match.`)
             }
-            
+
+            sendPairings(client, server, tournament)
+
             return setTimeout(() => {
-                return message.channel.send(`<@&${server.tourRole}> Time is up in the round!`)
+                return message.channel.send(`<@ &${server.tourRole}> Time is up in the round!`)
             }, timeRemaining)
         }
     }
