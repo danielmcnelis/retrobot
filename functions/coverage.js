@@ -36,7 +36,7 @@ const createDecks = async (event, data) => {
 
             if (!count) {
                 const placement = parseInt(participant.final_rank, 10)
-                const dname = await getDeckType(entry.ydk, event.format)
+                const dname = await getDeckType(entry.ydk, event.formatName)
 
                 const deckType = await DeckType.findOne({ 
                     where: { 
