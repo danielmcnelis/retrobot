@@ -2155,6 +2155,7 @@ try {
         if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
         if (!isMod(server, message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
 
+
         const noShowDiscordId = message.mentions.users.first() ? message.mentions.users.first().id : args.length > 0 ? args[0]	: null
         if (!noShowDiscordId) return message.channel.send({ content: "Please specify a player."})
         const noshow = await message.guild.members.fetch(noShowDiscordId)
@@ -2185,6 +2186,7 @@ try {
         const winningEntry = await Entry.findOne({ where: { participantId: winnerParticipantId, tournamentId: tournament.id }, include: Player })
         if (!winningEntry) return message.channel.send({ content: `Error: could not find opponent.`})
         const winningPlayer = winningEntry.player
+        const winner = await message.guild.members.fetch(winningPlayer.discordId)
         const success = await processMatchResult(server, message, winner, winningPlayer, noshow, noShowPlayer, tournament, true)
         if (!success) return
 
