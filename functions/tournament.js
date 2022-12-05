@@ -679,7 +679,7 @@ const processMatchResult = async (server, message, winningPlayer, losingPlayer, 
 // SEND PAIRINGS
 const sendPairings = async (client, server, tournament) => {
     const guild = client.guilds.cache.get(server.id)
-    const matches = await getMatches(server, tournament.id).map((el) => el.match).filter((match) => match.state === 'open')
+    const matches = [...await getMatches(server, tournament.id)].map((el) => el.match).filter((match) => match.state === 'open')
     
     for (let i = 0; i < matches.length; i++) {
         const match = matches[i]
