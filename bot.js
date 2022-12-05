@@ -1770,10 +1770,10 @@ try {
         if (!winningPlayer || !winnerStats) return message.channel.send({ content: `That user is not in the database.`})
  
         const loserHasTourRole = isTourPlayer(server, message.member)
-        console.log('message.member', message.member)
+        console.log('losingPlayer.name', losingPlayer.name)
         console.log('loserHasTourRole', loserHasTourRole)
         const winnerHasTourRole = isTourPlayer(server, winner)
-        console.log('winner', winner)
+        console.log('winningPlayer.name', winningPlayer.name)
         console.log('winnerHasTourRole', winnerHasTourRole)
         const activeTournament = await Tournament.count({ where: { state: 'underway', serverId: mgid, formatName: format.name } }) 
         let isTournamentMatch
