@@ -183,7 +183,7 @@ try {
     // TEST
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            updateAvatars(client)
+            assignTourRoles(client)
             return message.channel.send(emojis.yellow)
         } else {
             return message.channel.send('🧪')
@@ -761,8 +761,8 @@ try {
                     count = event.size
                 }
             } catch (err) {
-                return message.channel.send(`Failed to save all decks.`)
                 console.log(err)
+                return message.channel.send(`Failed to save all decks.`)
             }
         }
         
@@ -770,14 +770,29 @@ try {
             const entries = await Entry.findAll({ where: { tournamentId: tournament.id }, include: Player })
     
             for (let i = 0; i < entries.length; i++) {
-                try {
+                try {            
                     const entry = entries[i]
+                    const playerName = entry.playerName
+                    const playerId = entry.playerId
                     const discordId = entry.player.discordId	
                     console.log(`Deleting ${entry.pilot}'s entry for ${event.name}.`)
                     await entry.destroy()
-                    const member = await message.guild.members.fetch(discordId)
-                    if (!member) continue
-                    member.roles.remove(server.tourRole)
+
+                    const count = await Entry.count({ 
+                        where: {
+                            playerId: playerId,
+                            active: true,
+                            '$tournament.serverId$': server.id
+                        },
+                        include: Tournament,
+                    })
+
+                    if (!count) {
+                        const member = await message.guild.members.fetch(discordId)
+                        if (!member) continue
+                        console.log(`Removing ${playerName}'s tournament role on ${server.name}.`)
+                        member.roles.remove(server.tourRole)
+                    }
                 } catch (err) {
                     console.log(err)
                 }
