@@ -13,7 +13,7 @@ const createDecks = async (event, data) => {
     let b = 0 
     let c = 0
     let e = 0
-
+    console.log('data.length', data.length)
     for (let i = 0; i < data.length; i++) {
         try {
             const participant = data[i].participant
@@ -74,15 +74,16 @@ const createDecks = async (event, data) => {
                 })
 
                 b++
-                console.log(`uploaded ${event.abbreviation || event.name} #${placement} ${deckType.name} deck built by ${entry.pilot}`)
+                console.log(`uploaded ${event.abbreviation || event.name} #${placement} ${deckType.name} deck built by ${entry.playerName}`)
             } else {
                 c++
-                console.log(`already have ${entry.pilot}'s deck for ${event.name}`)
+                console.log(`already have ${entry.playerName}'s deck for ${event.name}`)
             }
         } catch (err) {
             e++
             console.log(err)
         }
+        console.log('i (end)', i)
     }
     
     console.log(`Uploaded ${b} decks for ${event.name}. Encountered ${e} errors. ${b + c} out of ${size} decks saved thus far.`)
