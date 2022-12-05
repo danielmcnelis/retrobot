@@ -512,7 +512,7 @@ try {
 		const entryCount = await Entry.count({ where: { tournamentId: id } })
 		if (!entryCount) return message.channel.send({ content: `Error: no entrants found.`})
 
-        const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${tournament.server.challongeAPIKey}`)
+        const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${server.challongeAPIKey}`)
         
         if (data.tournament.state === 'underway') {
 			await tournament.update({ state: 'underway' })
@@ -669,7 +669,7 @@ try {
         if (tournament.state === 'complete') return message.channel.send({ content: `This tournament has already ended.`})
 
         try {
-            const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${tournament.server.challongeAPIKey}`)
+            const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${server.challongeAPIKey}`)
             if (data.tournament.state !== 'complete') {
                 const { status } = await axios({
                     method: 'post',
@@ -732,7 +732,7 @@ try {
 
         if (event && !event.size) {
             try {
-                const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${tournament.server.challongeAPIKey}`)
+                const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${server.challongeAPIKey}`)
                 const size = event.size || data.tournament.participants_count
                 const startDate = `${data.tournament.started_at.slice(0, 10)} ${data.tournament.started_at.slice(11, 26)}`
                 const endDate = `${data.tournament.completed_at.slice(0, 10)} ${data.tournament.completed_at.slice(11, 26)}`
