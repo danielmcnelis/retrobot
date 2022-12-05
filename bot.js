@@ -2753,10 +2753,10 @@ try {
         let count = await Deck.count({ where: { eventId: event.id }})
         if (event.size === 0) return message.channel.send(`Please type **!end ${event.abbreviation}** before generating coverage.`)
 
-        if (event.size > 0 && event.size === count) {
+        if (event.size > 0 && event.size !== count) {
             try {
                 const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${event.tournamentId}/participants.json?api_key=${server.challongeAPIKey}`)
-                const success = true || await createDecks(event, data)
+                const success = await createDecks(event, data)
                 if (!success) {
                     return message.channel.send(`Failed to upload all decks.`)
                 } else {
