@@ -9,10 +9,11 @@ const { getDeckType } = require('./deck')
 const { S3Keys } = require('../secrets.json')
 
 // CREATE DECKS
-const createDecks = async (event) => {
+const createDecks = async (event, data) => {
     let b = 0 
     let c = 0
     let e = 0
+
     for (let i = 0; i < data.length; i++) {
         try {
             const participant = data[i].participant
