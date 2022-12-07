@@ -2750,43 +2750,23 @@ try {
         const input = args[0]
         const event = await Event.findOne({ where: { abbreviation: input }})
         if (!event) return message.channel.send(`No event found.`)
-        let count = await Deck.count({ where: { eventId: event.id }})
-        if (event.size === 0) return message.channel.send(`Please type **!end ${event.abbreviation}** before generating coverage.`)
+        await composeThumbnails(message, event.abbreviation)
 
-        if (event.size > 0 && event.size !== count) {
-            try {
-                const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${event.tournamentId}/participants.json?api_key=${server.challongeAPIKey}`)
-                const success = await createDecks(event, data)
-                if (!success) {
-                    return message.channel.send(`Failed to upload all decks.`)
-                } else {
-                    count = event.size
-                    message.channel.send(`Uploaded ${count} out of ${event.size} decks for ${event.abbreviation}.`)
-                    await composeThumbnails(message, event.abbreviation)
-                }
-            } catch (err) {
-                console.log(err)
-                return message.channel.send(`Failed to upload all decks.`)
-            }
-        }
-
-        if (event.size > 0 && event.size === count) {
-            const blogpost = await BlogPost.findOne({
-                where: {
-                    title: {
-                        [Op.or]: {
-                            [Op.substring]: event.name,
-                            [Op.substring]: event.abbreviation
-                        }
+        const blogpost = await BlogPost.findOne({
+            where: {
+                title: {
+                    [Op.or]: {
+                        [Op.substring]: event.name,
+                        [Op.substring]: event.abbreviation
                     }
                 }
-            })
-    
-            if (blogpost) {
-                return message.channel.send(`Blog coverage for ${input} already exists.`)
-            } else {
-                return composeBlogPost(message, event.abbreviation)
             }
+        })
+
+        if (blogpost) {
+            return message.channel.send(`Blog coverage for ${input} already exists.`)
+        } else {
+            return composeBlogPost(message, event.abbreviation)
         }
     }
 
