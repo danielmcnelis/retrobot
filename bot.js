@@ -294,19 +294,19 @@ try {
 
         const input = args[0].replace(/[^\ws]/gi, "_").replace(/ /g,'')
 
-        const name = input.startsWith('FLC') ? 'Format Library Championship ' + parseInt(input) :
-            input.startsWith('YRS') ? 'Yu-Gi-Oh! Retro Series ' + parseInt(input) :
-            input.startsWith('DLC') ? 'Drama Llama Classic ' + parseInt(input) :
-            input.startsWith('DDS') ? 'Digbic Dig Series ' + parseInt(input) :
-            input.startsWith('ETC') ? 'Ellietincan Cup ' + parseInt(input) :
-            input.startsWith('ACS') ? 'Format Library Championship ' + parseInt(input) :
-            input.startsWith('KGP') ? 'Format Library Championship ' + parseInt(input) :
-            input.startsWith('DCT') ? 'Duelist Crown Tournament ' + parseInt(input) :
-            input.startsWith('DSC') ? 'Dark Side Cup ' + parseInt(input) :
-            input.startsWith('WWC') ? 'Woawa World Cup ' + parseInt(input) :
-            input.startsWith('GASP') ? 'Gigachad Advanced Sneak Preview ' + parseInt(input) :
-            input.startsWith('RWL') ? 'Retro World Locals ' + parseInt(input) :
-            input.startsWith('FWL') ? 'Future World Locals ' + parseInt(input) : 
+        const name = input.startsWith('FLC') ? `Format Library Championship ${parseInt(input)}` :
+            input.startsWith('YRS') ? `Yu-Gi-Oh! Retro Series ${parseInt(input)}` :
+            input.startsWith('DLC') ? `Drama Llama Classic ${parseInt(input)}` :
+            input.startsWith('DDS') ? `Digbic Dig Series ${parseInt(input)}` :
+            input.startsWith('ETC') ? `Ellietincan Cup ${parseInt(input)}` :
+            input.startsWith('ACS') ? `Format Library Championship ${parseInt(input)}` :
+            input.startsWith('KGP') ? `Format Library Championship ${parseInt(input)}` :
+            input.startsWith('DCT') ? `Duelist Crown Tournament ${parseInt(input)}` :
+            input.startsWith('DSC') ? `Dark Side Cup ${parseInt(input)}` :
+            input.startsWith('WWC') ? `Woawa World Cup ${parseInt(input)}` :
+            input.startsWith('GASP') ? `Gigachad Advanced Sneak Preview ${parseInt(input)}` :
+            input.startsWith('RWL') ? `Retro World Locals ${parseInt(input)}` :
+            input.startsWith('FWL') ? `Future World Locals ${parseInt(input)}` : 
             input
 
         const logo = input.startsWith('FLC') ? emojis.FL :
@@ -624,18 +624,18 @@ try {
 
             if (hours < 0) {
                 const word2 = minutes === 59 ? 'minute' : 'minutes'
-                message.channel.send(`${emojis.high_alert} **Attention ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${60 - minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
+                message.channel.send(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${60 - minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
             } else if (hours === 0) {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
-                message.channel.send(`${emojis.high_alert} **Attention ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
+                message.channel.send(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
             } else {
                 const word2 = minutes === 1 ? 'minute' : 'minutes'
-                message.channel.send(`${emojis.high_alert} **Attention ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
+                message.channel.send(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
             }
 
             sendPairings(client, server, tournament, true)
             return setTimeout(() => {
-                return message.channel.send(`${emojis.high_alert} **Attention ${tournament.name} Participants!** ${emojis.high_alert} Time is up in the round! ${emojis.vincent}`)
+                return message.channel.send(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} Time is up in the round! ${emojis.vince}`)
             }, timeRemaining)
         }
     }
