@@ -13,7 +13,7 @@ const createDecks = async (event, data) => {
     let b = 0 
     let c = 0
     let e = 0
-    console.log('data.length', data.length)
+    
     for (let i = 0; i < data.length; i++) {
         try {
             const participant = data[i].participant
@@ -83,10 +83,9 @@ const createDecks = async (event, data) => {
             e++
             console.log(err)
         }
-        console.log('i (end)', i)
     }
     
-    console.log(`Uploaded ${b} decks for ${event.name}. Encountered ${e} errors. ${b + c} out of ${size} decks saved thus far.`)
+    console.log(`Uploaded ${b} decks for ${event.name}. Encountered ${e} errors. ${b + c} out of ${event.size} decks saved thus far.`)
     return b + c === size
 } 
 
