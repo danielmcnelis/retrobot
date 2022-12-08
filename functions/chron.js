@@ -30,8 +30,6 @@ const updateAvatars = async (client) => {
             const guild = client.guilds.cache.get(server.id)
             const membersMap = await guild.members.fetch()
             const memberIds = [...membersMap.keys()]
-            console.log('server.name', server.name)
-            console.log('memberIds.length', memberIds.length)
             
             for (let i = 0; i < memberIds.length; i++) {
                 try {

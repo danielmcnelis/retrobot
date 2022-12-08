@@ -3,6 +3,7 @@
 
 //MODULE IMPORTS
 const axios = require('axios')
+const { yescom } = require('../static/commands.json')
 const {Op} = require('sequelize')
 
 //DATABASE IMPORTS
@@ -135,7 +136,6 @@ const selectTournament = async (message, tournaments, discordId) => {
         time: 15000
     }).then(collected => {
         const num = parseInt(collected.first().content.match(/\d+/))
-        console.log('num', num)
         if (!num || !tournaments[num - 1]) {
             message.channel.send({ content: `Sorry, ${collected.first().content} is not a valid option.`})
             return null
@@ -357,7 +357,6 @@ const seed = async (server, message, tournament) => {
     }
 
     const seeds = [...expEntries.sort((a, b) => b[2] - a[2]), ...shuffleArray(newbieEntries)]  
-    console.log('seeds', seeds)  
     let count = 0
     const results = []
     for (let i = 0; i < seeds.length; i++) {

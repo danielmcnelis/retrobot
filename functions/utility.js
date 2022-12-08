@@ -519,12 +519,8 @@ const setTimers = async (client) => {
         try {
             const tournament = tournaments[i]
             const timeRemaining = tournament.deadline - now
-            console.log('tournament.name', tournament.name)
-            console.log('timeRemaining', timeRemaining)
             const guild = client.guilds.cache.get(tournament.serverId)
             const channel = guild.channels.cache.get(tournament.channelId)
-            console.log('channel.name', channel.name)
-            console.log(`${high_alert} **Attention: ${tournament.name} Participants!** ${high_alert} Time is up in the round! ${vince}`)
 
             setTimeout(() => {
                 return channel.send(`${high_alert} **Attention: ${tournament.name} Participants!** ${high_alert} Time is up in the round! ${vince}`)

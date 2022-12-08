@@ -674,14 +674,11 @@ const purgePfps = async () => {
             complete = true
         }
     }
-
-    console.log('data.length', data.length)
     
     for (let i = 0; i < data.length; i++) {
         try {
             const Key = data[i].Key
             const file = Key.slice(12, -4)
-            console.log('file', file)
             const player = await Player.findOne({ where: {
                 [Op.or]: {
                     name: file,
@@ -689,7 +686,6 @@ const purgePfps = async () => {
                 }
             }})
     
-            console.log('!!player', !!player)
             if (!player) {
                 console.log('DELETE:', Key, `(Not Found)`)
                 await s3.deleteObject({
