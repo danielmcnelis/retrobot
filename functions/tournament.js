@@ -75,6 +75,10 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
             const side = data.side.map((e) => e.serial_number)
             const extra = data.extra.map((e) => e.serial_number)
             const ydk = ['created by...', '#main', ...main, '#extra', ...extra, '!side', ...side, ''].join('\n')
+            if (format.category !== 'TCG') {
+                member.send({ content: `Thanks, ${member.user.username}, ${pronoun} deck has been saved. ${legend}\n\nPlease note: Decks for ${format.category} Formats cannot be verified at this time. Be sure your deck is legal for this tournament!`}).catch((err) => console.log(err))
+                return { url, ydk }
+            }
             const deckArr = [...main, ...extra, ...side,]
             const issues = await getIssues(deckArr, format)
             if (!issues) return false
