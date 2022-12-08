@@ -20,6 +20,9 @@ const Format = db.define('formats', {
   icon: {
     type: Sequelize.STRING
   },
+  category: {
+    type: Sequelize.STRING
+  },
   description: {
     type: Sequelize.TEXT
   },
