@@ -15,7 +15,7 @@ const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend,
     Counter, Cyberse, Dinosaur, DivineBeast, Dragon, Equip, Fairy, Field, Fiend, Fish, 
     Insect, Link, Machine, Normal, Plant, Psychic, Pyro, QuickPlay, Rank, Reptile, 
     Ritual, Rock, Scale, SeaSerpent, Spell, Spellcaster, Star, Thunder, Trap, Warrior, 
-    WingedBeast, Wyrm, Zombie, forbidden, limited, semi, unlimited, high_alert, vincent
+    WingedBeast, Wyrm, Zombie, forbidden, limited, semi, unlimited, high_alert, vince
  } = require('../static/emojis')
 const rarities = require('../static/rarities.json')
 const roles = require('../static/roles.json')
@@ -524,10 +524,10 @@ const setTimers = async (client) => {
             const guild = client.guilds.cache.get(tournament.serverId)
             const channel = guild.channels.cache.get(tournament.channelId)
             console.log('channel.name', channel.name)
-            console.log(`${high_alert} **Attention ${tournament.name} Participants!** ${high_alert} Time is up in the round! ${vincent}`)
+            console.log(`${high_alert} **Attention: ${tournament.name} Participants!** ${high_alert} Time is up in the round! ${vince}`)
 
             setTimeout(() => {
-                return channel.send(`${high_alert} **Attention ${tournament.name} Participants!** ${high_alert} Time is up in the round! ${vincent}`)
+                return channel.send(`${high_alert} **Attention: ${tournament.name} Participants!** ${high_alert} Time is up in the round! ${vince}`)
             }, timeRemaining)
         } catch (err) {
             console.log(err)

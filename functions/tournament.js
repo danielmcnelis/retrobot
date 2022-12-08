@@ -319,7 +319,7 @@ const askIfSeeded = async (message, name) => {
     const filter = m => m.author.id === message.author.id
 	message.channel.send({ content: `Do you wish to seed the tournament?` }).catch((err) => console.log(err))
 
-	await message.channel.awaitMessages({ 
+	return await message.channel.awaitMessages({ 
         filter,
         max: 1,
 		time: 15000

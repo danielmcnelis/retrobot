@@ -183,7 +183,7 @@ try {
     // TEST
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            assignTourRoles(client)
+            console.log(await askIfSeeded(message, 'FLC99'))
             return message.channel.send(emojis.yellow)
         } else {
             return message.channel.send('🧪')
