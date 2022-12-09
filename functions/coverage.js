@@ -86,7 +86,7 @@ const createDecks = async (event, data) => {
     }
     
     console.log(`Uploaded ${b} decks for ${event.name}. Encountered ${e} errors. ${b + c} out of ${event.size} decks saved thus far.`)
-    return b + c === size
+    return b + c === event.size
 } 
 
 // COMPOSE BLOG POST
