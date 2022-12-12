@@ -43,7 +43,7 @@ const checkExpiryDate = async (server) => {
   }
 }
 
-const uploadDeckFolder = async (server, tournamentName) => {
+const uploadDeckFolder = async (server, tournamentName, decks) => {
     console.log('uploadDeckFolder()', uploadDeckFolder)
   try {
     const { access_token, refresh_token } = JSON.parse(server.googleToken)
@@ -80,17 +80,17 @@ const uploadDeckFolder = async (server, tournamentName) => {
         } else {
           const folderId = file.data.id
           console.log(`Created folder with id: ${folderId}.`)
-          for (let i = 0; i < extensions.length; i++) {
-              const extension = extensions[i]
+          for (let i = 0; i < decks.length; i++) {
+              const deck = decks[i]
   
               const fileMetadata = {
-                'name': `${extension}`,
+                'name': `${deck.player.discordName}#${deck.player.discriminator}`,
                 parents: [folderId]
               }
   
               const media = {
                 mimeType: 'application/json',
-                body: fs.createReadStream(`./decks/${server.name}/${tournamentName}/${extension}`)
+                body: deck.ydk
               }
   
               saveFile(drive, fileMetadata, media, i) 

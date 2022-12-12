@@ -203,11 +203,21 @@ try {
 
             const tournament = await selectTournament(message, tournaments, maid)
             if (!tournament) return message.channel.send({ content: `There are no tournaments.` })
+
+            const decks = await Deck.findAll({
+                where: {
+                    eventName: {
+                        [Op.or]: [tournament.abbreviation, tournament.name]
+                    }
+                },
+                include: Player
+            })
+
             const { name } = tournament
 
             try {
                 await checkExpiryDate(server)
-                await uploadDeckFolder(server, name)
+                await uploadDeckFolder(server, name, decks)
                 return message.channel.send({ content: `Your tournament files have been uploaded! ${server.logo}` })
             } catch (err) {
                 console.log(err)
@@ -529,18 +539,6 @@ try {
     
             if (status === 200) { 
                 await tournament.update({ state: 'underway' })
-                try {
-                    const { sheet1Data, sheet2Data } = await createSheetData(tournament)
-                    await checkExpiryDate(server)
-                    const { sheets, oAuth2Client } = await connectToSheets()
-                    const spreadsheetId = await makeSheet(sheets, `${name} Deck Lists`, sheet1Data)
-                    await addSheet(sheets, oAuth2Client, spreadsheetId, 'Summary')
-                    await writeToSheet(sheets, spreadsheetId, 'Summary', 'RAW', sheet2Data)
-                    await uploadDeckFolder(server, name)
-                } catch (err) {
-                    console.log(err)
-                }
-
                 message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
                 return sendPairings(client, server, tournament, false)
             } else {
