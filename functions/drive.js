@@ -7,8 +7,13 @@ const fs = require('fs')
 const axios = require('axios')
 
 const generateNewToken = async (server) => {
+  console.log('generateNewToken()', generateNewToken)
   const { refresh_token } = JSON.parse(server.googleToken)
   try {
+    console.log('refresh_token', refresh_token)
+    console.log('client_secret', client_secret)
+    console.log('client_id', client_id)
+
     const { data } = await axios.post('https://www.googleapis.com/oauth2/v4/token', {
       "client_id": client_id,
       "client_secret": client_secret,
@@ -16,6 +21,7 @@ const generateNewToken = async (server) => {
       "grant_type": "refresh_token"
     })
 
+    console.log('data', data)
     return data.access_token
   } catch (err) {
     console.log(err)
@@ -24,6 +30,7 @@ const generateNewToken = async (server) => {
 }
 
 const checkExpiryDate = async (server) => {
+    console.log('checkExpiryDate()', checkExpiryDate)
   const { access_token, expiry_date } = JSON.parse(server.googleToken)
   const currentTime = Date.now()
   if (currentTime > expiry_date) {
@@ -37,6 +44,7 @@ const checkExpiryDate = async (server) => {
 }
 
 const uploadDeckFolder = async (server, tournamentName) => {
+    console.log('uploadDeckFolder()', uploadDeckFolder)
   try {
     const { access_token, refresh_token } = JSON.parse(server.googleToken)
     console.log('access_token', access_token)
@@ -49,7 +57,8 @@ const uploadDeckFolder = async (server, tournamentName) => {
       access_token, 
       refresh_token
     )
-  
+
+    console.log('oAuth2Client', oAuth2Client)
     oAuth2Client.setCredentials(JSON.parse(server.googleToken))
     const drive = google.drive({ version: 'v3', auth: oAuth2Client})
   
