@@ -68,7 +68,6 @@ const uploadDeckFolder = async (server, tournamentName, decks) => {
     }
   
     const folder = `./decks/${server.name}/${tournamentName}`
-    const extensions = fs.readdirSync(folder)
 
     try {
       drive.files.create({
