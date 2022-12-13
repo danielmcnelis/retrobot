@@ -304,19 +304,20 @@ try {
 
         const input = args[0].replace(/[^\ws]/gi, "_").replace(/ /g,'')
 
-        const name = input.startsWith('FLC') ? `Format Library Championship ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('YRS') ? `Yu-Gi-Oh! Retro Series ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('DLC') ? `Drama Llama Classic ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('DDS') ? `Digbic Dig Series ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('ETC') ? `Ellietincan Cup ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('ACS') ? `Format Library Championship ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('KGP') ? `Format Library Championship ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('DCT') ? `Duelist Crown Tournament ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('DSC') ? `Dark Side Cup ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('WWC') ? `Woawa World Cup ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('GASP') ? `Gigachad Advanced Sneak Preview ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('RWL') ? `Retro World Locals ${input.replace(/[^0-9]/g,'')}` :
-            input.startsWith('FWL') ? `Future World Locals ${input.replace(/[^0-9]/g,'')}` : 
+        const name = input.startsWith('FLC') ? `Format Library Championship ${parseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('YRS') ? `Yu-Gi-Oh! Retro Series ${parseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('DLC') ? `Drama Llama Classic ${parseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('DDS') ? `Digbic Dig Series ${parseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('ETC') ? `Ellietincan Cup ${pparseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('ACS') ? `Format Library Championship ${parseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('KGP') ? `Format Library Championship ${parseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('DCT') ? `Duelist Crown Tournament ${parseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('DSC') ? `Dark Side Cup ${parseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('WWC') ? `Woawa World Cup ${parseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('GASP') ? `Gigachad Advanced Sneak Preview ${parseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('RWL') ? `Retro World Locals ${parseInt(input.replace(/[^0-9]/g,''))}` :
+            input.startsWith('BC') ? `Blazing Cheaters ${parseInt(input.replace(/[^0-9]/g,''))}` : 
+            input.startsWith('FWL') ? `Future World Locals ${parseInt(input.replace(/[^0-9]/g,''))}` : 
             input
 
         const logo = input.startsWith('FLC') ? emojis.FL :
@@ -332,6 +333,7 @@ try {
             input.startsWith('GASP') ? emojis.gigachad :
             input.startsWith('RWL') ? emojis.celtic :
             input.startsWith('FWL') ? emojis.farqred :
+            input.startsWith('BC') ? emojis.speeder :
             server.logo || emojis.legend
 
         try {
