@@ -746,6 +746,7 @@ const updateServers = async (client) => {
             const guild = client.guilds.cache.get(server.id)
             if (!guild) {
                 console.log(`${server.name} cannot be found in the client cache`)
+                await server.destroy()
                 continue
             }
     
