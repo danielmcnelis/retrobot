@@ -739,6 +739,24 @@ const updateSets = async () => {
 
 // UPDATE SERVERS
 const updateServers = async (client) => {
+    const guilds =client.guilds.cache
+
+    for (let i = 0; i < guilds.length; i++) {
+        const guild = guilds[i]
+        const count = await Server.count({
+            where: {
+                id: guild.id
+            }
+        }) 
+
+        if (!count) {
+            console.log('CREATING server:', guild.name)
+            await Server.create({ id: guild.id, name: guild.name })
+        } else {
+            console.log(`server found: ${guild.name}`)
+        }
+    }
+
     const servers = await Server.findAll()
     for (let i = 0; i < servers.length; i++) {
         try {
