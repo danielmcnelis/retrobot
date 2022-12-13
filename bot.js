@@ -27,6 +27,31 @@ const { client } = require('./static/clients.js')
 const commands = require('./static/commands.json')
 const emojis = require('./static/emojis.json')
 
+const { ping } = './commands/ping.js'
+client.commands = new Discord.Collection()
+client.commands.set(ping.data.name, ping)
+
+client.on(Discord.Events.InteractionCreate, interaction => {
+	console.log(interaction)
+})
+client.on(Discord.Events.InteractionCreate, async interaction => {
+	if (!interaction.isChatInputCommand()) return
+
+	const command = interaction.client.commands.get(interaction.commandName)
+
+	if (!command) {
+		console.error(`No command matching ${interaction.commandName} was found.`)
+		return
+	}
+
+	try {
+		await command.execute(interaction)
+	} catch (error) {
+		console.error(error)
+		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
+	}
+})
+
 // GLOBAL VARIABLES
 const fuzzyCards = FuzzySet([], false)
 
