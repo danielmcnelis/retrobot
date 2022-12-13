@@ -183,7 +183,7 @@ try {
     // TEST
     if (cmd === `!test`) {
         if (isProgrammer(message.member)) {
-            console.log(await askIfSeeded(message, 'FLC99'))
+            updateServers(client)
             return message.channel.send(emojis.yellow)
         } else {
             return message.channel.send('🧪')
@@ -324,7 +324,7 @@ try {
             input.startsWith('YRS') ? emojis.mlady :
             input.startsWith('DLC') ? emojis.lmfao :
             input.startsWith('DDS') ? emojis.stoned :
-            input.startsWith('ETC') ? emojis.lipton :
+            input.startsWith('ETC')f ? emojis.lipton :
             input.startsWith('ACS') ? emojis.toad :
             input.startsWith('KGP') ? emojis.UredU :
             input.startsWith('DCT') ? emojis.king :
