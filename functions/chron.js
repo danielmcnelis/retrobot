@@ -739,7 +739,8 @@ const updateSets = async () => {
 
 // UPDATE SERVERS
 const updateServers = async (client) => {
-    const guilds =client.guilds.cache
+    const guilds = client.guilds.cache
+    console.log('guilds', guilds)
 
     for (let i = 0; i < guilds.length; i++) {
         const guild = guilds[i]
