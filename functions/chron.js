@@ -771,8 +771,6 @@ const updateServers = async (client) => {
                 console.log(`guild found: ${server.name}`)
             }
     
-            const owner = await Player.findOne({ where: { discordId: guild.ownerId }})
-    
             if (server.name !== guild.name) {
                 console.log(`updating server name from ${server.name} => ${guild.name}`)
                 server.name = guild.name
@@ -784,7 +782,9 @@ const updateServers = async (client) => {
                 server.size = guild.memberCount
                 await server.save()
             }
-    
+
+            const owner = await Player.findOne({ where: { discordId: guild.ownerId }})
+
             if (owner && server.ownerId !== owner.id) {
                 console.log(`updating server owner from ${server.ownerId} => ${owner.id}`)
                 server.ownerId = owner.id
