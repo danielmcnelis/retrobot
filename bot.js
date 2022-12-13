@@ -324,7 +324,7 @@ try {
             input.startsWith('YRS') ? emojis.mlady :
             input.startsWith('DLC') ? emojis.lmfao :
             input.startsWith('DDS') ? emojis.stoned :
-            input.startsWith('ETC')f ? emojis.lipton :
+            input.startsWith('ETC') ? emojis.lipton :
             input.startsWith('ACS') ? emojis.toad :
             input.startsWith('KGP') ? emojis.UredU :
             input.startsWith('DCT') ? emojis.king :
