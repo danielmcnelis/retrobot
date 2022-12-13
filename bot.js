@@ -28,6 +28,7 @@ const commands = require('./static/commands.json')
 const emojis = require('./static/emojis.json')
 
 const ping = './commands/ping.js'
+console.log('ping', ping)
 client.commands = new Discord.Collection()
 client.commands.set(ping.data.name, ping)
 
