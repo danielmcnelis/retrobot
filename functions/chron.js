@@ -748,6 +748,8 @@ const updateServers = async (client) => {
                 console.log(`${server.name} cannot be found in the client cache`)
                 await server.destroy()
                 continue
+            } else {
+                console.log(`guild found: ${server.name}`)
             }
     
             const owner = await Player.findOne({ where: { discordId: guild.ownerId }})
