@@ -1,14 +1,14 @@
 
 const { discordBotToken} = require('../secrets')
-const { Client } = require('discord.js')
+const { Client, GatewayIntentBits } = require('discord.js')
 
 const client = new Client({ 
     intents: [ 
-        'GUILDS', 
-        'GUILD_MEMBERS', 
-        'GUILD_MESSAGES', 
-        'GUILD_MESSAGE_REACTIONS',
-        'DIRECT_MESSAGES'
+        GatewayIntentBits.Guilds, 
+        GatewayIntentBits.GuildMembers, 
+        GatewayIntentBits.GuildMessages, 
+        GatewayIntentBits.GuildMessageReactions, 
+        GatewayIntentBits.DirectMessages
     ],
     partials: [
         'MESSAGE',
