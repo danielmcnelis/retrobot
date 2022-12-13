@@ -4,6 +4,7 @@
 // MODULE IMPORTS
 const axios = require('axios')
 const Discord = require('discord.js')
+const { Collection, Client, Events, GatewayIntentBits } = require('discord.js');
 const FuzzySet = require('fuzzyset')
 const QuickChart = require('quickchart-js')
 const { Op } = require('sequelize')
@@ -29,13 +30,13 @@ const emojis = require('./static/emojis.json')
 
 const ping = require('./commands/ping.js')
 console.log('ping', ping)
-client.commands = new Discord.Collection()
+client.commands = new Collection()
 client.commands.set(ping.data.name, ping)
 
-client.on(Discord.Events.InteractionCreate, interaction => {
+client.on(Events.InteractionCreate, interaction => {
 	console.log(interaction)
 })
-client.on(Discord.Events.InteractionCreate, async interaction => {
+client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return
 
 	const command = interaction.client.commands.get(interaction.commandName)
