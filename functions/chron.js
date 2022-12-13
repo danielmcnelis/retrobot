@@ -740,10 +740,11 @@ const updateSets = async () => {
 // UPDATE SERVERS
 const updateServers = async (client) => {
     const guilds = client.guilds.cache.values()
-    console.log('guilds', guilds)
+    console.log('guilds.length', guilds.length)
 
     for (let i = 0; i < guilds.length; i++) {
         const guild = guilds[i]
+        console.log('guild', guild)
         const count = await Server.count({
             where: {
                 id: guild.id
