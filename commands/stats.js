@@ -3,6 +3,7 @@
     const { hasAffiliateAccess, getMedal } = require('../functions/utility')
     const emojis = require('../static/commands.json')
     const { Format, Player, Server, Stats } = require('../db')
+    const { Op } = require('sequelize')
 
     module.exports = {
         data: new SlashCommandBuilder()
