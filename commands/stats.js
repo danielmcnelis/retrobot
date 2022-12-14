@@ -8,7 +8,12 @@
     module.exports = {
         data: new SlashCommandBuilder()
             .setName('stats')
-            .setDescription('Post a player\'s stats'),
+            .setDescription(`Post a player's stats.`)
+            .addUserOption((option) =>
+                option.setName('user')
+                    .setDescription('The user whose stats you want to check.')
+                    .setRequired(false)
+            ),
         async execute(interaction) {
             const server = !interaction.guild.id ? {} : 
                 await Server.findOne({ where: { id: interaction.guild.id }}) || 
