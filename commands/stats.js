@@ -10,21 +10,23 @@
             .setName('stats')
             .setDescription(`Post a player's stats.`)
             .addUserOption(option =>
-                option.setName('user')
-                    .setDescription('The user whose stats you want to check.')
+                option
+                    .setName('user')
+                    .setDescription('The user you want to check.')
                     .setRequired(true)
             ),
         async execute(interaction) {
-            const server = !interaction.guild.id ? {} : 
-                await Server.findOne({ where: { id: interaction.guild.id }}) || 
-                await Server.create({ id: interaction.guild.id, name: interaction.guild.name })
+            console.log('interaction.guild', interaction.guild)
+            const server = !interaction.guildId ? {} : 
+                await Server.findOne({ where: { id: interaction.guildId }}) || 
+                await Server.create({ id: interaction.guildId, name: interaction.guild.name })
 
             if (!hasAffiliateAccess(server)) return interaction.reply({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
             const format = await Format.findOne({
                 where: {
                     [Op.or]: {
                         name: { [Op.iLike]: server.format },
-                        channel: interaction.channel.id
+                        channel: interaction.channelId
                     }
                 }
             })
