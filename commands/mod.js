@@ -1,5 +1,5 @@
 
-const { MessageEmbed, SlashCommandBuilder } = require('discord.js')
+const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
 const { Server } = require('../db')
 
 module.exports = {
@@ -14,7 +14,7 @@ module.exports = {
         if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         if (!isMod(server, message.member)) return message.channel.send({ content: "You do not have permission to do that."})
 
-        const botEmbed = new MessageEmbed()
+        const botEmbed = new EmbedBuilder()
 	        .setColor('#38C368')
         	.setTitle('RetroBot Moderator Guide')
 	        .setDescription('A Rankings and Tournament Bot powered by FormatLibrary.com.\n' )

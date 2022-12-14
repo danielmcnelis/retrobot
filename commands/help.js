@@ -1,12 +1,12 @@
 
-const { MessageEmbed, SlashCommandBuilder } = require('discord.js')
+const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
 		.setDescription('View the RetroBot user guide.'),
 	async execute(interaction) {
-        const botEmbed = new MessageEmbed()
+        const botEmbed = new EmbedBuilder()
 	        .setColor('#38C368')
         	.setTitle('RetroBot User Guide')
 	        .setDescription('A Yu-Gi-Oh! Bot powered by FormatLibrary.com.\n' )
