@@ -4,6 +4,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const { Format, Server } = require('../db')
 const { Op } = require('sequelize')
+const { search } = require('../functions/utility')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -15,7 +16,7 @@ module.exports = {
                 .setDescription('Enter search query.')
                 .setRequired(true)
         ),
-	async execute(interaction) {
+	async execute(interaction, fuzzyCards) {
         const query = interaction.options.getString('string')
         const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 

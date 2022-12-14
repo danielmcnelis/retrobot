@@ -19,24 +19,6 @@ const commands = require('./commands')
 client.commands = new Collection()
 Object.values(commands).forEach((command) => client.commands.set(command.data.name, command))
 
-client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return
-
-	const command = interaction.client.commands.get(interaction.commandName)
-
-	if (!command) {
-		console.error(`No command matching ${interaction.commandName} was found.`)
-		return
-	}
-
-	try {
-		await command.execute(interaction)
-	} catch (error) {
-		console.error(error)
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
-	}
-})
-
 // GLOBAL VARIABLES
 const fuzzyCards = FuzzySet([], false)
 
@@ -67,6 +49,29 @@ client.on('ready', async() => {
     setTimeout(() => conductCensus(client), midnightCountdown + (3 * 60 * 1000))
     setTimeout(() => updateAvatars(client), midnightCountdown + (10 * 60 * 1000))
     setTimeout(() => purgeRatedDecks(), midnightCountdown + (12 * 60 * 1000))
+})
+
+// COMMANDS
+client.on(Events.InteractionCreate, async interaction => {
+	if (!interaction.isChatInputCommand()) return
+
+	const command = interaction.client.commands.get(interaction.commandName)
+
+	if (!command) {
+		console.error(`No command matching ${interaction.commandName} was found.`)
+		return
+	}
+
+	try {
+        if (command.data.name === 'search') {
+            await command.execute(interaction, fuzzyCards)
+        } else {
+            await command.execute(interaction)
+        }
+	} catch (error) {
+		console.error(error)
+		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
+	}
 })
 
 // WELCOME
