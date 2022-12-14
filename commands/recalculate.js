@@ -34,21 +34,30 @@
             if (!format) return interaction.reply({ content: `Try using **/recalculate** in channels like: <#414575168174948372> or <#629464112749084673>.`})
             
             const serverId = server.internalLadder ? server.id : '414551319031054346'
+            const count = await Match.count({ where: { format: format.name, serverId: serverId }})
+            interaction.reply({ content: `Recalculating data from ${count} ${format.name} ${format.emoji} matches. Please wait...`})
+            
+            const allMatches = await Match.findAll({ 
+                where: { format: format.name, serverId: serverId }, 
+                attributes: ['winnerId', 'loserId', 'delta'], 
+                order: [["createdAt", "ASC"]]
+            })
+
             const allStats = await Stats.findAll({ where: { format: format.name, serverId: serverId } })
     
             for (let i = 0; i < allStats.length; i++) {
                 const stats = allStats[i]
-                stats.elo = 500.00
-                stats.testElo = 500.00
-                stats.backupElo = null
-                stats.wins = 0
-                stats.losses = 0
-                stats.games = 0
-                await stats.save()
+                
+                await stats.update({
+                    elo: 500.00,
+                    testElo: 500.00,
+                    backupElo: null,
+                    wins: 0,
+                    losses: 0,
+                    games: 0
+                })
             }
-            
-            const allMatches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [["createdAt", "ASC"]]})
-            interaction.reply({ content: `Recalculating data from ${allMatches.length} ${format.name} ${format.emoji} matches. Please wait...`})
+
             for (let i = 0; i < allMatches.length; i++) {
                 const match = allMatches[i]
                 const winnerId = match.winnerId
