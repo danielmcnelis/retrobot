@@ -16,6 +16,7 @@
                     .setRequired(true)
             ),
         async execute(interaction) {
+            const opponent = interaction.options.getUser('opponent')
             console.log('opponent', opponent)
             const server = !interaction.guildId ? {} : 
                 await Server.findOne({ where: { id: interaction.guildId }}) || 
