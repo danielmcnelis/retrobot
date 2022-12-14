@@ -489,12 +489,11 @@ const selectMatch = async (interaction, matches) => {
         return {
             label: `(${index + 1})`,
             description: `${match.winner} > ${match.loser}`,
-            value: index,
+            value: `${matches[index].id}`,
         }
     })
 
     console.log('options', options)
-
 
     const row = new ActionRowBuilder()
         .addComponents(
