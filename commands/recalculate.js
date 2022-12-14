@@ -48,7 +48,7 @@
             }
             
             const allMatches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [["createdAt", "ASC"]]})
-            interaction.channel.send({ content: `Recalculating data from ${allMatches.length} ${format.name} ${format.emoji} matches. Please wait...`})
+            interaction.reply({ content: `Recalculating data from ${allMatches.length} ${format.name} ${format.emoji} matches. Please wait...`})
             for (let i = 0; i < allMatches.length; i++) {
                 const match = allMatches[i]
                 const winnerId = match.winnerId
@@ -89,7 +89,7 @@
                 console.log(`${format.name} Match ${i+1}: ${winnerStats.player.name} > ${loserStats.player.name}`)
             }
     
-            return interaction.reply({ content: `Recalculation complete!`})	
+            return interaction.channel.send({ content: `Recalculation complete!`})	
     }
 }
 
