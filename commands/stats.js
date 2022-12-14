@@ -1,7 +1,7 @@
 
     const { SlashCommandBuilder } = require('discord.js')    
     const { hasAffiliateAccess, getMedal } = require('../functions/utility')
-    const emojis = require('../static/commands.json')
+    const emojis = require('../static/emojis.json')
     const { Format, Player, Server, Stats } = require('../db')
     const { Op } = require('sequelize')
 
@@ -13,10 +13,9 @@
                 option
                     .setName('user')
                     .setDescription('The user you want to check.')
-                    .setRequired(false)
+                    .setRequired(true)
             ),
         async execute(interaction) {
-            console.log('interaction.guild', interaction.guild)
             const server = !interaction.guildId ? {} : 
                 await Server.findOne({ where: { id: interaction.guildId }}) || 
                 await Server.create({ id: interaction.guildId, name: interaction.guild.name })

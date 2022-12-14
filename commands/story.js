@@ -2,7 +2,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const { hasFullAccess, isMod } = require('../functions/utility')
 const { postStory } = require('../functions/iron')
-const emojis = require('../static/commands.json')
+const emojis = require('../static/emojis.json')
 const { Format, Server } = require('../db')
 
 module.exports = {
@@ -11,11 +11,11 @@ module.exports = {
 		.setDescription('Posts the Iron Story.'),
 	async execute(interaction) {
         const server = !mgid ? {} : 
-            await Server.findOne({ where: { id: interaction.guild.id }}) || 
-            await Server.create({ id: interaction.guild.id, name: interaction.guild.name })
+            await Server.findOne({ where: { id: interaction.guildId }}) || 
+            await Server.create({ id: interaction.guildId, name: interaction.guild.name })
 
-        if (!hasFullAccess(server)) return interaction.replay({ content: `This feature is only available in Format Library. ${emojis.FL}`})
-        if (!isMod(server, interaction.member)) return interaction.replay({ content: `You do not have permission to do that.`})
+        if (!hasFullAccess(server)) return interaction.reply({ content: `This feature is only available in Format Library. ${emojis.FL}`})
+        if (!isMod(server, interaction.member)) return interaction.reply({ content: `You do not have permission to do that.`})
 
         const format = await Format.findOne({
             where: {

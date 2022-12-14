@@ -11,7 +11,6 @@ const { Deck, Format, Player, RatedPool, Stats, Server } = require('../db/index.
 //STATIC IMPORTS
 const channels = require('../static/channels')
 const emojis = require('../static/emojis.json')
-const { yescom } = require('../static/commands.json')
 
 //FUNCTION IMPORTS
 const { getIssues } = require('./deck')

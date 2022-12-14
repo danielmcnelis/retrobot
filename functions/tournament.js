@@ -3,7 +3,6 @@
 
 //MODULE IMPORTS
 const axios = require('axios')
-const { yescom } = require('../static/commands.json')
 const {Op} = require('sequelize')
 
 //DATABASE IMPORTS
