@@ -6,6 +6,7 @@
     const emojis = require('../static/emojis.json')
     const { Entry, Format, Match, Matchup, Player, Server, Stats, Tournament } = require('../db')
     const { Op } = require('sequelize')
+    const { client } = require('../static/clients.js')
 
     module.exports = {
         data: new SlashCommandBuilder()
