@@ -1,10 +1,7 @@
 const { REST, Routes } = require('discord.js')
-const { discordBotToken } = require('./secrets.json')
-const { client } = require('./static/clients.js')
+const { discordBotToken, clientId } = require('./secrets.json')
+console.log('discordBotToken', discordBotToken)
 const fs = require('fs')
-
-const clientId = client.id
-console.log('clientId', clientId)
 
 const guildId = '414551319031054346'
 
@@ -19,7 +16,7 @@ for (const file of commandFiles) {
 }
 
 // Construct and prepare an instance of the REST module
-const rest = new REST({ version: '10' }).setToken(discordBotToken)
+const rest = new REST({ version: '10' }).setToken(discordBotToken);
 
 // and deploy your commands!
 (async () => {
@@ -28,8 +25,8 @@ const rest = new REST({ version: '10' }).setToken(discordBotToken)
 
 		// The put method is used to fully refresh all commands in the guild with the current set
 		const data = await rest.put(
-			Routes.applicationGuildCommands(clientId, guildId),
-			{ body: commands },
+            Routes.applicationCommands(clientId),
+            { body: commands },
 		);
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
@@ -37,4 +34,4 @@ const rest = new REST({ version: '10' }).setToken(discordBotToken)
 		// And of course, make sure you catch and log any errors!
 		console.error(error)
 	}
-})()
+})();

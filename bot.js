@@ -28,31 +28,32 @@ const { client } = require('./static/clients.js')
 const commands = require('./static/commands.json')
 const emojis = require('./static/emojis.json')
 
-const ping = require('./commands/ping.js')
-console.log('ping', ping)
-client.commands = new Collection()
-client.commands.set(ping.data.name, ping)
+// const ping = require('./commands/ping.js')
+// console.log('ping', ping)
+// client.commands = new Collection()
+// client.commands.set(ping.data.name, ping)
 
-client.on(Events.InteractionCreate, interaction => {
-	console.log(interaction)
-})
-client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return
+// client.on(Events.InteractionCreate, interaction => {
+// 	console.log(interaction)
+// })
 
-	const command = interaction.client.commands.get(interaction.commandName)
+// client.on(Events.InteractionCreate, async interaction => {
+// 	if (!interaction.isChatInputCommand()) return
 
-	if (!command) {
-		console.error(`No command matching ${interaction.commandName} was found.`)
-		return
-	}
+// 	const command = interaction.client.commands.get(interaction.commandName)
 
-	try {
-		await command.execute(interaction)
-	} catch (error) {
-		console.error(error)
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
-	}
-})
+// 	if (!command) {
+// 		console.error(`No command matching ${interaction.commandName} was found.`)
+// 		return
+// 	}
+
+// 	try {
+// 		await command.execute(interaction)
+// 	} catch (error) {
+// 		console.error(error)
+// 		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
+// 	}
+// })
 
 // GLOBAL VARIABLES
 const fuzzyCards = FuzzySet([], false)
