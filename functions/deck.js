@@ -34,7 +34,7 @@ const {
 
 
 // GET DECK FORMAT
-const getDeckFormat = async (server, message, interaction.channelId) => {
+const getDeckFormat = async (server, message, interaction) => {
     let format = await Format.findOne({ 
         where: { 
             [Op.or]: {
