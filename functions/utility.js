@@ -190,11 +190,12 @@ const search = async (query, fuzzyCards, format) => {
 	const attachment = new AttachmentBuilder({ buffer: `https://cdn.formatlibrary.com/images/cards/${card.ypdId}.jpg`, name: `${card.ypdId}.jpg` })
 
 	const thumbnail = attachment ? `attachment://${card.ypdId}.jpg` : `https://ygoprodeck.com/pics/${card.ypdId}.jpg`    
+    
     const cardEmbed = new EmbedBuilder()
-	cardEmbed.setColor(color)
-	cardEmbed.setTitle(card.name)
-	cardEmbed.setThumbnail(thumbnail)
-	cardEmbed.setDescription(
+        .setColor(color)
+	    .setTitle(card.name)
+	    .setThumbnail(thumbnail)
+	    .setDescription(
             `${labels.join('')}` + 
             `\n\n${card.description}` +
             `${stats ? `\n\n${stats}` : ''}` +

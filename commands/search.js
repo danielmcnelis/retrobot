@@ -34,8 +34,8 @@ module.exports = {
         const { cardEmbed, attachment } = await search(query, fuzzyCards, format)
         if (!cardEmbed) {
             interaction.reply({ content: `Could not find: "${query}".`})
-        } else if (attachment) {
-            interaction.reply({ embeds: [cardEmbed], files: [attachment] })
+        // } else if (attachment) {
+        //     interaction.reply({ embeds: [cardEmbed], files: [attachment] })
         } else {
             return interaction.reply({ embeds: [cardEmbed] })
         }
