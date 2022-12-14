@@ -1,6 +1,7 @@
 
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
 const { Server } = require('../db')
+const { hasAffiliateAccess } = require('../functions/utility')
 
 module.exports = {
 	data: new SlashCommandBuilder()
