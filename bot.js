@@ -89,6 +89,7 @@ client.on('ready', async() => {
 
 // WELCOME
 client.on('guildMemberAdd', async (member) => {    
+    console.log('guildMemberAdd')
     try {
         const guild = member.guild
         const server = await Server.findOne({ where: { id: guild.id }})
@@ -111,6 +112,7 @@ client.on('guildMemberAdd', async (member) => {
     
 // GOODBYE
 client.on('guildMemberRemove', async (member) => {
+    console.log('guildMemberRemove')
     try {
         const guild = member.guild
         const server = await Server.findOne({ where: { id: guild.id }})
@@ -127,6 +129,7 @@ client.on('guildMemberRemove', async (member) => {
  
 // COMMANDS
 client.on('messageCreate', async (message) => {
+    console.log('messageCreate')
 try {
     if (
 		//no commands in DMs except !rated
