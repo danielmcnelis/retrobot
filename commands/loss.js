@@ -4,7 +4,7 @@
     const { postStory } = require('../functions/iron')
     const { checkPairing, getMatches, processMatchResult, selectTournament } = require('../functions/tournament')
     const emojis = require('../static/emojis.json')
-    const { Entry, Format, Match, Matchup, Player, Server, Stats, Tournament } = require('../db')
+    const { Entry, Format, Iron, Match, Matchup, Player, Server, Stats, Tournament } = require('../db')
     const { Op } = require('sequelize')
     const { client } = require('../static/clients.js')
 
