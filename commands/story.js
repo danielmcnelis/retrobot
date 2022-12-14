@@ -4,6 +4,7 @@ const { hasFullAccess, isMod } = require('../functions/utility')
 const { postStory } = require('../functions/iron')
 const emojis = require('../static/emojis.json')
 const { Format, Server } = require('../db')
+const { Op } = require('sequelize')
 
 module.exports = {
 	data: new SlashCommandBuilder()

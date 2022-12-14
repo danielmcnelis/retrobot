@@ -3,6 +3,7 @@
 
 const { SlashCommandBuilder } = require('discord.js')
 const { Format, Server } = require('../db')
+const { Op } = require('sequelize')
 
 module.exports = {
 	data: new SlashCommandBuilder()
