@@ -487,8 +487,7 @@ const selectMatch = async (interaction, matches) => {
 
     const options = matches.map((match, index) => {
         return {
-            label: `(${index + 1})`,
-            description: `${match.winner} > ${match.loser}`,
+            label: `(${index + 1}) ${match.winner} > ${match.loser}`,
             value: `${matches[index].id}`,
         }
     })
@@ -503,7 +502,7 @@ const selectMatch = async (interaction, matches) => {
                 .addOptions(...options),
         )
 
-    await interaction.reply({ content: `Please select a match to undo:`, components: [row] })
+    await interaction.reply({ content: `Please select a match to undo:`, components: [ac] })
 }
 
 // SET TIMERS

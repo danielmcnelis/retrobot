@@ -48,7 +48,7 @@
             }
             
             const allMatches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [["createdAt", "ASC"]]})
-            interaction.reply({ content: `Recalculating data from ${allMatches.length} ${format.name} ${format.emoji} matches. Please wait...`})
+            interaction.channel.send({ content: `Recalculating data from ${allMatches.length} ${format.name} ${format.emoji} matches. Please wait...`})
             for (let i = 0; i < allMatches.length; i++) {
                 const match = allMatches[i]
                 const winnerId = match.winnerId
