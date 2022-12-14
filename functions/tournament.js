@@ -132,15 +132,15 @@ const selectTournament = async (message, tournaments, discordId) => {
     if (tournaments.length === 1) return tournaments[0]
     const options = tournaments.map((tournament, index) => `(${index + 1}) ${tournament.name}`)
     const filter = m => m.author.id === discordId
-    message.channel.send({ content: `Please select a tournament:\n${options.join('\n').toString()}`})
-    return await message.channel.awaitMessages({
+    interaction.channel.send({ content: `Please select a tournament:\n${options.join('\n').toString()}`})
+    return await interaction.channel.awaitMessages({
         filter,
         max: 1,
         time: 15000
     }).then(collected => {
         const num = parseInt(collected.first().content.match(/\d+/))
         if (!num || !tournaments[num - 1]) {
-            message.channel.send({ content: `Sorry, ${collected.first().content} is not a valid option.`})
+            interaction.channel.send({ content: `Sorry, ${collected.first().content} is not a valid option.`})
             return null
         }
         else return tournaments[num - 1]
@@ -562,17 +562,17 @@ const getGameCount = async (message, tournament, noshow) => {
 }
 
 //PROCESS MATCH RESULT
-const processMatchResult = async (server, message, winner, winningPlayer, loser, losingPlayer, tournament, noshow = false) => {
+const processMatchResult = async (server, interaction, winner, winningPlayer, loser, losingPlayer, tournament, noshow = false) => {
     const losingEntry = await Entry.findOne({ where: { playerId: losingPlayer.id, tournamentId: tournament.id }, include: Player })
     const winningEntry = await Entry.findOne({ where: { playerId: winningPlayer.id, tournamentId: tournament.id }, include: Player })
     if (!losingEntry || !winningEntry) {
-        message.channel.send({ content: `Sorry I could not find your tournament in the database.`})
+        interaction.channel.send({ content: `Sorry I could not find your tournament in the database.`})
         return false
     } 
 
     const gameCount = noshow ? [0, 0] : [1, 0]
     if (!gameCount || !gameCount.length) {
-        message.channel.send({ content: `Please specify a valid game count.`})
+        interaction.channel.send({ content: `Please specify a valid game count.`})
         return false
     }
 
@@ -607,7 +607,7 @@ const processMatchResult = async (server, message, winner, winningPlayer, loser,
     }
      
     if (!success) {
-        message.channel.send({ content: `Error: could not update bracket for ${tournament.name}.`})
+        interaction.channel.send({ content: `Error: could not update bracket for ${tournament.name}.`})
         return false
     }
  
@@ -632,7 +632,7 @@ const processMatchResult = async (server, message, winner, winningPlayer, loser,
         if (loserEliminated) {
             const playerId = losingEntry.player.id
             const discordId = losingEntry.player.discordId
-            const member = message.guild.members.cache.get(discordId)
+            const member = interaction.guild.members.cache.get(discordId)
             losingEntry.active = false
             await losingEntry.save()
 
@@ -656,7 +656,7 @@ const processMatchResult = async (server, message, winner, winningPlayer, loser,
 
         setTimeout(async () => {
             if (loserEliminated) {
-                return message.channel.send({ content: `${losingPlayer.name}, You are eliminated from the tournament. Better luck next time!`})
+                return interaction.channel.send({ content: `${losingPlayer.name}, You are eliminated from the tournament. Better luck next time!`})
             } else if (loserNextOpponent) {
                 try {
                     console.log(`New Match for ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${loserNextOpponent.player.name + '#' + loserNextOpponent.player.discriminator}\nDuelingBook: ${loserNextOpponent.player.duelingBook}`)
@@ -673,18 +673,18 @@ const processMatchResult = async (server, message, winner, winningPlayer, loser,
                     console.log(err)
                 }
         
-                return message.channel.send({ content: `New Match: <@${losingPlayer.discordId}> (DB: ${losingPlayer.duelingBook}) vs. <@${loserNextOpponent.player.discordId}> (DB: ${loserNextOpponent.player.duelingBook}). Good luck to both duelists.`})
+                return interaction.channel.send({ content: `New Match: <@${losingPlayer.discordId}> (DB: ${losingPlayer.duelingBook}) vs. <@${loserNextOpponent.player.discordId}> (DB: ${loserNextOpponent.player.duelingBook}). Good luck to both duelists.`})
             } else if (loserMatchWaitingOn && loserWaitingOnP1 && loserWaitingOnP2) {
-                return message.channel.send({ content: `${losingPlayer.name}, You are waiting for the result of ${loserWaitingOnP1.player.name} (DB: ${loserWaitingOnP1.player.duelingBook}) vs ${loserWaitingOnP2.player.name} (DB: ${loserWaitingOnP2.player.duelingBook}).`})
+                return interaction.channel.send({ content: `${losingPlayer.name}, You are waiting for the result of ${loserWaitingOnP1.player.name} (DB: ${loserWaitingOnP1.player.duelingBook}) vs ${loserWaitingOnP2.player.name} (DB: ${loserWaitingOnP2.player.duelingBook}).`})
             } else {
-                return message.channel.send({ content: `${losingPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`})
+                return interaction.channel.send({ content: `${losingPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`})
             }
         }, 2000)
         
         if (!winnerNextMatch || (winnerNextMatch && loserNextMatch !== winnerNextMatch)) {
             setTimeout(async () => {
                 if (!winnerNextMatch) {
-                    return message.channel.send({ content: `<@${winningPlayer.discordId}>, You won the tournament! Congratulations on your stellar performance! ${legend}`})
+                    return interaction.channel.send({ content: `<@${winningPlayer.discordId}>, You won the tournament! Congratulations on your stellar performance! ${legend}`})
                 } else if (winnerNextOpponent) {
                     try {
                         console.log(`New Match for ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${winnerNextOpponent.player.name + '#' + winnerNextOpponent.player.discriminator}\nDuelingBook: ${winnerNextOpponent.player.duelingBook}`)
@@ -701,11 +701,11 @@ const processMatchResult = async (server, message, winner, winningPlayer, loser,
                         console.log(err)
                     }
                     
-                    return message.channel.send({ content: `New Match: <@${winningPlayer.discordId}> (DB: ${winningPlayer.duelingBook}) vs. <@${winnerNextOpponent.player.discordId}> (DB: ${winnerNextOpponent.player.duelingBook}). Good luck to both duelists.`})
+                    return interaction.channel.send({ content: `New Match: <@${winningPlayer.discordId}> (DB: ${winningPlayer.duelingBook}) vs. <@${winnerNextOpponent.player.discordId}> (DB: ${winnerNextOpponent.player.duelingBook}). Good luck to both duelists.`})
                 } else if (winnerMatchWaitingOn && winnerWaitingOnP1 && winnerWaitingOnP2) {
-                    return message.channel.send({ content: `${winningPlayer.name}, You are waiting for the result of ${winnerWaitingOnP1.player.name} (DB: ${winnerWaitingOnP1.player.duelingBook}) vs ${winnerWaitingOnP2.player.name} (DB: ${winnerWaitingOnP2.player.duelingBook}).`})
+                    return interaction.channel.send({ content: `${winningPlayer.name}, You are waiting for the result of ${winnerWaitingOnP1.player.name} (DB: ${winnerWaitingOnP1.player.duelingBook}) vs ${winnerWaitingOnP2.player.name} (DB: ${winnerWaitingOnP2.player.duelingBook}).`})
                 } else {
-                    return message.channel.send({ content: `${winningPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`})
+                    return interaction.channel.send({ content: `${winningPlayer.name}, You are waiting for multiple matches to finish. Grab a snack and stay hydrated.`})
                 }
             }, 4000)
         }

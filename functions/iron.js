@@ -448,7 +448,7 @@ const postStory = async (channel, format) => {
         `\n${teamB.join('\n')}`
     })
 
-    return setTimeout(() => postPairing(channel, format), 5000)
+    return setTimeout(() => postPairing(interaction.channel, format), 5000)
 }
 
 //RESET IRON

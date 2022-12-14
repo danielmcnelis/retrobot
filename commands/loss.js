@@ -1,8 +1,10 @@
 
     const { SlashCommandBuilder } = require('discord.js')    
     const { hasAffiliateAccess, isIronPlayer, isTourPlayer } = require('../functions/utility')
+    const { postStory } = require('../functions/iron')
+    const { checkPairing, getMatches, processMatchResult, selectTournament } = require('../functions/tournament')
     const emojis = require('../static/emojis.json')
-    const { Entry, Format, Player, Server, Stats, Tournament } = require('../db')
+    const { Entry, Format, Match, Matchup, Player, Server, Stats, Tournament } = require('../db')
     const { Op } = require('sequelize')
 
     module.exports = {
@@ -17,7 +19,9 @@
             ),
         async execute(interaction) {
             const opponent = interaction.options.getUser('opponent')
+            const winner = interaction.guild.members.fetch(opponent.id)
             console.log('opponent', opponent)
+            console.log('winner', winner)
             const server = !interaction.guildId ? {} : 
                 await Server.findOne({ where: { id: interaction.guildId }}) || 
                 await Server.create({ id: interaction.guildId, name: interaction.guild.name })
@@ -28,14 +32,14 @@
                     where: {
                         [Op.or]: {
                             name: { [Op.iLike]: server.format },
-                            channel: mcid
+                            channel: interaction.channelId
                         }
                     }
                 })
         
             if (!format) return interaction.reply({ content: `Try using /loss in channels like: <#414575168174948372> or <#629464112749084673>.`})
             if (opponent.id === interaction.user.id) return interaction.reply({ content: `You cannot lose a match to yourself.`})
-            if (await isNewUser(opponent.id)) await createPlayer(opponent)
+            if (await isNewUser(opponent.id)) await createPlayer(winner)
             const winningPlayer = await Player.findOne({ where: { discordId: opponent.id } })
             const serverId = server.internalLadder ? server.id : '414551319031054346'
             
@@ -52,7 +56,7 @@
             if (!winningPlayer || !winnerStats) return interaction.reply({ content: `That user is not in the database.`})
     
             const loserHasTourRole = isTourPlayer(server, interaction.member)
-            const winnerHasTourRole = isTourPlayer(server, opponent)
+            const winnerHasTourRole = isTourPlayer(server, winner)
             const activeTournament = await Tournament.count({ where: { state: 'underway', serverId: interaction.guildId, formatName: format.name } }) 
             let isTournamentMatch
             let winningEntry
@@ -60,7 +64,7 @@
             let tournament
 
             const loserHasIronRole = isIronPlayer(server, interaction.member)
-            const winnerHasIronRole = isIronPlayer(server, opponent)
+            const winnerHasIronRole = isIronPlayer(server, winner)
             const activeIron = await Iron.count({ where: { format: format.name, status: 'active' }})
             let isIronMatch
 
