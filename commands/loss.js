@@ -6,7 +6,6 @@
     const emojis = require('../static/emojis.json')
     const { Entry, Format, Iron, Match, Matchup, Player, RatedPool, Server, Stats, Tournament } = require('../db')
     const { Op } = require('sequelize')
-    const { client } = require('../static/clients.js')
 
     module.exports = {
         data: new SlashCommandBuilder()
@@ -72,8 +71,22 @@
             let isIronMatch
 
             if (loserHasTourRole && winnerHasTourRole && activeTournament) {
-                const loserEntries = await Entry.findAll({ where: { playerId: losingPlayer.id }, include: Tournament })
-                const winnerEntries = await Entry.findAll({ where: { playerId: winningPlayer.id }, include: Tournament })
+                const loserEntries = await Entry.findAll({ 
+                    where: { 
+                        playerId: losingPlayer.id,
+                        '$tournament.formatId$': format.id
+                    }, 
+                    include: Tournament 
+                })
+
+                const winnerEntries = await Entry.findAll({ 
+                    where: { 
+                        playerId: winningPlayer.id,
+                        '$tournament.formatId$': format.id
+                    }, 
+                    include: Tournament 
+                })
+                
                 if (loserEntries.length && winnerEntries.length) {
                     const loserTournamentIds = []
                     const winnerTournamentIds = []

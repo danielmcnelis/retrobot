@@ -127,7 +127,7 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
 }
 
 // SELECT TOURNAMENT
-const selectTournament = async (interaction, tournaments, discordId) => {
+const selectTournament = async (interaction, tournaments) => {
     if (tournaments.length === 0) return false
     if (tournaments.length === 1) return tournaments[0]
     const options = tournaments.map((tournament, index) => `(${index + 1}) ${tournament.name}`)

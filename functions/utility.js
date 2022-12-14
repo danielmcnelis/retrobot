@@ -3,7 +3,7 @@
 
 //MODULE IMPORTS
 const Canvas = require('canvas')
-const Discord = require('discord.js')
+const { ActionRowBuilder, MessageEmbed, MessageAttachment, StringSelectMenuBuilder } = require('discord.js')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
@@ -187,10 +187,10 @@ const search = async (query, fuzzyCards, format) => {
 			` ${!card.link ? `DEF: ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
 			null
 	
-	const attachment = new Discord.MessageAttachment(`https://cdn.formatlibrary.com/images/cards/${card.ypdId}.jpg`, `${card.ypdId}.jpg`)
+	const attachment = new MessageAttachment(`https://cdn.formatlibrary.com/images/cards/${card.ypdId}.jpg`, `${card.ypdId}.jpg`)
 
 	const thumbnail = attachment ? `attachment://${card.ypdId}.jpg` : `https://ygoprodeck.com/pics/${card.ypdId}.jpg`    
-    const cardEmbed = new Discord.MessageEmbed()
+    const cardEmbed = new MessageEmbed()
 	cardEmbed.setColor(color)
 	cardEmbed.setTitle(card.name)
 	cardEmbed.setThumbnail(thumbnail)
@@ -312,7 +312,7 @@ const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, card
             }
         }
 
-        const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `${name}Deck.png`)
+        const attachment = new MessageAttachment(canvas.toBuffer(), `${name}Deck.png`)
         return attachment
     } catch (err) {
         console.log(err)
@@ -481,27 +481,27 @@ const isNewUser = async (discordId) => !await Player.count({ where: { discordId:
 const isTourPlayer = (server, member) => server && member && member._roles.includes(server.tourRole)
 
 // SELECT MATCH
-const selectMatch = async (message, matches, discordId) => {
+const selectMatch = async (interaction, matches) => {
     if (matches.length === 0) return false
     if (matches.length === 1) return matches[0]
-    const options = matches.map((match, index) => `(${index + 1}) ${match.winner} > ${match.loser}`)
-    const filter = m => m.author.id === discordId
-    message.channel.send({ content: `Please select a match to undo:\n${options.join('\n').toString()}`})
-    return await message.channel.awaitMessages({
-        filter,
-        max: 1,
-        time: 15000
-    }).then((collected) => {
-        const num = parseInt(collected.first().content.match(/\d+/))
-        if (!num || !matches[num - 1]) {
-            message.channel.send({ content: `Sorry, ${collected.first().content} is not a valid option.`})
-            return null
+
+    const options = matches.map((match, index) => {
+        return {
+            label: `(${index + 1})`,
+            description: `${match.winner} > ${match.loser}`,
+            value: matches[index],
         }
-        else return matches[num - 1]
-    }).catch((err) => {
-        console.log(err)
-        return null
     })
+
+    const row = new ActionRowBuilder()
+        .addComponents(
+            new StringSelectMenuBuilder()
+                .setCustomId('select')
+                .setPlaceholder('Nothing selected')
+                .addOptions(...options),
+        )
+
+    await interaction.reply({ content: `Please select a match to undo:`, components: [row] })
 }
 
 // SET TIMERS
