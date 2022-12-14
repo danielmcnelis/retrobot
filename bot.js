@@ -31,7 +31,8 @@ const commands = require('./commands')
 console.log('commands', commands)
 
 client.commands = new Collection()
-commands.forEach((command) => {
+
+Object.values(commands).forEach((command) => {
     console.log('set command.data.name', command.data.name)
     client.commands.set(command.data.name, command)
 })
