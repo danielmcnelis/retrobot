@@ -2,14 +2,14 @@
     const { SlashCommandBuilder } = require('discord.js')    
     const { getMedal } = require('../functions/utility')
     const emojis = require('../static/commands.json')
-    const { Format, Player, Server } = require('../db')
+    const { Format, Player, Server, Stats } = require('../db')
 
     module.exports = {
         data: new SlashCommandBuilder()
             .setName('stats')
             .setDescription('Post a player\'s stats'),
         async execute(interaction) {
-            const server = !mgid ? {} : 
+            const server = !interaction.guild.id ? {} : 
                 await Server.findOne({ where: { id: interaction.guild.id }}) || 
                 await Server.create({ id: interaction.guild.id, name: interaction.guild.name })
 
@@ -18,7 +18,7 @@
                 where: {
                     [Op.or]: {
                         name: { [Op.iLike]: server.format },
-                        channel: mcid
+                        channel: interaction.channel.id
                     }
                 }
             })
