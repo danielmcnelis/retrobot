@@ -1,7 +1,7 @@
 
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
 const { Server } = require('../db')
-const { isMod, hasAffiliateAccess } = require('../functions/utility')
+const { hasAffiliateAccess, isMod } = require('../functions/utility')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,8 +12,8 @@ module.exports = {
             await Server.findOne({ where: { id: interaction.guildId }}) || 
             await Server.create({ id: interaction.guildId, name: interaction.guild.name })
     
-        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
-        if (!isMod(server, message.member)) return message.channel.send({ content: "You do not have permission to do that."})
+        if (!hasAffiliateAccess(server)) return interaction.reply({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
+        if (!isMod(server, interaction.member)) return interaction.reply({ content: "You do not have permission to do that."})
 
         const botEmbed = new EmbedBuilder()
 	        .setColor('#38C368')
