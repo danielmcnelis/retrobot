@@ -13,7 +13,7 @@
                 option
                     .setName('user')
                     .setDescription('The user you want to check.')
-                    .setRequired(true)
+                    .setRequired(false)
             ),
         async execute(interaction) {
             console.log('interaction.guild', interaction.guild)
