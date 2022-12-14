@@ -25,35 +25,38 @@ const { assignRoles, capitalize, createMembership, createPlayer, fetchCardNames,
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
-const commands = require('./static/commands.json')
 const emojis = require('./static/emojis.json')
 
-// const ping = require('./commands/ping.js')
-// console.log('ping', ping)
-// client.commands = new Collection()
-// client.commands.set(ping.data.name, ping)
+const commands = require('./commands')
+console.log('commands', commands)
 
-// client.on(Events.InteractionCreate, interaction => {
-// 	console.log(interaction)
-// })
+client.commands = new Collection()
+commands.forEach((command) => {
+    console.log('set command.data.name', command.data.name)
+    client.commands.set(command.data.name, command)
+})
 
-// client.on(Events.InteractionCreate, async interaction => {
-// 	if (!interaction.isChatInputCommand()) return
+client.on(Events.InteractionCreate, interaction => {
+	console.log(interaction)
+})
 
-// 	const command = interaction.client.commands.get(interaction.commandName)
+client.on(Events.InteractionCreate, async interaction => {
+	if (!interaction.isChatInputCommand()) return
 
-// 	if (!command) {
-// 		console.error(`No command matching ${interaction.commandName} was found.`)
-// 		return
-// 	}
+	const command = interaction.client.commands.get(interaction.commandName)
 
-// 	try {
-// 		await command.execute(interaction)
-// 	} catch (error) {
-// 		console.error(error)
-// 		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
-// 	}
-// })
+	if (!command) {
+		console.error(`No command matching ${interaction.commandName} was found.`)
+		return
+	}
+
+	try {
+		await command.execute(interaction)
+	} catch (error) {
+		console.error(error)
+		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
+	}
+})
 
 // GLOBAL VARIABLES
 const fuzzyCards = FuzzySet([], false)
@@ -129,7 +132,6 @@ client.on('guildMemberRemove', async (member) => {
  
 // COMMANDS
 client.on('messageCreate', async (message) => {
-    console.log('messageCreate message', message)
 try {
     if (
 		//no commands in DMs except !rated
@@ -188,38 +190,6 @@ try {
         })
     }
 
-    // PING 
-    if (cmd === `!ping`) return message.channel.send({ content: '🏓'})
-
-    // SEED 
-    if (cmd === `!seed`) return message.channel.send({ content: '🌱'})
-
-    // STORY
-    if (cmd === `!story`) {
-        if (!hasFullAccess(server)) return message.channel.send({ content: `This feature is only available in Format Library. ${emojis.FL}`})
-        if (!isMod(server, message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
-
-        const format = await Format.findOne({
-            where: {
-                [Op.or]: {
-                    name: {[Op.iLike]: server.format },
-                    channel: mcid
-                }
-            }
-        })
-
-        return postStory(message.channel, format)
-    }
-
-    // TEST
-    if (cmd === `!test`) {
-        if (isProgrammer(message.member)) {
-            updateServers(client)
-            return message.channel.send(emojis.yellow)
-        } else {
-            return message.channel.send('🧪')
-        }
-    }
 
     // FIX
     if (cmd === `!fix`) {
@@ -1407,68 +1377,6 @@ try {
         }
     }
 
-
-    // STATS
-    if (commands.statscom.includes(cmd)) {
-        if (!hasAffiliateAccess(server)) return message.channel.send({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
-        const format = await Format.findOne({
-            where: {
-                [Op.or]: {
-                    name: { [Op.iLike]: server.format },
-                    channel: mcid
-                }
-            }
-        })
-
-        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
-        const discordId = message.mentions.users.first() ? message.mentions.users.first().id : args[0] ? args[0] : maid	
-        const player = await Player.findOne({ where: { discordId: discordId } })
-        if (!player) return message.channel.send({ content: "That user is not in the database."})
-        const serverId = server.internalLadder ? server.id : '414551319031054346'
-
-        const stats = await Stats.findOne({ 
-            where: { 
-                playerId: player.id, 
-                format: {[Op.iLike]: format.name}, 
-                [Op.or]: [
-                    { wins: { [Op.not]: null } }, 
-                    { losses: { [Op.not]: null } }, 
-                ],
-                serverId: serverId
-            } 
-        })
-
-        const allStats = await Stats.findAll({ 
-            where: {
-                format: { [Op.iLike]: format.name }, 
-                games: { [Op.gte]: 3 },
-                serverId: serverId,
-                inactive: false,
-                '$player.hidden$': false
-            },
-            include: [Player],
-            order: [['elo', 'DESC']] 
-        })
-
-        const index = allStats.length ? allStats.findIndex((s) => s.playerId === player.id) : null
-        const rank = stats && index >= 0 ? `#${index + 1} out of ${allStats.length}` : `N/A`
-        const elo = stats ? stats.elo.toFixed(2) : `500.00`
-        const medal = getMedal(elo, title = true)
-        const wins = stats ? stats.wins : 0
-        const losses = stats ? stats.losses : 0
-        const winrate = wins || losses ? `${(100 * wins / (wins + losses)).toFixed(2)}%` : 'N/A'		
-
-        return message.channel.send({ content: 
-            `${server.emoji || format.emoji} --- ${format.name} Stats --- ${server.emoji || format.emoji}`
-            + `${server.internalLadder ? `\nServer: ${server.name}` : ''}`
-            + `\nName: ${player.name}`
-            + `\nMedal: ${medal}`
-            + `\nRanking: ${rank}`
-            + `\nElo Rating: ${elo}`
-            + `\nWins: ${wins}, Losses: ${losses}`
-            + `\nWin Rate: ${winrate}`
-        })
-    }
 
     // HISTORY
     if (commands.histcom.includes(cmd)) {
