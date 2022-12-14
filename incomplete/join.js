@@ -12,7 +12,7 @@
             where: {
                 [Op.or]: {
                     name: {[Op.iLike]: server.format },
-                    channel: mcid
+                    channel: interaction.channelId
                 }
             }
         })
@@ -21,7 +21,7 @@
             where: { 
                 state: {[Op.or]: ['pending', 'standby']}, 
                 formatName: format ? format.name : {[Op.not]: null},
-                serverId: mgid
+                serverId: interaction.guildId
             }, 
             order: [['createdAt', 'ASC']] 
         })
@@ -38,7 +38,7 @@
             where: { 
                 state: 'underway', 
                 formatName: format ? format.name : {[Op.not]: null},
-                serverId: mgid
+                serverId: interaction.guildId
             }
         })
 

@@ -2,7 +2,7 @@
 
     // LEGAL
     if (commands.legalcom.includes(cmd)) {
-        const format = await getDeckFormat(server, message, mcid)
+        const format = await getDeckFormat(server, message, interaction.channelId)
         if (!format) return
         if (format.category !== 'TCG') return message.channel.send(`Sorry, ${format.category} formats are not supported at this time.`)
         message.channel.send(`Please check your DMs.`)

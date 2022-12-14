@@ -6,7 +6,7 @@
         if (isProgrammer(message.member)) {
             const tournaments = await Tournament.findAll({
                 where: {
-                    serverId: mgid,
+                    serverId: interaction.guildId,
                     createdAt: { [Op.gte]: "2022-07-01 00:00:00.000+00" },
                 },
                 order: [["createdAt", "ASC"]],

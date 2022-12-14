@@ -7,7 +7,7 @@
         if (!args.length) return message.channel.send({ content: `Please specify the name of the tournament you wish to destroy.`})
 
         const input = args[0]
-        const tournament = await Tournament.findOne({ where: { abbreviation: { [Op.iLike]: input } }, serverId: mgid })
+        const tournament = await Tournament.findOne({ where: { abbreviation: { [Op.iLike]: input } }, serverId: interaction.guildId })
         if (!tournament) return message.channel.send({ content: `Could not find tournament: "${input}".`})
         if (tournament.state === 'underway') return message.channel.send({ content: `This tournament is underway, therefore it may only be deleted by the database manager.`})
         if (tournament.state === 'complete') return message.channel.send({ content: `This tournament is complete, therefore it may only be deleted by the database manager.`})

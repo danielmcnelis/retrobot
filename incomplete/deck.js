@@ -12,7 +12,7 @@
         const tournaments = await Tournament.findAll({
             where: { 
                 state: {[Op.or]: ["pending", "underway"]}, 
-                serverId: mgid 
+                serverId: interaction.guildId 
             },
             order: [["createdAt", "ASC"]]
         })

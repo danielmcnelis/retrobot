@@ -8,7 +8,7 @@
         const tournaments = await Tournament.findAll({ 
             where: { 
                 state: 'underway',
-                serverId: mgid
+                serverId: interaction.guildId
             }, 
             order: [['createdAt', 'ASC']] 
         })
@@ -19,7 +19,7 @@
                     name: { [Op.iLike]: input }, 
                     url: { [Op.iLike]: input }
                 }, 
-                serverId: mgid
+                serverId: interaction.guildId
             }
         }) || await selectTournament(message, tournaments, maid)
         

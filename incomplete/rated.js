@@ -1,7 +1,7 @@
 
     // RATED PLAY
     if (commands.ratedcom.includes(cmd)) {
-        if (mgid) return message.channel.send(`Try using ${cmd} by DM'ing it to me.`)
+        if (interaction.guildId) return message.channel.send(`Try using ${cmd} by DM'ing it to me.`)
         const player = await Player.findOne({ where: { discordId: maid } })
         if (!player) return message.channel.send(`You are not in the database. Please join the Format Library Discord server to register.`)
         const format = await getRatedFormat(message)

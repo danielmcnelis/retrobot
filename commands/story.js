@@ -11,7 +11,7 @@ module.exports = {
 		.setName('story')
 		.setDescription('Posts the Iron Story.'),
 	async execute(interaction) {
-        const server = !mgid ? {} : 
+        const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 
             await Server.create({ id: interaction.guildId, name: interaction.guild.name })
 
@@ -22,7 +22,7 @@ module.exports = {
             where: {
                 [Op.or]: {
                     name: {[Op.iLike]: server.format },
-                    channel: mcid
+                    channel: interaction.channelId
                 }
             }
         })

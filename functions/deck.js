@@ -34,12 +34,12 @@ const {
 
 
 // GET DECK FORMAT
-const getDeckFormat = async (server, message, mcid) => {
+const getDeckFormat = async (server, message, interaction.channelId) => {
     let format = await Format.findOne({ 
         where: { 
             [Op.or]: {
                 name: { [Op.iLike]: server.format },
-                channel: mcid
+                channel: interaction.channelId
             }
         }
     })

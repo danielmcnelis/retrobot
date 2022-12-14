@@ -8,7 +8,7 @@
                 state: {
                     [Op.or]: ['pending', 'standby']
                 },
-                serverId: mgid
+                serverId: interaction.guildId
             }, 
             order: [['createdAt', 'ASC']] 
         })

@@ -25,7 +25,7 @@ module.exports = {
             where: {
                 [Op.or]: {
                     name: {[Op.iLike]: server.format },
-                    channel: mcid
+                    channel: interaction.channelId
                 }
             }
         })

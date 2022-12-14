@@ -74,7 +74,7 @@
                     emoji: server.emoji || format.emoji,
                     url: data.tournament.url,
                     channelId: channelId,
-                    serverId: mgid,
+                    serverId: interaction.guildId,
                     community: server.name
                 })
 
@@ -114,7 +114,7 @@
                         emoji: server.emoji || format.emoji,
                         url: data.tournament.url,
                         channelId: channelId,
-                        serverId: mgid,
+                        serverId: interaction.guildId,
                         community: server.name
                     })
 
