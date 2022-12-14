@@ -34,6 +34,7 @@ module.exports = {
         const matches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [['createdAt', 'DESC']]})
         const authorIsMod = isMod(server, interaction.member)
         const match = authorIsMod ? await selectMatch(interaction, matches.slice(0, 10)) : matches[0]
+        console.log('match', match)
         const winnerId = match.winnerId
         const loserId = match.loserId
         const winningPlayer = await Player.findOne({ where: { id: winnerId } })

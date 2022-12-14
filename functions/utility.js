@@ -489,7 +489,7 @@ const selectMatch = async (interaction, matches) => {
         return {
             label: `(${index + 1})`,
             description: `${match.winner} > ${match.loser}`,
-            value: matches[index],
+            value: index,
         }
     })
 
