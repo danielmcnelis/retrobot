@@ -25,7 +25,8 @@
             })
     
             if (!format) return interaction.reply({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
-            const discordId = interaction.mentions.users.first() ? interaction.mentions.users.first().id : args[0] ? args[0] : interaction.member.user.id	
+            const user = interaction.options.getUser('user') || interaction.user
+            const discordId = user.id	
             const player = await Player.findOne({ where: { discordId: discordId } })
             if (!player) return interaction.reply({ content: "That user is not in the database."})
             const serverId = server.internalLadder ? server.id : '414551319031054346'
