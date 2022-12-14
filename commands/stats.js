@@ -1,6 +1,6 @@
 
     const { SlashCommandBuilder } = require('discord.js')    
-    const { getMedal } = require('../functions/utility')
+    const { hasAffiliateAccess, getMedal } = require('../functions/utility')
     const emojis = require('../static/commands.json')
     const { Format, Player, Server, Stats } = require('../db')
 
