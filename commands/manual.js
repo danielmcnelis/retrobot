@@ -26,11 +26,11 @@
             ),
         async execute(interaction) {
             const winner = interaction.options.getUser('winner')
-            const winningMember = await interaction.guild.members.fetch(winner.user.id)
+            const winningMember = await interaction.guild.members.fetch(winner.id)
             console.log('winningMember', winningMember)
 
             const loser = interaction.options.getUser('loser')
-            const losingMember = await interaction.guild.members.fetch(loser.user.id)
+            const losingMember = await interaction.guild.members.fetch(loser.id)
             console.log('losingMember', losingMember)
 
             const server = !interaction.guildId ? {} : 
