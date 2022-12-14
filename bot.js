@@ -129,7 +129,7 @@ client.on('guildMemberRemove', async (member) => {
  
 // COMMANDS
 client.on('messageCreate', async (message) => {
-    console.log('messageCreate')
+    console.log('messageCreate message', message)
 try {
     if (
 		//no commands in DMs except !rated
