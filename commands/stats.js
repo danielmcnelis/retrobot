@@ -9,10 +9,10 @@
         data: new SlashCommandBuilder()
             .setName('stats')
             .setDescription(`Post a player's stats.`)
-            .addUserOption((option) =>
+            .addUserOption(option =>
                 option.setName('user')
                     .setDescription('The user whose stats you want to check.')
-                    .setRequired(false)
+                    .setRequired(true)
             ),
         async execute(interaction) {
             const server = !interaction.guild.id ? {} : 
