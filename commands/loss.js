@@ -20,6 +20,7 @@
             ),
         async execute(interaction) {
             const opponent = interaction.options.getUser('opponent')
+            const member = interaction.guild.members.fetch(interaction.user.id)
             const winner = interaction.guild.members.fetch(opponent.id)
             console.log('opponent', opponent)
             console.log('winner', winner)
@@ -56,7 +57,7 @@
             if (!losingPlayer || !loserStats) return interaction.reply({ content: `You are not in the database.`})
             if (!winningPlayer || !winnerStats) return interaction.reply({ content: `That user is not in the database.`})
     
-            const loserHasTourRole = isTourPlayer(server, interaction.member)
+            const loserHasTourRole = isTourPlayer(server, member)
             const winnerHasTourRole = isTourPlayer(server, winner)
             const activeTournament = await Tournament.count({ where: { state: 'underway', serverId: interaction.guildId, formatName: format.name } }) 
             let isTournamentMatch
@@ -64,7 +65,7 @@
             let losingEntry
             let tournament
 
-            const loserHasIronRole = isIronPlayer(server, interaction.member)
+            const loserHasIronRole = isIronPlayer(server, member)
             const winnerHasIronRole = isIronPlayer(server, winner)
             const activeIron = await Iron.count({ where: { format: format.name, status: 'active' }})
             let isIronMatch
