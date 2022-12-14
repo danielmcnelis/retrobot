@@ -22,7 +22,7 @@
             const opponent = interaction.options.getUser('opponent')
             const member = interaction.guild.members.fetch(interaction.user.id)
             const winner = interaction.guild.members.fetch(opponent.id)
-            console.log('opponent', opponent)
+            console.log('member', member)
             console.log('winner', winner)
             const server = !interaction.guildId ? {} : 
                 await Server.findOne({ where: { id: interaction.guildId }}) || 
