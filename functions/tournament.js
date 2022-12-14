@@ -127,12 +127,13 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
 }
 
 // SELECT TOURNAMENT
-const selectTournament = async (message, tournaments, discordId) => {
+const selectTournament = async (interaction, tournaments, discordId) => {
     if (tournaments.length === 0) return false
     if (tournaments.length === 1) return tournaments[0]
     const options = tournaments.map((tournament, index) => `(${index + 1}) ${tournament.name}`)
     const filter = m => m.author.id === discordId
     interaction.channel.send({ content: `Please select a tournament:\n${options.join('\n').toString()}`})
+    
     return await interaction.channel.awaitMessages({
         filter,
         max: 1,

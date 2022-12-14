@@ -90,8 +90,22 @@
         let isIronMatch
 
         if (loserHasTourRole && winnerHasTourRole && activeTournament) {
-            const loserEntries = await Entry.findAll({ where: { playerId: losingPlayer.id }, include: Tournament })
-            const winnerEntries = await Entry.findAll({ where: { playerId: winningPlayer.id }, include: Tournament })
+            const loserEntries = await Entry.findAll({ 
+                where: { 
+                    playerId: losingPlayer.id,
+                    '$tournament.formatId$': format.id
+                }, 
+                include: Tournament 
+            })
+
+            const winnerEntries = await Entry.findAll({ 
+                where: { 
+                    playerId: winningPlayer.id,
+                    '$tournament.formatId$': format.id
+                 }, 
+                include: Tournament 
+            })
+
             if (loserEntries.length && winnerEntries.length) {
                 const loserTournamentIds = []
                 const winnerTournamentIds = []
@@ -137,7 +151,7 @@
                 }
                     
                 if (tournaments.length) {
-                    const tournament = await selectTournament(interaction, tournaments, message.member.user.id)
+                    const tournament = await selectTournament(interaction, tournaments, interaction.user.id)
                     if (tournament) {
                         isTournamentMatch = true
                         if (tournament.state === 'pending' || tournament.state === 'standby') return interaction.reply({ content: `Sorry, ${tournament.name} has not started yet.`})
