@@ -35,19 +35,21 @@
             
             const serverId = server.internalLadder ? server.id : '414551319031054346'
             const count = await Match.count({ where: { format: format.name, serverId: serverId }})
+
             interaction.reply({ content: `Recalculating data from ${count} ${format.name} ${format.emoji} matches. Please wait...`})
             
             const allMatches = await Match.findAll({ 
                 where: { format: format.name, serverId: serverId }, 
-                attributes: ['winnerId', 'loserId', 'delta'], 
+                attributes: ['id', 'winnerId', 'loserId', 'delta'], 
                 order: [["createdAt", "ASC"]]
             })
+
+            console.log('allMatches.length', allMatches.length)
 
             const allStats = await Stats.findAll({ where: { format: format.name, serverId: serverId } })
     
             for (let i = 0; i < allStats.length; i++) {
                 const stats = allStats[i]
-                
                 await stats.update({
                     elo: 500.00,
                     testElo: 500.00,
