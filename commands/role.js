@@ -40,7 +40,7 @@
             const membership = await Membership.findOne({ where: { '$player.discordId$': interaction.user.id, serverId: interaction.guildId }, include: Player })
             if (!membership) return interaction.reply({ content: `You are not in the database.`})
     
-            if (!message.member.roles.cache.some(role => role.id === roleId)) {
+            if (!interaction.member.roles.cache.some(role => role.id === roleId)) {
                 try {
                     await interaction.member.roles.add(roleId)
                     const count = await Role.count({ where: { membershipId: membership.id, roleId: roleId } })
