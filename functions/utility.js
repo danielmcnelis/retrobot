@@ -187,8 +187,7 @@ const search = async (query, fuzzyCards, format) => {
 			` ${!card.link ? `DEF: ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
 			null
 	
-	const attachment = new AttachmentBuilder({ buffer: `https://cdn.formatlibrary.com/images/cards/${card.ypdId}.jpg`, name: `${card.ypdId}.jpg` })
-
+	const attachment = new AttachmentBuilder(`https://cdn.formatlibrary.com/images/cards/${card.ypdId}.jpg`, { name: `${card.ypdId}.jpg` })
 	const thumbnail = attachment ? `attachment://${card.ypdId}.jpg` : `https://ygoprodeck.com/pics/${card.ypdId}.jpg`    
     
     const cardEmbed = new EmbedBuilder()
@@ -313,7 +312,7 @@ const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, card
             }
         }
 
-        const attachment = new AttachmentBuilder({ buffer: canvas.toBuffer(), name: `${name}Deck.png` })
+        const attachment = new AttachmentBuilder(canvas.toBuffer(), { name: `${name}Deck.png` })
         return attachment
     } catch (err) {
         console.log(err)
