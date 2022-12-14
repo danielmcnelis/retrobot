@@ -1,7 +1,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { BlogPost, Event, Format, Server } = require('../db')
+const { BlogPost, Event } = require('../db')
 const { isProgrammer } = require('../functions/utility')
 
 module.exports = {

@@ -3,6 +3,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const { Format, Match, Server } = require('../db')
 const QuickChart = require('quickchart-js')
+const { hasAffiliateAccess } = require('../functions/utility')
 
 module.exports = {
     data: new SlashCommandBuilder()

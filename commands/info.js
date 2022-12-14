@@ -1,6 +1,7 @@
 
 const { SlashCommandBuilder } = require('discord.js')
 const { Format, Server } = require('../db')
+const { urlize } = require('../functions/utility')
 
 module.exports = {
     data: new SlashCommandBuilder()
