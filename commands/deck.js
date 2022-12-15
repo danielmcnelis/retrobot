@@ -41,6 +41,8 @@ module.exports = {
             },
             order: [["createdAt", "ASC"]]
         })
+        
+        console.log('touranments.length', tournaments.length)
 
         const discordId = user.id
         const isAuthor = discordId === interaction.user.id
@@ -54,6 +56,7 @@ module.exports = {
         for (let i = 0; i < tournaments.length; i++) {
             try {
                 const tournament = tournaments[i]
+                console.log('tournament.name', tournament.name)
                 const entry = await Entry.findOne({
                     where: {
                         playerId: player.id,
@@ -67,6 +70,8 @@ module.exports = {
                 console.log(err)
             }
         }
+
+        console.log('entries.length', entries.length)
         
         const entry = await selectTournamentForDeckCheck(interaction, entries, isAuthor, format)
         if (!entry) return

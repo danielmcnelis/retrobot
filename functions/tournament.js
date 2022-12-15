@@ -129,28 +129,32 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
 
 // SELECT TOURNAMENT FOR DECK CHECK
 const selectTournamentForDeckCheck = async (interaction, entries, isAuthor, format) => {
-    if (entries.length === 0) return interaction.reply({ content: `${isAuthor ? "You are" : "That player is"} not registered for any ${format.name} format ${format.emoji} tournaments in this server.`})
-    if (entries.length === 1) return entries[0]
+    if (entries.length === 0) {
+        interaction.reply({ content: `${isAuthor ? "You are" : "That player is"} not registered for any ${format.name} format ${format.emoji} tournaments in this server.`})
+        return false
+    } else if (entries.length === 1) {
+        return entries[0]
+    } else {
+        const options = entries.map((entry, index) => {
+            return {
+                label: `(${index + 1}) ${entry.tournament.name}`,
+                value: `${entry.id}`,
+            }
+        })
     
-    const options = entries.map((entry, index) => {
-        return {
-            label: `(${index + 1}) ${entry.tournament.name}`,
-            value: `${entry.id}`,
-        }
-    })
-
-    console.log('options', options)
-
-    const row = new ActionRowBuilder()
-        .addComponents(
-            new StringSelectMenuBuilder()
-                .setCustomId('select')
-                .setPlaceholder('Nothing selected')
-                .addOptions(...options),
-        )
-
-    interaction.reply({ content: `Please select a tournament:`, components: [row] })
-    return false
+        console.log('options', options)
+    
+        const row = new ActionRowBuilder()
+            .addComponents(
+                new StringSelectMenuBuilder()
+                    .setCustomId('select')
+                    .setPlaceholder('Nothing selected')
+                    .addOptions(...options),
+            )
+    
+        interaction.reply({ content: `Please select a tournament:`, components: [row] })
+        return false
+    }
 }
 
 // SEND DECK
