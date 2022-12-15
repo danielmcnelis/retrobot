@@ -9,6 +9,7 @@ const { askForDBName } = require('../functions/tournament')
 const { drawDeck } = require('../functions/utility')
 const axios = require('axios')
 const { client } = require('../static/clients.js')
+const emojis = require('../static/emojis.json')
 
 const getRatedInformation = async (interaction, player) => {
     const format = await getRatedFormat(interaction)
