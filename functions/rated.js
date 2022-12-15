@@ -126,8 +126,8 @@ const getDropFormats = async (message, pools) => {
 // GET RATED FORMAT
 const getRatedFormat = async (interaction) => {
     const filter = m => m.author.id === interaction.user.id
-    const msg = await interaction.user.send({ content: `What format do you want to play?`})
-    return await msg.awaitMessages({
+    const message = await interaction.user.send({ content: `What format do you want to play?`})
+    return await message.channel.awaitMessages({
         filter,
         max: 1,
         time: 15000
@@ -137,7 +137,7 @@ const getRatedFormat = async (interaction) => {
         return format
     }).catch((err) => {
         console.log(err)
-        interaction.user.send({ content: `Sorry, time's up.`})
+        message.channel.send({ content: `Sorry, time's up.`})
         return false
     })
 }
