@@ -9,8 +9,8 @@ const { Op } = require('sequelize')
 const { Deck, Format, Player, RatedPool, Stats, Server } = require('../db/index.js')
 
 //STATIC IMPORTS
-const channels = require('../static/channels')
 const emojis = require('../static/emojis.json')
+const yescom = ['yes', 'ye', 'y', 'ya', 'yeah', 'da', 'ja', 'si', 'ok', 'sure']
 
 //FUNCTION IMPORTS
 const { getIssues } = require('./deck')
