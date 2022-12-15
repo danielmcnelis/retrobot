@@ -6,6 +6,7 @@ const { Op } = require('sequelize')
 const { getRatedFormat } = require('../functions/rated')
 const { askForDBName } = require('../functions/tournament')
 const axios = require('axios')
+const { client } = require('../static/clients.js')
 
 const getRatedInformation = async (member, player) => {
     console.log('getRatedInformation() interaction', interaction)
