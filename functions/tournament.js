@@ -127,6 +127,15 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
     })
 }
 
+// SEND DECK
+const sendDeck = async (interaction, entryId) => {
+    const entry = await Entry.findOne({ where: { id: entryId }, include: [Player, Tournament] })
+    interaction.reply({ content: `Please check your DMs.` })
+    const deckAttachments = await drawDeck(entry.ydk) || []
+    const isAuthor = interaction.user.id === entry.player.discordId
+    return interaction.member.send({ content: `${isAuthor ? `${entry.player.name}\'s` : 'Your'} deck for ${entry.tournament.name} is:\n<${entry.url}>`, files: [...deckAttachments]}).catch((err) => console.log(err))
+}
+
 // SELECT TOURNAMENT FOR DECK CHECK
 const selectTournamentForDeckCheck = async (interaction, entries, isAuthor, format) => {
     if (entries.length === 0) {
@@ -152,41 +161,46 @@ const selectTournamentForDeckCheck = async (interaction, entries, isAuthor, form
                     .addOptions(...options),
             )
     
-        interaction.reply({ content: `Please select a tournament:`, components: [row] })
+        await interaction.reply({ content: `Please select a tournament:`, components: [row] })
         return false
     }
 }
 
-// SEND DECK
-const sendDeck = async (interaction, entryId) => {
-    const entry = await Entry.findOne({ where: { id: entryId }, include: [Player, Tournament] })
-    interaction.reply({ content: `Please check your DMs.` })
-    const deckAttachments = await drawDeck(entry.ydk) || []
-    const isAuthor = interaction.user.id === entry.player.discordId
-    return interaction.member.send({ content: `${isAuthor ? `${entry.player.name}\'s` : 'Your'} deck for ${entry.tournament.name} is:\n<${entry.url}>`, files: [...deckAttachments]}).catch((err) => console.log(err))
-}
 
 // SELECT TOURNAMENT
 const selectTournament = async (interaction, tournaments) => {
-    if (tournaments.length === 0) return interaction.reply({ content: `There is no active tournament.` })
-    if (tournaments.length === 1) return tournaments[0]
+    if (tournaments.length === 0) {
+        await interaction.reply({ content: `There is no pending tournament.` })
+        return false
+    } else if (tournaments.length === 1)  {
+        return tournaments[0]
+    } else {
+        const options = tournaments.map((tournament, index) => {
+            return {
+                label: `(${index + 1}) ${tournament.name}`,
+                value: `${tournaments[index].id}`,
+            }
+        })
     
-    const options = tournaments.map((tournament, index) => {
-        return {
-            label: `(${index + 1}) ${tournament.name}`,
-            value: `${tournaments[index].id}`,
-        }
-    })
+        const row = new ActionRowBuilder()
+            .addComponents(
+                new StringSelectMenuBuilder()
+                    .setCustomId('select')
+                    .setPlaceholder('Nothing selected')
+                    .addOptions(...options),
+            )
+    
+        await interaction.reply({ content: `Please select a tournament:`, components: [row] })
+        return false
+    }
+}
 
-    const row = new ActionRowBuilder()
-        .addComponents(
-            new StringSelectMenuBuilder()
-                .setCustomId('select')
-                .setPlaceholder('Nothing selected')
-                .addOptions(...options),
-        )
+// CLOSE TOURNAMENT 
 
-    return interaction.reply({ content: `Please select a tournament:`, components: [row] })
+const closeTournament = async (interaction, tournamentId) => {
+    const tournament = await Tournament.findOne({ where: { id: tournamentId }})
+    await tournament.update({ state: 'standby' })
+    return interaction.reply({ content: `Registration for ${tournament.name} ${tournament.logo} is now closed.`})
 }
 
 ////// TOURNAMENT HOST FUNCTIONS ///////

@@ -91,6 +91,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
             const entryId = interaction.values[0]
             await sendDeck(interaction, entryId)
             return interaction.message.edit({components: []})
+        } else if (command.data.name === 'close') {
+            const tournamentId = interaction.values[0]
+            await closeTournament(interaction, tournamentId)
+            return interaction.message.edit({components: []})
         } else {
             return
         }
