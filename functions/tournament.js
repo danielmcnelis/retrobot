@@ -139,6 +139,8 @@ const selectTournamentForDeckCheck = async (interaction, entries, isAuthor, form
         }
     })
 
+    console.log('options', options)
+
     const row = new ActionRowBuilder()
         .addComponents(
             new StringSelectMenuBuilder()
