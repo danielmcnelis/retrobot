@@ -49,7 +49,7 @@ module.exports = {
         const player = await Player.findOne({ where: { discordId: discordId } })
         if (!player) return interaction.reply({ content: `${isAuthor ? "You are" : "That player is"} not in the database.`})
         
-        const tournament = await selectTournament(interaction, tournaments, maid)
+        const tournament = await selectTournament(interaction, tournaments)
 
         interaction.deferReply().then(console.log).catch(console.error)
 
