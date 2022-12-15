@@ -11,6 +11,7 @@ const { Membership, Player, Server } = require('./db/index.js')
 // FUNCTION IMPORTS
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
+const { undoMatch } = require('./functions/undo')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
@@ -76,11 +77,12 @@ client.on(Events.InteractionCreate, async interaction => {
 })
 
 // SELECT MENUS
-client.on(Events.InteractionCreate, async interaction => {
+client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isStringSelectMenu()) return;
-
-	const selected = interaction.values[0];
-	await interaction.update(`The ${selected} option has been selected!`)
+    console.log('interaction', interaction)
+	const matchId = interaction.values[0];
+    await undoMatch(interaction.channel, matchId)
+	return interaction.reply(`Match #${selected} has been selected!`)
 });
 
 // WELCOME
