@@ -29,7 +29,7 @@ module.exports = {
         const tournaments = await Tournament.findAll({ 
             where: { 
                 state: 'pending',
-                // formatName: format.name,
+                formatName: format.name,
                 serverId: interaction.guildId
             }, 
             order: [['createdAt', 'ASC']] 

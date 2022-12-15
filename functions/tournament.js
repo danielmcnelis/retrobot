@@ -207,6 +207,90 @@ const openTournament = async (interaction, tournamentId) => {
     return interaction.reply({ content: `Registration for ${tournament.name} ${tournament.logo} is now open.`})
 }
 
+// JOIN TOURNAMENT 
+const joinTournament = async (interaction, tournamentId) => {
+    const player = await Player.findOne({
+        where: {
+            discordId: interaction.user.id
+        }
+    })
+    
+    const event = await Event.findOne({
+        where: {
+            tournamentId: tournamentId
+        },
+        include: Tournament
+    })
+
+    const tournament = event.tournament
+
+    const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournamentId }})
+    const format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.formatName } }})
+    if (!format) return interaction.reply(`Unable to determine what format is being played in ${tournament.name}. Please contact an administrator.`)
+    interaction.reply({ content: `Please check your DMs.` })
+    
+    const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.member, player)
+    if (!dbName) return
+    const { url, ydk } = await getDeckList(server, interaction.member, player, format, tournament.name, event)
+    if (!url) return
+
+    if (!entry) {
+        try {                                
+          const { participant } = await postParticipant(server, tournament, player)
+          if (!participant) return interaction.member.send({ content: `Error: Unable to register on Challonge for ${tournament.name} ${tournament.logo}.`})
+          
+          await Entry.create({
+              playerName: player.name,
+              url: url,
+              ydk: ydk,
+              participantId: participant.id,
+              playerId: player.id,
+              tournamentId: tournament.id
+          })
+    
+        } catch (err) {
+          console.log(err)
+          return interaction.member.send({ content: `Error: Could not access database.`})
+        } finally {
+          const deckAttachments = await drawDeck(ydk) || []
+          interaction.member.roles.add(server.tourRole).catch((err) => console.log(err))
+          interaction.member.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament! FYI, this is the deck you submitted:`, files: [...deckAttachments] }).catch((err) => console.log(err))
+          return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        }
+    } else if (entry.active === false) {
+        try {                                
+            const { participant } = await postParticipant(server, tournament, player)
+            if (!participant) return interaction.member.send({ content: `Error: Unable to register on Challonge for ${tournament.name} ${tournament.logo}.`})
+            
+            await entry.update({
+                url: url,
+                ydk: ydk,
+                participantId: participant.id,
+                active: true
+            })
+        } catch (err) {
+            console.log(err)
+            return interaction.member.send({ content: `Error: Could not access database.`})
+        } finally {
+            const deckAttachments = await drawDeck(ydk) || []
+            interaction.member.roles.add(server.tourRole).catch((err) => console.log(err))
+            interaction.member.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament! FYI, this is the deck you submitted:`, files: [...deckAttachments] }).catch((err) => console.log(err))
+            return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        }
+    } else {
+        try {
+            await entry.update({ url: url, ydk: ydk })
+        } catch (err) {
+            console.log(err)
+            return interaction.member.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
+        } finally {
+            const deckAttachments = await drawDeck(ydk) || []
+            interaction.member.send({ content: `Thanks! I have your updated deck list for the tournament:`, files: [...deckAttachments] }).catch((err) => console.log(err))
+            return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> resubmitted their deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        }
+    }
+}
+
 ////// TOURNAMENT HOST FUNCTIONS ///////
 
 // CREATE SHEET DATA
@@ -840,6 +924,7 @@ module.exports = {
     getTournamentFormat,
     getTournamentType,
     getMatches,
+    joinTournament,
     openTournament,
     processMatchResult,
     postParticipant,
