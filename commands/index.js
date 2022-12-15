@@ -8,6 +8,7 @@ const coverage = require('./coverage')
 const deck = require('./deck')
 const dice = require('./dice')
 const duelingbook = require('./duelingbook')
+const exit = require('./exit')
 const h2h = require('./h2h')
 const help = require('./help')
 const history = require('./history')
@@ -45,6 +46,7 @@ module.exports = {
     deck,
     dice,
     duelingbook,
+    exit,
     h2h,
     help,
     history,
