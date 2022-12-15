@@ -22,10 +22,12 @@ const noshow = require('./noshow')
 const open = require('./open')
 const ping = require('./ping')
 const queue = require('./queue')
+const rated = require('./rated')
 const recalculate = require('./recalculate')
 const rng = require('./rng')
 const role = require('./role')
 const search = require('./search')
+const signup = require('./signup')
 const stats = require('./stats')
 const story = require('./story')
 const test = require('./test')
@@ -55,10 +57,12 @@ module.exports = {
     open,
     ping,
     queue,
+    rated,
     recalculate,
     rng,
     role,
     search,
+    signup,
     stats,
     story,
     test,

@@ -12,18 +12,14 @@ const { Membership, Player, Server } = require('./db/index.js')
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
 const { undoMatch } = require('./functions/undo')
-const { closeTournament, joinTournament, openTournament, sendDeck } = require('./functions/tournament')
+const { checkTimer, closeTournament, joinTournament, openTournament, sendDeck, setTimerForTournament, signupForTournament } = require('./functions/tournament')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
 const emojis = require('./static/emojis.json')
 const commands = require('./commands')
 client.commands = new Collection()
-Object.values(commands).forEach((command) => {
-    console.log('Setting command.data.name', command.data.name)
-    client.commands.set(command.data.name, command)
-})
-
+Object.values(commands).forEach((command) => client.commands.set(command.data.name, command))
 
 // GLOBAL VARIABLES
 const fuzzyCards = FuzzySet([], false)
@@ -76,7 +72,7 @@ client.on(Events.InteractionCreate, async interaction => {
         }
 	} catch (error) {
 		console.error(error)
-		return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
+		return interaction.reply({ content: 'There was an error executing this command!', ephemeral: true })
 	}
 })
 
@@ -107,6 +103,18 @@ client.on(Events.InteractionCreate, async (interaction) => {
         } else if (command.data.name === 'join') {
             const tournamentId = interaction.values[0]
             await joinTournament(interaction, tournamentId)
+            return interaction.message.edit({components: []})
+        } else if (command.data.name === 'signup') {
+            const tournamentId = interaction.values[0]
+            await signupForTournament(interaction, tournamentId)
+            return interaction.message.edit({components: []})
+        } else if (command.data.name === 'timer') {
+            const tournamentId = interaction.values[0]
+            await checkTimer(interaction, tournamentId)
+            return interaction.message.edit({components: []})
+        } else if (command.data.name === 'settimer') {
+            const tournamentId = interaction.values[0]
+            await setTimerForTournament(interaction, tournamentId)
             return interaction.message.edit({components: []})
         } else {
             return

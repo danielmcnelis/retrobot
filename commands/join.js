@@ -42,12 +42,6 @@ module.exports = {
         const tournament = await selectTournament(interaction, tournaments)
         if (!tournament) return
 
-        const event = await Event.findOne({
-            where: {
-                tournamentId: tournament.id
-            }
-        })
-
         const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournament.id }})
         if (!format) format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.formatName } }})
         if (!format) return interaction.reply(`Unable to determine what format is being played in ${tournament.name}. Please contact an administrator.`)
@@ -55,7 +49,8 @@ module.exports = {
         
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.member, player)
         if (!dbName) return
-        const { url, ydk } = await getDeckList(server, interaction.member, player, format, tournament.name, event)
+
+        const { url, ydk } = await getDeckList(server, interaction.member, player, format, tournament.name)
         if (!url) return
 
         if (!entry) {

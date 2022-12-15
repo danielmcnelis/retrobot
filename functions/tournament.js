@@ -214,15 +214,12 @@ const joinTournament = async (interaction, tournamentId) => {
             discordId: interaction.user.id
         }
     })
-    
-    const event = await Event.findOne({
-        where: {
-            tournamentId: tournamentId
-        },
-        include: Tournament
-    })
 
-    const tournament = event.tournament
+    const tournament = await Tournament.findOne({
+        where: {
+            id: tournamentId
+        }
+    })
 
     const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournamentId }})
     const format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.formatName } }})
@@ -231,7 +228,7 @@ const joinTournament = async (interaction, tournamentId) => {
     
     const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.member, player)
     if (!dbName) return
-    const { url, ydk } = await getDeckList(server, interaction.member, player, format, tournament.name, event)
+    const { url, ydk } = await getDeckList(server, interaction.member, player, format, tournament.name)
     if (!url) return
 
     if (!entry) {
@@ -289,6 +286,155 @@ const joinTournament = async (interaction, tournamentId) => {
             return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> resubmitted their deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
         }
     }
+}
+
+
+// SIGNUP FOR TOURNAMENT 
+const signupForTournament = async (interaction, tournamentId) => {
+    const user = interaction.options.getUser('user')
+    const member = await interaction.guild.members.fetch(user.id)
+
+    const player = await Player.findOne({
+        where: {
+            discordId: user.id
+        }
+    })
+
+    const tournament = await Tournament.findOne({
+        where: {
+            id: tournamentId
+        }
+    })
+
+    const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournamentId }})
+    const format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.formatName } }})
+    if (!format) return interaction.reply(`Unable to determine what format is being played in ${tournament.name}. Please contact an administrator.`)
+    interaction.reply({ content: `Please check your DMs.` })
+    
+    const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.member, player)
+    if (!dbName) return
+    const { url, ydk } = await getDeckList(server, interaction.member, player, format, tournament.name, event)
+    if (!url) return
+
+    if (!entry) {
+        try {                                
+          const { participant } = await postParticipant(server, tournament, player)
+          if (!participant) return interaction.member.send({ content: `Error: Unable to register on Challonge for ${tournament.name} ${tournament.logo}.`})
+          
+          await Entry.create({
+              playerName: player.name,
+              url: url,
+              ydk: ydk,
+              participantId: participant.id,
+              playerId: player.id,
+              tournamentId: tournament.id
+          })
+    
+        } catch (err) {
+          console.log(err)
+          return interaction.member.send({ content: `Error: Could not access database.`})
+        } finally {
+          member.roles.add(server.tourRole).catch((err) => console.log(err))
+          interaction.member.send({ content: `Thanks! I have all the information we need for ${player.name}.` }).catch((err) => console.log(err))
+          return client.channels.cache.get(tournament.channelId).send({ content: `A moderator signed up <@${player.discordId}> for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        }
+    } else if (entry.active === false) {
+        try {                                
+            const { participant } = await postParticipant(server, tournament, player)
+            if (!participant) return interaction.member.send({ content: `Error: Unable to register on Challonge for ${tournament.name} ${tournament.logo}.`})
+            
+            await entry.update({
+                url: url,
+                ydk: ydk,
+                participantId: participant.id,
+                active: true
+            })
+        } catch (err) {
+            console.log(err)
+            return interaction.member.send({ content: `Error: Could not access database.`})
+        } finally {
+            member.roles.add(server.tourRole).catch((err) => console.log(err))
+            interaction.member.send({ content: `Thanks! I have all the information we need for ${player.name}.` }).catch((err) => console.log(err))
+            return client.channels.cache.get(tournament.channelId).send({ content: `A moderator signed up <@${player.discordId}> for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        }
+    } else {
+        try {
+            await entry.update({ url: url, ydk: ydk })
+        } catch (err) {
+            console.log(err)
+            return interaction.member.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
+        } finally {
+            interaction.member.send({ content: `Thanks! I have ${player.name}'s updated deck list for the tournament.` }).catch((err) => console.log(err))
+            return client.channels.cache.get(tournament.channelId).send({ content: `A moderator resubmitted <@${player.discordId}>'s deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        }
+    }
+}
+
+// CHECK TIMER
+const checkTimer = async (interaction, tournamentId) => {
+    const tournament = await Tournament.findOne({
+        where: {
+            id: tournamentId
+        }
+    }) 
+
+    const now = new Date()
+    const difference = tournament.deadline - now
+
+    if (difference < 0) return interaction.reply(`The deadline has passed.`)
+    if (difference < 60 * 1000) return interaction.reply(`Remaining time: less than 1 minute.`)
+
+    let hours = Math.floor(difference / (1000 * 60 * 60))
+    const word1 = hours === 1 ? 'hour' : 'hours'
+    let minutes = Math.round((difference - (hours * (1000 * 60 * 60))) / (1000 * 60))
+    
+    while (minutes >= 60) {
+        hours++
+        minutes-= 60
+    }
+
+    if (hours < 1) {
+        const word2 = minutes === 1 ? 'minute' : 'minutes'
+        return interaction.reply(`Remaining time: ${minutes} ${word2}.`)
+    } else {
+        const word2 = minutes === 1 ? 'minute' : 'minutes'
+        return interaction.reply(`Remaining time: ${hours} ${word1} and ${minutes} ${word2}.`)
+    }
+}
+
+// SET TIMER FOR TOURNAMENT
+const setTimerForTournament = async (interaction, tournamentId) => {
+    const tournament = await Tournament.findOne({
+        where: {
+            id: tournamentId
+        }
+    }) 
+
+    const timestamp = Date.now()
+    let hours = interaction.options.getNumber('hours')
+    let minutes = interaction.options.getNumber('minutes')
+    const timeRemaining = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000)
+    const deadline = new Date(timestamp + timeRemaining)
+    await tournament.update({ deadline })
+
+    while (minutes >= 60) {
+        hours++
+        minutes-= 60
+    }
+
+    const word1 = hours === 1 ? 'hour' : 'hours'
+    const word2 = minutes === 1 ? 'minute' : 'minutes'
+
+    if (hours < 1) {
+        interaction.reply(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
+    } else {
+        interaction.reply(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
+    }
+
+    sendPairings(client, server, tournament, true)
+    return setTimeout(() => {
+        return interaction.channel.send(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} Time is up in the round! ${emojis.vince}`)
+    }, timeRemaining)
 }
 
 ////// TOURNAMENT HOST FUNCTIONS ///////
@@ -913,6 +1059,7 @@ module.exports = {
     askForDBName,
     askIfSeeded,
     checkPairing,
+    checkTimer,
     closeTournament,
     createSheetData,
     findNextOpponent,
@@ -933,5 +1080,7 @@ module.exports = {
     selectTournament,
     selectTournamentForDeckCheck,
     sendDeck,
-    sendPairings
+    sendPairings,
+    setTimerForTournament,
+    signupForTournament
 }
