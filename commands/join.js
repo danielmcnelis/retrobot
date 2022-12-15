@@ -2,7 +2,7 @@
 
 const { SlashCommandBuilder } = require('discord.js')
 const { Entry, Event, Format, Player, Server, Tournament } = require('../db')
-const { postParticipant, selectTournament } = require('../functions/tournament')
+const { askForDBName, getDeckList, postParticipant, selectTournament } = require('../functions/tournament')
 const { drawDeck, hasPartnerAccess } = require('../functions/utility')
 const { Op } = require('sequelize')
 const { client } = require('../static/clients.js')
