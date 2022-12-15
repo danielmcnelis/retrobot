@@ -83,7 +83,8 @@ client.on(Events.InteractionCreate, async interaction => {
 // SELECT MENUS
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isStringSelectMenu()) return
-	const command = interaction.client.commands.get(interaction.message.commandName)
+    console.log('interaction', interaction)
+	const command = interaction.client.commands.get(interaction.commandName)
 
 	try {
         if (command.data.name === 'undo') {
