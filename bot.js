@@ -19,7 +19,11 @@ const { client } = require('./static/clients.js')
 const emojis = require('./static/emojis.json')
 const commands = require('./commands')
 client.commands = new Collection()
-Object.values(commands).forEach((command) => client.commands.set(command.data.name, command))
+Object.values(commands).forEach((command) => {
+    console.log('Setting command.data.name', command.data.name)
+    client.commands.set(command.data.name, command)
+})
+
 
 // GLOBAL VARIABLES
 const fuzzyCards = FuzzySet([], false)
