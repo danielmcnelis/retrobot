@@ -41,7 +41,7 @@ module.exports = {
             },
             order: [["createdAt", "ASC"]]
         })
-        
+
         console.log('touranments.length', tournaments.length)
 
         const discordId = user.id
@@ -78,6 +78,6 @@ module.exports = {
 
         interaction.reply({ content: `Please check your DMs.` })
         const deckAttachments = await drawDeck(entry.ydk) || []
-        return interaction.member.send({ content: `${isAuthor ? `${player.name}\'s` : 'Your'} deck for ${tournament.name} is:\n<${entry.url}>`, files: [...deckAttachments]}).catch((err) => console.log(err))
+        return interaction.member.send({ content: `${isAuthor ? `${player.name}\'s` : 'Your'} deck for ${entry.tournament.name} is:\n<${entry.url}>`, files: [...deckAttachments]}).catch((err) => console.log(err))
     }
 }
