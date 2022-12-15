@@ -502,7 +502,7 @@ const selectMatch = async (interaction, matches) => {
                 .addOptions(...options),
         )
 
-    await interaction.reply({ content: `Please select a match to undo:`, components: [ac] })
+    await interaction.reply({ content: `Please select a match to undo:`, components: [row] })
 }
 
 // SET TIMERS

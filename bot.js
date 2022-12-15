@@ -75,6 +75,14 @@ client.on(Events.InteractionCreate, async interaction => {
 	}
 })
 
+// SELECT MENUS
+client.on(Events.InteractionCreate, async interaction => {
+	if (!interaction.isStringSelectMenu()) return;
+
+	const selected = interaction.values[0];
+	await interaction.update(`The ${selected} option has been selected!`)
+});
+
 // WELCOME
 client.on('guildMemberAdd', async (member) => {    
     console.log('guildMemberAdd')
