@@ -4,7 +4,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const { Entry, Format, Player, Server, Tournament } = require('../db')
 const { Op } = require('sequelize')
-const { selectTournament } = require('../functions/tournament')
+const { selectTournamentForDeckCheck } = require('../functions/tournament')
 const { isMod } = require('../functions/utility')
 
 module.exports = {
@@ -15,7 +15,7 @@ module.exports = {
             option
                 .setName('player')
                 .setDescription('The tournament player to check.')
-                .setRequired(true)
+                .setRequired(false)
         ),
     async execute(interaction) {
         const user = interaction.options.getUser('player')
@@ -48,14 +48,28 @@ module.exports = {
 
         const player = await Player.findOne({ where: { discordId: discordId } })
         if (!player) return interaction.reply({ content: `${isAuthor ? "You are" : "That player is"} not in the database.`})
+
+        const entries = []
+
+        for (let i = 0; i < tournaments.length; i++) {
+            try {
+                const tournament = tournaments[i]
+                const entry = await Entry.findOne({
+                    where: {
+                        playerId: player.id,
+                        tournamentId: tournament.id
+                    },
+                    include: Tournament
+                })
+
+                if (entry) entries.push(entry)
+            } catch (err) {
+                console.log(err)
+            }
+        }
         
-        const tournament = await selectTournament(interaction, tournaments)
-
-        interaction.deferReply().then(console.log).catch(console.error)
-
-        if (!tournament) return interaction.reply({ content: `There is no active tournament.` })
-        const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournament.id } })
-        if (!entry) return interaction.reply({ content: `${isAuthor ? "You are" : "That player is"} not registered for ${tournament.name}.`})
+        const entry = await selectTournamentForDeckCheck(interaction, entries, isAuthor, format)
+        if (!entry) return
 
         interaction.reply({ content: `Please check your DMs.` })
         const deckAttachments = await drawDeck(entry.ydk) || []

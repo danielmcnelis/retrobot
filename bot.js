@@ -12,6 +12,7 @@ const { Membership, Player, Server } = require('./db/index.js')
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
 const { undoMatch } = require('./functions/undo')
+const { sendDeck } = require('./functions/tournament')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
@@ -19,7 +20,6 @@ const emojis = require('./static/emojis.json')
 const commands = require('./commands')
 client.commands = new Collection()
 Object.values(commands).forEach((command) => client.commands.set(command.data.name, command))
-console.log('client.commands', client.commands)
 
 // GLOBAL VARIABLES
 const fuzzyCards = FuzzySet([], false)
@@ -88,8 +88,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
             await undoMatch(interaction.channel, matchId)
             return interaction.message.edit({components: []})
         } else if (command.data.name === 'deck') {
-            const tournamentId = interaction.values[0]
-            await sendDeck(interaction.channel, tournamentId)
+            const entryId = interaction.values[0]
+            await sendDeck(interaction, entryId)
             return interaction.message.edit({components: []})
         } else {
             return
