@@ -12,6 +12,7 @@ const h2h = require('./h2h')
 const help = require('./help')
 const history = require('./history')
 const info = require('./info')
+const join = require('./join')
 const leaderboard = require('./leaderboard')
 const legal = require('./legal')
 const loss = require('./loss')
@@ -44,6 +45,7 @@ module.exports = {
     help,
     history,
     info,
+    join,
     leaderboard,
     legal,
     loss,
