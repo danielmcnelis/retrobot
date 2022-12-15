@@ -44,7 +44,7 @@ module.exports = {
         if (!alreadyIn) {
             const count = await Iron.count({ where: { format: format.name }})
             if (count >= 10) {
-                return interaction.reply({ content: `Sorry, ${message.author.username}, the ${format.name} ${server.emoji || format.emoji} Iron is full.`})
+                return interaction.reply({ content: `Sorry, ${player.discordName}, the ${format.name} ${server.emoji || format.emoji} Iron is full.`})
             } else if (count < 10 && count >= 6) {
                 if (isConfirming) {
                     await Iron.create({ 
@@ -88,7 +88,7 @@ module.exports = {
 
                     if ((teamBCount === teamACount && teamBElim >= teamAElim) || teamBCount < teamACount) {
                         await Iron.create({ 
-                            name: message.author.username,
+                            name: player.discordName,
                             playerId: player.id,
                             format: format.name,
                             team: 'B',
@@ -101,7 +101,7 @@ module.exports = {
                         return interaction.reply({ content: `You joined the Iron for Team B. ${emojis.iron}`})
                     } else {
                         await Iron.create({ 
-                            name: message.author.username,
+                            name: player.discordName,
                             playerId: player.id,
                             format: format.name,
                             team: 'A',
@@ -116,7 +116,7 @@ module.exports = {
                 }
             } else {
                 await Iron.create({ 
-                    name: message.author.username,
+                    name: player.discordName,
                     playerId: player.id,
                     format: format.name
                 })
@@ -127,7 +127,7 @@ module.exports = {
         } else {
             const ironPerson = await Iron.findOne({ 
                 where: {
-                    name: message.author.username,
+                    name: player.discordName,
                     format: format.name,
                     playerId: player.id
                 }
