@@ -35,7 +35,7 @@ module.exports = {
         const tournaments = await Tournament.findAll({
             where: { 
                 state: {[Op.or]: ["pending", "underway"]}, 
-                format: format.name,
+                formatName: format.name,
                 serverId: interaction.guildId 
             },
             order: [["createdAt", "ASC"]]
@@ -49,7 +49,7 @@ module.exports = {
         if (!player) return interaction.reply({ content: `${isAuthor ? "You are" : "That player is"} not in the database.`})
         
         const tournament = await selectTournament(interaction, tournaments, maid)
-        
+
         interaction.deferReply().then(console.log).catch(console.error)
 
         if (!tournament) return interaction.reply({ content: `There is no active tournament.` })
