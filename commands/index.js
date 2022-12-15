@@ -27,9 +27,11 @@ const recalculate = require('./recalculate')
 const rng = require('./rng')
 const role = require('./role')
 const search = require('./search')
+const settimer = require('./settimer')
 const signup = require('./signup')
 const stats = require('./stats')
 const story = require('./story')
+const timer = require('./timer')
 const test = require('./test')
 const undo = require('./undo')
   
@@ -62,10 +64,12 @@ module.exports = {
     rng,
     role,
     search,
+    settimer,
     signup,
     stats,
     story,
     test,
+    timer,
     undo
 }
   
