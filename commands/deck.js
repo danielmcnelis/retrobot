@@ -19,6 +19,7 @@ module.exports = {
         ),
     async execute(interaction) {
         const user = interaction.options.getUser('player')
+        console.log('user', user)
         
         const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 
@@ -45,6 +46,9 @@ module.exports = {
         console.log('touranments.length', tournaments.length)
 
         const discordId = user.id
+        console.log('discordId', discordId)
+        console.log('interaction.member.id', interaction.member.id)
+        console.log('interaction.user.id', interaction.user.id)
         const isAuthor = discordId === interaction.user.id
         if (!isMod(server, interaction.member) && !isAuthor) return interaction.reply({ content: `You do not have permission to do that.` })
 
