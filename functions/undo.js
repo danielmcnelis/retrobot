@@ -7,9 +7,9 @@ const undoMatch = async (channel, id) => {
         const winnerId = match.winnerId
         const loserId = match.loserId
         const winningPlayer = await Player.findOne({ where: { id: winnerId } })
-        const winnerStats = await Stats.findOne({ where: { playerId: winningPlayer.id, format: format.name, serverId: match.serverId } })
+        const winnerStats = await Stats.findOne({ where: { playerId: winningPlayer.id, format: match.format, serverId: match.serverId } })
         const losingPlayer = await Player.findOne({ where: { id: loserId } })
-        const loserStats = await Stats.findOne({ where: { playerId: losingPlayer.id, format: format.name, serverId: match.serverId } })
+        const loserStats = await Stats.findOne({ where: { playerId: losingPlayer.id, format: match.format, serverId: match.serverId } })
     
         if (!winnerStats.backupElo) channel.send({ content: `${winningPlayer.name} has no backup stats: Remember to **/recalculate** when finished.`})
         if (!loserStats.backupElo) channel.send({ content: `${losingPlayer.name} has no backup stats: Remember to **/recalculate** when finished.`})
