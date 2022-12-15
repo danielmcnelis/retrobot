@@ -3,13 +3,14 @@
 const { SlashCommandBuilder } = require('discord.js')
 const { Deck, Match, Membership, Player, RatedPool, Server, Stats } = require('../db')
 const { Op } = require('sequelize')
-const { getRatedFormat } = require('../functions/rated')
+const { getRatedFormat, getNewRatedDeck, getPotentialPairConfirmation, getPreviousRatedDeck } = require('../functions/rated')
+const { getIssues } = require('../functions/deck')
 const { askForDBName } = require('../functions/tournament')
+const { drawDeck } = require('../functions/utility')
 const axios = require('axios')
 const { client } = require('../static/clients.js')
 
 const getRatedInformation = async (interaction, player) => {
-    console.log('getRatedInformation() interaction', interaction)
     const format = await getRatedFormat(interaction)
     if (!format) return interaction.user.send({ content: `Please specify a valid format.`})
     
@@ -28,7 +29,7 @@ const getRatedInformation = async (interaction, player) => {
     const yourGuildIds = yourServers.map((s) => s.id) || []
 
     if (!yourGuildIds.length) return interaction.user.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${server.emoji || format.emoji}`)
-    const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.member, player)
+    const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.user, player)
     if (!dbName) return
 
     const yourRatedDecks = await Deck.findAll({
@@ -41,7 +42,7 @@ const getRatedInformation = async (interaction, player) => {
         limit: 20
     }) || []
 
-    let ratedDeck = await getPreviousRatedDeck(interaction.member, yourRatedDecks, format)
+    let ratedDeck = await getPreviousRatedDeck(interaction.user, yourRatedDecks, format)
     if (ratedDeck) {
         try {
             const id = ratedDeck.url.slice(ratedDeck.url.indexOf('?id=') + 4)
@@ -83,7 +84,7 @@ const getRatedInformation = async (interaction, player) => {
             return interaction.reply(`Unable to process deck list. Please try again.`)
         }
     } else {
-        ratedDeck = await getNewRatedDeck(interaction.member, player, format)
+        ratedDeck = await getNewRatedDeck(interaction.user, player, format)
     }
     
     if (!ratedDeck || !ratedDeck.ydk) return
