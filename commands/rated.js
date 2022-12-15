@@ -7,10 +7,10 @@ const { getRatedFormat } = require('../functions/rated')
 const { askForDBName } = require('../functions/tournament')
 const axios = require('axios')
 
-const getRatedInformation = async (interaction, player) => {
+const getRatedInformation = async (member, player) => {
     console.log('getRatedInformation() interaction', interaction)
     const format = await getRatedFormat(interaction)
-    if (!format) return interaction.channel.send({ content: `Please specify a valid format.`})
+    if (!format) return member.send({ content: `Please specify a valid format.`})
     
     const yourServers = [...await Membership.findAll({ 
         where: { 
@@ -26,7 +26,7 @@ const getRatedInformation = async (interaction, player) => {
     
     const yourGuildIds = yourServers.map((s) => s.id) || []
 
-    if (!yourGuildIds.length) return interaction.channel.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${server.emoji || format.emoji}`)
+    if (!yourGuildIds.length) return member.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${server.emoji || format.emoji}`)
     const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.member, player)
     if (!dbName) return
 
@@ -61,16 +61,16 @@ const getRatedInformation = async (interaction, player) => {
                     
                     for (let i = 0; i < response.length; i += 50) {
                         if (response[i+50] && response[i+50].startsWith("\n")) {
-                            interaction.channel.send({ content: response.slice(i, i+51).join('\n').toString()}).catch((err) => console.log(err))
+                            member.send({ content: response.slice(i, i+51).join('\n').toString()}).catch((err) => console.log(err))
                             i++
                         } else {
-                            interaction.channel.send({ content: response.slice(i, i+50).join('\n').toString()}).catch((err) => console.log(err))
+                            member.send({ content: response.slice(i, i+50).join('\n').toString()}).catch((err) => console.log(err))
                         }
                     }
                 } else if (unrecognizedCards.length) {
                     let response = `I'm sorry, ${interaction.user.username}, the following card IDs were not found in our database:\n${unrecognizedCards.join('\n')}`
                     response += `\n\nThese cards are either alternate artwork, new to the TCG, OCG only, or incorrect in our database. Please contact the Tournament Organizer or the Admin if you can't resolve this.`
-                    return interaction.channel.send({ content: response.toString() }).catch((err) => console.log(err))
+                    return member.send({ content: response.toString() }).catch((err) => console.log(err))
                 } else {
                     const ydk = ['created by...', '#main', ...main, '#extra', ...extra, '!side', ...side, ''].join('\n')
                     ratedDeck.ydk = ydk
@@ -254,6 +254,7 @@ module.exports = {
         if (interaction.guildId) return interaction.reply(`Try using **/rated** by DM'ing it to me.`)
         const player = await Player.findOne({ where: { discordId: interaction.user.id } })
         if (!player) return interaction.reply(`You are not in the database. Please join the Format Library Discord server to register.`)
-        return getRatedInformation(interaction, player)
+        const member = await client.guild.members.fetch(interaction.user.id)
+        return getRatedInformation(member, player)
     }
 }
