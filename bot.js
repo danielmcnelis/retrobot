@@ -84,6 +84,7 @@ client.on(Events.InteractionCreate, async interaction => {
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isStringSelectMenu()) return
 
+    console.log('isStringSelectMenu() interaction', interaction)
     console.log('isStringSelectMenu() interaction.commandName', interaction.commandName)
 	const command = interaction.client.commands.get(interaction.commandName)
     console.log('command', command)
