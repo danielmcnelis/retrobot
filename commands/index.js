@@ -5,6 +5,7 @@ const close = require('./close')
 const coin = require('./coin')
 const combine = require('./combine')
 const coverage = require('./coverage')
+const deck = require('./deck')
 const dice = require('./dice')
 const duelingbook = require('./duelingbook')
 const h2h = require('./h2h')
@@ -12,6 +13,7 @@ const help = require('./help')
 const history = require('./history')
 const info = require('./info')
 const leaderboard = require('./leaderboard')
+const legal = require('./legal')
 const loss = require('./loss')
 const manual = require('./manual')
 const mod = require('./mod')
@@ -35,6 +37,7 @@ module.exports = {
     coin,
     combine,
     coverage,
+    deck,
     dice,
     duelingbook,
     h2h,
@@ -42,6 +45,7 @@ module.exports = {
     history,
     info,
     leaderboard,
+    legal,
     loss,
     manual,
     mod,

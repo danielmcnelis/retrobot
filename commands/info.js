@@ -22,6 +22,7 @@ module.exports = {
             }
         })
 
+        if (!format) return interaction.reply({ content: `Try using /info in channels like: <#414575168174948372> or <#629464112749084673>.`})
         return interaction.reply(`**${format.name.toUpperCase()} FORMAT ${format.emoji} - OVERVIEW**\nhttps://formatlibrary.com/formats/${urlize(format.name)}`)
     }
 }

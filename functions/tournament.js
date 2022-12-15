@@ -130,25 +130,24 @@ const getDeckList = async (server, member, player, format, tournamentName, overr
 const selectTournament = async (interaction, tournaments) => {
     if (tournaments.length === 0) return false
     if (tournaments.length === 1) return tournaments[0]
-    const options = tournaments.map((tournament, index) => `(${index + 1}) ${tournament.name}`)
-    const filter = m => m.author.id === discordId
-    interaction.channel.send({ content: `Please select a tournament:\n${options.join('\n').toString()}`})
     
-    return await interaction.channel.awaitMessages({
-        filter,
-        max: 1,
-        time: 15000
-    }).then(collected => {
-        const num = parseInt(collected.first().content.match(/\d+/))
-        if (!num || !tournaments[num - 1]) {
-            interaction.channel.send({ content: `Sorry, ${collected.first().content} is not a valid option.`})
-            return null
+    const options = tournaments.map((tournament, index) => {
+        return {
+            label: `(${index + 1}) ${tournament.name}`,
+            value: `${tournament[index].id}`,
         }
-        else return tournaments[num - 1]
-    }).catch(err => {
-        console.log(err)
-        return null
     })
+
+    const row = new ActionRowBuilder()
+        .addComponents(
+            new StringSelectMenuBuilder()
+                .setCustomId('select')
+                .setPlaceholder('Nothing selected')
+                .addOptions(...options),
+        )
+
+    const x = await interaction.channel.send({ content: `Please select a tournament:`, components: [row] })
+    console.log('x', x)
 }
 
 ////// TOURNAMENT HOST FUNCTIONS ///////

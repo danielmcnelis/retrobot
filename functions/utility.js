@@ -492,7 +492,6 @@ const selectMatch = async (interaction, matches) => {
         }
     })
 
-    console.log('options', options)
     const row = new ActionRowBuilder()
         .addComponents(
             new StringSelectMenuBuilder()

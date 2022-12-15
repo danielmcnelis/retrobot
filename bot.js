@@ -66,24 +66,39 @@ client.on(Events.InteractionCreate, async interaction => {
 
 	try {
         if (command.data.name === 'search') {
-            await command.execute(interaction, fuzzyCards)
+            return command.execute(interaction, fuzzyCards)
         } else {
-            await command.execute(interaction)
+            return command.execute(interaction)
         }
 	} catch (error) {
 		console.error(error)
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
+		return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
 	}
 })
 
 // SELECT MENUS
 client.on(Events.InteractionCreate, async (interaction) => {
-	if (!interaction.isStringSelectMenu()) return;
-    console.log('interaction', interaction)
-	const matchId = interaction.values[0];
-    await undoMatch(interaction.channel, matchId)
-    return interaction.message.edit({components: []})
-});
+	if (!interaction.isStringSelectMenu()) return
+
+	const command = interaction.client.commands.get(interaction.commandName)
+
+	try {
+        if (command.data.name === 'undo') {
+            const matchId = interaction.values[0]
+            await undoMatch(interaction.channel, matchId)
+            return interaction.message.edit({components: []})
+        } else if (command.data.name === 'deck') {
+            const tournamentId = interaction.values[0]
+            await sendDeck(interaction.channel, tournamentId)
+            return interaction.message.edit({components: []})
+        } else {
+            return
+        }
+	} catch (error) {
+		console.error(error)
+		return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
+	}
+})
 
 // WELCOME
 client.on('guildMemberAdd', async (member) => {    
