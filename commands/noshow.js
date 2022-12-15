@@ -71,6 +71,6 @@
             const success = await processMatchResult(server, interaction, winner, winningPlayer, noShow, noShowPlayer, tournament, true)
             if (!success) return
     
-            return interaction.reply({ content: `${noShowPlayer.name}, your Tournament loss to <@${winningPlayer.discordId}> has been recorded as a no-show.`})	
+            return interaction.reply({ content: `<@${noShowPlayer.discordId}>, your Tournament loss to <@${winningPlayer.discordId}> has been recorded as a no-show.`})	
     }
 }

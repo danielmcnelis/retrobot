@@ -91,7 +91,7 @@
             }
 
             return interaction.reply({ content: 
-                `${oldPlayer.name}'s ID was replaced with ${newPlayer.name}'s ID in ${count} match records.` +
+                `<@${oldPlayer.discordId}>'s ID was replaced with <@${newPlayer.discordId}>'s ID in ${count} match records.` +
                 ` ${violations} boosting violation(s) occurred.` +
                 `\n\nStats in the following formats need to be recalculated:\n${formats.join("\n")}`
             })

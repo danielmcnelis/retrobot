@@ -56,9 +56,7 @@
             if (!winningPlayer || !winnerStats) return interaction.reply({ content: `That user is not in the database.`})
     
             const loserHasTourRole = isTourPlayer(server, member)
-            console.log('loserHasTourRole', loserHasTourRole)
             const winnerHasTourRole = isTourPlayer(server, winner)
-            console.log('winnerHasTourRole', winnerHasTourRole)
             const activeTournament = await Tournament.count({ where: { state: 'underway', serverId: interaction.guildId, formatName: format.name } }) 
             let isTournamentMatch
             let winningEntry
@@ -231,7 +229,7 @@
                 await rPTU.update({ status: 'pending' })
             }
 
-            return interaction.reply({ content: `${losingPlayer.name}, your ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${server.emoji || format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss to ${winningPlayer.name} has been recorded.`})
+            return interaction.reply({ content: `${losingPlayer.name}, your ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${server.emoji || format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss to <@${winningPlayer.discordId}> has been recorded.`})
         }
     }
 

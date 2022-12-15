@@ -243,6 +243,6 @@
             await rPTU.update({ status: 'pending' })
         }
 
-        return interaction.reply({ content: `A manual ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${server.emoji || format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss by ${losingPlayer.name} to ${winningPlayer.name} has been recorded.`})		
+        return interaction.reply({ content: `A manual ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${server.emoji || format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss by <@${losingPlayer.discordId}> to <@${winningPlayer.discordId}> has been recorded.`})		
     }
 }
