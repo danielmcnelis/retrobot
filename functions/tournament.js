@@ -134,7 +134,7 @@ const selectTournament = async (interaction, tournaments) => {
     const options = tournaments.map((tournament, index) => {
         return {
             label: `(${index + 1}) ${tournament.name}`,
-            value: `${tournament[index].id}`,
+            value: `${tournaments[index].id}`,
         }
     })
 
