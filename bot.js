@@ -99,7 +99,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
         } else if (command.data.name === 'close') {
             const tournamentId = interaction.values[0]
             await closeTournament(interaction, tournamentId)
-            return interaction.message.edit({components: []})
+            const row = new ActionRowBuilder()
+            .addComponents(
+                new StringSelectMenuBuilder()
+                    .setCustomId('select')
+                    .setPlaceholder(`Selected tournament ${tournamentId}`)
+            )
+
+            return interaction.message.edit({components: [row]})
         } else if (command.data.name === 'open') {
             const tournamentId = interaction.values[0]
             await openTournament(interaction, tournamentId)
