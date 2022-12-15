@@ -161,7 +161,7 @@ const selectTournamentForDeckCheck = async (interaction, entries, isAuthor, form
                     .addOptions(...options),
             )
     
-        await interaction.reply({ content: `Please select a tournament:`, components: [row] })
+        interaction.reply({ content: `Please select a tournament:`, components: [row] })
         return false
     }
 }
@@ -190,7 +190,7 @@ const selectTournament = async (interaction, tournaments) => {
                     .addOptions(...options),
             )
     
-        await interaction.reply({ content: `Please select a tournament:`, components: [row] })
+        interaction.reply({ content: `Please select a tournament:`, components: [row] })
         return false
     }
 }
