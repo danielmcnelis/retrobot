@@ -168,7 +168,7 @@ const selectTournamentForDeckCheck = async (interaction, entries, isAuthor, form
 // SELECT TOURNAMENT
 const selectTournament = async (interaction, tournaments) => {
     if (tournaments.length === 0) {
-        interaction.reply({ content: `There is no pending tournament.` })
+        interaction.reply({ content: `There is no tournament that meets this criteria.` })
         return false
     } else if (tournaments.length === 1)  {
         return tournaments[0]
@@ -194,11 +194,17 @@ const selectTournament = async (interaction, tournaments) => {
 }
 
 // CLOSE TOURNAMENT 
-
 const closeTournament = async (interaction, tournamentId) => {
     const tournament = await Tournament.findOne({ where: { id: tournamentId }})
     await tournament.update({ state: 'standby' })
     return interaction.reply({ content: `Registration for ${tournament.name} ${tournament.logo} is now closed.`})
+}
+
+// OPEN TOURNAMENT
+const openTournament = async (interaction, tournamentId) => {
+    const tournament = await Tournament.findOne({ where: { id: tournamentId }})
+    await tournament.update({ state: 'pending' })
+    return interaction.reply({ content: `Registration for ${tournament.name} ${tournament.logo} is now open.`})
 }
 
 ////// TOURNAMENT HOST FUNCTIONS ///////
@@ -823,6 +829,7 @@ module.exports = {
     askForDBName,
     askIfSeeded,
     checkPairing,
+    closeTournament,
     createSheetData,
     findNextOpponent,
     findNoShowOpponent,
@@ -833,6 +840,7 @@ module.exports = {
     getTournamentFormat,
     getTournamentType,
     getMatches,
+    openTournament,
     processMatchResult,
     postParticipant,
     removeParticipant,

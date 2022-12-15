@@ -28,7 +28,7 @@ module.exports = {
         })
           
         const tournament = await selectTournament(interaction, tournaments)
-        if (!tournament) return interaction.reply({ content: `There are no closed tournaments.`})
+        if (!tournament) return
         await tournament.update({ state: 'pending'})
         return interaction.reply({ content: `Registration for ${tournament.name} ${tournament.logo} is now open.`})
 	}

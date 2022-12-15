@@ -100,6 +100,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
             const tournamentId = interaction.values[0]
             await closeTournament(interaction, tournamentId)
             return interaction.message.edit({components: []})
+        } else if (command.data.name === 'open') {
+            const tournamentId = interaction.values[0]
+            await openTournament(interaction, tournamentId)
+            return interaction.message.edit({components: []})
         } else {
             return
         }
