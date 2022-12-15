@@ -151,8 +151,6 @@ const selectTournamentForDeckCheck = async (interaction, entries, isAuthor, form
             }
         })
     
-        console.log('options', options)
-    
         const row = new ActionRowBuilder()
             .addComponents(
                 new StringSelectMenuBuilder()
@@ -170,7 +168,7 @@ const selectTournamentForDeckCheck = async (interaction, entries, isAuthor, form
 // SELECT TOURNAMENT
 const selectTournament = async (interaction, tournaments) => {
     if (tournaments.length === 0) {
-        await interaction.reply({ content: `There is no pending tournament.` })
+        interaction.reply({ content: `There is no pending tournament.` })
         return false
     } else if (tournaments.length === 1)  {
         return tournaments[0]
