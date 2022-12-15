@@ -8,6 +8,7 @@ const { askForDBName } = require('../functions/tournament')
 const axios = require('axios')
 
 const getRatedInformation = async (interaction, player) => {
+    console.log('getRatedInformation() interaction', interaction)
     const format = await getRatedFormat(interaction)
     if (!format) return interaction.channel.send({ content: `Please specify a valid format.`})
     
