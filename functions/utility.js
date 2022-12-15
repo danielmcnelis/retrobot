@@ -519,6 +519,7 @@ const setTimers = async (client) => {
         try {
             const tournament = tournaments[i]
             const timeRemaining = tournament.deadline - now
+            if (timeRemaining < 0) continue
             const guild = client.guilds.cache.get(tournament.serverId)
             const channel = guild.channels.cache.get(tournament.channelId)
 

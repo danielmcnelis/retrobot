@@ -82,7 +82,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     console.log('interaction', interaction)
 	const matchId = interaction.values[0];
     await undoMatch(interaction.channel, matchId)
-	return interaction.reply(`Match #${matchId} has been selected!`)
+    return interaction.message.edit({components: []})
 });
 
 // WELCOME
