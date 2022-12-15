@@ -147,7 +147,8 @@ const selectTournamentForDeckCheck = async (interaction, entries, isAuthor, form
                 .addOptions(...options),
         )
 
-    return interaction.reply({ content: `Please select a tournament:`, components: [row] })
+    interaction.reply({ content: `Please select a tournament:`, components: [row] })
+    return false
 }
 
 // SEND DECK

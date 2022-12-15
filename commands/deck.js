@@ -5,7 +5,7 @@ const { SlashCommandBuilder } = require('discord.js')
 const { Entry, Format, Player, Server, Tournament } = require('../db')
 const { Op } = require('sequelize')
 const { selectTournamentForDeckCheck } = require('../functions/tournament')
-const { isMod } = require('../functions/utility')
+const { drawDeck, isMod } = require('../functions/utility')
 
 module.exports = {
     data: new SlashCommandBuilder()
