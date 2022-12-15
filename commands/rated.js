@@ -82,7 +82,7 @@ const getRatedInformation = async (interaction, player) => {
             }
         } catch (err) {
             console.log(err)
-            return interaction.reply(`Unable to process deck list. Please try again.`)
+            return interaction.user.send(`Unable to process deck list. Please try again.`)
         }
     } else {
         ratedDeck = await getNewRatedDeck(interaction.user, player, format)
@@ -90,7 +90,7 @@ const getRatedInformation = async (interaction, player) => {
     
     if (!ratedDeck || !ratedDeck.ydk) return
     const deckAttachments = await drawDeck(ratedDeck.ydk) || []
-    interaction.reply({content: `Okay, ${interaction.user.username}, you will be using this deck if you are paired:` , files: [...deckAttachments] })
+    interaction.user.send({content: `Okay, ${interaction.user.username}, you will be using this deck if you are paired:` , files: [...deckAttachments] })
     
     const ratedPool = await RatedPool.findOne({
         where: {
@@ -129,7 +129,7 @@ const getRatedInformation = async (interaction, player) => {
                 }
             }
 
-            return interaction.reply(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+            return interaction.user.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
         }
 
         for (let i = 0; i < potentialPairs.length; i++) {
@@ -193,7 +193,7 @@ const getRatedInformation = async (interaction, player) => {
                 const opposingMember = await guild.members.fetch(opponent.discordId)
 
                 opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${player.name + '#' + player.discriminator}\nDuelingBook: ${player.duelingBook}`).catch((err) => console.log(err))
-                interaction.reply(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.name + '#' + opponent.discriminator}\nDuelingBook: ${opponent.duelingBook}`).catch((err) => console.log(err))
+                interaction.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.name + '#' + opponent.discriminator}\nDuelingBook: ${opponent.duelingBook}`).catch((err) => console.log(err))
                 
                 await potentialPair.destroy()
                 await ratedPool.destroy()
@@ -245,7 +245,7 @@ const getRatedInformation = async (interaction, player) => {
         }
     }
     
-    return interaction.reply(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+    return interaction.user.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
 }
 
 module.exports = {
