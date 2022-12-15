@@ -11,7 +11,7 @@ const getExitInformation = async (interaction, player) => {
 
     const pools = oldRatedPools.map((p) => p.format)
 
-    const drops = await getDropFormats(message, pools)
+    const drops = await getDropFormats(interaction, pools)
     if (!drops || !drops.length) return interaction.user.send(`Please specify a valid number.`)
 
     const results = []
