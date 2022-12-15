@@ -257,6 +257,7 @@ module.exports = {
         if (interaction.guildId) return interaction.reply(`Try using **/rated** by DM'ing it to me.`)
         const player = await Player.findOne({ where: { discordId: interaction.user.id } })
         if (!player) return interaction.reply(`You are not in the database. Please join the Format Library Discord server to register.`)
+        interaction.reply('🥸')
         return getRatedInformation(interaction, player)
     }
 }
