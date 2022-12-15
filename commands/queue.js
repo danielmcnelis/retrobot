@@ -26,7 +26,7 @@ module.exports = {
             }
         })
         
-        if (!format) return interaction.reply({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+        if (!format) return interaction.reply({ content: `Try using **/queue** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         const queue = [...await Iron.findAll({ where: { format: format.name }})].map((i) => i.name)
         if (!queue.length) return interaction.reply({ content: `The ${format.name} ${server.emoji || format.emoji} Iron queue is empty. ${emojis.iron}`})
         return interaction.reply({ content: `${format.name} ${server.emoji || format.emoji} Iron Queue:\n` + queue.join('\n').toString() })

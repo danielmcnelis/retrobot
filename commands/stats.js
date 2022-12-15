@@ -30,7 +30,7 @@
                 }
             })
     
-            if (!format) return interaction.reply({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+            if (!format) return interaction.reply({ content: `Try using **/stats** in channels like: <#414575168174948372> or <#629464112749084673>.`})
             const user = interaction.options.getUser('user') || interaction.user
             const discordId = user.id	
             const player = await Player.findOne({ where: { discordId: discordId } })

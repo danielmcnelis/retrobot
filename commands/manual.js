@@ -26,11 +26,9 @@
         async execute(interaction) {
             const winner = interaction.options.getUser('winner')
             const winningMember = await interaction.guild.members.fetch(winner.id)
-            console.log('winningMember', winningMember)
 
             const loser = interaction.options.getUser('loser')
             const losingMember = await interaction.guild.members.fetch(loser.id)
-            console.log('losingMember', losingMember)
 
             const server = !interaction.guildId ? {} : 
                 await Server.findOne({ where: { id: interaction.guildId }}) || 
@@ -48,7 +46,7 @@
                 }
             })
         
-            if (!format) return interaction.reply({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
+            if (!format) return interaction.reply({ content: `Try using **/manual** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         
         const winnerDiscordId = winner.id
         const loserDiscordId = loser.id	
@@ -72,9 +70,7 @@
         if (!winningPlayer || !winnerStats) return interaction.reply({ content: `Sorry, <@${winnerDiscordId}> is not in the database.`})
 
         const loserHasTourRole = await isTourPlayer(server, losingMember)
-        console.log('loserHasTourRole', loserHasTourRole)
         const winnerHasTourRole = await isTourPlayer(server, winningMember)
-        console.log('winnerHasTourRole', winnerHasTourRole)
         const activeTournament = await Tournament.count({ where: { state: 'underway', serverId: interaction.guildId, formatName: format.name } }) 
         let isTournamentMatch
         let winningEntry
@@ -82,9 +78,7 @@
         let tournament
 
         const loserHasIronRole = isIronPlayer(server, losingMember)
-        console.log('loserHasIronRole', loserHasIronRole)
         const winnerHasIronRole = isIronPlayer(server, winningMember)
-        console.log('winnerHasIronRole', winnerHasIronRole)
         const activeIron = await Iron.count({ where: { format: format.name, status: 'active' }})
         let isIronMatch
 
