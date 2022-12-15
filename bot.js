@@ -12,7 +12,7 @@ const { Membership, Player, Server } = require('./db/index.js')
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
 const { undoMatch } = require('./functions/undo')
-const { closeTournament, sendDeck } = require('./functions/tournament')
+const { closeTournament, openTournament, sendDeck } = require('./functions/tournament')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
@@ -97,17 +97,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
             await sendDeck(interaction, entryId)
             return interaction.message.edit({components: []})
         } else if (command.data.name === 'close') {
-            console.log('interaction', interaction)
             const tournamentId = interaction.values[0]
             await closeTournament(interaction, tournamentId)
-            const row = new ActionRowBuilder()
-            .addComponents(
-                new StringSelectMenuBuilder()
-                    .setCustomId('select')
-                    .setPlaceholder(`Selected tournament ${tournamentId}`)
-            )
-
-            return interaction.message.edit({components: [row]})
+            return interaction.message.edit({components: []})
         } else if (command.data.name === 'open') {
             const tournamentId = interaction.values[0]
             await openTournament(interaction, tournamentId)
