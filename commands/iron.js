@@ -1,20 +1,31 @@
 
 
-    // IRON
-    if(commands.ironcom.includes(cmd)) {
-        if (!hasFullAccess(server)) return message.channel.send({ content: `This feature is only available in Format Library. ${emojis.FL}`})
+const { SlashCommandBuilder } = require('discord.js')
+const { Format, Iron, Player, Server } = require('../db')
+const { Op } = require('sequelize')
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('iron')
+        .setDescription('Join or leave the iron queue.'),
+    async execute(interaction) {
+        const server = !interaction.guildId ? {} : 
+            await Server.findOne({ where: { id: interaction.guildId }}) || 
+            await Server.create({ id: interaction.guildId, name: interaction.guild.name })
+        
         const format = await Format.findOne({
             where: {
                 [Op.or]: {
-                    name: { [Op.iLike]: server.format },
+                    name: {[Op.iLike]: server.format },
                     channel: interaction.channelId
                 }
             }
         })
+
+        if (!hasFullAccess(server)) return interaction.reply({ content: `This feature is only available in Format Library. ${emojis.FL}`})
+        if (!format) return interaction.reply({ content: `Try using **/iron** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         
-        if (!format) return message.channel.send({ content: `Try using **${cmd}** in channels like: <#414575168174948372> or <#629464112749084673>.`})
-        
-        const player = await Player.findOne({ where: { discordId: maid }})
+        const player = await Player.findOne({ where: { discordId: interaction.user.id }})
         const alreadyIn = await Iron.count({ 
             where: { 
                 format: format.name,
@@ -26,23 +37,23 @@
         const isConfirming = await Iron.count({ where: { format: format.name, status: 'confirming' }})
         const isDrafting = await Iron.count({ where: { format: format.name, status: 'drafting' }})
         const isActive = await Iron.count({ where: { format: format.name, status: 'active' }})
-        if (isDrafting && !alreadyIn) return message.channel.send({ content: 'Please wait until after the drafting process is complete to join the iron.' })
-        if (!isPending && alreadyIn) return message.channel.send({ content: 'Sorry, you cannot leave the iron after it has started.' })
+        if (isDrafting && !alreadyIn) return interaction.reply({ content: 'Please wait until after the drafting process is complete to join the iron.' })
+        if (!isPending && alreadyIn) return interaction.reply({ content: 'Sorry, you cannot leave the iron after it has started.' })
         
         if (!alreadyIn) {
             const count = await Iron.count({ where: { format: format.name }})
             if (count >= 10) {
-                return message.channel.send({ content: `Sorry, ${message.author.username}, the ${format.name} ${server.emoji || format.emoji} Iron is full.`})
+                return interaction.reply({ content: `Sorry, ${message.author.username}, the ${format.name} ${server.emoji || format.emoji} Iron is full.`})
             } else if (count < 10 && count >= 6) {
                 if (isConfirming) {
                     await Iron.create({ 
-                        name: message.author.username,
+                        name: player.discordName,
                         playerId: player.id,
                         format: format.name,
                         confirmed: true
                     })
     
-                    message.channel.send({ content: `You joined the Iron queue. ${emojis.iron}`})
+                    return interaction.reply({ content: `You joined the Iron queue. ${emojis.iron}`})
                 } else if (isActive) {
                     const teamACount = await Iron.count({ 
                         where: {
@@ -85,8 +96,8 @@
                         })
 
                         //ADD FORMAT LIBRARY IRON ROLE
-                        message.member.roles.add('948006324237643806')
-                        return message.channel.send({ content: `You joined the Iron for Team B. ${emojis.iron}`})
+                        interaction.member.roles.add('948006324237643806')
+                        return interaction.reply({ content: `You joined the Iron for Team B. ${emojis.iron}`})
                     } else {
                         await Iron.create({ 
                             name: message.author.username,
@@ -98,8 +109,8 @@
                         })
 
                         // ADD FORMAT LIBRARY IRON ROLE
-                        message.member.roles.add('948006324237643806')
-                        return message.channel.send({ content: `You joined the Iron for Team A. ${emojis.iron}`})
+                        interaction.member.roles.add('948006324237643806')
+                        return interaction.reply({ content: `You joined the Iron for Team A. ${emojis.iron}`})
                     }
                 }
             } else {
@@ -109,8 +120,8 @@
                     format: format.name
                 })
 
-                message.channel.send({ content: `You joined the Iron queue. ${emojis.iron}`})
-                if (count === 5) return confirmIron(message.channel, format)
+                if (count === 5) confirmIron(interaction.channel, format)
+                return interaction.reply({ content: `You joined the Iron queue. ${emojis.iron}`})
             }
         } else {
             const ironPerson = await Iron.findOne({ 
@@ -123,6 +134,7 @@
 
             if (!ironPerson) return
             await ironPerson.destroy()
-            return message.channel.send({ content: `You left the Iron queue. ${emojis.iron}`})
+            return interaction.reply({ content: `You left the Iron queue. ${emojis.iron}`})
         }
-    } 
+    }
+}
