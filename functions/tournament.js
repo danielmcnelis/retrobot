@@ -519,7 +519,7 @@ const getTournamentType = async (message) => {
 const getTournamentChannel = async (client, server, format, interaction) => {
     if (server.name === 'Format Library') return format.channel
 
-    const channels = client.channels.cache
+    const channels = interaction.guild.channels.cache
     console.log('channels', channels)
     
     const options = channels.map((channel) => {
