@@ -60,28 +60,23 @@ module.exports = {
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
 
+        const formatName = new TextInputBuilder()
+            .setCustomId('formatName')
+            .setLabel("What format will be played?")
+            .setStyle(TextInputStyle.Short)
+            .setRequired(true)
+            
+        if (format) {
+            formatName.setValue(format.name)
+            formatName.setPlaceholder(format.name)
+        }
+
         const nameRow = new ActionRowBuilder().addComponents(name)
         const abbreviationRow = new ActionRowBuilder().addComponents(abbreviation)
         const typeRow = new ActionRowBuilder().addComponents(tournament_type)
+        const formatRow = new ActionRowBuilder().addComponents(formatName)
 
-        // Add inputs to the modal
-        modal.addComponents(nameRow, abbreviationRow, typeRow)
-
-        if (!format) {
-            const formatName = new TextInputBuilder()
-                .setCustomId('formatName')
-                .setLabel("What format will be played?")
-                .setStyle(TextInputStyle.Short)
-                .setRequired(true)
-
-            const formatRow = new ActionRowBuilder().addComponents(formatName)
-            modal.addComponents(formatRow)
-        } else {
-            console.log('set .formatName', format.name)
-            interaction.formatName = format.name
-        }
-
-        console.log('modal', modal)
+        modal.addComponents(nameRow, abbreviationRow, typeRow, formatRow)    
         return await interaction.showModal(modal)        
     }
 }

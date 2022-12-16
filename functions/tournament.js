@@ -1068,6 +1068,7 @@ const handleCreateModal = async (client, interaction, formatName, name, abbrevia
         await Server.create({ id: interaction.guildId, name: interaction.guild.name })
 
     const format = await Format.findOne({ where: { name: {[Op.iLike]: formatName }}})
+    if (server.format && server.format !== format.name) return interaction.reply(`Sorry, only ${format.name} tournaments can be hosted on this server.`)
     
     const channelId = await getTournamentChannel(client, server, format, interaction)
     if (!channelId) return
