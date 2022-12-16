@@ -75,12 +75,12 @@ module.exports = {
                 .setRequired(true)
 
             const formatRow = new ActionRowBuilder().addComponents(formatName)
-
-            console.log('modal', modal)
-
             modal.addComponents(formatRow)
+        } else {
+            interaction.formatName = format.name
         }
 
+        console.log('modal', modal)
         return await interaction.showModal(modal)        
     }
 }
