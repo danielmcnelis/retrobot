@@ -1072,7 +1072,7 @@ const handleCreateModal = async (client, interaction, name, tournament_type, abb
     const channelId = await getTournamentChannel(client, server, format, interaction)
     if (!channelId) return
 
-    return this.createTournament(interaction, name, tournament_type, abbreviation, formatName)
+    return createTournament(interaction, name, tournament_type, abbreviation, formatName)
 }
 
 // CREATE TOURNAMENT
