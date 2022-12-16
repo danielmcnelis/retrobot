@@ -5,12 +5,11 @@
 const { ActionRowBuilder, Events, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Format, Server, Tournament } = require('../db')
+const { Format, Server } = require('../db')
 const emojis = require('../static/emojis.json')
 const { isMod, hasPartnerAccess } = require('../functions/utility')
 const { sendPairings, selectTournament } = require('../functions/tournament')
 const { Op } = require('sequelize')
-const { client } = require('../static/clients.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -38,15 +37,6 @@ module.exports = {
                 }
             }
         })
-
-        console.log('format', format)
-
-        if (!format) this.data.addChannelOption(cha =>
-            cha
-                .setName('channel')
-                .setDescription('Provide a tournament channel.')
-                .setRequired(true)
-        )
 
 		const modal = new ModalBuilder()
             .setCustomId('createTournament')

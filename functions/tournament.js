@@ -516,21 +516,30 @@ const getTournamentType = async (message) => {
 }
 
 // GET TOURNAMENT CHANNEL
-const getTournamentChannel = async (server, format, message) => {
+const getTournamentChannel = async (client, server, format, interaction) => {
     if (server.name === 'Format Library') return format.channel
-    const filter = (m) => m.author.id === message.author.id
-    message.channel.send({ content: `Please provide a **#link** to the channel that will be used to report match results.` })
-    return await message.channel.awaitMessages({
-        filter,
-        max: 1,
-        time: 15000,
-    }).then((collected) => {
-        return collected.first().content.toLowerCase().replace(/[\\<>@#&!]/g, "")
-    }).catch((err) => {
-        console.log(err)
-        message.channel.send({ content: `Sorry, time's up.` })
-        return false
+
+    const channels = client.channels.cache
+    console.log('channels', channels)
+    
+    const options = channels.map((channel) => {
+        console.log('channel', channel)
+        return {
+            label: `#${channel.name}`,
+            value: channel.id,
+        }
     })
+
+    const row = new ActionRowBuilder()
+        .addComponents(
+            new StringSelectMenuBuilder()
+                .setCustomId('select')
+                .setPlaceholder('Nothing selected')
+                .addOptions(...options),
+        )
+
+    interaction.reply({ content: `Please select a channel:`, components: [row] })
+    return false
 }
 
 // GET TOURNAMENT FORMAT
@@ -1052,17 +1061,22 @@ const sendPairings = async (client, server, tournament, ignoreRound1) => {
     }
 }
 
-// CREATE TOURNAMENT
-const createTournament = async (interaction, name, tournament_type, abbreviation, formatName) => {
-
+// HANDLE CREATE MODAL
+const handleCreateModal = async (client, interaction, name, tournament_type, abbreviation, formatName) => {
     const server = !interaction.guildId ? {} : 
         await Server.findOne({ where: { id: interaction.guildId }}) || 
         await Server.create({ id: interaction.guildId, name: interaction.guild.name })
 
     const format = await Format.findOne({ where: { name: {[Op.iLike]: formatName }}})
     
-    const channelId = await getTournamentChannel(server, format, interaction)
-    if (!interaction.guild.channels.cache.get(channelId)) return interaction.reply({ content: `Please specify a valid tournament channel.`})
+    const channelId = await getTournamentChannel(client, server, format, interaction)
+    if (!channelId) return
+
+    return this.createTournament(interaction, name, tournament_type, abbreviation, formatName)
+}
+
+// CREATE TOURNAMENT
+const createTournament = async (interaction, name, tournament_type, abbreviation, formatName) => {
 
     const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
 
@@ -1191,7 +1205,6 @@ module.exports = {
     checkTimer,
     closeTournament,
     createSheetData,
-    createTournament,
     findNextOpponent,
     findNoShowOpponent,
     findOtherPreReqMatch,
@@ -1201,6 +1214,7 @@ module.exports = {
     getTournamentFormat,
     getTournamentType,
     getMatches,
+    handleCreateModal,
     joinTournament,
     openTournament,
     processMatchResult,
