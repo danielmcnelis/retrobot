@@ -43,7 +43,7 @@ module.exports = {
             
         const tourTypeInput = new TextInputBuilder()
             .setCustomId('tourTypeInput')
-            .setLabel("Single Elim., Double Elim., Swiss, or Round Robin?")
+            .setLabel("Type of tournament (SE, DE, SW, RR)?")
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
 
