@@ -76,6 +76,8 @@ module.exports = {
 
             const formatRow = new ActionRowBuilder().addComponents(formatName)
 
+            console.log('modal', modal)
+
             modal.addComponents(formatRow)
         }
 
