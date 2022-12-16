@@ -26,39 +26,32 @@ module.exports = {
 
 		// Create the modal
 		const modal = new ModalBuilder()
-        .setCustomId('myModal')
-        .setTitle('My Modal')
+        .setCustomId('createTournament')
+        .setTitle('Create a New Tournament')
 
-        // Add components to modal
-
-        // Create the text input components
         const tourNameInput = new TextInputBuilder()
             .setCustomId('tourNameInput')
-            // The label is the prompt the user sees for this input
             .setLabel("Full name of the tournament?")
-            // Short means only a single line of text
             .setStyle(TextInputStyle.Short)
+            .setRequired(true)
 
-
-        // Create the text input components
         const tourAbbreviationInput = new TextInputBuilder()
             .setCustomId('tourAbbreviationInput')
-            // The label is the prompt the user sees for this input
-            .setLabel("Abbreviation of the tournament?")
-            // Short means only a single line of text
+            .setLabel("Abbreviation for the tournament?")
             .setStyle(TextInputStyle.Short)
+            .setRequired(false)
             
         const tourTypeInput = new TextInputBuilder()
             .setCustomId('tourTypeInput')
-            .setLabel("What type of tournament?")
-            // Paragraph means multiple lines of text.
+            .setLabel("Single Elim., Double Elim., Swiss, or Round Robin?")
             .setStyle(TextInputStyle.Short)
+            .setRequired(true)
 
         const tourFormatInput = new TextInputBuilder()
             .setCustomId('tourFormatInput')
             .setLabel("What format will be played?")
-            // Paragraph means multiple lines of text.
             .setStyle(TextInputStyle.Short)
+            .setRequired(true)
 
         const nameRow = new ActionRowBuilder().addComponents(tourNameInput)
         const abbreviationRow = new ActionRowBuilder().addComponents(tourAbbreviationInput)

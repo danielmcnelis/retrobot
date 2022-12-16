@@ -78,6 +78,12 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 })
 
+// MODAL SUBMIT
+client.on(Events.InteractionCreate, interaction => {
+	if (!interaction.isModalSubmit()) return
+	console.log(interaction)
+})
+
 // SELECT MENUS
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isStringSelectMenu()) return
