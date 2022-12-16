@@ -1054,8 +1054,6 @@ const sendPairings = async (client, server, tournament, ignoreRound1) => {
 
 // CREATE TOURNAMENT
 const createTournament = async (interaction, name, tournament_type, abbreviation, formatName) => {
-    // const channelId = await getTournamentChannel(server, format, message)
-    // if (!interaction.guild.channels.cache.get(channelId)) return interaction.reply({ content: `Please specify a valid tournament channel.`})
 
     const server = !interaction.guildId ? {} : 
         await Server.findOne({ where: { id: interaction.guildId }}) || 
@@ -1063,6 +1061,9 @@ const createTournament = async (interaction, name, tournament_type, abbreviation
 
     const format = await Format.findOne({ where: { name: {[Op.iLike]: formatName }}})
     
+    const channelId = await getTournamentChannel(server, format, interaction)
+    if (!interaction.guild.channels.cache.get(channelId)) return interaction.reply({ content: `Please specify a valid tournament channel.`})
+
     const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
 
     // const name = input.startsWith('FLC') ? `Format Library Championship ${parseInt(input.replace(/[^0-9]/g,''))}` :
