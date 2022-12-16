@@ -11,7 +11,7 @@ const { Deck, Entry, Format, Player, Stats, Server, Tournament } = require('../d
 
 //FUNCTION IMPORTS
 const { getIssues } = require('./deck.js')
-const { capitalize, drawDeck, shuffleArray } = require('./utility.js')
+const { capitalize, drawDeck, generateRandomString, shuffleArray } = require('./utility.js')
 
 // STATIC IMPORTS
 const { legend, mad } = require('../static/emojis')
