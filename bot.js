@@ -12,7 +12,7 @@ const { Membership, Player, Server } = require('./db/index.js')
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
 const { undoMatch } = require('./functions/undo')
-const { checkTimer, closeTournament, createTournament, joinTournament, openTournament, sendDeck, setTimerForTournament, signupForTournament, createTournament } = require('./functions/tournament')
+const { checkTimer, closeTournament, createTournament, joinTournament, openTournament, sendDeck, setTimerForTournament, signupForTournament } = require('./functions/tournament')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
