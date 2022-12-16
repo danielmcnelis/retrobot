@@ -1072,11 +1072,11 @@ const handleCreateModal = async (client, interaction, name, tournament_type, abb
     const channelId = await getTournamentChannel(client, server, format, interaction)
     if (!channelId) return
 
-    return createTournament(interaction, name, tournament_type, abbreviation, formatName)
+    return createTournament(interaction, server, format, name, tournament_type, abbreviation)
 }
 
 // CREATE TOURNAMENT
-const createTournament = async (interaction, name, tournament_type, abbreviation, formatName) => {
+const createTournament = async (interaction, server, format, name, tournament_type, abbreviation) => {
 
     const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
 
