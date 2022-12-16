@@ -79,9 +79,16 @@ client.on(Events.InteractionCreate, async interaction => {
 })
 
 // MODAL SUBMIT
-client.on(Events.InteractionCreate, interaction => {
+client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isModalSubmit()) return
-	console.log(interaction)
+    
+	const tourName = interaction.fields.getTextInputValue('tourName')
+	const tourType = interaction.fields.getTextInputValue('tourType')
+	const tourAbbreviation = interaction.fields.getTextInputValue('tourAbbreviation')
+	const tourFormat = interaction.fields.getTextInputValue('tourFormat')
+	console.log({ tourName, tourType, tourAbbreviation, tourFormat })
+
+    await interaction.reply({ content: 'Your submission was received successfully!' })
 })
 
 // SELECT MENUS
