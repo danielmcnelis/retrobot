@@ -1,15 +1,91 @@
 
-    // CREATE
-    if (cmd === `!create`) {
-        if (!hasPartnerAccess(server)) return message.channel.send({ content: `This feature is only available with partner access. ${emojis.legend}`})
-        if (!isMod(server, message.member)) return message.channel.send({ content: `You do not have permission to do that.`})
-        if (!args.length) return message.channel.send({ content: `Please provide a name for the new tournament.`})
-        const format = await getTournamentFormat(server, message)
-        if (!format) return message.channel.send({ content: `Please specify a valid format.`})
+
+
+
+const { ActionRowBuilder, Events, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+
+const { SlashCommandBuilder } = require('discord.js')
+const { Format, Server, Tournament } = require('../db')
+const emojis = require('../static/emojis.json')
+const { isMod, hasPartnerAccess } = require('../functions/utility')
+const { sendPairings, selectTournament } = require('../functions/tournament')
+const { Op } = require('sequelize')
+const { client } = require('../static/clients.js')
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('create')
+        .setDescription('Create a tournament.'),
+    async execute(interaction) {
+        const server = !interaction.guildId ? {} : 
+            await Server.findOne({ where: { id: interaction.guildId }}) || 
+            await Server.create({ id: interaction.guildId, name: interaction.guild.name })
+        
+        if (!hasPartnerAccess(server)) return interaction.reply({ content: `This feature is only available with partner access. ${emojis.legend}`})
+        if (!isMod(server, interaction.member)) return interaction.reply({ content: 'You do not have permission to do that.'})
+
+		// Create the modal
+		const modal = new ModalBuilder()
+        .setCustomId('myModal')
+        .setTitle('My Modal')
+
+        // Add components to modal
+
+        // Create the text input components
+        const tourNameInput = new TextInputBuilder()
+            .setCustomId('tourNameInput')
+            // The label is the prompt the user sees for this input
+            .setLabel("Full name of the tournament?")
+            // Short means only a single line of text
+            .setStyle(TextInputStyle.Short)
+
+
+        // Create the text input components
+        const tourAbbreviationInput = new TextInputBuilder()
+            .setCustomId('tourAbbreviationInput')
+            // The label is the prompt the user sees for this input
+            .setLabel("Abbreviation of the tournament?")
+            // Short means only a single line of text
+            .setStyle(TextInputStyle.Short)
+            
+        const tourTypeInput = new TextInputBuilder()
+            .setCustomId('tourTypeInput')
+            .setLabel("What type of tournament?")
+            // Paragraph means multiple lines of text.
+            .setStyle(TextInputStyle.Short)
+
+        const tourFormatInput = new TextInputBuilder()
+            .setCustomId('tourFormatInput')
+            .setLabel("What format will be played?")
+            // Paragraph means multiple lines of text.
+            .setStyle(TextInputStyle.Short)
+
+        const nameRow = new ActionRowBuilder().addComponents(tourNameInput)
+        const abbreviationRow = new ActionRowBuilder().addComponents(tourAbbreviationInput)
+        const tourTypeRow = new ActionRowBuilder().addComponents(tourTypeInput)
+        const tourFormatRow = new ActionRowBuilder().addComponents(tourFormatInput)
+
+        // Add inputs to the modal
+        modal.addComponents(nameRow, abbreviationRow, tourTypeRow, tourFormatRow)
+
+        // Show the modal to the user
+        await interaction.showModal(modal)
+
+        return
+        
+        const format = await Format.findOne({
+            where: {
+                [Op.or]: {
+                    name: {[Op.iLike]: server.format },
+                    channel: interaction.channelId
+                }
+            }
+        })
+
         const tournament_type = await getTournamentType(message)
-        if (!tournament_type) return message.channel.send({ content: `Please select a valid tournament type.`})
+        if (!tournament_type) return interaction.reply({ content: `Please select a valid tournament type.`})
         const channelId = await getTournamentChannel(server, format, message)
-        if (!message.guild.channels.cache.get(channelId)) return message.channel.send({ content: `Please specify a valid tournament channel.`})
+        if (!interaction.guild.channels.cache.get(channelId)) return interaction.reply({ content: `Please specify a valid tournament channel.`})
 
         const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
 
@@ -78,7 +154,7 @@
                     community: server.name
                 })
 
-                return message.channel.send({ content: 
+                return interaction.reply({ content: 
                     `You created a new tournament:` + 
                     `\nName: ${name} ${logo}` + 
                     `\nFormat: ${format.name} ${server.emoji || format.emoji}` + 
@@ -118,7 +194,7 @@
                         community: server.name
                     })
 
-                    return message.channel.send({ content: 
+                    return interaction.reply({ content: 
                         `You created a new tournament:` + 
                         `\nName: ${data.tournament.name} ${logo}` + 
                         `\nFormat: ${format.name} ${server.emoji || format.emoji}` + 
@@ -128,7 +204,10 @@
                 } 
             } catch (err) {
                 console.log(err)
-                return message.channel.send({ content: `Unable to connect to Challonge account.`})
+                return interaction.reply({ content: `Unable to connect to Challonge account.`})
             }
         }
+        
+        
     }
+}

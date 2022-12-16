@@ -5,6 +5,7 @@ const close = require('./close')
 const coin = require('./coin')
 const combine = require('./combine')
 const coverage = require('./coverage')
+const create = require('./create')
 const deck = require('./deck')
 const dice = require('./dice')
 const duelingbook = require('./duelingbook')
@@ -44,6 +45,7 @@ module.exports = {
     coin,
     combine,
     coverage,
+    create,
     deck,
     dice,
     duelingbook,

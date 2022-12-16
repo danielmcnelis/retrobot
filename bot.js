@@ -2,7 +2,7 @@
 // RETROBOT - A RANKINGS & TOURNAMENT MANAGEMENT DISCORD BOT
 
 // MODULE IMPORTS
-const { ActionRowBuilder, Collection, Events, StringSelectMenuBuilder } = require('discord.js');
+const { ActionRowBuilder, Collection, Events, ModalBuilder, StringSelectMenuBuilder, TextInputBuilder } = require('discord.js');
 const FuzzySet = require('fuzzyset')
 
 // DATABASE IMPORTS 
@@ -53,6 +53,13 @@ client.on('ready', async() => {
     setTimeout(() => purgeRatedDecks(), midnightCountdown + (12 * 60 * 1000))
 })
 
+
+
+client.on(Events.InteractionCreate, async interaction => {
+	if (!interaction.isChatInputCommand()) return;
+
+});
+
 // COMMANDS
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return
@@ -64,16 +71,11 @@ client.on(Events.InteractionCreate, async interaction => {
 		return
 	}
 
-	try {
-        if (command.data.name === 'search') {
-            return command.execute(interaction, fuzzyCards)
-        } else {
-            return command.execute(interaction)
-        }
-	} catch (error) {
-		console.error(error)
-		return interaction.reply({ content: 'There was an error executing this command!', ephemeral: true })
-	}
+    if (command.data.name === 'search') {
+        return command.execute(interaction, fuzzyCards)
+    } else {
+        return command.execute(interaction)
+    }
 })
 
 // SELECT MENUS
