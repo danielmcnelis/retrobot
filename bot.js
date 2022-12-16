@@ -81,7 +81,7 @@ client.on(Events.InteractionCreate, async interaction => {
 // MODAL SUBMIT
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isModalSubmit()) return
-    console.log('interaction', interaction)
+    console.log('interaction.formatName', interaction.formatName)
 	const name = interaction.fields.getTextInputValue('name')
 	const tournament_type = interaction.fields.getTextInputValue('tournament_type')
 	const abbreviation = interaction.fields.getTextInputValue('abbreviation')

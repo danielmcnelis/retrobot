@@ -77,6 +77,7 @@ module.exports = {
             const formatRow = new ActionRowBuilder().addComponents(formatName)
             modal.addComponents(formatRow)
         } else {
+            console.log('set .formatName', format.name)
             interaction.formatName = format.name
         }
 
