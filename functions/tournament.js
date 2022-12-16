@@ -15,6 +15,7 @@ const { capitalize, drawDeck, generateRandomString, shuffleArray } = require('./
 
 // STATIC IMPORTS
 const { legend, mad } = require('../static/emojis')
+const emojis = require('../static/emojis')
 
 ////// TOURNAMENT REGISTRATION FUNCTIONS ///////
 
