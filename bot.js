@@ -12,7 +12,7 @@ const { Membership, Player, Server } = require('./db/index.js')
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
 const { undoMatch } = require('./functions/undo')
-const { checkTimer, closeTournament, joinTournament, openTournament, sendDeck, setTimerForTournament, signupForTournament } = require('./functions/tournament')
+const { checkTimer, closeTournament, createTournament, joinTournament, openTournament, sendDeck, setTimerForTournament, signupForTournament, createTournament } = require('./functions/tournament')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
@@ -81,14 +81,12 @@ client.on(Events.InteractionCreate, async interaction => {
 // MODAL SUBMIT
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isModalSubmit()) return
-    
-	const tourName = interaction.fields.getTextInputValue('tourName')
-	const tourType = interaction.fields.getTextInputValue('tourType')
-	const tourAbbreviation = interaction.fields.getTextInputValue('tourAbbreviation')
-	const tourFormat = interaction.fields.getTextInputValue('tourFormat')
-	console.log({ tourName, tourType, tourAbbreviation, tourFormat })
-
-    await interaction.reply({ content: 'Your submission was received successfully!' })
+	const name = interaction.fields.getTextInputValue('name')
+	const tournament_type = interaction.fields.getTextInputValue('tournament_type')
+	const abbreviation = interaction.fields.getTextInputValue('abbreviation')
+	const formatName = interaction.fields.getTextInputValue('formatName')
+    // await interaction.reply({ content: 'Your submission was received successfully!' })
+    return createTournament(interaction, name, tournament_type, abbreviation, formatName)
 })
 
 // SELECT MENUS

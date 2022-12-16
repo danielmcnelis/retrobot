@@ -33,7 +33,7 @@ const askForDBName = async (member, player, override = false, error = false, att
         time: 15000
     }).then(async (collected) => {
         const dbName = collected.first().content
-        if (dbName.includes("duelingbook.com/deck") || dbName.includes("imgur.com")) {
+        if (dbname.toLowerCase().includes("duelingbook.com/deck") || dbname.toLowerCase().includes("imgur.com")) {
             if (attempt >= 3) {
                 member.send({ content: `Sorry, time's up. Go back to the server and try again.`}).catch((err) => console.log(err))
                 return false
@@ -1048,10 +1048,135 @@ const sendPairings = async (client, server, tournament, ignoreRound1) => {
         } catch (err) {
             console.log(err)
         }
+    }
+}
 
-        
+// CREATE TOURNAMENT
+const createTournament = async (interaction, name, tournament_type, abbreviation, formatName) => {
+    // const channelId = await getTournamentChannel(server, format, message)
+    // if (!interaction.guild.channels.cache.get(channelId)) return interaction.reply({ content: `Please specify a valid tournament channel.`})
 
+    const server = !interaction.guildId ? {} : 
+        await Server.findOne({ where: { id: interaction.guildId }}) || 
+        await Server.create({ id: interaction.guildId, name: interaction.guild.name })
+
+    const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
+
+    // const name = input.startsWith('FLC') ? `Format Library Championship ${parseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('YRS') ? `Yu-Gi-Oh! Retro Series ${parseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('DLC') ? `Drama Llama Classic ${parseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('DDS') ? `Digbic Dig Series ${parseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('ETC') ? `Ellietincan Cup ${pparseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('ACS') ? `Format Library Championship ${parseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('KGP') ? `Format Library Championship ${parseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('DCT') ? `Duelist Crown Tournament ${parseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('DSC') ? `Dark Side Cup ${parseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('WWC') ? `Woawa World Cup ${parseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('GASP') ? `Gigachad Advanced Sneak Preview ${parseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('RWL') ? `Retro World Locals ${parseInt(input.replace(/[^0-9]/g,''))}` :
+    //     input.startsWith('BC') ? `Blazing Cheaters ${parseInt(input.replace(/[^0-9]/g,''))}` : 
+    //     input.startsWith('FWL') ? `Future World Locals ${parseInt(input.replace(/[^0-9]/g,''))}` : 
+    //     input
+
+    const logo = name.toLowerCase().includes('format library championship') ? emojis.FL :
+        name.toLowerCase().includes('retro series') ? emojis.mlady :
+        name.toLowerCase().includes('drama llama') ? emojis.lmfao :
+        name.toLowerCase().includes('digbic') ? emojis.stoned :
+        name.toLowerCase().includes('ellietincan') ? emojis.lipton :
+        name.toLowerCase().includes('ajtbls') ? emojis.toad :
+        name.toLowerCase().includes('ke$ha') ? emojis.UredU :
+        name.toLowerCase().includes('crown') ? emojis.king :
+        name.toLowerCase().includes('dark side') ? emojis.evil :
+        name.toLowerCase().includes('woawa') ? '🦉 ⚽' :
+        name.toLowerCase().includes('gigachad') ? emojis.gigachad :
+        name.toLowerCase().includes('retro world') ? emojis.celtic :
+        name.toLowerCase().includes('future world') ? emojis.farqred :
+        name.toLowerCase().includes('blazing cheaters') ? emojis.speeder :
+        server.logo || emojis.legend
+
+    try {
+        const { status, data } = await axios({
+            method: 'post',
+            url: `https://api.challonge.com/v1/tournaments.json?api_key=${server.challongeAPIKey}`,
+            data: {
+                tournament: {
+                    name: name,
+                    url: abbreviation || name,
+                    tournament_type: tournament_type,
+                    game_name: 'Yu-Gi-Oh!',
+                    pts_for_match_tie: "0.0"
+                }
+            }
+        })
         
+        if (status === 200 && data) {
+            await Tournament.create({ 
+                id: data.tournament.id,
+                name: name,
+                abbreviation: abbreviation,
+                state: 'pending',
+                type: tournament_type,
+                formatName: format.name,
+                logo: logo,
+                emoji: server.emoji || format.emoji,
+                url: data.tournament.url,
+                channelId: channelId,
+                serverId: interaction.guildId,
+                community: server.name
+            })
+
+            return interaction.reply({ content: 
+                `You created a new tournament:` + 
+                `\nName: ${name} ${logo}` + 
+                `\nFormat: ${format.name} ${server.emoji || format.emoji}` + 
+                `\nType: ${capitalize(data.tournament.tournament_type, true)}` +
+                `\nBracket: https://challonge.com/${data.tournament.url}`
+            })
+        } 
+    } catch (err) {
+        console.log(err)
+        try {
+            const { status, data } = await axios({
+                method: 'post',
+                url: `https://api.challonge.com/v1/tournaments.json?api_key=${server.challongeAPIKey}`,
+                data: {
+                    tournament: {
+                        name: name,
+                        url: str,
+                        tournament_type: tournament_type,
+                        game_name: 'Yu-Gi-Oh!',
+                        pts_for_match_tie: "0.0"
+                    }
+                }
+            })
+            
+            if (status === 200 && data) {
+                await Tournament.create({ 
+                    id: data.tournament.id,
+                    name: data.tournament.name,
+                    state: data.tournament.state,
+                    type: data.tournament.tournament_type,
+                    formatName: format.name,
+                    logo: logo,
+                    emoji: server.emoji || format.emoji,
+                    url: data.tournament.url,
+                    channelId: channelId,
+                    serverId: interaction.guildId,
+                    community: server.name
+                })
+
+                return interaction.reply({ content: 
+                    `You created a new tournament:` + 
+                    `\nName: ${data.tournament.name} ${logo}` + 
+                    `\nFormat: ${format.name} ${server.emoji || format.emoji}` + 
+                    `\nType: ${capitalize(data.tournament.tournament_type, true)}` +
+                    `\nBracket: https://challonge.com/${data.tournament.url}`
+                })
+            } 
+        } catch (err) {
+            console.log(err)
+            return interaction.reply({ content: `Unable to connect to Challonge account.`})
+        }
     }
 }
 
@@ -1062,6 +1187,7 @@ module.exports = {
     checkTimer,
     closeTournament,
     createSheetData,
+    createTournament,
     findNextOpponent,
     findNoShowOpponent,
     findOtherPreReqMatch,
