@@ -1062,7 +1062,7 @@ const sendPairings = async (client, server, tournament, ignoreRound1) => {
 }
 
 // HANDLE CREATE MODAL
-const handleCreateModal = async (client, interaction, name, tournament_type, abbreviation, formatName) => {
+const handleCreateModal = async (client, interaction, formatName, name, abbreviation, tournament_type) => {
     const server = !interaction.guildId ? {} : 
         await Server.findOne({ where: { id: interaction.guildId }}) || 
         await Server.create({ id: interaction.guildId, name: interaction.guild.name })
@@ -1072,11 +1072,11 @@ const handleCreateModal = async (client, interaction, name, tournament_type, abb
     const channelId = await getTournamentChannel(client, server, format, interaction)
     if (!channelId) return
 
-    return createTournament(interaction, server, format, name, tournament_type, abbreviation)
+    return createTournament(interaction, server, format, name, abbreviation, tournament_type, channelId)
 }
 
 // CREATE TOURNAMENT
-const createTournament = async (interaction, server, format, name, tournament_type, abbreviation) => {
+const createTournament = async (interaction, server, format, name, abbreviation, tournament_type, channelId) => {
 
     const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
 
