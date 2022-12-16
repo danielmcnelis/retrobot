@@ -1061,6 +1061,8 @@ const createTournament = async (interaction, name, tournament_type, abbreviation
         await Server.findOne({ where: { id: interaction.guildId }}) || 
         await Server.create({ id: interaction.guildId, name: interaction.guild.name })
 
+    const format = await Format.findOne({ where: { name: {[Op.iLike]: formatName }}})
+    
     const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
 
     // const name = input.startsWith('FLC') ? `Format Library Championship ${parseInt(input.replace(/[^0-9]/g,''))}` :
