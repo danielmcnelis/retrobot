@@ -39,6 +39,8 @@ module.exports = {
             }
         })
 
+        console.log('format', format)
+
         if (!format) this.data.addChannelOption(cha =>
             cha
                 .setName('channel')
