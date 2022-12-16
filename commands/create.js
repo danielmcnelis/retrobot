@@ -15,7 +15,13 @@ const { client } = require('../static/clients.js')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('create')
-        .setDescription('Create a tournament.'),
+        .setDescription('Create a tournament.')
+        .addChannelOption(cha =>
+            cha
+                .setName('channel')
+                .setDescription('Enter tournament name.')
+                .setRequired(true)
+        ),
     async execute(interaction) {
         const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 
@@ -32,6 +38,13 @@ module.exports = {
                 }
             }
         })
+
+        if (!format) this.data.addChannelOption(cha =>
+            cha
+                .setName('channel')
+                .setDescription('Provide a tournament channel.')
+                .setRequired(true)
+        )
 
 		const modal = new ModalBuilder()
             .setCustomId('createTournament')
