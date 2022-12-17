@@ -81,6 +81,7 @@ module.exports = {
                 .setStyle(TextInputStyle.Short)
                 .setRequired(true)
             
+            channelName.setValue(interaction.channel.name)
             channelName.setPlaceholder(interaction.channel.name)
 
             const channelRow = new ActionRowBuilder().addComponents(channelName)
