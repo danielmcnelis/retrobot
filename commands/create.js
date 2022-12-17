@@ -60,10 +60,6 @@ module.exports = {
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
 
-
-        if (!format) {
-        }
-
         const nameRow = new ActionRowBuilder().addComponents(name)
         const abbreviationRow = new ActionRowBuilder().addComponents(abbreviation)
         const typeRow = new ActionRowBuilder().addComponents(tournament_type)
