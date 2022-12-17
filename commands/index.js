@@ -7,6 +7,7 @@ const combine = require('./combine')
 const coverage = require('./coverage')
 const create = require('./create')
 const deck = require('./deck')
+const destroy = require('./destroy')
 const dice = require('./dice')
 const duelingbook = require('./duelingbook')
 const exit = require('./exit')
@@ -47,6 +48,7 @@ module.exports = {
     coverage,
     create,
     deck,
+    destroy,
     dice,
     duelingbook,
     exit,
