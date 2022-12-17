@@ -78,10 +78,15 @@ client.on(Events.InteractionCreate, async interaction => {
 // BUTTON SUBMIT
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isButton()) return
-	console.log(interaction)
-
-    return
-    await seed(interaction, tournamentId)   
+    const custom_id = interaction.message.components[0].components[0].data.custom_id
+    const toBeSeeded = custom_id.charAt(0) !== 'N'
+    const toBeShuffled = custom_id.charAt(0) === 'S'
+    const tournamentId = custom_id.slice(1)
+    console.log('custom_id', custom_id)
+    console.log('toBeSeeded', toBeSeeded)
+    console.log('toBeShuffled', toBeShuffled)
+    console.log('tournamentId', tournamentId)
+    if (toBeSeeded) await seed(interaction, tournamentId, toBeShuffled)
     return startTournament(interaction, tournamentId)
 })
 

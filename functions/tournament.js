@@ -611,57 +611,71 @@ const removeParticipant = async (server, interaction, member, entry, tournament,
 }
 
 //SEED
-const seed = async (interaction, tournamentId) => {
+const seed = async (interaction, tournamentId, shuffle = false) => {
     const server = await Server.findOne({ where: { id: interaction.guildId }})
     const tournament = await Tournament.findOne({ where: { id: tournamentId }})
-    interaction.channel.send({ content: `Seeding in progress, please wait.`})
 
-    const entries = await Entry.findAll({ where: { active: true, tournamentId: tournament.id } })  
-    const serverId = server.internalLadder ? server.id : '414551319031054346'  
-    const expEntries = []
-    const newbieEntries = []
-
-    for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i]
-        const playerId = entry.playerId
-        const stats = await Stats.findOne({ where: { format: tournament.formatName, playerId, serverId }})
-        
-        if (stats) {
-            expEntries.push([entry.participantId, entry.playerName, stats.elo])
-        } else {
-            newbieEntries.push([entry.participantId, entry.playerName, null])
-        }
-    }
-
-    const seeds = [...expEntries.sort((a, b) => b[2] - a[2]), ...shuffleArray(newbieEntries)]  
-    let count = 0
-    const results = []
-
-    for (let i = 0; i < seeds.length; i++) {
-        const participantId = seeds[i][0]
-        const name = seeds[i][1]
-
+    if (shuffle) {
         try {
             await axios({
-                method: 'put',
-                url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/${participantId}.json?api_key=${server.challongeAPIKey}`,
-                data: {
-                    participant: {
-                        seed: i+1
-                    }
-                }
+                method: 'post',
+                url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/randomize.json?api_key=${server.challongeAPIKey}`
             })
             
-            results.push(`${name} is now the ${i+1} seed.`)
-            count++
+            interaction.channel.send(`Success! Your seeds 🌱 have been shuffled! 🙏`)
         } catch (err) {
-            interaction.channel.send({ content: `Error processing ${name} (participantId: ${participantId}) as the ${i+1} seed.`})
+            interaction.channel.send(`Error: Your seeds 🥀 have not been shuffled. 😢`)
         }
-    }
+    } else {
+        interaction.channel.send({ content: `Seeding in progress, please wait.`})
 
-    for (let i = 0; i < results.length; i += 30) interaction.channel.send({ content: results.slice(i, i + 30).join('\n').toString()})
-    if (count !== seeds.length) interaction.channel.send({ content: `Error seeding tournament. Please fix seeding manually if desired.`})
-    return
+        const entries = await Entry.findAll({ where: { active: true, tournamentId: tournament.id } })  
+        const serverId = server.internalLadder ? server.id : '414551319031054346'  
+        const expEntries = []
+        const newbieEntries = []
+    
+        for (let i = 0; i < entries.length; i++) {
+            const entry = entries[i]
+            const playerId = entry.playerId
+            const stats = await Stats.findOne({ where: { format: tournament.formatName, playerId, serverId }})
+            
+            if (stats) {
+                expEntries.push([entry.participantId, entry.playerName, stats.elo])
+            } else {
+                newbieEntries.push([entry.participantId, entry.playerName, null])
+            }
+        }
+    
+        const seeds = [...expEntries.sort((a, b) => b[2] - a[2]), ...shuffleArray(newbieEntries)]  
+        let count = 0
+        const results = []
+    
+        for (let i = 0; i < seeds.length; i++) {
+            const participantId = seeds[i][0]
+            const name = seeds[i][1]
+    
+            try {
+                await axios({
+                    method: 'put',
+                    url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/${participantId}.json?api_key=${server.challongeAPIKey}`,
+                    data: {
+                        participant: {
+                            seed: i+1
+                        }
+                    }
+                })
+                
+                results.push(`${name} is now the ${i+1} seed.`)
+                count++
+            } catch (err) {
+                results.push(`Error: Failed to set ${name} (participantId: ${participantId}) as the ${i+1} seed.`)
+            }
+        }
+    
+        for (let i = 0; i < results.length; i += 30) interaction.channel.send({ content: results.slice(i, i + 30).join('\n').toString()})
+        if (count !== seeds.length) interaction.channel.send({ content: `Error seeding tournament. Please fix seeds manually if desired. 🤠`})
+        return
+    }
 }
 
 
@@ -1216,8 +1230,6 @@ const startTournament = async (interaction, tournamentId) => {
     const server = await Server.findOne({ where: { id: interaction.guildId }})
     const tournament = await Tournament.findOne({ where: { id: tournamentId }})
     
-    // await seed(interaction, tournament)
-
     const { status } = await axios({
         method: 'post',
         url: `https://api.challonge.com/v1/tournaments/${tournament.id}/start.json?api_key=${server.challongeAPIKey}`

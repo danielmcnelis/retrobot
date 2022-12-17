@@ -8,6 +8,7 @@ const { selectTournament, sendPairings } = require('../functions/tournament')
 const { isMod, hasPartnerAccess } = require('../functions/utility')
 const { Op } = require('sequelize')
 const axios = require('axios')
+const emojis = require('../static/emojis.json')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -59,24 +60,24 @@ module.exports = {
         } else {
 		    const row = new ActionRowBuilder()
                 .addComponents(new ButtonBuilder()
-                    .setCustomId('yes')
+                    .setCustomId(`Y${tournament.id}`)
                     .setLabel('Yes')
                     .setStyle(ButtonStyle.Primary)
                 )
 
                 .addComponents(new ButtonBuilder()
-                    .setCustomId('no')
+                    .setCustomId(`N${tournament.id}`)
                     .setLabel('No')
                     .setStyle(ButtonStyle.Primary)
                 )
 
                 .addComponents(new ButtonBuilder()
-                    .setCustomId('shuffle')
+                    .setCustomId(`S${tournament.id}`)
                     .setLabel('Shuffle')
                     .setStyle(ButtonStyle.Primary)
                 )
 
-            await interaction.reply({ content: 'Should this tournament be seeded by Format Library rankings?', components: [row] })
+            await interaction.reply({ content: `Should this tournament be seeded by Format Library ${emojis.FL} rankings?`, components: [row] })
         }
     }
 }
