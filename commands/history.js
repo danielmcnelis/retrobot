@@ -187,7 +187,7 @@ module.exports = {
                 })
                 
                 const url = await chart.getShortUrl()
-                const channel = client.channels.cache.get(server.botSpamChannel)
+                const channel = interaction.guild.channels.cache.get(server.botSpamChannel)
                 if (!channel) {
                     return interaction.reply({ content: `Error: could not find bot-spam channel.`})
                 } else if (i === 0) {
