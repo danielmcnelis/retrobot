@@ -35,8 +35,8 @@ module.exports = {
             ...await Entry.findAll({ 
                 where: { 
                     '$player.discordId$': interaction.user.id,
-                    '$tournament.formatName': format ? format.name : { [Op.not]: null },
-                    '$tournament.serverId': interaction.guild.id
+                    '$tournament.formatName$': format ? format.name : { [Op.not]: null },
+                    '$tournament.serverId$': interaction.guild.id
                 }, 
                 include: [Player, Tournament] 
             })
