@@ -88,7 +88,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
     console.log('toBeSeeded', toBeSeeded)
     console.log('toBeShuffled', toBeShuffled)
     console.log('tournamentId', tournamentId)
-    if (toBeSeeded) await seed(interaction, tournamentId, toBeShuffled)
+    
+    if (toBeSeeded) {
+        await seed(interaction, tournamentId, toBeShuffled)
+    } else {
+        interaction.channel.send(`Okay, your seeds 🌱 will not been changed. 👍`)
+    }
+
     return startTournament(interaction, tournamentId)
 })
 

@@ -1237,7 +1237,7 @@ const startTournament = async (interaction, tournamentId) => {
 
     if (status === 200) { 
         await tournament.update({ state: 'underway' })
-        interaction.reply({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
+        interaction.reply({ content: `Let's go! Your tournament is starting now: https://challonge.com/${tournament.url} ${tournament.emoji}`})
         return sendPairings(interaction.guild, server, tournament, false)
     } else {
         return interaction.reply({ content: `Error connecting to Challonge.`})
