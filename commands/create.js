@@ -72,7 +72,7 @@ module.exports = {
         }
 
         const channelName = new TextInputBuilder()
-            .setCustomId('formatName')
+            .setCustomId('channelName')
             .setLabel("What channel will host this event?")
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
