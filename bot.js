@@ -95,6 +95,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         interaction.channel.send(`Okay, your seeds 🌱 will not been changed. 👍`)
     }
 
+    interaction.message.edit({ components: [] })
     return startTournament(interaction, tournamentId)
 })
 
