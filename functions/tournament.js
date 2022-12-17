@@ -189,7 +189,12 @@ const selectTournament = async (interaction, tournaments) => {
                     .addOptions(...options),
             )
     
-        interaction.reply({ content: `Please select a tournament:`, components: [row], mentions: { users: [interaction.options.getUser('user')] }  })
+        const user = interaction.options.getUser('user')
+        console.log('user', user)
+        interaction.mentions.users.push(user)
+        console.log('interaction.mentions.users', interaction.mentions.users)
+
+        interaction.reply({ content: `Please select a tournament:`, components: [row], mentions: interaction.mentions }  })
         return false
     }
 }
