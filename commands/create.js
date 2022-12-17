@@ -81,6 +81,9 @@ module.exports = {
             const channel = await interaction.guild.channels.cache.get(format.channelId) || {}
             channelName.setValue(channel.name)
             channelName.setPlaceholder(channel.name)
+        } else {
+            channelName.setValue(interaction.channel.name)
+            channelName.setPlaceholder(interaction.channel.name)
         }
 
         const nameRow = new ActionRowBuilder().addComponents(name)
