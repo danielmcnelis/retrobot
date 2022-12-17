@@ -132,8 +132,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
             await joinTournament(interaction, tournamentId)
             return interaction.message.edit({components: []})
         } else if (command.data.name === 'signup') {
-            console.log('interaction', interaction)
-            const userId = interaction.components[0].customId
+            console.log('interaction.components', interaction.components)
+            const userId = interaction.components[0].id
             const tournamentId = interaction.values[0]
             await signupForTournament(interaction, tournamentId, userId)
             return interaction.message.edit({components: []})
