@@ -622,7 +622,7 @@ const seed = async (interaction, tournamentId, shuffle = false) => {
                 url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants/randomize.json?api_key=${server.challongeAPIKey}`
             })
             
-            interaction.channel.send(`Success! Your seeds 🌱 have been shuffled! 🙏`)
+            interaction.channel.send(`Success! Your seeds 🌱 have been shuffled! 🎲`)
         } catch (err) {
             interaction.channel.send(`Error: Your seeds 🥀 have not been shuffled. 😢`)
         }
@@ -1192,6 +1192,22 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
     }
 }
 
+// REMOVE FROM TOURNAMENT
+const removeFromTournament = async (interaction, tournamentId, playerId) => {
+    const server = await Server.findOne({ where: { id: interaction.guildId }})
+    const member = await interaction.guild.members.fetch(userId)
+    
+    const entry = await Entry.findOne({ 
+        where: { 
+            playerId: playerId, 
+            tournamentId: tournamentId 
+        }, 
+        include: [Player, Tournament] 
+    })
+
+    return removeParticipant(server, interaction, member, entry, entry.tournament, false)
+}
+
 // DROP FROM TOURNAMENT
 const dropFromTournament = async (interaction, tournamentId) => {
     const tournament = await Tournament.findOne({ where: { id: tournamentId }})
@@ -1264,6 +1280,7 @@ module.exports = {
     openTournament,
     processMatchResult,
     postParticipant,
+    removeFromTournament,
     removeParticipant,
     seed,
     selectTournament,

@@ -12,7 +12,7 @@ const { Membership, Player, Server } = require('./db/index.js')
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
 const { undoMatch } = require('./functions/undo')
-const { checkTimer, closeTournament, createTournament, dropFromTournament, joinTournament, openTournament, seed, sendDeck, setTimerForTournament, signupForTournament, startTournament } = require('./functions/tournament')
+const { checkTimer, closeTournament, createTournament, dropFromTournament, joinTournament, openTournament, removeFromTournament, seed, sendDeck, setTimerForTournament, signupForTournament, startTournament } = require('./functions/tournament')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
@@ -78,16 +78,11 @@ client.on(Events.InteractionCreate, async interaction => {
 // BUTTON SUBMIT
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isButton()) return
-    console.log('interaction', interaction)
-    console.log('interaction.message.components[0]', interaction.message.components[0])
+    
     const customId = interaction.customId
     const toBeSeeded = customId.charAt(0) !== 'N'
     const toBeShuffled = customId.charAt(0) === 'S'
     const tournamentId = customId.slice(1)
-    console.log('customId', customId)
-    console.log('toBeSeeded', toBeSeeded)
-    console.log('toBeShuffled', toBeShuffled)
-    console.log('tournamentId', tournamentId)
     
     if (toBeSeeded) {
         await seed(interaction, tournamentId, toBeShuffled)
@@ -153,6 +148,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
         } else if (command.data.name === 'drop') {
             const tournamentId = interaction.values[0]
             await dropFromTournament(interaction, tournamentId)
+            return interaction.message.edit({ components: []})
+        } else if (command.data.name === 'remove') {
+            const tournamentId = interaction.values[0]
+            const userId = interaction.message.components[0].components[0].data.custom_id
+            await removeFromTournament(interaction, tournamentId, userId)
             return interaction.message.edit({ components: []})
         } else if (command.data.name === 'timer') {
             const tournamentId = interaction.values[0]
