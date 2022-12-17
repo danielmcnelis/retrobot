@@ -9,7 +9,7 @@ const { search } = require('../functions/utility')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('search')
-		.setDescription('Search for a card.')
+		.setDescription('Search for a card. 🎴')
 		.addStringOption(str =>
             str
                 .setName('string')

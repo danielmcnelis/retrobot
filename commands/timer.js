@@ -11,7 +11,7 @@ const { selectTournament } = require('../functions/tournament')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('timer')
-        .setDescription('Post time remaining in the round.'),
+        .setDescription('Post time remaining in the round. ⏰'),
     async execute(interaction) {
         const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 

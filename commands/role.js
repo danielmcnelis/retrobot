@@ -8,7 +8,7 @@
     module.exports = {
         data: new SlashCommandBuilder()
             .setName('role')
-            .setDescription(`Add or remove a format role.`),
+            .setDescription(`Add or remove a format role. 🧙`),
         async execute(interaction) {
             const server = !interaction.guildId ? {} : 
                 await Server.findOne({ where: { id: interaction.guildId }}) || 

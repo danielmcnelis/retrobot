@@ -32,7 +32,7 @@ const getExitInformation = async (interaction, player) => {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('exit')
-        .setDescription('Exit the rated pool.'),
+        .setDescription('Exit the rated pool. 👋'),
     async execute(interaction) {
         if (interaction.guildId) return interaction.reply(`Try using **/exit** by DM'ing it to me.`)
         const player = await Player.findOne({ where: { discordId: interaction.user.id } })

@@ -251,7 +251,7 @@ const getRatedInformation = async (interaction, player) => {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('rated')
-        .setDescription('Join the rated pool for any format.'),
+        .setDescription('Join the rated pool for any format. 🎮'),
     async execute(interaction) {
         if (interaction.guildId) return interaction.reply(`Try using **/rated** by DM'ing it to me.`)
         const player = await Player.findOne({ where: { discordId: interaction.user.id } })

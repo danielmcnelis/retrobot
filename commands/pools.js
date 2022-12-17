@@ -7,7 +7,7 @@ const emojis = require('../static/emojis.json')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('pools')
-		.setDescription('Check your Rated Pools.'),
+		.setDescription('Check your Rated Pools. 🏊'),
 	async execute(interaction) {
         if (interaction.guildId) {
             interaction.reply(`Please check your DMs.`)

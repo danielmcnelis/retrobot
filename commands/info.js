@@ -7,7 +7,7 @@ const { Op } = require('sequelize')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('info')
-        .setDescription('Post format overview.'),
+        .setDescription('Post format overview. 📚'),
     async execute(interaction) {
         const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 

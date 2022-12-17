@@ -10,7 +10,7 @@ const { Op } = require('sequelize')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('history')
-        .setDescription(`View a player's Elo history chart.`)
+        .setDescription(`View a player's Elo history chart. 📈`)
         .addUserOption(option =>
             option
                 .setName('user')

@@ -11,7 +11,7 @@
     module.exports = {
         data: new SlashCommandBuilder()
             .setName('manual')
-            .setDescription(`Manually report a match result.`)
+            .setDescription(`Manually report a match result. 👷`)
             .addUserOption(option =>
                 option
                     .setName('winner')

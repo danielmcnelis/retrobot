@@ -9,7 +9,7 @@ const { Op } = require('sequelize')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('h2h')
-        .setDescription(`Post the record between 2 players.`)
+        .setDescription(`Post the record between 2 players. 🤼`)
         .addUserOption(option =>
             option
                 .setName('p1')

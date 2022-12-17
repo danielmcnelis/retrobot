@@ -13,7 +13,7 @@
     module.exports = {
         data: new SlashCommandBuilder()
             .setName('recalculate')
-            .setDescription(`Recalculate player stats.`),
+            .setDescription(`Recalculate player stats. 🧮`),
         async execute(interaction) {
             const server = !interaction.guildId ? {} : 
                 await Server.findOne({ where: { id: interaction.guildId }}) || 

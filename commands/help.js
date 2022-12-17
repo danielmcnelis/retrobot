@@ -4,7 +4,7 @@ const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
-		.setDescription('View the RetroBot user guide.'),
+		.setDescription('View the RetroBot user guide. 🦮'),
 	async execute(interaction) {
         const botEmbed = new EmbedBuilder()
 	        .setColor('#38C368')

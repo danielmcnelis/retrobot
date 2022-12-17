@@ -5,7 +5,7 @@ const { Player } = require('../db')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('duelingbook')
-		.setDescription('Set your DuelingBook name.')
+		.setDescription('Set your DuelingBook name. 📛')
 		.addStringOption(str =>
             str
                 .setName('string')

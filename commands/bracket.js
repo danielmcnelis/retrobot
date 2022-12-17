@@ -9,7 +9,7 @@ const { Op } = require('sequelize')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('bracket')
-        .setDescription('Post brackets for active tournaments.'),
+        .setDescription('Post brackets for active tournaments. 🏟️'),
     async execute(interaction) {
         const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 

@@ -8,7 +8,7 @@ const { checkDeckList } = require('../functions/deck')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('legal')
-        .setDescription('Check deck legality.'),
+        .setDescription('Check deck legality. 👍'),
     async execute(interaction) {
         const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 

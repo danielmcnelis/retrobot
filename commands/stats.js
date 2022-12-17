@@ -8,7 +8,7 @@
     module.exports = {
         data: new SlashCommandBuilder()
             .setName('stats')
-            .setDescription(`Post a player's stats.`)
+            .setDescription(`Post a player's stats. 🏅`)
             .addUserOption(option =>
                 option
                     .setName('user')

@@ -10,7 +10,7 @@ const { Op } = require('sequelize')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('signup')
-		.setDescription('Sign-up another user for a tournament.')
+		.setDescription('Sign-up another user for a tournament. 🙋')
         .addUserOption(option =>
             option
                 .setName('user')

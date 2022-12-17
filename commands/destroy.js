@@ -11,7 +11,7 @@ const axios = require('axios')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('destroy')
-		.setDescription('Destroy a tournament.')
+		.setDescription('Destroy a tournament. 🧨')
         .addStringOption(str =>
             str
                 .setName('tournament')

@@ -18,7 +18,7 @@
     module.exports = {
         data: new SlashCommandBuilder()
             .setName('combine')
-            .setDescription(`Combine two user accounts.`)
+            .setDescription(`Combine two user accounts. 🏭`)
             .addUserOption(option =>
                 option
                     .setName('olduser')

@@ -8,7 +8,7 @@ const emojis = require('../static/emojis.json')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('test')
-        .setDescription('Performs a test.'),
+        .setDescription('Performs a test. 🧪'),
     async execute(interaction) {
         if (isProgrammer(interaction.member)) {
             updateServers(client)

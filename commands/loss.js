@@ -10,7 +10,7 @@
     module.exports = {
         data: new SlashCommandBuilder()
             .setName('loss')
-            .setDescription(`Report a loss to another player.`)
+            .setDescription(`Report a loss to another player. 💀`)
             .addUserOption(option =>
                 option
                     .setName('opponent')

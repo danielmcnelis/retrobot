@@ -11,7 +11,7 @@
     module.exports = {
         data: new SlashCommandBuilder()
             .setName('noshow')
-            .setDescription(`Record a tournament no-show.`)
+            .setDescription(`Record a tournament no-show. 🙈`)
             .addUserOption(option =>
                 option
                     .setName('no-show')

@@ -11,7 +11,7 @@ const emojis = require('../static/emojis.json')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('remove')
-		.setDescription('Remove a player from a tournament.')
+		.setDescription('Remove a player from a tournament. 👢')
         .addUserOption(option =>
             option
                 .setName('user')

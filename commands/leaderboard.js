@@ -8,7 +8,7 @@ const { Op } = require('sequelize')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('leaderboard')
-        .setDescription(`Post the leaderboard.`)
+        .setDescription(`Post the leaderboard. 🪜`)
         .addNumberOption(num =>
             num
                 .setName('number')

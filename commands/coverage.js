@@ -8,7 +8,7 @@ const { Op } = require('sequelize')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('coverage')
-        .setDescription('Post tournament coverage.')
+        .setDescription('Post tournament coverage. 🖊️')
 		.addStringOption(str =>
             str
                 .setName('string')

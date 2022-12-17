@@ -10,7 +10,7 @@ const { drawDeck, isMod } = require('../functions/utility')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('deck')
-        .setDescription(`Check tournament player's deck.`)
+        .setDescription(`Check tournament player's deck. 🧐`)
         .addUserOption(option =>
             option
                 .setName('player')

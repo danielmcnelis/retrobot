@@ -9,7 +9,7 @@ const { Op } = require('sequelize')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('undo')
-        .setDescription(`Undo a match result.`),                
+        .setDescription(`Undo a match result. ⏪`),                
     async execute(interaction) {
         const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 

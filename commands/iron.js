@@ -9,7 +9,7 @@ const emojis = require('../static/emojis.json')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('iron')
-        .setDescription('Join or leave the iron queue.'),
+        .setDescription('Join or leave the iron queue. 🏋️'),
     async execute(interaction) {
         const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 

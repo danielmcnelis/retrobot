@@ -11,7 +11,7 @@ const { Op } = require('sequelize')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('settimer')
-        .setDescription('Set the timer for the round.')
+        .setDescription('Set the timer for the round. ⌛')
 		.addNumberOption(num =>
             num
                 .setName('hours')
