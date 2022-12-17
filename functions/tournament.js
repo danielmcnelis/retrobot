@@ -56,7 +56,7 @@ const askForDBName = async (member, player, override = false, error = false, att
 }
 
 //GET DECK LIST
-const getDeckList = async (server, member, player, format, tournamentName, override = false) => {            
+const getDeckList = async (member, player, format, override = false) => {            
     const filter = m => m.author.id === member.user.id
     const pronoun = override ? `${player.name}'s` : 'your'
     const message = await member.send({ content: `Please provide a duelingbook.com/deck link for ${pronoun} tournament deck.`}).catch((err) => console.log(err))
@@ -229,7 +229,7 @@ const joinTournament = async (interaction, tournamentId) => {
     
     const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.member, player)
     if (!dbName) return
-    const { url, ydk } = await getDeckList(server, interaction.member, player, format, tournament.name)
+    const { url, ydk } = await getDeckList(interaction.member, player, format)
     if (!url) return
 
     if (!entry) {
@@ -314,7 +314,7 @@ const signupForTournament = async (interaction, tournamentId) => {
     
     const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.member, player)
     if (!dbName) return
-    const { url, ydk } = await getDeckList(server, interaction.member, player, format, tournament.name, event)
+    const { url, ydk } = await getDeckList(interaction.member, player, format, true)
     if (!url) return
 
     if (!entry) {
@@ -1048,8 +1048,6 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
             }
         }
     })
-
-    console.log('!!format', !!format)
     
     const channel = interaction.guild.name !== 'Format Library' ? await interaction.guild.channels.cache.find((channel) => channel.name === channelName) : {}
     const channelId = interaction.guild.name === 'Format Library' ? format.channelId : channel.id
