@@ -300,11 +300,10 @@ const joinTournament = async (interaction, tournamentId) => {
 
 // SIGNUP FOR TOURNAMENT 
 const signupForTournament = async (interaction, tournamentId, userId) => {
-    console.log('interaction', interaction)
-    console.log('interaction.mentions.users', interaction.mentions.users)
     console.log('userId', userId)
     if (!userId) userId = await interaction.options.getUser('user').id
     const member = await interaction.guild.members.fetch(userId)
+    console.log('member', member)
 
     const player = await Player.findOne({
         where: {
