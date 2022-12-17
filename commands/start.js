@@ -2,7 +2,7 @@
 
 
 
-const { ActionRowBuilder, ButtonBuilder, SlashCommandBuilder } = require('discord.js')
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require('discord.js')
 const { Entry, Format, Server, Tournament } = require('../db')
 const { selectTournament, sendPairings } = require('../functions/tournament')
 const { isMod, hasPartnerAccess } = require('../functions/utility')
