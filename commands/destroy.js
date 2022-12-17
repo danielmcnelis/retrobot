@@ -37,9 +37,13 @@ module.exports = {
             }
         })
 
+
         if (!tournament) return interaction.reply({ content: `Could not find tournament: "${name}".`})
         if (tournament.state === 'underway') return interaction.reply({ content: `This tournament is underway, therefore it may only be deleted by the database manager.`})
         if (tournament.state === 'complete') return interaction.reply({ content: `This tournament is complete, therefore it may only be deleted by the database manager.`})
+        console.log('tournament.name', tournament.name)
+        console.log('tournament.id', tournament.id)
+        console.log('server.challongeAPIKey', server.challongeAPIKey)
 
         try {
             const { status } = await axios({
@@ -56,7 +60,7 @@ module.exports = {
                         const playerId = entry.player.id
                         await entry.destroy()
                         
-                        const member = await message.guild.members.fetch(discordId)
+                        const member = await interaction.guild.members.fetch(discordId)
                         if (!member) continue
 
                         const count = await Entry.count({ 
@@ -80,6 +84,7 @@ module.exports = {
                 return interaction.reply({ content: `Unable to delete tournament from Challonge account.`})
             }
         } catch (err) {
+            console.log(err)
             return interaction.reply({ content: `Error: Unable to delete tournament from Challonge account.`})
         }
     }
