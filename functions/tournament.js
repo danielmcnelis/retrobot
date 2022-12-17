@@ -1043,12 +1043,20 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
     const format = await Format.findOne({
         where: {
             [Op.or]: {
-                name: {[Op.iLike]: server.format },
-                channel: interaction.channelId,
-                name: {[Op.iLike]: formatName }
+                name: {
+                    [Op.iLike]: {
+                        [Op.or]: [
+                            server.format,
+                            format.name
+                        ]
+                    }
+                },
+                channel: interaction.channelId
             }
         }
     })
+
+    console.log('!!format', !!format)
     
     const channel = interaction.guild.name !== 'Format Library' ? await interaction.guild.channels.cache.find((channel) => channel.name === channelName) : {}
     const channelId = interaction.guild.name === 'Format Library' ? format.channelId : channel.id
