@@ -298,6 +298,7 @@ const joinTournament = async (interaction, tournamentId) => {
 
 // SIGNUP FOR TOURNAMENT 
 const signupForTournament = async (interaction, tournamentId) => {
+    console.log('interaction', interaction)
     const user = interaction.options.getUser('user')
     const member = await interaction.guild.members.fetch(user.id)
 
