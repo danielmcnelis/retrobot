@@ -78,7 +78,7 @@ module.exports = {
             .setRequired(true)
 
         if (server.name === 'Format Library') {
-            const channel = interaction.guild.channels.cache.get(format.channelId) || {}
+            const channel = await interaction.guild.channels.cache.get(format.channelId) || {}
             channelName.setValue(channel.name)
             channelName.setPlaceholder(channel.name)
         }
