@@ -60,39 +60,39 @@ module.exports = {
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
 
-        const formatName = new TextInputBuilder()
-            .setCustomId('formatName')
-            .setLabel("What format will be played?")
-            .setStyle(TextInputStyle.Short)
-            .setRequired(true)
-            
-        if (format) {
-            formatName.setValue(format.name)
-            formatName.setPlaceholder(format.name)
-        }
 
-        const channelName = new TextInputBuilder()
-            .setCustomId('channelName')
-            .setLabel("What channel will host this event?")
-            .setStyle(TextInputStyle.Short)
-            .setRequired(true)
-
-        if (server.name === 'Format Library' && format) {
-            const channel = await interaction.guild.channels.cache.find((channel) => channel.id === format.channelId) || {}
-            channelName.setValue(channel.name)
-            channelName.setPlaceholder(channel.name)
-        } else {
-            channelName.setValue(interaction.channel.name)
-            channelName.setPlaceholder(interaction.channel.name)
+        if (!format) {
         }
 
         const nameRow = new ActionRowBuilder().addComponents(name)
         const abbreviationRow = new ActionRowBuilder().addComponents(abbreviation)
         const typeRow = new ActionRowBuilder().addComponents(tournament_type)
-        const formatRow = new ActionRowBuilder().addComponents(formatName)
-        const channelRow = new ActionRowBuilder().addComponents(channelName)
 
-        modal.addComponents(nameRow, abbreviationRow, typeRow, formatRow, channelRow)    
+        modal.addComponents(nameRow, abbreviationRow, typeRow)
+
+        if (server.name === 'Format Library' && !format) {
+            const formatName = new TextInputBuilder()
+                .setCustomId('formatName')
+                .setLabel("What format will be played?")
+                .setStyle(TextInputStyle.Short)
+                .setRequired(true)
+                
+            const formatRow = new ActionRowBuilder().addComponents(formatName)
+            modal.addComponents(formatRow)  
+        } else {
+            const channelName = new TextInputBuilder()
+                .setCustomId('channelName')
+                .setLabel("What channel will host this event?")
+                .setStyle(TextInputStyle.Short)
+                .setRequired(true)
+            
+            channelName.setValue(interaction.channel.name)
+            channelName.setPlaceholder(interaction.channel.name)
+
+            const channelRow = new ActionRowBuilder().addComponents(channelName)
+            modal.addComponents(channelRow)
+        }
+    
         return await interaction.showModal(modal)        
     }
 }

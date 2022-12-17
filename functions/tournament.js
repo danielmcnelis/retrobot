@@ -1040,10 +1040,18 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
         await Server.findOne({ where: { id: interaction.guildId }}) || 
         await Server.create({ id: interaction.guildId, name: interaction.guild.name })
 
-    const format = await Format.findOne({ where: { name: {[Op.iLike]: formatName }}})
-    if (server.format && server.format !== format.name) return interaction.reply(`Sorry, only ${format.name} tournaments can be hosted on this server.`)
-
-    const channel = await interaction.guild.channels.cache.find((channel) => channel.name === channelName)
+    const format = await Format.findOne({
+        where: {
+            [Op.or]: {
+                name: {[Op.iLike]: server.format },
+                channel: interaction.channelId,
+                name: {[Op.iLike]: formatName }
+            }
+        }
+    })
+    
+    const channel = interaction.guild.name !== 'Format Library' ? await interaction.guild.channels.cache.find((channel) => channel.name === channelName) : {}
+    const channelId = interaction.guild.name === 'Format Library' ? format.channelId : channel.id
 
     const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
 
@@ -1105,7 +1113,7 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
                 logo: logo,
                 emoji: server.emoji || format.emoji,
                 url: data.tournament.url,
-                channelId: channel.id,
+                channelId: channelId,
                 serverId: interaction.guildId,
                 community: server.name
             })
@@ -1145,7 +1153,7 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
                     logo: logo,
                     emoji: server.emoji || format.emoji,
                     url: data.tournament.url,
-                    channelId: channel.id,
+                    channelId: channelId,
                     serverId: interaction.guildId,
                     community: server.name
                 })
