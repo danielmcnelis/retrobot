@@ -9,6 +9,7 @@ const create = require('./create')
 const deck = require('./deck')
 const destroy = require('./destroy')
 const dice = require('./dice')
+const drop = require('./drop')
 const duelingbook = require('./duelingbook')
 const exit = require('./exit')
 const h2h = require('./h2h')
@@ -33,6 +34,7 @@ const role = require('./role')
 const search = require('./search')
 const settimer = require('./settimer')
 const signup = require('./signup')
+const start = require('./start')
 const stats = require('./stats')
 const story = require('./story')
 const timer = require('./timer')
@@ -50,6 +52,7 @@ module.exports = {
     deck,
     destroy,
     dice,
+    drop,
     duelingbook,
     exit,
     h2h,
@@ -74,6 +77,7 @@ module.exports = {
     search,
     settimer,
     signup,
+    start,
     stats,
     story,
     test,

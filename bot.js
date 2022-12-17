@@ -12,7 +12,7 @@ const { Membership, Player, Server } = require('./db/index.js')
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
 const { undoMatch } = require('./functions/undo')
-const { checkTimer, closeTournament, createTournament, joinTournament, openTournament, sendDeck, setTimerForTournament, signupForTournament } = require('./functions/tournament')
+const { checkTimer, closeTournament, createTournament, dropFromTournament, joinTournament, openTournament, seed, sendDeck, setTimerForTournament, signupForTournament, startTournament } = require('./functions/tournament')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
@@ -53,11 +53,8 @@ client.on('ready', async() => {
     setTimeout(() => purgeRatedDecks(), midnightCountdown + (12 * 60 * 1000))
 })
 
-
-
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
-
 });
 
 // COMMANDS
@@ -78,27 +75,38 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 })
 
+// BUTTON SUBMIT
+client.on(Events.InteractionCreate, async (interaction) => {
+	if (!interaction.isButton()) return
+	console.log(interaction)
+
+    return
+    await seed(interaction, tournamentId)   
+    return startTournament(interaction, tournamentId)
+})
+
 // MODAL SUBMIT
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isModalSubmit()) return
-    
+
 	const name = interaction.fields.getTextInputValue('name')
 	let tournament_type = interaction.fields.getTextInputValue('tournament_type')
     if (tournament_type.toLowerCase().includes('de') || tournament_type.toLowerCase().includes('double')) tournament_type = 'double elimination'
     if (tournament_type.toLowerCase().includes('se') || tournament_type.toLowerCase().includes('single')) tournament_type = 'single elimination'
     if (tournament_type.toLowerCase().includes('sw') || tournament_type.toLowerCase().includes('swiss')) tournament_type = 'swiss'
     if (tournament_type.toLowerCase().includes('rr') || tournament_type.toLowerCase().includes('rob')) tournament_type = 'round robin'
-	console.log('tournament_type', tournament_type)
+
     const abbreviation = interaction.fields.getTextInputValue('abbreviation')
 	const formatName = interaction.fields.fields.get('formatName') ? interaction.fields.getTextInputValue('formatName') : null
 	const channelName = interaction.fields.fields.get('channelName') ? interaction.fields.getTextInputValue('channelName') : null
+    
     return createTournament(interaction, formatName, name, abbreviation, tournament_type, channelName)
 })
 
 // SELECT MENUS
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isStringSelectMenu()) return
-    
+
     const commandName = interaction.commandName || interaction.message.interaction.commandName
 	const command = interaction.client.commands.get(commandName)
 
@@ -127,6 +135,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
             const tournamentId = interaction.values[0]
             await signupForTournament(interaction, tournamentId)
             return interaction.message.edit({components: []})
+        } else if (command.data.name === 'drop') {
+            const tournamentId = interaction.values[0]
+            await dropFromTournament(interaction, tournamentId)
+            return interaction.message.edit({ components: []})
         } else if (command.data.name === 'timer') {
             const tournamentId = interaction.values[0]
             await checkTimer(interaction, tournamentId)
