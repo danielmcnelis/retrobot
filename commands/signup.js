@@ -2,6 +2,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
+const wait = require('node:timers/promises').setTimeout
 const { Entry, Format, Player, Server, Tournament } = require('../db')
 const { askForDBName, getDeckList, postParticipant, selectTournament } = require('../functions/tournament')
 const { isMod, hasPartnerAccess } = require('../functions/utility')
