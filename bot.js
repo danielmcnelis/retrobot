@@ -87,7 +87,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	const abbreviation = interaction.fields.getTextInputValue('abbreviation')
 	const formatName = interaction.fields.getTextInputValue('formatName')
     // await interaction.reply({ content: 'Your submission was received successfully!' })
-    return handleCreateModal(client, interaction, formatName, name, abbreviation, tournament_type)
+    return handleCreateModal(interaction, formatName, name, abbreviation, tournament_type)
 })
 
 // SELECT MENUS

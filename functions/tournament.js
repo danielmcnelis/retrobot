@@ -516,19 +516,22 @@ const getTournamentType = async (message) => {
 }
 
 // GET TOURNAMENT CHANNEL
-const getTournamentChannel = async (client, server, format, interaction) => {
+const getTournamentChannel = async (server, format, interaction) => {
     if (server.name === 'Format Library') return format.channel
 
-    const channels = interaction.guild.channels.cache
+    const channels = await interaction.guild.channels.cache
     console.log('channels', channels)
     
-    const options = channels.map((channel) => {
+    const options = channels.filter((channel) => channel.type === 0).map((channel) => {
         console.log('channel', channel)
         return {
             label: `#${channel.name}`,
             value: channel.id,
         }
     })
+
+    console.log('options', options)
+    console.log('options.length', options.length)
 
     const row = new ActionRowBuilder()
         .addComponents(
@@ -1062,7 +1065,7 @@ const sendPairings = async (client, server, tournament, ignoreRound1) => {
 }
 
 // HANDLE CREATE MODAL
-const handleCreateModal = async (client, interaction, formatName, name, abbreviation, tournament_type) => {
+const handleCreateModal = async (interaction, formatName, name, abbreviation, tournament_type) => {
     const server = !interaction.guildId ? {} : 
         await Server.findOne({ where: { id: interaction.guildId }}) || 
         await Server.create({ id: interaction.guildId, name: interaction.guild.name })
@@ -1070,7 +1073,7 @@ const handleCreateModal = async (client, interaction, formatName, name, abbrevia
     const format = await Format.findOne({ where: { name: {[Op.iLike]: formatName }}})
     if (server.format && server.format !== format.name) return interaction.reply(`Sorry, only ${format.name} tournaments can be hosted on this server.`)
     
-    const channelId = await getTournamentChannel(client, server, format, interaction)
+    const channelId = await getTournamentChannel(server, format, interaction)
     if (!channelId) return
 
     return createTournament(interaction, server, format, name, abbreviation, tournament_type, channelId)
