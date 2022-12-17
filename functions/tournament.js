@@ -1181,7 +1181,6 @@ module.exports = {
     findOtherPreReqMatch,
     getDeckList,
     getPairing,
-    getTournamentChannel,
     getTournamentFormat,
     getTournamentType,
     getMatches,
