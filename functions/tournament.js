@@ -194,7 +194,7 @@ const selectTournament = async (interaction, tournaments) => {
         interaction.mentions.users.push(user)
         console.log('interaction.mentions.users', interaction.mentions.users)
 
-        interaction.reply({ content: `Please select a tournament:`, components: [row], mentions: interaction.mentions }  })
+        interaction.reply({ content: `Please select a tournament:`, components: [row], mentions: interaction.mentions })
         return false
     }
 }
