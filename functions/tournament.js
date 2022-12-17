@@ -1035,7 +1035,7 @@ const sendPairings = async (client, server, tournament, ignoreRound1) => {
 }
 
 // CREATE TOURNAMENT
-const createTournament = async (interaction, server, format, name, abbreviation, tournament_type, channelName) => {
+const createTournament = async (interaction, formatName, name, abbreviation, tournament_type, channelName) => {
     const server = !interaction.guildId ? {} : 
         await Server.findOne({ where: { id: interaction.guildId }}) || 
         await Server.create({ id: interaction.guildId, name: interaction.guild.name })
