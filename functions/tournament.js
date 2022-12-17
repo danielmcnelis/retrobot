@@ -591,21 +591,21 @@ const removeParticipant = async (server, interaction, member, entry, tournament,
             if (!count) member.roles.remove(server.tourRole).catch((err) => console.log(err))
         
             if (drop) {
-                return interaction.reply({ content: `I removed you from the tournament. Better luck next time!`})
+                return interaction.reply({ content: `I removed you from ${tournament.name}. Better luck next time! ${tournament.emoji}`})
             } else {
-                return interaction.reply({ content: `${member.user.username} has been removed from the tournament.`})
+                return interaction.reply({ content: `${member.user.username} has been removed from ${tournament.name}. ${tournament.emoji}`})
             }
         } else if (!success && drop) {
-            return interaction.reply({ content: `Hmm... I don't see you in the participants list.`})
+            return interaction.reply({ content: `Hmm... I don't see you in the participants list for ${tournament.name}. ${tournament.emoji}`})
         } else if (!success && !drop) {
-            return interaction.reply({ content: `I could not find ${member.user.username} in the participants list.`})
+            return interaction.reply({ content: `I could not find ${member.user.username} in the participants list for ${tournament.name}. ${tournament.emoji}`})
         }
     } catch (err) {
         console.log(err)
         if (drop) {
-            return interaction.reply({ content: `Hmm... I don't see you in the participants list.`})
+            return interaction.reply({ content: `Hmm... I don't see you in the participants list for ${tournament.name}. ${tournament.emoji}`})
         } else {
-            return interaction.reply({ content: `I could not find ${member.user.username} in the participants list.`})
+            return interaction.reply({ content: `I could not find ${member.user.username} in the participants list for ${tournament.name}. ${tournament.emoji}`})
         }
     }   
 }
