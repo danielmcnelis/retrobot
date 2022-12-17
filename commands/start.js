@@ -7,6 +7,7 @@ const { Entry, Format, Server, Tournament } = require('../db')
 const { selectTournament, sendPairings } = require('../functions/tournament')
 const { isMod, hasPartnerAccess } = require('../functions/utility')
 const { Op } = require('sequelize')
+const axios = require('axios')
 
 module.exports = {
 	data: new SlashCommandBuilder()
