@@ -1043,7 +1043,7 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
     const format = await Format.findOne({ where: { name: {[Op.iLike]: formatName }}})
     if (server.format && server.format !== format.name) return interaction.reply(`Sorry, only ${format.name} tournaments can be hosted on this server.`)
 
-    console.log('interaction.guild.channels', interaction.guild.channels)
+    console.log('interaction.guild', interaction.guild)
     const channel = await interaction.guild.channels.find((channel) => channel.name === channelName)
     if (!channel) return interaction.reply(`Invalid channel name.`)
     console.log('channel.name', channel.name)
