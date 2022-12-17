@@ -83,7 +83,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isModalSubmit()) return
     
 	const name = interaction.fields.getTextInputValue('name')
-	const tournament_type = interaction.fields.getTextInputValue('tournament_type')
+	let tournament_type = interaction.fields.getTextInputValue('tournament_type')
+    if (tournament_type.toLowerCase().includes('de') || tournament_type.toLowerCase().includes('double')) tournament_type = 'double elimination'
+    if (tournament_type.toLowerCase().includes('se') || tournament_type.toLowerCase().includes('single')) tournament_type = 'single elimination'
+    if (tournament_type.toLowerCase().includes('sw') || tournament_type.toLowerCase().includes('swiss')) tournament_type = 'swiss'
+    if (tournament_type.toLowerCase().includes('rr') || tournament_type.toLowerCase().includes('rob')) tournament_type = 'round robin'
 	const abbreviation = interaction.fields.getTextInputValue('abbreviation')
 	const formatName = interaction.fields.fields.get('formatName') ? interaction.fields.getTextInputValue('formatName') : null
 	const channelName = interaction.fields.fields.get('channelName') ? interaction.fields.getTextInputValue('channelName') : null
