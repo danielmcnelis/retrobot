@@ -50,6 +50,7 @@ module.exports = {
         if (!player) return interaction.reply({ content: `That player is not in the database.`})
         
         const tournament = await selectTournament(interaction, tournaments)
+		await wait(2000)
         if (!tournament) return
 
         const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournament.id }})
