@@ -4,7 +4,7 @@
 
 const { SlashCommandBuilder } = require('discord.js')
 const { Entry, Player, Server, Tournament } = require('../db')
-const { isAdmin, hasPartnerAccess } = require('../functions/utility')
+const { isAdmin, isProgrammer, hasPartnerAccess, isProgrammer } = require('../functions/utility')
 const { Op } = require('sequelize')
 const axios = require('axios')
 
@@ -38,10 +38,9 @@ module.exports = {
             }
         })
 
-
         if (!tournament) return interaction.reply({ content: `Could not find tournament: "${name}".`})
-        if (tournament.state === 'underway') return interaction.reply({ content: `This tournament is underway, therefore it may only be deleted by the database manager.`})
-        if (tournament.state === 'complete') return interaction.reply({ content: `This tournament is complete, therefore it may only be deleted by the database manager.`})
+        if (tournament.state === 'underway' && !isProgrammer(interaction.member)) return interaction.reply({ content: `This tournament is underway, therefore it may only be deleted by the database manager.`})
+        if (tournament.state === 'complete' && !isProgrammer(interaction.member)) return interaction.reply({ content: `This tournament is complete, therefore it may only be deleted by the database manager.`})
         console.log('tournament.name', tournament.name)
         console.log('tournament.id', tournament.id)
         console.log('server.challongeAPIKey', server.challongeAPIKey)
