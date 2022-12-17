@@ -29,6 +29,7 @@ const ping = require('./ping')
 const queue = require('./queue')
 const rated = require('./rated')
 const recalculate = require('./recalculate')
+const remove = require('./remove')
 const rng = require('./rng')
 const role = require('./role')
 const search = require('./search')
@@ -72,6 +73,7 @@ module.exports = {
     queue,
     rated,
     recalculate,
+    remove,
     rng,
     role,
     search,
