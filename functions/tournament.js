@@ -290,7 +290,7 @@ const joinTournament = async (interaction, tournamentId) => {
         } finally {
             const deckAttachments = await drawDeck(ydk) || []
             interaction.member.send({ content: `Thanks! I have your updated deck list for the tournament:`, files: [...deckAttachments] }).catch((err) => console.log(err))
-            return client.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> resubmitted their deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+            return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> resubmitted their deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
         }
     }
 }
@@ -310,6 +310,12 @@ const signupForTournament = async (interaction, tournamentId) => {
     const tournament = await Tournament.findOne({
         where: {
             id: tournamentId
+        }
+    })
+
+    const server = await Server.findOne({
+        where: {
+            name: interaction.guild.name
         }
     })
 
@@ -343,7 +349,7 @@ const signupForTournament = async (interaction, tournamentId) => {
         } finally {
           member.roles.add(server.tourRole).catch((err) => console.log(err))
           interaction.member.send({ content: `Thanks! I have all the information we need for ${player.name}.` }).catch((err) => console.log(err))
-          return client.channels.cache.get(tournament.channelId).send({ content: `A moderator signed up <@${player.discordId}> for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+          return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `A moderator signed up <@${player.discordId}> for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
         }
     } else if (entry.active === false) {
         try {                                
@@ -362,7 +368,7 @@ const signupForTournament = async (interaction, tournamentId) => {
         } finally {
             member.roles.add(server.tourRole).catch((err) => console.log(err))
             interaction.member.send({ content: `Thanks! I have all the information we need for ${player.name}.` }).catch((err) => console.log(err))
-            return client.channels.cache.get(tournament.channelId).send({ content: `A moderator signed up <@${player.discordId}> for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+            return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `A moderator signed up <@${player.discordId}> for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
         }
     } else {
         try {
@@ -372,7 +378,7 @@ const signupForTournament = async (interaction, tournamentId) => {
             return interaction.member.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
         } finally {
             interaction.member.send({ content: `Thanks! I have ${player.name}'s updated deck list for the tournament.` }).catch((err) => console.log(err))
-            return client.channels.cache.get(tournament.channelId).send({ content: `A moderator resubmitted <@${player.discordId}>'s deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+            return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `A moderator resubmitted <@${player.discordId}>'s deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
         }
     }
 }
@@ -417,6 +423,12 @@ const setTimerForTournament = async (interaction, tournamentId) => {
         }
     }) 
 
+    const server = await Server.findOne({
+        where: {
+            name: interaction.guild.name
+        }
+    })
+
     const timestamp = Date.now()
     let hours = interaction.options.getNumber('hours')
     let minutes = interaction.options.getNumber('minutes')
@@ -438,7 +450,7 @@ const setTimerForTournament = async (interaction, tournamentId) => {
         interaction.reply(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
     }
 
-    sendPairings(client, server, tournament, true)
+    sendPairings(interaction.guild, server, tournament, true)
     return setTimeout(() => {
         return interaction.channel.send(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} Time is up in the round! ${emojis.vince}`)
     }, timeRemaining)
@@ -991,8 +1003,7 @@ const processMatchResult = async (server, interaction, winner, winningPlayer, lo
 }
 
 // SEND PAIRINGS
-const sendPairings = async (client, server, tournament, ignoreRound1) => {
-    const guild = client.guilds.cache.get(server.id)
+const sendPairings = async (guild, server, tournament, ignoreRound1) => {
     const matches = [...await getMatches(server, tournament.id)].map((el) => el.match).filter((match) => match.state === 'open')
     
     for (let i = 0; i < matches.length; i++) {

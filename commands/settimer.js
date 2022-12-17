@@ -7,7 +7,6 @@ const emojis = require('../static/emojis.json')
 const { isMod, hasPartnerAccess } = require('../functions/utility')
 const { sendPairings, selectTournament } = require('../functions/tournament')
 const { Op } = require('sequelize')
-const { client } = require('../static/clients.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -78,7 +77,7 @@ module.exports = {
             interaction.reply(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
         }
 
-        sendPairings(client, server, tournament, true)
+        sendPairings(interaction.guild, server, tournament, true)
         return setTimeout(() => {
             return interaction.channel.send(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} Time is up in the round! ${emojis.vince}`)
         }, timeRemaining)
