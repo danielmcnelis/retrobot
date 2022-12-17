@@ -627,7 +627,7 @@ const seed = async (interaction, tournamentId, shuffle = false) => {
             interaction.channel.send(`Error: Your seeds 🥀 have not been shuffled. 😢`)
         }
     } else {
-        interaction.channel.send({ content: `Seeding in progress, please wait.`})
+        interaction.channel.send({ content: `Seeding 🌱 in progress, please wait. 🙏`})
 
         const entries = await Entry.findAll({ where: { active: true, tournamentId: tournament.id } })  
         const serverId = server.internalLadder ? server.id : '414551319031054346'  
@@ -673,7 +673,7 @@ const seed = async (interaction, tournamentId, shuffle = false) => {
         }
     
         for (let i = 0; i < results.length; i += 30) interaction.channel.send({ content: results.slice(i, i + 30).join('\n').toString()})
-        if (count !== seeds.length) interaction.channel.send({ content: `Error seeding tournament. Please fix seeds manually if desired. 🤠`})
+        if (count !== seeds.length) interaction.channel.send({ content: `Error seeding 🥀 tournament. Please fix seeds manually if desired. 🤠`})
         return
     }
 }
