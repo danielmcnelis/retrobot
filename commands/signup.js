@@ -64,7 +64,7 @@ module.exports = {
         
         const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.member, player)
         if (!dbName) return
-        const { url, ydk } = await getDeckList(server, interaction.member, player, format, tournament.name, true)
+        const { url, ydk } = await getDeckList(interaction.member, player, format, tournament.name, true)
         if (!url) return
 
         if (!entry) {
