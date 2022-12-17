@@ -87,7 +87,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	const abbreviation = interaction.fields.getTextInputValue('abbreviation')
 	const formatName = interaction.fields.getTextInputValue('formatName')
 	const channelName = interaction.fields.getTextInputValue('channelName')
-    // await interaction.reply({ content: 'Your submission was received successfully!' })
+
     return createTournament(interaction, formatName, name, abbreviation, tournament_type, channelName)
 })
 
