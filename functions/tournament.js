@@ -1049,7 +1049,7 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
     })
     
     const channel = interaction.guild.name !== 'Format Library' ? await interaction.guild.channels.cache.find((channel) => channel.name === channelName) : {}
-    const channelId = interaction.guild.name === 'Format Library' ? format.channelId : channel.id
+    const channelId = interaction.guild.name === 'Format Library' ? format.channel : channel.id
 
     const str = generateRandomString(10, '0123456789abcdefghijklmnopqrstuvwxyz')
 
@@ -1108,6 +1108,7 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
                 state: 'pending',
                 type: tournament_type,
                 formatName: format.name,
+                formatId: format.id,
                 logo: logo,
                 emoji: server.emoji || format.emoji,
                 url: data.tournament.url,
@@ -1148,6 +1149,7 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
                     state: data.tournament.state,
                     type: data.tournament.tournament_type,
                     formatName: format.name,
+                    formatId: format.id,
                     logo: logo,
                     emoji: server.emoji || format.emoji,
                     url: data.tournament.url,

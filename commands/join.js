@@ -5,7 +5,6 @@ const { Entry, Format, Player, Server, Tournament } = require('../db')
 const { askForDBName, getDeckList, postParticipant, selectTournament } = require('../functions/tournament')
 const { drawDeck, hasPartnerAccess } = require('../functions/utility')
 const { Op } = require('sequelize')
-const { client } = require('../static/clients.js')
 const emojis = require('../static/emojis.json')
 
 module.exports = {
