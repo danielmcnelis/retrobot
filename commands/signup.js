@@ -2,12 +2,10 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const wait = require('node:timers/promises').setTimeout
 const { Entry, Format, Player, Server, Tournament } = require('../db')
 const { askForDBName, getDeckList, postParticipant, selectTournament } = require('../functions/tournament')
 const { isMod, hasPartnerAccess } = require('../functions/utility')
 const { Op } = require('sequelize')
-const { client } = require('../static/clients.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -51,7 +49,6 @@ module.exports = {
         if (!player) return interaction.reply({ content: `That player is not in the database.`})
         
         const tournament = await selectTournament(interaction, tournaments)
-		await wait(2000)
         if (!tournament) return
 
         const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournament.id }})

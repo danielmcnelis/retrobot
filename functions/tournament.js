@@ -180,11 +180,13 @@ const selectTournament = async (interaction, tournaments) => {
                 value: `${tournaments[index].id}`,
             }
         })
+
+        const user = interaction.options.getUser('user')
     
         const row = new ActionRowBuilder()
             .addComponents(
                 new StringSelectMenuBuilder()
-                    .setCustomId('select')
+                    .setCustomId(user ? user.id : 'select')
                     .setPlaceholder('Nothing selected')
                     .addOptions(...options),
             )
@@ -297,11 +299,12 @@ const joinTournament = async (interaction, tournamentId) => {
 
 
 // SIGNUP FOR TOURNAMENT 
-const signupForTournament = async (interaction, tournamentId) => {
+const signupForTournament = async (interaction, tournamentId, userId) => {
     console.log('interaction', interaction)
     console.log('interaction.mentions.users', interaction.mentions.users)
-    const user = interaction.mentions.users[0] || interaction.options.getUser('user')
-    const member = await interaction.guild.members.fetch(user.id)
+    console.log('userId', userId)
+    if (!userId) userId = await interaction.options.getUser('user').id
+    const member = await interaction.guild.members.fetch(userId)
 
     const player = await Player.findOne({
         where: {
