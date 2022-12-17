@@ -78,11 +78,13 @@ client.on(Events.InteractionCreate, async interaction => {
 // BUTTON SUBMIT
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isButton()) return
-    const custom_id = interaction.custom_id
-    const toBeSeeded = custom_id.charAt(0) !== 'N'
-    const toBeShuffled = custom_id.charAt(0) === 'S'
-    const tournamentId = custom_id.slice(1)
-    console.log('custom_id', custom_id)
+    console.log('interaction', interaction)
+    console.log('interaction.message.components[0]', interaction.message.components[0])
+    const customId = interaction.customId
+    const toBeSeeded = customId.charAt(0) !== 'N'
+    const toBeShuffled = customId.charAt(0) === 'S'
+    const tournamentId = customId.slice(1)
+    console.log('customId', customId)
     console.log('toBeSeeded', toBeSeeded)
     console.log('toBeShuffled', toBeShuffled)
     console.log('tournamentId', tournamentId)
