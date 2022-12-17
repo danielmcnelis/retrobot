@@ -189,7 +189,7 @@ const selectTournament = async (interaction, tournaments) => {
                     .addOptions(...options),
             )
     
-        interaction.reply({ content: `Please select a tournament:`, components: [row] })
+        interaction.reply({ content: `Please select a tournament:`, components: [row], mentions: { users: [interaction.options.getUser('user')] }  })
         return false
     }
 }
@@ -299,7 +299,8 @@ const joinTournament = async (interaction, tournamentId) => {
 // SIGNUP FOR TOURNAMENT 
 const signupForTournament = async (interaction, tournamentId) => {
     console.log('interaction', interaction)
-    const user = interaction.options.getUser('user')
+    console.log('interaction.mentions.users', interaction.mentions.users)
+    const user = interaction.mentions.users[0] || interaction.options.getUser('user')
     const member = await interaction.guild.members.fetch(user.id)
 
     const player = await Player.findOne({
