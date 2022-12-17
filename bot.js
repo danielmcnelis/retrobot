@@ -88,7 +88,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
     if (tournament_type.toLowerCase().includes('se') || tournament_type.toLowerCase().includes('single')) tournament_type = 'single elimination'
     if (tournament_type.toLowerCase().includes('sw') || tournament_type.toLowerCase().includes('swiss')) tournament_type = 'swiss'
     if (tournament_type.toLowerCase().includes('rr') || tournament_type.toLowerCase().includes('rob')) tournament_type = 'round robin'
-	const abbreviation = interaction.fields.getTextInputValue('abbreviation')
+	console.log('tournament_type', tournament_type)
+    const abbreviation = interaction.fields.getTextInputValue('abbreviation')
 	const formatName = interaction.fields.fields.get('formatName') ? interaction.fields.getTextInputValue('formatName') : null
 	const channelName = interaction.fields.fields.get('channelName') ? interaction.fields.getTextInputValue('channelName') : null
     return createTournament(interaction, formatName, name, abbreviation, tournament_type, channelName)
