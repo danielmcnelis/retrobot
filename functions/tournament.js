@@ -1047,7 +1047,7 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
                     [Op.iLike]: {
                         [Op.or]: [
                             server.format,
-                            format.name
+                            formatName
                         ]
                     }
                 },
