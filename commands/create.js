@@ -66,7 +66,7 @@ module.exports = {
 
         modal.addComponents(nameRow, abbreviationRow, typeRow)
 
-        if (server.name === 'Format Library' && !format) {
+        if (!format) {
             const formatName = new TextInputBuilder()
                 .setCustomId('formatName')
                 .setLabel("What format will be played?")
@@ -75,7 +75,7 @@ module.exports = {
                 
             const formatRow = new ActionRowBuilder().addComponents(formatName)
             modal.addComponents(formatRow)  
-        } else {
+        } else if (server.name !== 'Format Library') {
             const channelName = new TextInputBuilder()
                 .setCustomId('channelName')
                 .setLabel("What channel will host this event?")
