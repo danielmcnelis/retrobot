@@ -191,6 +191,7 @@ const selectTournament = async (interaction, tournaments) => {
     
         const user = interaction.options.getUser('user')
         console.log('user', user)
+        console.log('interaction', interaction)
         interaction.mentions.users.push(user)
         console.log('interaction.mentions.users', interaction.mentions.users)
 
