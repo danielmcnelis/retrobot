@@ -77,8 +77,8 @@ module.exports = {
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
 
-        if (server.name === 'Format Library') {
-            const channel = await interaction.guild.channels.cache.find((channel)=> channel.id === format.channelId) || {}
+        if (server.name === 'Format Library' && format) {
+            const channel = await interaction.guild.channels.cache.find((channel) => channel.id === format.channelId) || {}
             channelName.setValue(channel.name)
             channelName.setPlaceholder(channel.name)
         } else {
