@@ -12,7 +12,7 @@ const { Membership, Player, Server } = require('./db/index.js')
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
 const { undoMatch } = require('./functions/undo')
-const { checkTimer, closeTournament, handleCreateModal, joinTournament, openTournament, sendDeck, setTimerForTournament, signupForTournament } = require('./functions/tournament')
+const { checkTimer, closeTournament, createTournament, joinTournament, openTournament, sendDeck, setTimerForTournament, signupForTournament, createTournament } = require('./functions/tournament')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
@@ -86,8 +86,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	const tournament_type = interaction.fields.getTextInputValue('tournament_type')
 	const abbreviation = interaction.fields.getTextInputValue('abbreviation')
 	const formatName = interaction.fields.getTextInputValue('formatName')
+	const channelName = interaction.fields.getTextInputValue('ChannelName')
     // await interaction.reply({ content: 'Your submission was received successfully!' })
-    return handleCreateModal(interaction, formatName, name, abbreviation, tournament_type)
+    return createTournament(interaction, formatName, name, abbreviation, tournament_type, channelName)
 })
 
 // SELECT MENUS

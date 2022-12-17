@@ -71,12 +71,25 @@ module.exports = {
             formatName.setPlaceholder(format.name)
         }
 
+        const channelName = new TextInputBuilder()
+            .setCustomId('formatName')
+            .setLabel("What channel will host this event?")
+            .setStyle(TextInputStyle.Short)
+            .setRequired(true)
+
+        if (server.name === 'Format Library') {
+            const channel = interaction.guild.channels.cache.get(format.channelId) || {}
+            channelName.setValue(channel.name)
+            channelName.setPlaceholder(channel.name)
+        }
+
         const nameRow = new ActionRowBuilder().addComponents(name)
         const abbreviationRow = new ActionRowBuilder().addComponents(abbreviation)
         const typeRow = new ActionRowBuilder().addComponents(tournament_type)
         const formatRow = new ActionRowBuilder().addComponents(formatName)
+        const channelRow = new ActionRowBuilder().addComponents(channelName)
 
-        modal.addComponents(nameRow, abbreviationRow, typeRow, formatRow)    
+        modal.addComponents(nameRow, abbreviationRow, typeRow, formatRow, channelRow)    
         return await interaction.showModal(modal)        
     }
 }
