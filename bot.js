@@ -81,12 +81,12 @@ client.on(Events.InteractionCreate, async interaction => {
 // MODAL SUBMIT
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isModalSubmit()) return
-    console.log('interaction.formatName', interaction.formatName)
+    
 	const name = interaction.fields.getTextInputValue('name')
 	const tournament_type = interaction.fields.getTextInputValue('tournament_type')
 	const abbreviation = interaction.fields.getTextInputValue('abbreviation')
 	const formatName = interaction.fields.getTextInputValue('formatName')
-	const channelName = interaction.fields.getTextInputValue('ChannelName')
+	const channelName = interaction.fields.getTextInputValue('channelName')
     // await interaction.reply({ content: 'Your submission was received successfully!' })
     return createTournament(interaction, formatName, name, abbreviation, tournament_type, channelName)
 })
