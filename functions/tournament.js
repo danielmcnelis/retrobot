@@ -302,12 +302,13 @@ const joinTournament = async (interaction, tournamentId) => {
 const signupForTournament = async (interaction, tournamentId, userId) => {
     console.log('userId', userId)
     if (!userId) userId = await interaction.options.getUser('user').id
+    console.log('userId', userId)
     const member = await interaction.guild.members.fetch(userId)
     console.log('member', member)
 
     const player = await Player.findOne({
         where: {
-            discordId: user.id
+            discordId: userId
         }
     })
 
