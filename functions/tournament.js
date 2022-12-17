@@ -222,6 +222,12 @@ const joinTournament = async (interaction, tournamentId) => {
         }
     })
 
+    const server = await Server.findOne({
+        where: {
+            name: interaction.guild.name
+        }
+    })
+
     const entry = await Entry.findOne({ where: { playerId: player.id, tournamentId: tournamentId }})
     const format = await Format.findOne({ where: { name: {[Op.iLike]: tournament.formatName } }})
     if (!format) return interaction.reply(`Unable to determine what format is being played in ${tournament.name}. Please contact an administrator.`)
