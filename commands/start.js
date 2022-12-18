@@ -55,7 +55,7 @@ module.exports = {
         
         if (data.tournament.state === 'underway') {
 			await tournament.update({ state: 'underway' })
-            message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
+            interaction.reply({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
             return sendPairings(interaction.guild, server, tournament, false)
         } else {
 		    const row = new ActionRowBuilder()
