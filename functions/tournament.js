@@ -1195,7 +1195,7 @@ const createTournament = async (interaction, formatName, name, abbreviation, tou
 // REMOVE FROM TOURNAMENT
 const removeFromTournament = async (interaction, tournamentId, userId) => {
     const server = await Server.findOne({ where: { id: interaction.guildId }})
-    const member = await interaction.guild.members.fetch(userId)
+    const member = userId ? await interaction.guild.members.fetch(userId) : interaction.member
     
     const entry = await Entry.findOne({
         where: { 

@@ -32,6 +32,8 @@ module.exports = {
                 }
             }
         })
+
+        if (!format) return
         
         const tournaments = await Tournament.findAll({
             where: { 
