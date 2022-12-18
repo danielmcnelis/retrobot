@@ -1283,7 +1283,7 @@ const initiateStartTournament = async (interaction, tournamentId) => {
     
     if (data.tournament.state === 'underway') {
         await tournament.update({ state: 'underway' })
-        interaction.reply({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
+        interaction.reply({ content: `Let's go! Your tournament is starting now: https://challonge.com/${tournament.url} ${tournament.emoji}`})
         return sendPairings(interaction.guild, server, tournament, false)
     } else {
         const row = new ActionRowBuilder()
