@@ -12,7 +12,7 @@ const { Membership, Player, Server } = require('./db/index.js')
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
 const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
 const { undoMatch } = require('./functions/undo')
-const { checkTimer, closeTournament, createTournament, dropFromTournament, joinTournament, openTournament, removeFromTournament, seed, sendDeck, setTimerForTournament, signupForTournament, startTournament } = require('./functions/tournament')
+const { checkTimer, closeTournament, createTournament, dropFromTournament, initiateStartTournament, joinTournament, openTournament, removeFromTournament, seed, sendDeck, setTimerForTournament, signupForTournament, startTournament } = require('./functions/tournament')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
@@ -144,6 +144,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
             const userId = interaction.message.components[0].components[0].data.custom_id
             const tournamentId = interaction.values[0]
             await signupForTournament(interaction, tournamentId, userId)
+            return interaction.message.edit({components: []})
+        } else if (command.data.name === 'start') {
+            const tournamentId = interaction.values[0]
+            await initiateStartTournament(interaction, tournamentId)
             return interaction.message.edit({components: []})
         } else if (command.data.name === 'drop') {
             const tournamentId = interaction.values[0]

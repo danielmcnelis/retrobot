@@ -4,7 +4,7 @@
 //MODULE IMPORTS
 const axios = require('axios')
 const {Op} = require('sequelize')
-const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js')
+const { ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder } = require('discord.js')
 
 //DATABASE IMPORTS
 const { Deck, Entry, Format, Player, Stats, Server, Tournament } = require('../db/index.js')
@@ -1260,6 +1260,55 @@ const startTournament = async (interaction, tournamentId) => {
     }
 }
 
+const initiateStartTournament = async (interaction, tournamentId) => {
+    const server = await Server.findOne({
+        where: {
+            id: interaction.guildId
+        }
+    })
+
+    const tournament = await Tournament.findOne({
+        where: {
+            id: tournamentId
+        }
+    })
+
+    const unregCount = await Entry.count({ where: { participantId: null, tournamentId: tournamentId } })
+    if (unregCount) return interaction.reply({ content: 'One or more players is not registered with Challonge. Type **/purge** to remove them.'})
+
+    const entryCount = await Entry.count({ where: { tournamentId: tournamentId } })
+    if (!entryCount) return interaction.reply({ content: `Error: no entrants found.`})
+
+    const { data } = await axios.get(`https://api.challonge.com/v1/tournaments/${tournament.id}.json?api_key=${server.challongeAPIKey}`)
+    
+    if (data.tournament.state === 'underway') {
+        await tournament.update({ state: 'underway' })
+        message.channel.send({ content: `Let's go! Your tournament is starting now: https://challonge.com/${url} ${tournament.emoji}`})
+        return sendPairings(interaction.guild, server, tournament, false)
+    } else {
+        const row = new ActionRowBuilder()
+            .addComponents(new ButtonBuilder()
+                .setCustomId(`Y${tournament.id}`)
+                .setLabel('Yes')
+                .setStyle(ButtonStyle.Primary)
+            )
+
+            .addComponents(new ButtonBuilder()
+                .setCustomId(`N${tournament.id}`)
+                .setLabel('No')
+                .setStyle(ButtonStyle.Primary)
+            )
+
+            .addComponents(new ButtonBuilder()
+                .setCustomId(`S${tournament.id}`)
+                .setLabel('Shuffle')
+                .setStyle(ButtonStyle.Primary)
+            )
+
+        await interaction.reply({ content: `Should this tournament be seeded by Format Library ${emojis.FL} rankings?`, components: [row] })
+    }
+}
+
 module.exports = {
     askForDBName,
     checkPairing,
@@ -1276,6 +1325,7 @@ module.exports = {
     getTournamentFormat,
     getTournamentType,
     getMatches,
+    initiateStartTournament,
     joinTournament,
     openTournament,
     processMatchResult,
