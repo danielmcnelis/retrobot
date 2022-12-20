@@ -292,15 +292,15 @@ const composeThumbnails = async (interaction, event) => {
 
 // DISPLAY DECKS
 const displayDecks = async (interaction, event) => {
-    const minPlacement = size <= 8 ? 1 :
-        size > 8 && size <= 16 ? 2 :
-        size > 16 && size <= 24 ? 3 :
-        size > 24 && size <= 32 ? 4 :
-        size > 32 && size <= 48 ? 6 :
-        size > 48 && size <= 64 ? 8 :
-        size > 64 && size <= 96 ? 12 :
-        size > 96 && size <= 128 ? 16 :
-        size > 128 && size <= 224 ? 24 :
+    const minPlacement = event.size <= 8 ? 1 :
+        event.size > 8 && event.size <= 16 ? 2 :
+        event.size > 16 && event.size <= 24 ? 3 :
+        event.size > 24 && event.size <= 32 ? 4 :
+        event.size > 32 && event.size <= 48 ? 6 :
+        event.size > 48 && event.size <= 64 ? 8 :
+        event.size > 64 && event.size <= 96 ? 12 :
+        event.size > 96 && event.size <= 128 ? 16 :
+        event.size > 128 && event.size <= 224 ? 24 :
         32
         
     const decks = await Deck.findAll({ 
