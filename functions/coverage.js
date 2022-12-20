@@ -59,7 +59,7 @@ const createDecks = async (event, data) => {
                 await Deck.create({
                     type: deckType.name,
                     category: deckType.category,
-                    builder: entry.pilot,
+                    builder: entry.playerName,
                     formatName: event.formatName,
                     formatId: event.formatId,
                     ydk: entry.ydk,
