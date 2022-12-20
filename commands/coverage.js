@@ -1,7 +1,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Event } = require('../db')
+const { Event, Format, Player, Server } = require('../db')
 const { hasFullAccess, isMod } = require('../functions/utility')
 const { Op } = require('sequelize')
 const { composeBlogPost, composeThumbnails, displayDecks } = require('../functions/coverage')
@@ -17,6 +17,10 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
+        const server = !interaction.guildId ? {} : 
+            await Server.findOne({ where: { id: interaction.guildId }}) || 
+            await Server.create({ id: interaction.guildId, name: interaction.guild.name })
+
         if (!hasFullAccess(server)) return interaction.reply(`This feature is only available in Format Library. ${emojis.FL}`) 
         if (!isMod(interaction.member)) return interaction.reply(`You do not have permission to do that.`)
         

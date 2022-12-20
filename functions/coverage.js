@@ -1,5 +1,4 @@
 
-const axios = require('axios')
 const Canvas = require('canvas')
 const { S3 } = require('aws-sdk')
 const { Op } = require('sequelize')
