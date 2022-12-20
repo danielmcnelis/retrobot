@@ -171,7 +171,7 @@ module.exports = {
                     const playerName = entry.playerName
                     const playerId = entry.playerId
                     const discordId = entry.player.discordId	
-                    console.log(`Deleting ${entry.pilot}'s entry for ${event.name}.`)
+                    console.log(`Deleting ${entry.playerName}'s entry for ${event.name}.`)
                     await entry.destroy()
 
                     const count = await Entry.count({ 

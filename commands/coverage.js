@@ -21,7 +21,6 @@ module.exports = {
         const name = interaction.options.getString('tournament')        
         const event = await Event.findOne({ where: { abbreviation: name }})
         if (!event) return interaction.reply(`No event found.`)
-        await composeThumbnails(interaction, event.abbreviation)
 
         const blogpost = await BlogPost.findOne({
             where: {
@@ -34,11 +33,17 @@ module.exports = {
             }
         })
 
-        if (blogpost && event.community !== 'Konami' && event.community !== 'Upper Deck Entertainment') {
-            return interaction.reply(`Blog coverage for ${name} already exists.`)
+        if (blogpost) {
+            return interaction.reply(`Coverage for ${name} already exists.`)
+        } else if (event.community !== 'Konami' && event.community !== 'Upper Deck Entertainment') {
+            interaction.reply(`Generating coverage for ${name}. Please wait.`)
+            await composeThumbnails(interaction, event.abbreviation)
+            return
         } else {
-            composeBlogPost(interaction, event.abbreviation)
-            return interaction.reply(`Generating coverage for ${name}. Please wait.`)
+            interaction.reply(`Generating coverage for ${name}. Please wait.`)
+            await composeThumbnails(interaction, event.abbreviation)
+            await composeBlogPost(interaction, event.abbreviation)
+            return
         }
     }
 }
