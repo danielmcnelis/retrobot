@@ -41,8 +41,8 @@ module.exports = {
             return
         } else {
             interaction.reply(`Generating coverage for ${name}. Please wait.`)
-            await composeThumbnails(interaction, event.abbreviation)
             await composeBlogPost(interaction, event.abbreviation)
+            await composeThumbnails(interaction, event.abbreviation)
             return
         }
     }
