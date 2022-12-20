@@ -290,19 +290,22 @@ const composePreviews = async () => {
 const fixDecks = async () => {
     let a = 0
     let e = 0
-    const decks = await Deck.findAll()
+    const decks = await Deck.findAll({
+        where: {
+            builder: null
+        },
+        include: Player
+    })
     
-    for (let i = 0; i < decks.length; i++) {
+    decks.forEach(async (deck) =>{
         try {
-            const d = decks[i]
-            d.origin = d.eventId ? 'event' : 'user' 
-            await d.save()
+            await deck.update({ builder: deck.player.name })
             a++
         } catch (err) {
-            console.log(err)
             e++
+            console.log(err)
         }
-    }
+    })
 
     return console.log(`updated ${a} decks; encountered ${e} errors`)
 }
@@ -800,7 +803,7 @@ const fixTournmanets = async () => {
     return console.log(`saved ${b} tournaments, encountered ${e} errors`)
 }
 
-fixTournmanets()
+// fixTournmanets()
 // fixPfps()
 // fixBlogs()
 // copyRatedDecksToDecks()
@@ -808,7 +811,7 @@ fixTournmanets()
 // saveYDKs()
 // downloadYDKs()
 // fixPlayers()
-// fixDecks()
+fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()
