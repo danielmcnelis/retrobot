@@ -9,7 +9,7 @@ const { isMod, hasFullAccess } = require('../functions/utility')
 const { Op } = require('sequelize')
 const axios = require('axios')
 const emojis = require('../static/emojis.json')
-const { composeThumbnails } = require('../functions/coverage')
+const { composeThumbnails, createDecks } = require('../functions/coverage')
 
 module.exports = {
 	data: new SlashCommandBuilder()
