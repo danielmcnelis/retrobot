@@ -3,7 +3,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Entry, Event, Format, Server, Tournament } = require('../db')
+const { Deck, Entry, Event, Format, Server, Tournament } = require('../db')
 const { selectTournament } = require('../functions/tournament')
 const { isMod, hasFullAccess } = require('../functions/utility')
 const { Op } = require('sequelize')
@@ -154,7 +154,7 @@ module.exports = {
                     return interaction.reply(`Failed to save all decks.`)
                 } else {
                     count = event.size
-                    await composeThumbnails(interaction, event.abbreviation)
+                    composeThumbnails(interaction, event.abbreviation)
                 }
             } catch (err) {
                 console.log(err)
