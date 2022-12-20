@@ -322,7 +322,11 @@ const displayDecks = async (interaction, event) => {
         return interaction.channel.send(`The top ${count} deck lists for ${event.name} were already published.`)
     }
 
-    decks.forEach(async (deck) => await deck.update({ display: true }))
+    for (let i = 0; i < decks.length; i++) {
+        const deck = decks[i]
+        await deck.update({ display: true })
+    }
+    
     return interaction.channel.send(`Published ${decks.length} new deck lists for ${event.name}.`)
 }
 

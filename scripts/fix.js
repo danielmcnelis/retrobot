@@ -297,15 +297,16 @@ const fixDecks = async () => {
         include: Player
     })
     
-    decks.forEach(async (deck) =>{
+    for (let i = 0; i < decks.length; i++) {
         try {
+            const deck = decks[i]
             await deck.update({ builder: deck.player.name })
             a++
         } catch (err) {
             e++
             console.log(err)
         }
-    })
+    }
 
     return console.log(`updated ${a} decks; encountered ${e} errors`)
 }
