@@ -15,10 +15,10 @@ module.exports = {
             interaction.reply(`${emojis.Fish}`)
         }
 
-        const player = await Player.findOne({ where: { discordId: maid } })
-        if (!player) return interaction.reply(`You are not in the database. Please join the Format Library ${emojis.FL} Discord server to register.`)
+        const player = await Player.findOne({ where: { discordId: interaction.user.id } })
+        if (!player) return interaction.member.send(`You are not in the database. Please join the Format Library ${emojis.FL} Discord server to register.`)
         const pools = [...await RatedPool.findAll({ where: { playerId: player.id }, order: [['format', 'ASC']] })].map((p) => p.format)
-        if (!pools.length) return interaction.reply(`You are not in any Rated Pools.`)
-        return interaction.reply({ content: `You are in the following pools:\n${pools.join('\n')}`})
+        if (!pools.length) return interaction.member.send(`You are not in any Rated Pools.`)
+        return interaction.member.send({ content: `You are in the following pools:\n${pools.join('\n')}`})
 	}
 }
