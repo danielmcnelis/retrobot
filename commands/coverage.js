@@ -35,14 +35,14 @@ module.exports = {
 
         if (blogpost) {
             return interaction.reply(`Coverage for ${name} already exists.`)
-        } else if (event.community !== 'Konami' && event.community !== 'Upper Deck Entertainment') {
+        } else if (event.community === 'Konami' || event.community === 'Upper Deck Entertainment') {
             interaction.reply(`Generating coverage for ${name}. Please wait.`)
             await composeThumbnails(interaction, event.abbreviation)
             return
         } else {
             interaction.reply(`Generating coverage for ${name}. Please wait.`)
-            await composeBlogPost(interaction, event.abbreviation)
             await composeThumbnails(interaction, event.abbreviation)
+            await composeBlogPost(interaction, event.abbreviation)
             return
         }
     }
