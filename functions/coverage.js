@@ -7,6 +7,7 @@ const { BlogPost, Card, Deck, DeckType, Entry, Event, Format, Player, Tournament
 const { capitalize, dateToVerbose } = require('./utility')
 const { getDeckType } = require('./deck')
 const { S3Keys } = require('../secrets.json')
+const { checkExpiryDate, uploadDeckFolder } = require('./drive')
 
 // CREATE DECKS
 const createDecks = async (event, data) => {
@@ -308,7 +309,7 @@ const composeThumbnails = async (interaction, event) => {
     }
 }
 
-const uploadDeckFolder = async (interaction, tournamentId) => {
+const fixDeckFolder = async (interaction, tournamentId) => {
     const server = await Server.findOne({
         where: {
             id: interaction.guildId
@@ -344,5 +345,5 @@ module.exports = {
     composeBlogPost,
     composeThumbnails,
     createDecks,
-    uploadDeckFolder
+    fixDeckFolder
 }
