@@ -3,7 +3,7 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const { S3 } = require('aws-sdk')
 const { Op } = require('sequelize')
-const { BlogPost, Card, Deck, DeckType, Entry, Event, Format, Player }  = require('../db/index.js')
+const { BlogPost, Card, Deck, DeckType, Entry, Event, Format, Player, Tournament, Server }  = require('../db/index.js')
 const { capitalize, dateToVerbose } = require('./utility')
 const { getDeckType } = require('./deck')
 const { S3Keys } = require('../secrets.json')
@@ -308,8 +308,41 @@ const composeThumbnails = async (interaction, event) => {
     }
 }
 
+const uploadDeckFolder = async (interaction, tournamentId) => {
+    const server = await Server.findOne({
+        where: {
+            id: interaction.guildId
+        }
+    })
+
+    const tournament = await Tournament.findOne({
+        where: {
+            id: tournamentId
+        }
+    })
+
+    const decks = await Deck.findAll({
+        where: {
+            eventName: {
+                [Op.or]: [tournament.abbreviation, tournament.name]
+            }
+        },
+        include: Player
+    })
+
+    try {
+        await checkExpiryDate(server)
+        await uploadDeckFolder(server, tournament.name, decks)
+        return interaction.reply({ content: `Your tournament files have been uploaded! ${server.logo}` })
+    } catch (err) {
+        console.log(err)
+        return interaction.reply({ content: `Error. Check bot logs.` })
+    }
+}
+
 module.exports = {
     composeBlogPost,
     composeThumbnails,
-    createDecks
+    createDecks,
+    uploadDeckFolder
 }

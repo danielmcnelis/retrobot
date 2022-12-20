@@ -13,6 +13,7 @@ const drop = require('./drop')
 const duelingbook = require('./duelingbook')
 const end = require('./end')
 const exit = require('./exit')
+const fix = require('./fix')
 const h2h = require('./h2h')
 const help = require('./help')
 const history = require('./history')
@@ -58,6 +59,7 @@ module.exports = {
     duelingbook,
     end,
     exit,
+    fix,
     h2h,
     help,
     history,

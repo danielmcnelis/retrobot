@@ -2,7 +2,7 @@
 // RETROBOT - A RANKINGS & TOURNAMENT MANAGEMENT DISCORD BOT
 
 // MODULE IMPORTS
-const { ActionRowBuilder, Collection, Events, ModalBuilder, StringSelectMenuBuilder, TextInputBuilder } = require('discord.js');
+const { Collection, Events } = require('discord.js');
 const FuzzySet = require('fuzzyset')
 
 // DATABASE IMPORTS 
@@ -10,9 +10,10 @@ const { Membership, Player, Server } = require('./db/index.js')
 
 // FUNCTION IMPORTS
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
-const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
-const { undoMatch } = require('./functions/undo')
+const { uploadDeckFolder } = require('./functions/coverage')
 const { checkTimer, closeTournament, createTournament, dropFromTournament, initiateStartTournament, joinTournament, openTournament, removeFromTournament, seed, sendDeck, setTimerForTournament, signupForTournament, startTournament } = require('./functions/tournament')
+const { undoMatch } = require('./functions/undo')
+const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
@@ -165,6 +166,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
         } else if (command.data.name === 'settimer') {
             const tournamentId = interaction.values[0]
             await setTimerForTournament(interaction, tournamentId)
+            return interaction.message.edit({components: []})
+        } else if (command.data.name === 'fix') {
+            const tournamentId = interaction.values[0]
+            await uploadDeckFolder(interaction, tournamentId)
             return interaction.message.edit({components: []})
         } else {
             return
