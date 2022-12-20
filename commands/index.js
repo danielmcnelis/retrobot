@@ -28,6 +28,7 @@ const mod = require('./mod')
 const noshow = require('./noshow')
 const open = require('./open')
 const ping = require('./ping')
+const pools = require('./pools')
 const queue = require('./queue')
 const rated = require('./rated')
 const recalculate = require('./recalculate')
@@ -74,6 +75,7 @@ module.exports = {
     noshow,
     open,
     ping,
+    pools,
     queue,
     rated,
     recalculate,
