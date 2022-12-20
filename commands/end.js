@@ -154,7 +154,6 @@ module.exports = {
                     return interaction.reply(`Failed to save all decks.`)
                 } else {
                     count = event.size
-                    composeThumbnails(interaction, event.abbreviation)
                 }
             } catch (err) {
                 console.log(err)

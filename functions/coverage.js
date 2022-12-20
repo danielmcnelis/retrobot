@@ -45,18 +45,6 @@ const createDecks = async (event, data) => {
                     }
                 }) || ({ name: 'Other', category: 'Other' })
 
-                // const display = (size <= 8 && placement === 1) ||
-                //     (size > 8 && size <= 16 && placement <= 2) ||
-                //     (size > 16 && size <= 24 && placement <= 3) ||
-                //     (size > 24 && size <= 32 && placement <= 4) ||
-                //     (size > 32 && size <= 48 && placement <= 6) ||
-                //     (size > 48 && size <= 64 && placement <= 8) ||
-                //     (size > 64 && size <= 96 && placement <= 12) ||
-                //     (size > 96 && size <= 128 && placement <= 16) ||
-                //     (size > 128 && size <= 224 && placement <= 24) ||
-                //     (size > 224 && placement <= 32) ||
-                //     false
-
                 await Deck.create({
                     type: deckType.name,
                     category: deckType.category,
@@ -91,35 +79,31 @@ const createDecks = async (event, data) => {
 } 
 
 // COMPOSE BLOG POST
-const composeBlogPost = async (message, abbreviation) => {
+const composeBlogPost = async (interaction, event) => {
     try {
-        const event = await Event.findOne({ 
-            where: { 
-                abbreviation: {[Op.iLike]: abbreviation}
-            },
-            order: [["startDate", "ASC"]]
-        })
-
-        const format = await Format.findOne({ where: {
-            name: {[Op.iLike]: event.formatName }
-        }})
-
-        const winner = await Player.findOne({
+        const count = await BlogPost.count({
             where: {
-                id: event.playerId
+                title: {
+                    [Op.or]: {
+                        [Op.substring]: event.name,
+                        [Op.substring]: event.abbreviation
+                    }
+                }
             }
         })
 
+        if (count) return interaction.channel.send(`Blogpost for ${event.name} already exists.`)
+
         const deck = await Deck.findOne({
             where: {
-                eventName: abbreviation || event.name,
+                eventId: event.id,
                 placement: 1
             }
         })
 
         const decks = await Deck.findAll({ 
             where: {
-                formatName: {[Op.iLike]: event.formatName }
+                formatId: event.formatId
             }
         })
     
@@ -171,7 +155,7 @@ const composeBlogPost = async (message, abbreviation) => {
         }
     
         const conclusion = event.series ? `Enter the next <i>${event.name.replace(/[0-9]/g, '').trim()}</i> to see if you can knock out the reigning champ!` :
-            event.name.includes('World Championship') ? `And so the ${event.startDate.getFullYear()} ${capitalize(event.formatName, true)} Format season comes to a close. Be sure to enter next year's qualifiers for your chance to compete in the World Championship!` :
+            event.name.includes('Format World Championship') ? `And so the ${event.startDate.getFullYear()} ${capitalize(event.formatName, true)} Format season comes to a close. Be sure to enter next year's qualifiers for your chance to compete in the World Championship!` :
             event.name.includes('Last Chance') ? `And so the ${event.startDate.getFullYear()} ${capitalize(event.formatName, true)} Format qualifying season comes to a close. Tune in to find out who wins the World Championship!` :
             event.name.includes('Obelisk') || event.name.includes('Ra') || event.name.includes('Slifer') ? `Join the Goat Format Europe Discord community to compete in the <i>Academy series</i>!` :
             `Join the ${event.community} Discord community to compete in similar events!`
@@ -185,7 +169,7 @@ const composeBlogPost = async (message, abbreviation) => {
                         `<p className="blogpost-date">${blogTitleDate}</p>` +
                     `</div>` +
                 `<div className="blogpost-title-emojis">` +
-                    `<img className="blogpost-format-icon" src="https://cdn.formatlibrary.com/images/emojis/${format.icon}.png"/>` +
+                    `<img className="blogpost-format-icon" src="https://cdn.formatlibrary.com/images/emojis/${event.format.icon}.png"/>` +
                     `<img className="blogpost-event-icon" src="https://cdn.formatlibrary.com/images/emojis/event.png"/>` +
                 `</div>` +
             `</div>` +
@@ -195,7 +179,7 @@ const composeBlogPost = async (message, abbreviation) => {
                 `</p>` +
                 `<div className="blogpost-images-flexbox">` +
                     `<div className="blogpost-pfp-community-flexbox">` +
-                        `<img className="blogpost-pfp" src="https://cdn.formatlibrary.com/images/pfps/${winner.discordId || winner.name}.png" />` +
+                        `<img className="blogpost-pfp" src="https://cdn.formatlibrary.com/images/pfps/${event.player.discordId || event.player.name}.png" />` +
                         `<img className="blogpost-community"  src="https://cdn.formatlibrary.com/images/logos/${event.community}.png" />` +
                     `</div>` +
                     `<div className="blogpost-deck-box">` + 
@@ -211,9 +195,7 @@ const composeBlogPost = async (message, abbreviation) => {
             title: title,
             content: content,
             publishDate: publishDate,
-            author: 'RetroBot',
             format: event.formatName,
-            playerId: deck.playerId,
             eventDate: event.endDate
         })
     
@@ -228,10 +210,10 @@ const composeBlogPost = async (message, abbreviation) => {
 
         const { Location: uri} = await s3.upload({ Bucket: 'formatlibrary', Key: `images/decks/previews/${deck.id}.png`, Body: buffer, ContentType: `image/png` }).promise()
         console.log('uri', uri)
-        return message.channel.send(`Composed blogpost for ${abbreviation}.`)
+        return interaction.channel.send(`Composed blogpost for ${event.name}.`)
     } catch (err) {
         console.log(err)
-        return message.channel.send(`Error composing blogpost for ${abbreviation}.`)
+        return interaction.channel.send(`Error composing blogpost for ${event.name}.`)
     }
 }
 
@@ -241,7 +223,7 @@ const composeThumbnails = async (interaction, event) => {
     try {
         const decks = await Deck.findAll({
             where: {
-                eventName: event
+                eventId: event.id
             }
         })
     
@@ -302,13 +284,50 @@ const composeThumbnails = async (interaction, event) => {
             console.log('uri', uri)
         }
     
-        return interaction.channel.send(`Composed deck thumbnails for ${event}.`)
+        return interaction.channel.send(`Composed deck thumbnails for ${event.name}.`)
     } catch (err) {
         console.log(err)
-        return interaction.channel.send(`Error composing blogpost for ${event}.`)
+        return interaction.channel.send(`Error composing deck thumbnails for ${event.name}.`)
     }
 }
 
+// DISPLAY DECKS
+const displayDecks = async (interaction, event) => {
+    const minPlacement = size <= 8 ? 1 :
+        size > 8 && size <= 16 ? 2 :
+        size > 16 && size <= 24 ? 3 :
+        size > 24 && size <= 32 ? 4 :
+        size > 32 && size <= 48 ? 6 :
+        size > 48 && size <= 64 ? 8 :
+        size > 64 && size <= 96 ? 12 :
+        size > 96 && size <= 128 ? 16 :
+        size > 128 && size <= 224 ? 24 :
+        32
+        
+    const decks = await Deck.findAll({ 
+        where: {
+            eventId: event.id,
+            display: false,
+            placement: {[Op.lte]: minPlacement}
+        }
+    })
+
+    if (!decks.length) {
+        const count = await Deck.count({
+            where: {
+                eventId: event.id,
+                display: true
+            }
+        })
+
+        return interaction.channel.send(`The top ${count} deck lists for ${event.name} were already published.`)
+    }
+
+    decks.forEach(async (deck) => await deck.update({ display: true }))
+    return interaction.channel.send(`Published ${decks.length} new deck lists for ${event.name}.`)
+}
+
+// FIX DECK FOLDER
 const fixDeckFolder = async (interaction, tournamentId) => {
     const server = await Server.findOne({
         where: {
@@ -345,5 +364,6 @@ module.exports = {
     composeBlogPost,
     composeThumbnails,
     createDecks,
+    displayDecks,
     fixDeckFolder
 }
