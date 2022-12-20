@@ -5,7 +5,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const { Deck, Entry, Event, Format, Player, Server, Tournament } = require('../db')
 const { selectTournament } = require('../functions/tournament')
-const { isMod, hasFullAccess } = require('../functions/utility')
+const { isMod, hasPartnerAccess } = require('../functions/utility')
 const { Op } = require('sequelize')
 const axios = require('axios')
 const emojis = require('../static/emojis.json')
@@ -26,7 +26,7 @@ module.exports = {
             await Server.findOne({ where: { id: interaction.guildId }}) || 
             await Server.create({ id: interaction.guildId, name: interaction.guild.name })
         
-        if (!hasFullAccess(server)) return interaction.reply({ content: `This feature is only available in Format Library. ${emojis.FL}`})
+        if (!hasPartnerAccess(server)) return interaction.reply({ content: `This feature is only available in Format Library. ${emojis.FL}`})
         if (!isMod(server, interaction.member)) return interaction.reply({ content: 'You do not have permission to do that. Please type **/join** instead.'})   
         
         const name = interaction.options.getString('tournament')        
