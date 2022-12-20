@@ -45,8 +45,3 @@ module.exports = {
         }
     }
 }
-
-    // FIX
-    if (cmd === `!fix`) {
-
-    }
