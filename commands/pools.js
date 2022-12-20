@@ -12,7 +12,7 @@ module.exports = {
         if (interaction.guildId) {
             interaction.reply(`Please check your DMs.`)
         } else {
-            interaction.reply(`${emojis.Fish}`)
+            interaction.reply(`🤿`)
         }
 
         const player = await Player.findOne({ where: { discordId: interaction.user.id } })
