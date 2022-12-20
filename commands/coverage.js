@@ -22,8 +22,7 @@ module.exports = {
             await Server.create({ id: interaction.guildId, name: interaction.guild.name })
 
         if (!hasFullAccess(server)) return interaction.reply(`This feature is only available in Format Library. ${emojis.FL}`) 
-        console.log('interaction.member', interaction.member)
-        if (!isMod(interaction.member)) return interaction.reply(`You do not have permission to do that.`)
+        if (!isMod(server, interaction.member)) return interaction.reply(`You do not have permission to do that.`)
         
         const input = interaction.options.getString('tournament')     
         const event = await Event.findOne({ 
