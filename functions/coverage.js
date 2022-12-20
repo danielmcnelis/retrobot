@@ -236,7 +236,7 @@ const composeBlogPost = async (message, abbreviation) => {
 
 
 // COMPOSE THUMBNAILS
-const composeThumbnails = async (message, event) => {
+const composeThumbnails = async (interaction, event) => {
     try {
         const decks = await Deck.findAll({
             where: {
@@ -301,10 +301,10 @@ const composeThumbnails = async (message, event) => {
             console.log('uri', uri)
         }
     
-        return message.channel.send(`Composed deck thumbnails for ${event}.`)
+        return interaction.channel.send(`Composed deck thumbnails for ${event}.`)
     } catch (err) {
         console.log(err)
-        return message.channel.send(`Error composing blogpost for ${event}.`)
+        return interaction.channel.send(`Error composing blogpost for ${event}.`)
     }
 }
 

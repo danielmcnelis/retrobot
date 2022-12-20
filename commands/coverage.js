@@ -4,6 +4,7 @@ const { SlashCommandBuilder } = require('discord.js')
 const { BlogPost, Event } = require('../db')
 const { isProgrammer } = require('../functions/utility')
 const { Op } = require('sequelize')
+const { composeBlogPost, composeThumbnails } = require('../functions/coverage')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -11,14 +12,14 @@ module.exports = {
         .setDescription('Post tournament coverage. 🖊️')
 		.addStringOption(str =>
             str
-                .setName('string')
+                .setName('tournament')
                 .setDescription('Enter tournament name.')
                 .setRequired(true)
         ),
     async execute(interaction) {
         if (!isProgrammer(interaction.member)) return interaction.reply({ content: "You do not have permission to do that."})
-        const input = args[0]
-        const event = await Event.findOne({ where: { abbreviation: input }})
+        const name = interaction.options.getString('tournament')        
+        const event = await Event.findOne({ where: { abbreviation: name }})
         if (!event) return interaction.reply(`No event found.`)
         await composeThumbnails(interaction, event.abbreviation)
 
@@ -33,8 +34,8 @@ module.exports = {
             }
         })
 
-        if (blogpost) {
-            return interaction.reply(`Blog coverage for ${input} already exists.`)
+        if (blogpost && event.community !== 'Konami' && event.community !== 'Upper Deck Entertainment') {
+            return interaction.reply(`Blog coverage for ${name} already exists.`)
         } else {
             return composeBlogPost(interaction, event.abbreviation)
         }
