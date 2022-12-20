@@ -37,7 +37,8 @@ module.exports = {
         if (blogpost && event.community !== 'Konami' && event.community !== 'Upper Deck Entertainment') {
             return interaction.reply(`Blog coverage for ${name} already exists.`)
         } else {
-            return composeBlogPost(interaction, event.abbreviation)
+            composeBlogPost(interaction, event.abbreviation)
+            return interaction.reply(`Generating coverage for ${name}. Please wait.`)
         }
     }
 }

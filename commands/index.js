@@ -55,6 +55,7 @@ module.exports = {
     dice,
     drop,
     duelingbook,
+    end,
     exit,
     h2h,
     help,
