@@ -8,12 +8,12 @@ module.exports = {
 		.setDescription('Set your DuelingBook name. 📛')
 		.addStringOption(str =>
             str
-                .setName('string')
+                .setName('name')
                 .setDescription('Your DuelingBook name.')
                 .setRequired(true)
         ),
 	async execute(interaction) {
-        const duelingBook = interaction.options.getString('string')
+        const duelingBook = interaction.options.getString('name')
         const player =  await Player.findOne({ where: { discordId: interaction.user.id } })
         await player.update({ duelingBook })
         return interaction.reply({ content: `Your DuelingBook username has been set to: ${player.duelingBook}.`})

@@ -14,8 +14,8 @@ module.exports = {
 		.setDescription('Remove a player from a tournament. 👢')
         .addUserOption(option =>
             option
-                .setName('user')
-                .setDescription('The user you want to remove.')
+                .setName('player')
+                .setDescription('The player you want to remove.')
                 .setRequired(true)
         ),
 	async execute(interaction) {
@@ -23,7 +23,7 @@ module.exports = {
             await Server.findOne({ where: { id: interaction.guildId }}) || 
             await Server.create({ id: interaction.guildId, name: interaction.guild.name })
 
-        const user = interaction.options.getUser('user')
+        const user = interaction.options.getUser('player')
         const member = await interaction.guild.members.fetch(user.id)
 
         if (!hasPartnerAccess(server)) return interaction.reply({ content: `This feature is only available with partner access. ${emojis.legend}`})

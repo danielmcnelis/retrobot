@@ -1,6 +1,7 @@
 
 const activity = require('./activity')
 const bracket = require('./bracket')
+const card = require('./card')
 const close = require('./close')
 const coin = require('./coin')
 const combine = require('./combine')
@@ -35,7 +36,6 @@ const recalculate = require('./recalculate')
 const remove = require('./remove')
 const rng = require('./rng')
 const role = require('./role')
-const search = require('./search')
 const settimer = require('./settimer')
 const signup = require('./signup')
 const start = require('./start')
@@ -48,6 +48,7 @@ const undo = require('./undo')
 module.exports = {
     activity,
     bracket,
+    card,
     close,
     coin,
     combine,
@@ -82,7 +83,6 @@ module.exports = {
     remove,
     rng,
     role,
-    search,
     settimer,
     signup,
     start,

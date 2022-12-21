@@ -13,8 +13,8 @@ module.exports = {
         .setDescription(`View a player's Elo history chart. 📈`)
         .addUserOption(option =>
             option
-                .setName('user')
-                .setDescription('The user you want to check.')
+                .setName('player')
+                .setDescription('The player you want to check.')
                 .setRequired(false)
         ),
     async execute(interaction) {
@@ -38,7 +38,7 @@ module.exports = {
         let x = 250
         if (x > 2500) return interaction.reply({ content: "Please provide a number less than or equal to 2500."})
         
-        const user = interaction.options.getUser('user') || interaction.user    
+        const user = interaction.options.getUser('player') || interaction.user    
         const discordId = user.id
         const player = await Player.findOne({ where: { discordId: discordId } })
         if (!player) return interaction.reply({ content: "That user is not in the database."})

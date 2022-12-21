@@ -8,16 +8,16 @@ const { search } = require('../functions/utility')
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('search')
+		.setName('card')
 		.setDescription('Search for a card. 🎴')
 		.addStringOption(str =>
             str
-                .setName('string')
+                .setName('name')
                 .setDescription('Enter search query.')
                 .setRequired(true)
         ),
 	async execute(interaction, fuzzyCards) {
-        const query = interaction.options.getString('string')
+        const query = interaction.options.getString('name')
         const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 
             await Server.create({ id: interaction.guildId, name: interaction.guild.name })

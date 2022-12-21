@@ -14,7 +14,7 @@
             .setDescription(`Record a tournament no-show. 🙈`)
             .addUserOption(option =>
                 option
-                    .setName('no-show')
+                    .setName('player')
                     .setDescription('The player who no-showed.')
                     .setRequired(true)
             ),
@@ -37,7 +37,7 @@
         
             if (!format) return interaction.reply({ content: `Try using **/noShow** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         
-            const noShow = interaction.options.getUser('no-show')
+            const noShow = interaction.options.getUser('player')
             const noShowMember = await interaction.guild.members.fetch(noShow.id)
             if ((noShowMember && noShow.bot)) return interaction.reply({ content: `Sorry, Bots do not play ${format.name} Format... *yet*.`})
             if (noShowMember && await isNewUser(noShow.id)) await createPlayer(noShow)

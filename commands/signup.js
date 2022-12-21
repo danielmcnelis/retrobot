@@ -13,8 +13,8 @@ module.exports = {
 		.setDescription('Sign-up another user for a tournament. 🙋')
         .addUserOption(option =>
             option
-                .setName('user')
-                .setDescription('The user you want to sign-up.')
+                .setName('player')
+                .setDescription('The player you want to sign-up.')
                 .setRequired(true)
         ),
 	async execute(interaction) {
@@ -43,7 +43,7 @@ module.exports = {
             order: [['createdAt', 'ASC']] 
         })
         
-        const user = interaction.options.getUser('user')
+        const user = interaction.options.getUser('player')
         const member = await interaction.guild.members.fetch(user.id)
         const player = await Player.findOne({ where: { discordId: user.id }})
         if (!player) return interaction.reply({ content: `That player is not in the database.`})

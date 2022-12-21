@@ -12,18 +12,18 @@ module.exports = {
         .setDescription(`Post the record between 2 players. 🤼`)
         .addUserOption(option =>
             option
-                .setName('p1')
+                .setName('player1')
                 .setDescription('The first player.')
                 .setRequired(true))
         .addUserOption(option =>
             option
-                .setName('p2')
+                .setName('player2')
                 .setDescription('The second player.')
                 .setRequired(false)
         ),
     async execute(interaction) {
-        const user1 = interaction.options.getUser('p1')
-        const user2 = interaction.options.getUser('p2') || interaction.user
+        const user1 = interaction.options.getUser('player1')
+        const user2 = interaction.options.getUser('player2') || interaction.user
 
         const server = !interaction.guildId ? {} : 
             await Server.findOne({ where: { id: interaction.guildId }}) || 
