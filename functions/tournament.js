@@ -34,7 +34,7 @@ const askForDBName = async (member, player, override = false, error = false, att
         time: 15000
     }).then(async (collected) => {
         const dbName = collected.first().content
-        if (dbname.toLowerCase().includes("duelingbook.com/deck") || dbname.toLowerCase().includes("imgur.com")) {
+        if (dbName.toLowerCase().includes("duelingbook.com/deck") || dbName.toLowerCase().includes("imgur.com")) {
             if (attempt >= 3) {
                 member.send({ content: `Sorry, time's up. Go back to the server and try again.`}).catch((err) => console.log(err))
                 return false

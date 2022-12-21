@@ -145,16 +145,16 @@ const conductCensus = async (client) => {
                 }
             }
 
-            const memberIds = members.map((m) => m.user.id)
+            const memberIds = members.map((m) => m.user.id) || []
             const memberships = await Membership.findAll({ where: { serverId: guild.id }, include: Player }) || []
             for (let i = 0; i < memberships.length; i++) {
                 try {
                     const m = memberships[i]
-                    if (m.active === true && !memberIds.includes(m.player.discordId)) {
+                    if (m.active === true && m.player && !memberIds.includes(m.player.discordId)) {
                         m.active = false
                         await m.save()
                         inactivatedCount++
-                    } else if (m.active === false && memberIds.includes(m.player.discordId)) {
+                    } else if (m.active === false && m.player && memberIds.includes(m.player.discordId)) {
                         m.active = true
                         await m.save()
                         reactivatedCount++
