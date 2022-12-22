@@ -69,7 +69,7 @@ client.on(Events.InteractionCreate, async interaction => {
 		return
 	}
 
-    if (command.data.name === 'search') {
+    if (command.data.name === 'card') {
         return command.execute(interaction, fuzzyCards)
     } else {
         return command.execute(interaction)
