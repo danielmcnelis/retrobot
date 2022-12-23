@@ -71,7 +71,7 @@
                 
             const embed = new EmbedBuilder()
                 .setColor(0x0099FF)
-                .setTitle(`${user.name}'s ${format.name} ${format.emoji} Player Profile`)
+                .setTitle(`${user.username}'s Format Library ${emojis.FL} Player Profile`)
                 .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
                 // .setDescription('Some description here')
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
@@ -135,7 +135,7 @@
 
             const embed = new EmbedBuilder()
                 .setColor(0x0099FF)
-                .setTitle(`${user.name}'s ${format.name} ${format.emoji} Player Profile`)
+                .setTitle(`${user.username}'s ${format.name} ${format.emoji} Player Profile`)
                 .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
                 // .setDescription('Some description here')
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
