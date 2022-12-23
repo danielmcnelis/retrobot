@@ -84,9 +84,10 @@
                     { 
                         name: `${format.name} Format Trophies`, 
                         value: trophies.join('\n')
-                    }
+                    },
+                    { name: url(`https://formatlibrary.com/players/${user.username}#${user.discriminator}`), value: ' ' }
                 )
-                .setFooter({ text: `https://formatlibrary.com/players/${user.username}#${user.discriminator}` })
+                .setFooter({ text: url(`https://formatlibrary.com/players/${user.username}#${user.discriminator}`) })
 
                 return interaction.reply({ embeds: [embed] })
             } else {
@@ -138,9 +139,9 @@
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
                     { name: `Best Formats`, value: medals.join('\n') },
-                    { name: `Best Finishes`, value: trophies.join('\n') }
+                    { name: `Best Finishes`, value: trophies.join('\n') },
+                    { name: url(`https://formatlibrary.com/players/${user.username}#${user.discriminator}`), value: ' ' }
                 )
-                .setFooter({ text: url(`https://formatlibrary.com/players/${user.username}#${user.discriminator}`) })
                
                 return interaction.reply({ embeds: [embed] })
             }
