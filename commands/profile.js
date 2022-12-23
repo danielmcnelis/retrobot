@@ -105,7 +105,7 @@
                         ],
                         internal: false
                     },
-                    limit: 6,
+                    limit: 5,
                     order: [["elo", "DESC"]]
                 })
                 
@@ -127,7 +127,7 @@
                         display: true
                     },
                     include: [Event, Format],
-                    limit: 12,
+                    limit: 10,
                     order: [["placement", "ASC"], [Event, 'size', 'DESC']]
                 })].map((d) => {
                     const badge = d.placement === 1 ? emojis.first :
@@ -135,7 +135,7 @@
                         d.placement === 3 ? emojis.third :
                         emojis.placing
 
-                    return `${d.format.emoji} ${d.event.name}: ${badge} ${ordinalize(d.placement)} of ${d.event.size}`
+                    return `${d.format.emoji} ${d.event.name}: ${badge} ${ordinalize(d.placement)}`
                 })
 
                 console.log(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
