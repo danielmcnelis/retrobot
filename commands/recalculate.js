@@ -77,8 +77,6 @@
                     }
                 })
 
-                console.log('prevVanq', prevVanq)
-
                 if (!winnerStats) {
                     await trackStats(server, winnerId, format.name)
                     i--
