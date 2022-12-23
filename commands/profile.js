@@ -51,7 +51,7 @@
                     where: {
                         playerId: player.id,
                         formatId: format.id,
-                        event: {[Op.not]: null},
+                        eventName: {[Op.not]: null},
                         placement: {[Op.not]: null},
                         display: true
                     },
@@ -114,7 +114,7 @@
                 const trophies = [...await Deck.findAll({
                     where: {
                         playerId: player.id,
-                        event: {[Op.not]: null},
+                        eventName: {[Op.not]: null},
                         eventId: {[Op.not]: null},
                         placement: {[Op.not]: null},
                         display: true
