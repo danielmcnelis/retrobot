@@ -69,7 +69,7 @@
                 
             const embed = new EmbedBuilder()
                 .setColor('#38C368')
-                .setDescription(`${user.username}'s ${format.name} ${format.emoji} Player Profile`)
+                .setTitle(`${user.username}'s ${format.name} ${format.emoji} Player Profile`)
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
                     { 
@@ -133,7 +133,7 @@
                 })
 
             const embed = new EmbedBuilder()
-            .setColor('#38C368')
+                .setColor('#38C368')
                 .setTitle(`${user.username}'s Format Library ${emojis.FL} Player Profile`)
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
