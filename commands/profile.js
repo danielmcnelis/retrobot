@@ -1,6 +1,6 @@
 
     const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')    
-    const { getMedal } = require('../functions/utility')
+    const { getMedal, ordinalize } = require('../functions/utility')
     const emojis = require('../static/emojis.json')
     const { Deck, Event, Format, Player, Server, Stats } = require('../db')
     const { Op } = require('sequelize')
