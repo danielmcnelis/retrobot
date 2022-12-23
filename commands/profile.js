@@ -88,7 +88,7 @@
                         name: `${format.name} Format Trophies`, 
                         value: trophies.length ? trophies.join('\n') : 'N/A'
                     },
-                    { name: `Profile Link`, value: `https://formatlibrary.com/players/${user.username}#${user.discriminator}` }
+                    { name: `Profile Link`, value: `https://formatlibrary.com/players/${user.username.replaceAll(' ', '_')}#${user.discriminator}` }
                 )
 
                 return interaction.reply({ embeds: [embed] })
@@ -142,7 +142,7 @@
                 .addFields(
                     { name: `Best Formats`, value: medals.length ? medals.join('\n') : 'N/A' },
                     { name: `Best Finishes`, value: trophies.length ? trophies.join('\n') : 'N/A' },
-                    { name: `Profile Link`, value: `https://formatlibrary.com/players/${user.username}#${user.discriminator}` }
+                    { name: `Profile Link`, value: `https://formatlibrary.com/players/${user.username.replaceAll(' ', '_')}#${user.discriminator}` }
                 )
                
                 return interaction.reply({ embeds: [embed] })
