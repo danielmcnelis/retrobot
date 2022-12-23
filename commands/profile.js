@@ -80,7 +80,7 @@
                         `\nHighest Elo: ${stats.bestElo ? stats.bestElo.toFixed(2) : '500.00'}` +
                         `\nWinrate: ${stats.wins || stats.losses ? `${(100 * stats.wins / (stats.wins + stats.losses)).toFixed(2)}%` : 'N/A'}` +
                         `\nVanquished Foes: ${stats.vanquished || 0}` +
-                        `\nLongest Streak: ${stats.bestStreak || 0}`
+                        `\nLongest Win Streak: ${stats.bestStreak || 0}`
                     },
                     { 
                         name: `${format.name} Format Trophies`, 
