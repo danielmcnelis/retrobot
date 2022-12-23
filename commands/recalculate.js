@@ -67,6 +67,15 @@
                 const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format: format.name, serverId: serverId }, include: Player })
                 const loserStats = await Stats.findOne({ where: { playerId: loserId, format: format.name, serverId: serverId }, include: Player })
     
+                const prevVanq = await Match.count({
+                    where: {
+                        format: {[Op.iLike]: match.format},
+                        winnerId: match.winnerId,
+                        loserId: match.loserId,
+                        createdAt: {[Op.lte]: match.createdAt}
+                    }
+                })
+
                 if (!winnerStats) {
                     await trackStats(server, winnerId, format.name)
                     i--
@@ -84,15 +93,20 @@
                 const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origEloWinner - origEloLoser) / 400))))))
                 
                 winnerStats.elo = origEloWinner + delta
+                if (origEloWinner + delta > winnerStats.bestElo) winnerStats.bestElo = origEloWinner + delta
                 winnerStats.backupElo = origEloWinner
                 winnerStats.wins++
                 winnerStats.games++
+                winnerStats.streak++
+                if (winnerStats.streak >= winnerStats.bestStreak) winnerStats.bestStreak++
+                if (!prevVanq) winnerStats.vanquished++
                 await winnerStats.save()
         
                 loserStats.elo = origEloLoser - delta
                 loserStats.backupElo = origEloLoser
                 loserStats.losses++
                 loserStats.games++
+                loserStats.streak = 0
                 await loserStats.save()
     
                 match.delta = delta

@@ -21,7 +21,6 @@
                 await Server.create({ id: interaction.guildId, name: interaction.guild.name })
 
             const user = interaction.options.getUser('player') || interaction.user
-            console.log('user', user)
             const discordId = user.id	
             const player = await Player.findOne({ where: { discordId: discordId } })
             if (!player) return interaction.reply({ content: "That user is not in the database."})
@@ -70,30 +69,26 @@
                 })
                 
             const embed = new EmbedBuilder()
-                .setColor(0x0099FF)
-                .setTitle(`${user.username}'s ${format.name} ${format.emoji} Player Profile`)
+                .setColor('#38C368')
                 .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
-                // .setDescription('Some description here')
+                .setDescription(`${user.username}'s ${format.name} Format ${format.emoji} Player Profile`)
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
                     { 
                         name: `${format.name} Format Stats`,
                         value: 
                         `Best Medal: ${getMedal(stats.bestElo, true)}` +
-                        `\nHighest Elo: ${stats.bestElo.toFixed(2) || '500.00'}` +
+                        `\nHighest Elo: ${stats.bestElo ? stats.bestElo.toFixed(2) : '500.00'}` +
                         `\nWinrate: ${winrate}` +
-                        `\nVanquished Foes: ${stats.vanquished}` +
-                        `\nLongest Streak: ${stats.streak}`
+                        `\nVanquished Foes: ${stats.vanquished || 0}` +
+                        `\nLongest Streak: ${stats.streak || 0}`
                     },
                     { 
                         name: `${format.name} Format Trophies`, 
                         value: trophies.join('\n')
                     }
                 )
-                // .setImage('https://i.imgur.com/AfFp7pu.png')
-                // .setTimestamp()
-                //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
-        
+
                 return interaction.reply({ embeds: [embed] })
             } else {
                 const allStats = await Stats.findAll({ 
@@ -135,26 +130,19 @@
                         d.placement === 3 ? emojis.third :
                         emojis.placing
 
-                    return `${d.format.emoji} ${d.event.name}: ${badge} ${ordinalize(d.placement)} of ${d.event.size}`
+                    return `${d.format.emoji} ${d.eventName}: ${badge} ${ordinalize(d.placement)} of ${d.event.size}`
                 })
 
-                console.log(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
-
             const embed = new EmbedBuilder()
-                .setColor(0x0099FF)
-                .setDescription(`${user.username}'s Player Profile ${emojis.FL}`)
+            .setColor('#38C368')
+                .setDescription(`${user.username}'s Format Library ${emojis.FL} Player Profile`)
                 .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
-                // .setAuthor({ name: `${user.username}`, url: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`, iconUrl: `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp` })
-                // .setDescription('Some description here')
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
                     { name: `Best Formats`, value: medals.join('\n') },
                     { name: `Best Finishes`, value: trophies.join('\n') }
                 )
-                // .setImage('https://i.imgur.com/AfFp7pu.png')
-                // .setTimestamp()
-                //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
-        
+               
                 return interaction.reply({ embeds: [embed] })
             }
         }

@@ -6,6 +6,10 @@ const Stats = db.define('stats', {
   format: {
     type: Sequelize.STRING
   },
+  bestElo: {
+    type: Sequelize.FLOAT,
+    defaultValue: 500.0
+  },
   elo: {
     type: Sequelize.FLOAT,
     defaultValue: 500.0
@@ -22,6 +26,18 @@ const Stats = db.define('stats', {
     defaultValue: 0
   },
   games: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  streak: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  bestStreak: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  vanquished: {
     type: Sequelize.INTEGER,
     defaultValue: 0
   },

@@ -192,16 +192,28 @@
                 return interaction.reply({ content: `Sorry, ${winningPlayer.name} is not ${losingPlayer.name}'s ${format.name} Iron opponent. ${server.emoji || format.emoji} ${emojis.iron}`})
             }
         }
-            
+        
+        const prevVanq = await Match.count({
+            where: {
+                format: {[Op.iLike]: format.name},
+                winnerId: winningPlayer.id,
+                loserId: losingPlayer.id
+            }
+        })
+
         const origEloWinner = winnerStats.elo || 500.00
         const origEloLoser = loserStats.elo || 500.00
         const delta = 20 * (1 - (1 - 1 / ( 1 + (Math.pow(10, ((origEloWinner - origEloLoser) / 400))))))
         
         winnerStats.elo = origEloWinner + delta
+        if (origEloWinner + delta > winnerStats.bestElo) winnerStats.bestElo = origEloWinner + delta
         winnerStats.backupElo = origEloWinner
         winnerStats.wins++
         winnerStats.games++
         winnerStats.inactive = false
+        winnerStats.streak++
+        if (winnerStats.streak >= winnerStats.bestStreak) winnerStats.bestStreak++
+        if (!prevVanq) winnerStats.vanquished++
         await winnerStats.save()
 
         loserStats.elo = origEloLoser - delta
@@ -209,6 +221,7 @@
         loserStats.losses++
         loserStats.games++
         loserStats.inactive = false
+        loserStats.streak = 0
         await loserStats.save()
 
         const match = await Match.create({
