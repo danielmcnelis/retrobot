@@ -121,7 +121,7 @@
                         display: true
                     },
                     include: [Event, Format],
-                    limit: 15,
+                    limit: 12,
                     order: [["placement", "ASC"], [Event, 'size', 'DESC']]
                 })].map((d) => {
                     const badge = d.placement === 1 ? emojis.first :
