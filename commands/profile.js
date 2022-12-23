@@ -79,7 +79,7 @@
                         value: 
                         `Best Medal: ${getMedal(stats.bestElo, true)}` +
                         `\nHighest Elo: ${stats.bestElo ? stats.bestElo.toFixed(2) : '500.00'}` +
-                        `\nWinrate: ${winrate}` +
+                        `\nWinrate: ${stats.wins || stats.losses ? `${(100 * stats.wins / (stats.wins + stats.losses)).toFixed(2)}%` : 'N/A'}` +
                         `\nVanquished Foes: ${stats.vanquished || 0}` +
                         `\nLongest Streak: ${stats.streak || 0}`
                     },
