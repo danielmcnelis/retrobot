@@ -40,7 +40,7 @@
             
             const allMatches = await Match.findAll({ 
                 where: { format: format.name, serverId: serverId }, 
-                attributes: ['id', 'winnerId', 'loserId', 'delta'], 
+                attributes: ['id', 'winnerId', 'loserId', 'delta', 'createdAt'], 
                 order: [["createdAt", "ASC"]]
             })
 
@@ -72,7 +72,7 @@
     
                 const prevVanq = await Match.count({
                     where: {
-                        format: {[Op.iLike]: match.format},
+                        format: {[Op.iLike]: format.name },
                         winnerId: match.winnerId,
                         loserId: match.loserId,
                         createdAt: {[Op.lte]: match.createdAt}
