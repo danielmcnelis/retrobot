@@ -86,7 +86,7 @@
                         value: trophies.join('\n')
                     }
                 )
-                .setFooter({ text: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}` })
+                .setFooter({ text: `https://formatlibrary.com/players/${user.username}#${user.discriminator}` })
 
                 return interaction.reply({ embeds: [embed] })
             } else {
@@ -140,7 +140,7 @@
                     { name: `Best Formats`, value: medals.join('\n') },
                     { name: `Best Finishes`, value: trophies.join('\n') }
                 )
-                .setFooter({ text: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}` })
+                .setFooter({ text: url(`https://formatlibrary.com/players/${user.username}#${user.discriminator}`) })
                
                 return interaction.reply({ embeds: [embed] })
             }
