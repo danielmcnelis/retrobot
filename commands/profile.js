@@ -69,7 +69,6 @@
                 
             const embed = new EmbedBuilder()
                 .setColor('#38C368')
-                .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
                 .setDescription(`${user.username}'s ${format.name} Format ${format.emoji} Player Profile`)
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
@@ -87,6 +86,7 @@
                         value: trophies.join('\n')
                     }
                 )
+                .setFooter({ text: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}` })
 
                 return interaction.reply({ embeds: [embed] })
             } else {
@@ -129,18 +129,18 @@
                         d.placement === 3 ? emojis.third :
                         emojis.placing
 
-                    return `${d.format.emoji} ${d.eventName}: ${badge} ${ordinalize(d.placement)} of ${d.event.size}`
+                    return `${d.format.emoji} ${d.event.name}: ${badge} ${ordinalize(d.placement)} of ${d.event.size}`
                 })
 
             const embed = new EmbedBuilder()
             .setColor('#38C368')
                 .setDescription(`${user.username}'s Format Library ${emojis.FL} Player Profile`)
-                .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
                     { name: `Best Formats`, value: medals.join('\n') },
                     { name: `Best Finishes`, value: trophies.join('\n') }
                 )
+                .setFooter({ text: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}` })
                
                 return interaction.reply({ embeds: [embed] })
             }
