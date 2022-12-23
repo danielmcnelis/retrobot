@@ -66,8 +66,10 @@
                         emojis.placing
 
                     return `${d.event.name}: ${ordinalize(d.placement)} ${badge} of ${d.event.size}`
-                })
+                }) || []
                 
+            console.log(`${user.username}'s ${format.name} ${format.emoji} Player Profile`)
+            console.log(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
             const embed = new EmbedBuilder()
                 .setColor('#38C368')
                 .setTitle(`${user.username}'s ${format.name} ${format.emoji} Player Profile`)
@@ -84,7 +86,7 @@
                     },
                     { 
                         name: `${format.name} Format Trophies`, 
-                        value: trophies.join('\n')
+                        value: trophies.length ? trophies.join('\n') : 'N/A'
                     },
                     { name: `Profile Link`, value: `https://formatlibrary.com/players/${user.username}#${user.discriminator}` }
                 )
@@ -138,8 +140,8 @@
                 .setTitle(`${user.username}'s Format Library ${emojis.FL} Player Profile`)
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
-                    { name: `Best Formats`, value: medals.join('\n') },
-                    { name: `Best Finishes`, value: trophies.join('\n') },
+                    { name: `Best Formats`, value: medals.length ? medals.join('\n') : 'N/A' },
+                    { name: `Best Finishes`, value: trophies.length ? trophies.join('\n') : 'N/A' },
                     { name: `Profile Link`, value: `https://formatlibrary.com/players/${user.username}#${user.discriminator}` }
                 )
                
