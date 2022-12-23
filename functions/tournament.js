@@ -181,7 +181,7 @@ const selectTournament = async (interaction, tournaments) => {
             }
         })
 
-        const user = interaction.options.getUser('user')
+        const user = interaction.options.getUser('player')
         console.log('user', user)
     
         const row = new ActionRowBuilder()
@@ -302,7 +302,7 @@ const joinTournament = async (interaction, tournamentId) => {
 // SIGNUP FOR TOURNAMENT 
 const signupForTournament = async (interaction, tournamentId, userId) => {
     console.log('userId', userId)
-    if (!userId) userId = await interaction.options.getUser('user').id
+    if (!userId) userId = await interaction.options.getUser('player').id
     console.log('userId', userId)
     const member = await interaction.guild.members.fetch(userId)
     console.log('member', member)
