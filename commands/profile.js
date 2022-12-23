@@ -74,7 +74,7 @@
                 .setTitle(`${user.username}'s ${format.name} ${format.emoji} Player Profile`)
                 .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
                 // .setDescription('Some description here')
-                .setThumbnail(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
+                .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
                     { 
                         name: `${format.name} Format Stats`,
@@ -143,10 +143,10 @@
             const embed = new EmbedBuilder()
                 .setColor(0x0099FF)
                 .setDescription(`${user.username}'s Player Profile ${emojis.FL}`)
-                // .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
+                .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
                 // .setAuthor({ name: `${user.username}`, url: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`, iconUrl: `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp` })
                 // .setDescription('Some description here')
-                // .setThumbnail(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
+                .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
                     { name: `Best Formats`, value: medals.join('\n') },
                     { name: `Best Finishes`, value: trophies.join('\n') }
