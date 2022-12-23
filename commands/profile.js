@@ -114,6 +114,7 @@
                     where: {
                         playerId: player.id,
                         event: {[Op.not]: null},
+                        eventId: {[Op.not]: null},
                         placement: {[Op.not]: null},
                         display: true
                     },
