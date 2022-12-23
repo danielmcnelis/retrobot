@@ -130,7 +130,6 @@
                     limit: 12,
                     order: [["placement", "ASC"], [Event, 'size', 'DESC']]
                 })].map((d) => {
-                    console.log('d', d)
                     const badge = d.placement === 1 ? emojis.first :
                         d.placement === 2 ? emojis.second :
                         d.placement === 3 ? emojis.third :
@@ -139,11 +138,13 @@
                     return `${d.format.emoji} ${d.eventName}: ${ordinalize(d.placement)} ${badge} of ${d.event.size}`
                 })
 
+                console.log(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
+
             const embed = new EmbedBuilder()
                 .setColor(0x0099FF)
                 .setDescription(`${user.username}'s Player Profile ${emojis.FL}`)
                 // .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
-                .setAuthor({ name: `${user.username}`, url: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`, iconUrl: `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp` })
+                // .setAuthor({ name: `${user.username}`, url: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`, iconUrl: `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp` })
                 // .setDescription('Some description here')
                 // .setThumbnail(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
                 .addFields(
