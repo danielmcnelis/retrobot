@@ -135,7 +135,7 @@
                         d.placement === 3 ? emojis.third :
                         emojis.placing
 
-                    return `${d.format.emoji} ${d.event.name}: ${badge} ${ordinalize(d.placement)}`
+                    return `${d.format.emoji} ${d.event.name}: ${badge} ${ordinalize(d.placement)} of ${d.event.size}`
                 })
 
                 console.log(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
