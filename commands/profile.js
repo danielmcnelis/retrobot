@@ -79,7 +79,7 @@
                     { 
                         name: `${format.name} Format Stats`,
                         value: 
-                        `Best Medal: ${getMedal(stats.bestElo, title = true)}` +
+                        `Best Medal: ${getMedal(stats.bestElo, true)}` +
                         `\nHighest Elo: ${stats.bestElo.toFixed(2) || '500.00'}` +
                         `\nWinrate: ${winrate}` +
                         `\nVanquished Foes: ${stats.vanquished}` +
@@ -114,7 +114,7 @@
                 for (let i = 0; i < allStats.length; i++) {
                     const stats = allStats[i]
                     const format = await Format.findOne({ where: { name: {[Op.iLike]: stats.format } }})
-                    const medal = getMedal(stats.elo)
+                    const medal = getMedal(stats.elo, true)
                     medals.push(`${format.emoji} ${format.name}: ${medal}`)
                 }
 
@@ -141,9 +141,9 @@
 
             const embed = new EmbedBuilder()
                 .setColor(0x0099FF)
-                .setDescription(`${user.username}'s Format Library ${emojis.FL} Player Profile`)
+                .setDescription(`${user.username}'s Player Profile ${emojis.FL}`)
                 // .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
-                .setAuthor({ name: ' ', url: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`, iconUrl: `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp` })
+                .setAuthor({ name: `${user.username}`, url: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`, iconUrl: `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp` })
                 // .setDescription('Some description here')
                 // .setThumbnail(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
                 .addFields(
