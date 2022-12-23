@@ -76,12 +76,13 @@
                 // .setDescription('Some description here')
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
                 .addFields(
-                    { name: `${format.name} Format Stats`, value: 
+                    { name: `${format.name} Format Stats`, value: (
                         `Best Medal: ${getMedal(stats.bestElo, title = true)}` +
                         `\nHighest Elo: ${stats.bestElo.toFixed(2) || '500.00'}` +
                         `\nWinrate: ${winrate}` +
                         `\nVanquished Foes: ${stats.vanquished}` +
-                        `\nLongest Streak: ${stats.streak}` },
+                        `\nLongest Streak: ${stats.streak}`
+                    )},
                     { name: `${format.name} Format Trophies`, value: trophies }
                 )
                 // .setImage('https://i.imgur.com/AfFp7pu.png')
