@@ -14,7 +14,7 @@ const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend,
     DARK, LIGHT, EARTH, WIND, WATER, DIVINE, FIRE, Aqua, Beast, BeastWarrior, Continuous, 
     Counter, Cyberse, Dinosaur, DivineBeast, Dragon, Equip, Fairy, Field, Fiend, Fish, 
     Insect, Link, Machine, Normal, Plant, Psychic, Pyro, QuickPlay, Rank, Reptile, 
-    Ritual, Rock, Scale, SeaSerpent, Spell, Spellcaster, Star, Thunder, Trap, Warrior, 
+    Ritual, Rock, Scale, SeaSerpent, Spell, Spellcaster, Star, Thunder, Trap, treeborn, Warrior, 
     WingedBeast, Wyrm, Zombie, forbidden, limited, semi, unlimited, high_alert, vince
  } = require('../static/emojis')
 const rarities = require('../static/rarities.json')
@@ -410,7 +410,8 @@ const getMedal = (stats, title = false) => {
         : (stats > 590 && stats <= 650) ?  `Diamond ${diamond}`
         : (stats > 650 && stats <= 710) ?  `Master ${master}`
         : (stats > 710 && stats <= 770) ?  `Legend ${legend}`
-        : `Deity ${god}`
+        : (stats > 770 && stats <= 830) ? `Deity ${god}`
+        : `Ascended ${treeborn}`
     } else {
         return !stats ? gold
         : stats <= 230 ? mad
@@ -423,7 +424,8 @@ const getMedal = (stats, title = false) => {
         : (stats > 590 && stats <= 650) ? diamond
         : (stats > 650 && stats <= 710) ? master
         : (stats > 710 && stats <= 770) ? legend
-        : god
+        : (stats > 770 && stats <= 830) ? deity
+        : treeborn
     }
 }
 
