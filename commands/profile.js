@@ -64,7 +64,7 @@
                         d.placement === 3 ? emojis.third :
                         emojis.placing
 
-                    return `${d.eventName}: ${ordinalize(d.placement)} ${badge} of ${d.event.size}`
+                    return `${d.event.name}: ${ordinalize(d.placement)} ${badge} of ${d.event.size}`
                 })
                 
             const embed = new EmbedBuilder()
@@ -129,7 +129,7 @@
                         d.placement === 3 ? emojis.third :
                         emojis.placing
 
-                    return `${d.format.emoji} ${d.event.name}: ${badge} ${ordinalize(d.placement)} of ${d.event.size}`
+                    return `${d.format.emoji} ${d.eventName}: ${badge} ${ordinalize(d.placement)} of ${d.event.size}`
                 })
 
             const embed = new EmbedBuilder()
