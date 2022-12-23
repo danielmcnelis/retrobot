@@ -70,7 +70,7 @@
                 const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format: format.name, serverId: serverId }, include: Player })
                 const loserStats = await Stats.findOne({ where: { playerId: loserId, format: format.name, serverId: serverId }, include: Player })
     
-                const prevVanq = await Match.count({
+                const prevVanq = await Match.findOne({
                     where: {
                         format: {[Op.iLike]: format.name },
                         winnerId: match.winnerId,
