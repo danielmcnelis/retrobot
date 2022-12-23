@@ -76,14 +76,19 @@
                 // .setDescription('Some description here')
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
                 .addFields(
-                    { name: `${format.name} Format Stats`, value: (
+                    { 
+                        name: `${format.name} Format Stats`,
+                        value: 
                         `Best Medal: ${getMedal(stats.bestElo, title = true)}` +
                         `\nHighest Elo: ${stats.bestElo.toFixed(2) || '500.00'}` +
                         `\nWinrate: ${winrate}` +
                         `\nVanquished Foes: ${stats.vanquished}` +
                         `\nLongest Streak: ${stats.streak}`
-                    )},
-                    { name: `${format.name} Format Trophies`, value: trophies }
+                    },
+                    { 
+                        name: `${format.name} Format Trophies`, 
+                        value: trophies.join('\n')
+                    }
                 )
                 // .setImage('https://i.imgur.com/AfFp7pu.png')
                 // .setTimestamp()
@@ -141,8 +146,8 @@
                 // .setDescription('Some description here')
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
                 .addFields(
-                    { name: `Best Formats`, value: medals },
-                    { name: `Best Finishes`, value: trophies }
+                    { name: `Best Formats`, value: medals.join('\n') },
+                    { name: `Best Finishes`, value: trophies.join('\n') }
                 )
                 // .setImage('https://i.imgur.com/AfFp7pu.png')
                 // .setTimestamp()
