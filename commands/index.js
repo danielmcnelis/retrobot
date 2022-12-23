@@ -77,6 +77,7 @@ module.exports = {
     open,
     ping,
     pools,
+    profile,
     queue,
     rated,
     recalculate,
