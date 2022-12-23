@@ -47,7 +47,7 @@
                     }
                 })
 
-                const trophies = await Deck.findAll({
+                const trophies = [...await Deck.findAll({
                     where: {
                         playerId: player.id,
                         formatId: format.id,
@@ -58,7 +58,7 @@
                     include: Event,
                     limit: 12,
                     order: [["placement", "ASC"], [Event, 'size', 'DESC']]
-                }).map((d) => {
+                })].map((d) => {
                     const badge = d.placement === 1 ? emojis.first :
                         d.placement === 2 ? emojis.second :
                         d.placement === 3 ? emojis.third :
@@ -110,7 +110,7 @@
                     medals.push(`${format.emoji} ${format.name}: ${medal}`)
                 }
 
-                const trophies = await Deck.findAll({
+                const trophies = [...await Deck.findAll({
                     where: {
                         playerId: player.id,
                         event: {[Op.not]: null},
@@ -121,7 +121,7 @@
                     include: [Event, Format],
                     limit: 12,
                     order: [["placement", "ASC"], [Event, 'size', 'DESC']]
-                }).map((d) => {
+                })].map((d) => {
                     const badge = d.placement === 1 ? emojis.first :
                         d.placement === 2 ? emojis.second :
                         d.placement === 3 ? emojis.third :
