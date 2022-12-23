@@ -56,10 +56,9 @@
                         display: true
                     },
                     include: Event,
-                    limit: 12,
+                    limit: 10,
                     order: [["placement", "ASC"], [Event, 'size', 'DESC']]
                 })].map((d) => {
-                    console.log('d', d)
                     const badge = d.placement === 1 ? emojis.first :
                         d.placement === 2 ? emojis.second :
                         d.placement === 3 ? emojis.third :
@@ -81,7 +80,7 @@
                         `\nHighest Elo: ${stats.bestElo ? stats.bestElo.toFixed(2) : '500.00'}` +
                         `\nWinrate: ${stats.wins || stats.losses ? `${(100 * stats.wins / (stats.wins + stats.losses)).toFixed(2)}%` : 'N/A'}` +
                         `\nVanquished Foes: ${stats.vanquished || 0}` +
-                        `\nLongest Streak: ${stats.streak || 0}`
+                        `\nLongest Streak: ${stats.bestStreak || 0}`
                     },
                     { 
                         name: `${format.name} Format Trophies`, 
