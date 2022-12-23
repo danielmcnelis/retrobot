@@ -52,11 +52,14 @@
                 const stats = allStats[i]
                 await stats.update({
                     elo: 500.00,
-                    testElo: 500.00,
+                    bestElo: 500.00,
                     backupElo: null,
                     wins: 0,
                     losses: 0,
-                    games: 0
+                    games: 0,
+                    streak: 0,
+                    bestStreak: 0,
+                    vanquished: 0
                 })
             }
 
