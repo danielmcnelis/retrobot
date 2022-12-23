@@ -111,6 +111,7 @@
                 for (let i = 0; i < allStats.length; i++) {
                     const stats = allStats[i]
                     const format = await Format.findOne({ where: { name: {[Op.iLike]: stats.format } }})
+                    if (!format) continue
                     const medal = getMedal(stats.elo, true)
                     medals.push(`${format.emoji} ${format.name}: ${medal}`)
                 }
