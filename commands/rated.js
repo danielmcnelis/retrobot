@@ -30,7 +30,7 @@ const getRatedInformation = async (interaction, player) => {
     const yourGuildIds = yourServers.map((s) => s.id) || []
 
     if (!yourGuildIds.length) return interaction.user.send(`Sorry, you are not a member of a server that supports rated play for ${format.name} Format. ${server.emoji || format.emoji}`)
-    const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.member, player)
+    const dbName = player.duelingBook ? player.duelingBook : await askForDBName(interaction.user, player)
     if (!dbName) return
 
     const yourRatedDecks = await Deck.findAll({
