@@ -143,7 +143,7 @@
                 .setColor(0x0099FF)
                 .setDescription(`${user.username}'s Format Library ${emojis.FL} Player Profile`)
                 // .setURL(`https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`)
-                .setAuthor({ name: '', url: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`, iconUrl: `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp` })
+                .setAuthor({ name: ' ', url: `https://formatlibrary.com/players/${user.discordName}#${user.discriminator}`, iconUrl: `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp` })
                 // .setDescription('Some description here')
                 // .setThumbnail(`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.webp`)
                 .addFields(
