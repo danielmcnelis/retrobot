@@ -21,6 +21,7 @@
                 await Server.create({ id: interaction.guildId, name: interaction.guild.name })
 
             const user = interaction.options.getUser('player') || interaction.user
+            console.log('user', user)
             const discordId = user.id	
             const player = await Player.findOne({ where: { discordId: discordId } })
             if (!player) return interaction.reply({ content: "That user is not in the database."})
