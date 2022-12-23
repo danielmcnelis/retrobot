@@ -59,6 +59,7 @@
                     limit: 12,
                     order: [["placement", "ASC"], [Event, 'size', 'DESC']]
                 })].map((d) => {
+                    console.log('d', d)
                     const badge = d.placement === 1 ? emojis.first :
                         d.placement === 2 ? emojis.second :
                         d.placement === 3 ? emojis.third :
@@ -122,6 +123,7 @@
                     limit: 12,
                     order: [["placement", "ASC"], [Event, 'size', 'DESC']]
                 })].map((d) => {
+                    console.log('d', d)
                     const badge = d.placement === 1 ? emojis.first :
                         d.placement === 2 ? emojis.second :
                         d.placement === 3 ? emojis.third :
