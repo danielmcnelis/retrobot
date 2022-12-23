@@ -7,7 +7,7 @@ const {Op} = require('sequelize')
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } = require('discord.js')
 
 //DATABASE IMPORTS
-const { Deck, Entry, Format, Player, Stats, Server, Tournament } = require('../db/index.js')
+const { Deck, Entry, Format, Match, Player, Stats, Server, Tournament } = require('../db/index.js')
 
 //FUNCTION IMPORTS
 const { getIssues } = require('./deck.js')
@@ -182,6 +182,7 @@ const selectTournament = async (interaction, tournaments) => {
         })
 
         const user = interaction.options.getUser('user')
+        console.log('user', user)
     
         const row = new ActionRowBuilder()
             .addComponents(

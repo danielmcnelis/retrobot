@@ -152,11 +152,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
             return interaction.message.edit({components: []})
         } else if (command.data.name === 'drop') {
             const tournamentId = interaction.values[0]
+            console.log('tournamentId', tournamentId)
             await dropFromTournament(interaction, tournamentId)
             return interaction.message.edit({ components: []})
         } else if (command.data.name === 'remove') {
             const tournamentId = interaction.values[0]
-            const userId = interaction.message.components[0].components[0].data.custom_id
+            console.log('interaction.message.components[0].components[0].data', interaction.message.components[0].components[0].data)
+            const userId = interaction.message.components[0].components[0].data.customId
             await removeFromTournament(interaction, tournamentId, userId)
             return interaction.message.edit({ components: []})
         } else if (command.data.name === 'timer') {
