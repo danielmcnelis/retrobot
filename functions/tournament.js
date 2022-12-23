@@ -4,7 +4,7 @@
 //MODULE IMPORTS
 const axios = require('axios')
 const {Op} = require('sequelize')
-const { ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder } = require('discord.js')
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } = require('discord.js')
 
 //DATABASE IMPORTS
 const { Deck, Entry, Format, Player, Stats, Server, Tournament } = require('../db/index.js')
