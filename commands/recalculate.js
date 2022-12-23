@@ -40,11 +40,9 @@
             
             const allMatches = await Match.findAll({ 
                 where: { format: format.name, serverId: serverId }, 
-                attributes: ['id', 'winnerId', 'loserId', 'delta', 'createdAt'], 
+                attributes: ['id', 'format', 'winnerId', 'loserId', 'delta', 'createdAt'], 
                 order: [["createdAt", "ASC"]]
             })
-
-            console.log('allMatches.length', allMatches.length)
 
             const allStats = await Stats.findAll({ where: { format: format.name, serverId: serverId } })
     
@@ -70,14 +68,17 @@
                 const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format: format.name, serverId: serverId }, include: Player })
                 const loserStats = await Stats.findOne({ where: { playerId: loserId, format: format.name, serverId: serverId }, include: Player })
     
-                const prevVanq = await Match.findOne({
+                console.log('match.createdAt')
+                const prevVanq = await Match.count({
                     where: {
-                        format: {[Op.iLike]: format.name },
+                        format: match.format,
                         winnerId: match.winnerId,
                         loserId: match.loserId,
                         createdAt: {[Op.lte]: match.createdAt}
                     }
                 })
+                
+                console.log('prevVanq', prevVanq)
 
                 if (!winnerStats) {
                     await trackStats(server, winnerId, format.name)
