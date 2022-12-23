@@ -68,16 +68,15 @@
                 const winnerStats = await Stats.findOne({ where: { playerId: winnerId, format: format.name, serverId: serverId }, include: Player })
                 const loserStats = await Stats.findOne({ where: { playerId: loserId, format: format.name, serverId: serverId }, include: Player })
     
-                console.log('match.createdAt')
                 const prevVanq = await Match.count({
                     where: {
                         format: match.format,
                         winnerId: match.winnerId,
                         loserId: match.loserId,
-                        createdAt: {[Op.lte]: match.createdAt}
+                        createdAt: {[Op.lt]: match.createdAt}
                     }
                 })
-                
+
                 console.log('prevVanq', prevVanq)
 
                 if (!winnerStats) {
