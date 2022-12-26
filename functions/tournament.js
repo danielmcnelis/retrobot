@@ -1323,6 +1323,8 @@ const processNoShow = async (interaction, tournamentId, userId) => {
         }
     })
 
+    const noShow = await interaction.guild.members.fetch(noShowPlayer.discordId)
+
     const server = await Server.findOne({
         where: {
             id: interaction.guildId
