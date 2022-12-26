@@ -182,7 +182,6 @@ const selectTournament = async (interaction, tournaments) => {
         })
 
         const user = interaction.options.getUser('player')
-        console.log('user', user)
     
         const row = new ActionRowBuilder()
             .addComponents(
@@ -956,7 +955,7 @@ const processMatchResult = async (server, interaction, winner, winningPlayer, lo
                 }
 
                 try {
-                    const member = await guild.members.fetch(loserNextOpponent.player.discordId)
+                    const member = await interaction.guild.members.fetch(loserNextOpponent.player.discordId)
                     console.log(`New Match for ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${losingPlayer.name + '#' + losingPlayer.discriminator}\nDuelingBook: ${losingPlayer.duelingBook}`)
                     member.user.send(`New Match for ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${losingPlayer.name + '#' + losingPlayer.discriminator}\nDuelingBook: ${losingPlayer.duelingBook}`)
                 } catch (err) {
@@ -984,7 +983,7 @@ const processMatchResult = async (server, interaction, winner, winningPlayer, lo
                     }
 
                     try {
-                        const member = await guild.members.fetch(winnerNextOpponent.player.discordId)
+                        const member = await interaction.guild.members.fetch(winnerNextOpponent.player.discordId)
                         console.log(`New Match for ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${winningPlayer.name + '#' + winningPlayer.discriminator}\nDuelingBook: ${winningPlayer.duelingBook}`)
                         member.user.send(`New Match for ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${winningPlayer.name + '#' + winningPlayer.discriminator}\nDuelingBook: ${winningPlayer.duelingBook}`)
                     } catch (err) {
