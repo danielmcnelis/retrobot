@@ -1309,6 +1309,53 @@ const initiateStartTournament = async (interaction, tournamentId) => {
     }
 }
 
+//PROCESS NO SHOW
+const processNoShow = async (interaction, tournamentId, userId) => {
+    const tournament = await Tournament.findOne({
+        where: {
+            id: tournamentId
+        }
+    })
+
+    const noShowPlayer = await Player.findOne({
+        where: {
+            discordId: userId
+        }
+    })
+
+    const server = await Server.findOne({
+        where: {
+            id: interaction.guildId
+        }
+    })
+
+    if (!tournament || !noShowPlayer || !server) return
+ 
+    if (tournament.state === 'pending' || tournament.state === 'standby') return interaction.reply({ content: `Sorry, ${tournament.name} has not started yet.`})
+    if (tournament.state !== 'underway') return interaction.reply({ content: `Sorry, ${tournament.name} is not underway.`})
+    
+    const noShowEntry = await Entry.findOne({ where: { playerId: noShowPlayer.id, tournamentId: tournament.id } })
+    if (!noShowEntry) return interaction.reply({ content: `Sorry I could not find that player's tournament entry in the database.`})
+
+    const matchesArr = await getMatches(server, tournament.id)
+    let winnerParticipantId = false
+    for (let i = 0; i < matchesArr.length; i++) {
+        const match = matchesArr[i].match
+        if (match.state !== 'open') continue
+        winnerParticipantId = findNoShowOpponent(match, noShowEntry.participantId)
+        if (winnerParticipantId) break
+    }
+
+    const winningEntry = await Entry.findOne({ where: { participantId: winnerParticipantId, tournamentId: tournament.id }, include: Player })
+    if (!winningEntry) return interaction.reply({ content: `Error: could not find opponent.`})
+    const winningPlayer = winningEntry.player
+    const winner = await interaction.guild.members.fetch(winningPlayer.discordId)
+    const success = await processMatchResult(server, interaction, winner, winningPlayer, noShow, noShowPlayer, tournament, true)
+    if (!success) return
+
+    return interaction.reply({ content: `<@${noShowPlayer.discordId}>, your Tournament loss to <@${winningPlayer.discordId}> has been recorded as a no-show.`})	
+}
+
 module.exports = {
     askForDBName,
     checkPairing,
@@ -1329,6 +1376,7 @@ module.exports = {
     joinTournament,
     openTournament,
     processMatchResult,
+    processNoShow,
     postParticipant,
     removeFromTournament,
     removeParticipant,
