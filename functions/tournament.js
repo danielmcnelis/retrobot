@@ -804,6 +804,9 @@ const getPairing = (matchesArr = [], matchId) => {
 //POST PARTICIPANT
 const postParticipant = async (server, tournament, player) => {
     try {
+        console.log('server.challongeAPIKey', server.challongeAPIKey)
+        console.log('tournament.id', tournament.id)
+        console.log('player.name', player.name)
         const { data } = await axios({
             method: 'post',
             url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${server.challongeAPIKey}`,
@@ -813,6 +816,8 @@ const postParticipant = async (server, tournament, player) => {
                 }
             }
         })
+
+        console.log('!!data', !!data)
         return data
     } catch (err) {
         console.log(err)
