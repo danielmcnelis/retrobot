@@ -807,17 +807,19 @@ const fixTournmanets = async () => {
 const fixStatuses = async () => {
     const statuses = await Status.findAll({
         where: {
-            banlist: 'oct13'
-        }
+            banlist: 'sep13'
+        },
+        order: [["name", "ASC"]]
     })
 
     let b = 0
     let e = 0
+    const c = statuses.length
 
-    for (let i = 0; i < statuses.length; i++) {
+    for (let i = 0; i < statuses.length; i+=2) {
         try {
             const status = statuses[i]
-            await status.update({ banlist: 'sep13' })
+            await status.destroy()
             b++
         } catch (err) {
             console.log(err)
@@ -825,7 +827,7 @@ const fixStatuses = async () => {
         }
     }
 
-    return console.log(`updated ${b} statuses, encountered ${e} errors`)
+    return console.log(`destroyed ${b} out of ${c} statuses, encountered ${e} errors`)
 }
 
 fixStatuses()
