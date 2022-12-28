@@ -1239,10 +1239,14 @@ const dropFromTournament = async (interaction, tournamentId) => {
     const entry = await Entry.findOne({ 
         where: { 
             '$player.discordId$': interaction.user.id, 
-            tournamentId: tournament.id
+            tournamentId: tournamentId
         },
         include: Player
     })
+
+    console.log('interaction.user.id', interaction.user.id)
+    console.log('tournament.id', tournament.id)
+    console.log('tournamentId', tournamentId)
 
     return removeParticipant(server, interaction, interaction.member, entry, tournament, true)
 }
