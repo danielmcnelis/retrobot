@@ -10,15 +10,8 @@ const { Op } = require('sequelize')
 const { Card, Membership, Player, Print, Role, Set, Stats, Status, Tournament } = require('../db/index.js')
 
 //STATIC IMPORTS
-const { mad, sad, rock, bronze, silver, gold, platinum, diamond, master, legend, god, ATK, DEF,
-    DARK, LIGHT, EARTH, WIND, WATER, DIVINE, FIRE, Aqua, Beast, BeastWarrior, Continuous, 
-    Counter, Cyberse, Dinosaur, DivineBeast, Dragon, Equip, Fairy, Field, Fiend, Fish, 
-    Insect, Link, Machine, Normal, Plant, Psychic, Pyro, QuickPlay, Rank, Reptile, 
-    Ritual, Rock, Scale, SeaSerpent, Spell, Spellcaster, Star, Thunder, Trap, treeborn, Warrior, 
-    WingedBeast, Wyrm, Zombie, forbidden, limited, semi, unlimited, high_alert, vince
- } = require('../static/emojis')
+const emojis = require('../static/emojis')
 const rarities = require('../static/rarities.json')
-const roles = require('../static/roles.json')
 
 //DATE TO SIMPLE
 const dateToSimple = (date = 'N/A') => {
@@ -119,7 +112,7 @@ const search = async (query, fuzzyCards, format) => {
         order: [[Set, 'tcgDate', 'ASC'], ['marketPrice', 'DESC']]
     })
 
-    const firstPrint = print ? `${rarities[print.rarity]} ${print.set.setName}` : null 
+    const firstPrint = print ? `${emojis[rarities[print.rarity]]} ${print.set.setName}` : null 
 
     const legal = format && card.tcgDate && (card.tcgDate <= format.date || format.name === 'Traditional' || format.name === 'Current')
     const position = format && format.name === 'Traditional' && legal && status && status.restriction === 'Forbidden' ? 'limited' :
@@ -164,27 +157,27 @@ const search = async (query, fuzzyCards, format) => {
     let labels = [
 		`\nRelease Date: ${releaseDate}`,
 		`\nFirst Print: ${firstPrint || 'OCG Only'}`,
-        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${capitalize(position, true)} ${indicator}` : ''}`
+        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${capitalize(position, true)} ${emojis[indicator]}` : ''}`
     ]
 
     if (card.category === 'Monster') {
         labels = [
-            `Attribute: ${card.attribute} ${eval(card.attribute)}`,
-            `\n${card.xyz ? `Rank: ${card.level} ${Rank}` : card.link ? `Link Rating: ${card.rating} ${Link}` : `Level: ${card.level} ${Star}`}`,
+            `Attribute: ${card.attribute} ${emojis[card.attribute]}`,
+            `\n${card.xyz ? `Rank: ${card.level} ${emojis.Rank}` : card.link ? `Link Rating: ${card.rating} ${emojis.Link}` : `Level: ${card.level} ${emojis.Star}`}`,
             ...labels,
-            `\n**[** ${card.type} ${eval(card.type.replace(/[^\ws]/gi, ""))} / ${classes.join(" / ")} **]**`
+            `\n**[** ${card.type} ${emojis[card.type.replace(/[^\ws]/gi, "")]} / ${classes.join(" / ")} **]**`
         ]
     } else {
         labels = [
-            `Card: ${card.category} ${eval(card.category)}`,
-            `\nCategory: ${card.icon} ${eval(card.icon.replace(/[^\ws]/gi, ""))}`,
+            `Card: ${card.category} ${emojis[card.category]}`,
+            `\nCategory: ${card.icon} ${emojis[card.icon.replace(/[^\ws]/gi, "")]}`,
             ...labels
         ]
     }
 
 	const stats = card.category === "Monster" ? 
-			`ATK: ${card.atk === null ? '?' : card.atk} ${ATK}` + 
-			` ${!card.link ? `DEF: ${card.def === null ? '?' : card.def} ${DEF}` : ''}` :
+			`ATK: ${card.atk === null ? '?' : card.atk} ${emojis.ATK}` + 
+			` ${!card.link ? `DEF: ${card.def === null ? '?' : card.def} ${emojis.DEF}` : ''}` :
 			null
 	
 	const attachment = new AttachmentBuilder(`https://cdn.formatlibrary.com/images/cards/${card.ypdId}.jpg`, { name: `${card.ypdId}.jpg` })
@@ -338,13 +331,19 @@ const assignRoles = async (guild, member) => {
 
 //CAPITALIZE
 const capitalize = (str = '', eachWord = false) => {
+    if (!str) return
     if (eachWord) {
-        const splt = str.split(' ').map((s) => capitalize(s))
-        return splt.join(' ')
+      return str.split(' ')
+        .map((s) => capitalize(s))
+        .join(' ')
+        .split('-')
+        .map((s) => capitalize(s))
+        .join('-')
     } else {
-        return str.charAt(0).toUpperCase() + str.slice(1)
+      const charZero = str.charAt(0) || ''
+      return charZero.toUpperCase() + str.slice(1)
     }
-} 
+}
 
 //CONVERT ARRAY TO OBJECT
 const convertArrayToObject = (arr = []) => {
@@ -399,33 +398,33 @@ const generateRandomString = (length, chars) => {
 //GET MEDAL
 const getMedal = (stats, title = false) => {
     if (title) {
-        return !stats ? `Gold ${gold}`
-        : stats <= 230 ? `Tilted ${mad}`
-        : (stats > 230 && stats <= 290) ?  `Chump ${sad}`
-        : (stats > 290 && stats <= 350) ?  `Rock ${rock}`
-        : (stats > 350 && stats <= 410) ?  `Bronze ${bronze}`
-        : (stats > 410 && stats <= 470) ?  `Silver ${silver}`
-        : (stats > 470 && stats <= 530) ?  `Gold ${gold}`
-        : (stats > 530 && stats <= 590) ?  `Platinum ${platinum}`
-        : (stats > 590 && stats <= 650) ?  `Diamond ${diamond}`
-        : (stats > 650 && stats <= 710) ?  `Master ${master}`
-        : (stats > 710 && stats <= 770) ?  `Legend ${legend}`
-        : (stats > 770 && stats <= 830) ? `Deity ${god}`
-        : `Ascended ${treeborn}`
+        return !stats ? `Gold ${emojis.gold}`
+        : stats <= 230 ? `Tilted ${emojis.mad}`
+        : (stats > 230 && stats <= 290) ?  `Chump ${emojis.sad}`
+        : (stats > 290 && stats <= 350) ?  `Rock ${emojis.rock}`
+        : (stats > 350 && stats <= 410) ?  `Bronze ${emojis.bronze}`
+        : (stats > 410 && stats <= 470) ?  `Silver ${emojis.silver}`
+        : (stats > 470 && stats <= 530) ?  `Gold ${emojis.gold}`
+        : (stats > 530 && stats <= 590) ?  `Platinum ${emojis.platinum}`
+        : (stats > 590 && stats <= 650) ?  `Diamond ${emojis.diamond}`
+        : (stats > 650 && stats <= 710) ?  `Master ${emojis.master}`
+        : (stats > 710 && stats <= 770) ?  `Legend ${emojis.legend}`
+        : (stats > 770 && stats <= 830) ? `Deity ${emojis.god}`
+        : `Ascended ${emojis.treeborn}`
     } else {
-        return !stats ? gold
-        : stats <= 230 ? mad
-        : (stats > 230 && stats <= 290) ? sad
-        : (stats > 290 && stats <= 350) ? rock
-        : (stats > 350 && stats <= 410) ? bronze
-        : (stats > 410 && stats <= 470) ? silver
-        : (stats > 470 && stats <= 530) ? gold
-        : (stats > 530 && stats <= 590) ? platinum
-        : (stats > 590 && stats <= 650) ? diamond
-        : (stats > 650 && stats <= 710) ? master
-        : (stats > 710 && stats <= 770) ? legend
-        : (stats > 770 && stats <= 830) ? deity
-        : treeborn
+        return !stats ? emojis.gold
+        : stats <= 230 ? emojis.mad
+        : (stats > 230 && stats <= 290) ? emojis.sad
+        : (stats > 290 && stats <= 350) ? emojis.rock
+        : (stats > 350 && stats <= 410) ? emojis.bronze
+        : (stats > 410 && stats <= 470) ? emojis.silver
+        : (stats > 470 && stats <= 530) ? emojis.gold
+        : (stats > 530 && stats <= 590) ? emojis.platinum
+        : (stats > 590 && stats <= 650) ? emojis.diamond
+        : (stats > 650 && stats <= 710) ? emojis.master
+        : (stats > 710 && stats <= 770) ? emojis.legend
+        : (stats > 770 && stats <= 830) ? emojis.deity
+        : emojis.treeborn
     }
 }
 
@@ -525,7 +524,7 @@ const setTimers = async (client) => {
             const channel = guild.channels.cache.get(tournament.channelId)
 
             setTimeout(() => {
-                return channel.send(`${high_alert} **Attention: ${tournament.name} Participants!** ${high_alert} Time is up in the round! ${vince}`)
+                return channel.send(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} Time is up in the round! ${emojis.vince}`)
             }, timeRemaining)
         } catch (err) {
             console.log(err)

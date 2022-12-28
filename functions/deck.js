@@ -134,6 +134,13 @@ const checkDeckList = async (member, format) => {
             const {data} = await axios.get(`https://www.duelingbook.com/php-scripts/load-deck.php/deck?id=${id}`)
             if (!data) return {}
             const main = data.main.map((e) => e.serial_number)
+            const minimum = format.category === 'Speed' ? 20 : 40
+
+            if (main.length < minimum) {
+                member.send(`I'm sorry, your deck must contain at least ${minimum} cards.`).catch((err) => console.log(err))    
+                return false 
+            }
+
             const side = data.side.map((e) => e.serial_number)
             const extra = data.extra.map((e) => e.serial_number)
             const deckArr = [...main, ...side, ...extra]

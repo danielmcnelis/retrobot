@@ -77,7 +77,7 @@ module.exports = {
             interaction.reply(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
         }
 
-        sendPairings(interaction.guild, server, tournament, false)
+        sendPairings(interaction.guild, server, tournament, true)
         return setTimeout(() => {
             return interaction.channel.send(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} Time is up in the round! ${emojis.vince}`)
         }, timeRemaining)
