@@ -804,6 +804,31 @@ const fixTournmanets = async () => {
     return console.log(`saved ${b} tournaments, encountered ${e} errors`)
 }
 
+const fixStatuses = async () => {
+    const statuses = await Status.findAll({
+        where: {
+            banlist: 'oct13'
+        }
+    })
+
+    let b = 0
+    let e = 0
+
+    for (let i = 0; i < statuses.length; i++) {
+        try {
+            const status = statuses[i]
+            await status.update({ banlist: 'sep13' })
+            b++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
+    }
+
+    return console.log(`updated ${b} statuses, encountered ${e} errors`)
+}
+
+fixStatuses()
 // fixTournmanets()
 // fixPfps()
 // fixBlogs()
@@ -812,7 +837,7 @@ const fixTournmanets = async () => {
 // saveYDKs()
 // downloadYDKs()
 // fixPlayers()
-fixDecks()
+// fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()
