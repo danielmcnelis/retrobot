@@ -10,7 +10,7 @@ const { Op } = require('sequelize')
 const { Card, Membership, Player, Print, Role, Set, Stats, Status, Tournament } = require('../db/index.js')
 
 //STATIC IMPORTS
-const emojis = require('../static/emojis')
+const emojis = require('../static/emojis.json')
 const rarities = require('../static/rarities.json')
 
 //DATE TO SIMPLE
@@ -120,10 +120,10 @@ const search = async (query, fuzzyCards, format) => {
         legal && !status ? 'unlimited' :
         'not legal'
 
-    const indicator = position === 'semi-limited' ? semi :
-        position === 'limited' ? limited :
-        position === 'unlimited' ? unlimited :
-        forbidden
+    const indicator = position === 'semi-limited' ? emojis.semi :
+        position === 'limited' ? emojis.limited :
+        position === 'unlimited' ? emojis.unlimited :
+        emojis.forbidden
 
 	const color = card.category === "Spell" ? "#42f578" :
 		card.category === "Trap" ? "#e624ed" :
