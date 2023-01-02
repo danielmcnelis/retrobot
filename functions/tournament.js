@@ -790,7 +790,7 @@ const getParticipants = async (server, tournamentId) => {
     try {
         const { data } = await axios({
             method: 'get',
-            url: `https://api.challonge.com/v1/participants/${tournamentId}/matches.json?api_key=${server.challongeAPIKey}`
+            url: `https://api.challonge.com/v1/tournaments/${tournamentId}/participants.json?api_key=${server.challongeAPIKey}`
         })
         
         return data
