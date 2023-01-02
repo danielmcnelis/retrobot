@@ -39,6 +39,7 @@ const rng = require('./rng')
 const role = require('./role')
 const settimer = require('./settimer')
 const signup = require('./signup')
+const standings = require('./standings')
 const start = require('./start')
 const stats = require('./stats')
 const story = require('./story')
@@ -87,6 +88,7 @@ module.exports = {
     role,
     settimer,
     signup,
+    standings,
     start,
     stats,
     story,
