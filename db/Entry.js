@@ -16,6 +16,9 @@ const Entry = db.define('entries', {
         type: Sequelize.BOOLEAN,
         defaultValue: true
     },
+    roundDropped: {
+        type: Sequelize.INTEGER
+    },
     wins: {
         type: Sequelize.INTEGER,
         defaultValue: 0

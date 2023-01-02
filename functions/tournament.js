@@ -307,7 +307,6 @@ const joinTournament = async (interaction, tournamentId) => {
 
 // SIGNUP FOR TOURNAMENT 
 const signupForTournament = async (interaction, tournamentId, userId) => {
-    console.log('userId', userId)
     if (!userId) userId = await interaction.options.getUser('player').id
     console.log('userId', userId)
     const member = await interaction.guild.members.fetch(userId)
@@ -777,6 +776,21 @@ const getMatches = async (server, tournamentId) => {
         const { data } = await axios({
             method: 'get',
             url: `https://api.challonge.com/v1/tournaments/${tournamentId}/matches.json?api_key=${server.challongeAPIKey}`
+        })
+        
+        return data
+    } catch (err) {
+        console.log(err)
+        return []
+    }
+}
+
+//GET PARTICIPANTS
+const getParticipants = async (server, tournamentId) => {
+    try {
+        const { data } = await axios({
+            method: 'get',
+            url: `https://api.challonge.com/v1/participants/${tournamentId}/matches.json?api_key=${server.challongeAPIKey}`
         })
         
         return data
@@ -1374,8 +1388,168 @@ const processNoShow = async (interaction, tournamentId, userId) => {
     return interaction.reply({ content: `<@${noShowPlayer.discordId}>, your Tournament loss to <@${winningPlayer.discordId}> has been recorded as a no-show.`})	
 }
 
+//CALCULATE STANDINGS
+const calculateStandings = async (interaction, tournamentId) => {
+    const server = await Server.findOne({
+        where: {
+            id: interaction.guildId
+        }
+    })
+
+    interaction.reply(`Calculating standings, please wait.`)
+
+    const matches = await getMatches(server, tournamentId)
+    const participants = await getParticipants(server, tournamentId)
+
+    const data = {}
+
+    let currentRound = 1
+
+    for (let i = 0; i < participants.length; i++) {
+        const p = participants[i]
+
+        const entry = await Entry.findOne({
+            where: {
+                participantId: p.participant.id
+            }
+        })
+
+        data[p.participant.id] = {
+            name: entry.playerName,
+            rank: null,
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            byes: 0,
+            score: 0,
+            active: entry.active,
+            roundDropped: entry.roundDropped,
+            roundsWithoutBye: [],
+            opponents: [],
+            opponentScores: [],
+            defeated: [],
+            winsVsTied: 0,
+            rawBuchholz: 0,
+            medianBuchholz: 0
+        }
+    }
+
+    for (let i = 0; i < matches.length; i++) {
+        const match = matches[i]
+
+        if (match.state === 'pending') {
+            continue
+        } else if (match.state === 'open') {
+            if (match.round > currentRound) currentRound = match.round
+            data[match.player1_id].roundsWithoutBye.push(match.round)
+            data[match.player2_id].roundsWithoutBye.push(match.round)
+        } else if (match.state === 'complete' && match.winner_id) {
+            if (match.round > currentRound) currentRound = match.round
+            data[match.winner_id].wins++
+            data[match.winner_id].defeated.push(match.loser_id)
+            data[match.winner_id].opponents.push(match.loser_id)
+            data[match.winner_id].roundsWithoutBye.push(match.round)
+            data[match.loser_id].losses++
+            data[match.loser_id].opponents.push(match.winner_id)
+            data[match.loser_id].roundsWithoutBye.push(match.round)
+        } else if (match.state === 'complete' && !match.winner_id) {
+            if (match.round > currentRound) currentRound = match.round
+            data[match.player1_id].ties++
+            data[match.player1_id].opponents.push(match.player2_id)
+            data[match.player1_id].roundsWithoutBye.push(match.round)
+            data[match.player2_id].ties++
+            data[match.player2_id].opponents.push(match.player1_id)
+            data[match.player2_id].roundsWithoutBye.push(match.round)
+        } 
+    }
+
+    console.log('currentRound', currentRound)
+
+    const rounds = []
+    let i = 1
+    while (i <= currentRound) {
+        rounds.push(i)
+        i++
+    }
+
+    console.log('rounds', rounds)
+    
+    const keys = Object.getKeys(data)
+
+    keys.forEach((k) => {
+        for (let j = 1; j <= currentRound; j++) {
+            if (!data[k].roundsWithoutBye.includes(j) && (data[k].active || data[k].roundDropped < j)) {
+                console.log(`round ${j} BYE found for ${data[k].name}`)
+                data[k].byes++
+            }
+        }
+    })
+
+    keys.forEach((k) => {
+        data[k].score = data[k].wins + data[k].byes
+    })
+
+    keys.forEach((k) => {
+        for (let i = 0; i < data[k].opponents.length; i++) {
+            const opponentId = data[k].opponents[i]
+            data[k].opponentScores.push(data[opponentId].score)
+        }
+
+        const arr = data[k].opponentScores.sort()
+        arr.pop().shift()
+        console.log('opponentScores.sort()', opponentScores.sort())
+        console.log('arr', arr)
+
+        data[k].rawBuchholz = data[k].opponentScores.reduce((accum, val) => accum + val, 0)
+        console.log('data[k].rawBuchholz', data[k].rawBuchholz)
+        data[k].medianBuchholz = arr.reduce((accum, val) => accum + val, 0)
+        console.log('data[k].medianBuchholz', data[k].medianBuchholz)
+    })
+
+    console.log('data', data)
+
+    const standings = Object.values(data).sort((a, b) => {
+        if (a.score > b.score) {
+            return 1
+        } else if (a.score < b.score) {
+            return -1
+        } else if (a.medianBuchholz > b.medianBuchholz) {
+            return 1
+        } else if (a.medianBuchholz < b.medianBuchholz) {
+            return -1
+        } else if (a.winsVsTied > b.winsVsTied) {
+            return 1
+        } else if (a.winsVsTied < b.winsVsTied) {
+            return -1
+        } else {
+            return 0
+        }
+    })
+
+    const results = []
+
+    standings.forEach((s, index) => {
+        if (
+            (s.score > standings[index + 1].score || 
+            s.medianBuchholz > standings[index + 1].medianBuchholz || 
+            s.winsVsTied > standings[index + 1].winsVsTied) && (index = 0 || !standings[index - 1].startsWith('T'))
+        ) {
+            s.rank = index + 1
+        } else if (index = 0) {
+            s.rank = 'T1'
+        } else {
+            s.rank = standings[i - 1].rank
+        }
+
+        results.push(`${s.rank}. ${s.name} (${s.wins}-${s.losses}-${s.ties}, ${s.byes} Byes), Score: ${s.score}, Median-Buchholz: ${s.medianBuchholz}, Wins-vs-Tied: ${s.winsVsTied}`)
+    })
+
+    return interaction.channel.send(results.join('\n'))
+}
+
 module.exports = {
     askForDBName,
+    calculateStandings,
     checkPairing,
     checkTimer,
     closeTournament,
@@ -1390,6 +1564,7 @@ module.exports = {
     getTournamentFormat,
     getTournamentType,
     getMatches,
+    getParticipants,
     initiateStartTournament,
     joinTournament,
     openTournament,
