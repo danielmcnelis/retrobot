@@ -1474,7 +1474,7 @@ const calculateStandings = async (interaction, tournamentId) => {
 
     console.log('rounds', rounds)
     
-    const keys = Object.getKeys(data)
+    const keys = Object.keys(data)
 
     keys.forEach((k) => {
         for (let j = 1; j <= currentRound; j++) {
