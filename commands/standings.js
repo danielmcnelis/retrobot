@@ -166,7 +166,7 @@ module.exports = {
             }
         })
 
-        const results = [`Rank.  Player  |  Record  |  Median Buchholz  |  Wins vs Tied `]
+        const results = [`**Rank.  Player  (W-L-T)  [Median-Buccholz / Wins vs Tied]**`]
 
         standings.forEach((s, index) => {
             if (
@@ -205,7 +205,7 @@ module.exports = {
             }
 
             console.log('standings', standings)
-            results.push(`${s.rank}.  ${s.name}  |  (${s.wins}-${s.losses}-${s.ties}${s.byes ? `, +BYE)` : ')'}  |  MB: ${s.medianBuchholz}  |  WvT: ${s.winsVsTied}]`)
+            results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties}${s.byes ? `, +BYE)` : ')'}  [${s.medianBuchholz} / ${s.winsVsTied}]`)
         })
 
         return interaction.channel.send(results.join('\n'))
