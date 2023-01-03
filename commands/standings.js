@@ -183,23 +183,30 @@ module.exports = {
         const results = []
 
         standings.forEach((s, index) => {
-            if (index + 1 === standings.length) {
-                if (!standings[index - 1].rank.startsWith('T')) {
-                    s.rank = `${index + 1}`
-                } else {
-                    s.rank = standings[i - 1].rank
-                }
-            } else if (
+            if (
                 (
-                    s.score > standings[index + 1].score || 
-                    s.medianBuchholz > standings[index + 1].medianBuchholz || 
-                    s.winsVsTied > standings[index + 1].winsVsTied) && (index === 0 || !standings[index - 1].rank.startsWith('T')
+                    // if at the end or has a better score/tie-breakers than the next player
+                    index + 1 === standings.length || (
+                        s.score > standings[index + 1].score || 
+                        s.medianBuchholz > standings[index + 1].medianBuchholz || 
+                        s.winsVsTied > standings[index + 1].winsVsTied
+                    )
+                ) && (
+                    // and at the beginning or not tied with the previous player
+                    index === 0 || (
+                        s.score !== standings[index + 1].score || 
+                        s.medianBuchholz !== standings[index + 1].medianBuchholz || 
+                        s.winsVsTied !== standings[index + 1].winsVsTied
+                    )
                 )
             ) {
+                // then assign a unique ranking for this index position
                 s.rank = `${index + 1}`
             } else if (index === 0) {
+                // else if at the beginning assign T1 ranking
                 s.rank = 'T1'
             } else {
+                // else assign same ranking as the previous player
                 s.rank = standings[index - 1].rank
             }
 
