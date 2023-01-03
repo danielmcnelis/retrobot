@@ -1480,7 +1480,7 @@ const calculateStandings = async (interaction, tournamentId) => {
 
     keys.forEach((k) => {
         for (let j = 1; j <= currentRound; j++) {
-            if (!data[k].roundsWithoutBye.includes(j) && (data[k].active || data[k].roundDropped < j)) {
+            if (!data[k].roundsWithoutBye.includes(j) && (data[k].active || data[k].roundDropped > j)) {
                 console.log(`round ${j} BYE found for ${data[k].name}`)
                 data[k].byes++
             }
