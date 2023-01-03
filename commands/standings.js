@@ -138,13 +138,13 @@ module.exports = {
             for (let i = 0; i < data[k].opponents.length; i++) {
                 const opponentId = data[k].opponents[i]
                 data[k].opponentScores.push(data[opponentId].score)
+                if (data[opponentId].score === k.score) k.winsVsTied++
             }
 
-            const arr = data[k].opponentScores.sort()
+            const arr = data[k].opponentScores.sort().pop().shift()
             data[k].rawBuchholz = data[k].opponentScores.reduce((accum, val) => accum + val, 0)
             data[k].medianBuchholz = arr.reduce((accum, val) => accum + val, 0)
         })
-
 
         const standings = Object.values(data).sort((a, b) => {
             if (a.score > b.score) {
@@ -164,9 +164,7 @@ module.exports = {
             }
         })
 
-        console.log('data', data)
-        console.log('standings before loop', standings)
-        const results = []
+        const results = [`Place - Player - (W-L-T) - `]
 
         standings.forEach((s, index) => {
             if (
@@ -204,8 +202,8 @@ module.exports = {
                 s.rank = `T${index + 1}`
             }
 
-            console.log('standings after loop', standings)
-            results.push(`${s.rank}. ${s.name} (${s.wins}-${s.losses}-${s.ties}, ${s.byes}B), S: ${s.score}, MB: ${s.medianBuchholz}, WvT: ${s.winsVsTied}`)
+            console.log('standings', standings)
+            results.push(`${s.rank}. ${s.name} (${s.wins}-${s.losses}-${s.ties}${s.byes ? `, +BYE)` : ')'} [${s.score}.0 | ${s.medianBuchholz}.0 | ${s.winsVsTied}]`)
         })
 
         return interaction.channel.send(results.join('\n'))
