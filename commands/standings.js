@@ -174,14 +174,14 @@ module.exports = {
                     // if at the end or has a better score/tie-breakers than the next player
                     index + 1 === standings.length || (
                         s.score > standings[index + 1].score || 
-                        s.medianBuchholz > standings[index + 1].medianBuchholz || 
-                        s.winsVsTied > standings[index + 1].winsVsTied
+                        s.score === standings[index + 1].score && s.medianBuchholz > standings[index + 1].medianBuchholz || 
+                        s.score === standings[index + 1].score && s.medianBuchholz === standings[index + 1].medianBuchholz && s.winsVsTied > standings[index + 1].winsVsTied
                     )
                 ) && (
                     // and at the beginning or not tied with the previous player
                     index === 0 || (
-                        s.score !== standings[index - 1].score || 
-                        s.medianBuchholz !== standings[index - 1].medianBuchholz || 
+                        s.score !== standings[index - 1].score &&
+                        s.medianBuchholz !== standings[index - 1].medianBuchholz && 
                         s.winsVsTied !== standings[index - 1].winsVsTied
                     )
                 )
@@ -193,8 +193,8 @@ module.exports = {
                 s.rank = 'T1'
             } else if (
                 // else if tied with previous player
-                s.score === standings[index - 1].score || 
-                s.medianBuchholz === standings[index - 1].medianBuchholz || 
+                s.score === standings[index - 1].score && 
+                s.medianBuchholz === standings[index - 1].medianBuchholz && 
                 s.winsVsTied === standings[index - 1].winsVsTied
             ) {
                 // then assign the same ranking as the previous player
