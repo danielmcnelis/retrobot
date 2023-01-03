@@ -12,7 +12,7 @@ module.exports = {
         .setDescription('Performs a test. 🧪'),
     async execute(interaction) {
         if (isProgrammer(interaction.member)) {
-            const roles = interaction.guild.roles.cache.map((r) => r.Role)
+            const roles = interaction.guild.roles.cache.map((r) => r.role)
             
             for (const role of roles) {
                 if (role.name.includes('Grinders')) {
