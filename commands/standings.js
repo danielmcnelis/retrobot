@@ -97,22 +97,16 @@ module.exports = {
                 if (round > currentRound) currentRound = round
                 data[match.player1_id].roundsWithoutBye.push(round)
                 data[match.player2_id].roundsWithoutBye.push(round)
-            } else if (match.state === 'complete' && match.winner_id) {
+            } else if (match.state === 'complete' && match.winner_id && match.loser_id) {
                 if (round > currentRound) currentRound = match.round
                 data[match.winner_id].wins++
                 data[match.winner_id].defeated.push(match.loser_id)
                 data[match.winner_id].opponents.push(match.loser_id)
                 data[match.winner_id].roundsWithoutBye.push(round)
-
-                if (!match.loser_id) {
-                    console.log(`no match.loser_id:`, match)
-                    continue
-                }
-
                 data[match.loser_id].losses++
                 data[match.loser_id].opponents.push(match.winner_id)
                 data[match.loser_id].roundsWithoutBye.push(round)
-            } else if (match.state === 'complete' && !match.winner_id) {
+            } else if (match.state === 'complete') {
                 if (round > currentRound) currentRound = round
                 data[match.player1_id].ties++
                 data[match.player1_id].opponents.push(match.player2_id)
