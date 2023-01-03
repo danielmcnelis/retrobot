@@ -84,30 +84,31 @@ module.exports = {
 
         for (let i = 0; i < matches.length; i++) {
             const match = matches[i]
+            const round = parseInt(match.round)
 
             if (match.state === 'pending') {
                 continue
             } else if (match.state === 'open') {
-                if (match.round > currentRound) currentRound = match.round
-                data[match.player1_id].roundsWithoutBye.push(match.round)
-                data[match.player2_id].roundsWithoutBye.push(match.round)
+                if (round > currentRound) currentRound = round
+                data[match.player1_id].roundsWithoutBye.push(round)
+                data[match.player2_id].roundsWithoutBye.push(round)
             } else if (match.state === 'complete' && match.winner_id) {
-                if (match.round > currentRound) currentRound = match.round
+                if (round > currentRound) currentRound = match.round
                 data[match.winner_id].wins++
                 data[match.winner_id].defeated.push(match.loser_id)
                 data[match.winner_id].opponents.push(match.loser_id)
-                data[match.winner_id].roundsWithoutBye.push(match.round)
+                data[match.winner_id].roundsWithoutBye.push(round)
                 data[match.loser_id].losses++
                 data[match.loser_id].opponents.push(match.winner_id)
-                data[match.loser_id].roundsWithoutBye.push(match.round)
+                data[match.loser_id].roundsWithoutBye.push(round)
             } else if (match.state === 'complete' && !match.winner_id) {
-                if (match.round > currentRound) currentRound = match.round
+                if (round > currentRound) currentRound = round
                 data[match.player1_id].ties++
                 data[match.player1_id].opponents.push(match.player2_id)
-                data[match.player1_id].roundsWithoutBye.push(match.round)
+                data[match.player1_id].roundsWithoutBye.push(round)
                 data[match.player2_id].ties++
                 data[match.player2_id].opponents.push(match.player1_id)
-                data[match.player2_id].roundsWithoutBye.push(match.round)
+                data[match.player2_id].roundsWithoutBye.push(round)
             } 
         }
 
@@ -144,7 +145,8 @@ module.exports = {
             }
 
             const arr = data[k].opponentScores.sort()
-            arr.pop().shift()
+            arr.pop()
+            arr.shift()
             console.log('opponentScores.sort()', opponentScores.sort())
             console.log('arr', arr)
 
