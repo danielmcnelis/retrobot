@@ -62,6 +62,11 @@ module.exports = {
                 }
             })
 
+            if (!entry) {
+                console.log(`no entry: ${p.participant}`)
+                continue
+            }
+
             data[p.participant.id] = {
                 name: entry.playerName,
                 rank: '',
