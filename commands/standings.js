@@ -164,17 +164,17 @@ module.exports = {
 
         const standings = Object.values(data).sort((a, b) => {
             if (a.score > b.score) {
-                return 1
+                return -1
             } else if (a.score < b.score) {
-                return -1
+                return 1
             } else if (a.medianBuchholz > b.medianBuchholz) {
-                return 1
+                return -1
             } else if (a.medianBuchholz < b.medianBuchholz) {
-                return -1
-            } else if (a.winsVsTied > b.winsVsTied) {
                 return 1
-            } else if (a.winsVsTied < b.winsVsTied) {
+            } else if (a.winsVsTied > b.winsVsTied) {
                 return -1
+            } else if (a.winsVsTied < b.winsVsTied) {
+                return 1
             } else {
                 return 0
             }
