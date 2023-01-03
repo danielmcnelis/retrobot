@@ -44,7 +44,7 @@ module.exports = {
         const tournament = await selectTournament(interaction, tournaments)
         if (!tournament) return
 
-        interaction.reply(`Calculating standings, please wait.`)
+        // interaction.reply(`Calculating standings, please wait.`)
 
         const matches = await getMatches(server, tournament.id)
         const participants = await getParticipants(server, tournament.id)
@@ -171,7 +171,7 @@ module.exports = {
             }
         })
 
-        const results = [ `${tournament.logo} - ${tournament.name} Standings - ${tournament.emoji}` , `**Rank.  Name  (W-L-T)  [MB / TB]**`]
+        const results = [ `${tournament.logo} - ${tournament.name} Standings - ${tournament.emoji}` , `**Rank.  Name  (W-L-T)  [Score / Med-Buch / WvT]**`]
 
         for (let index = 0; index < standings.length; index++) {
             const s = standings[index]
@@ -212,9 +212,9 @@ module.exports = {
                 s.rank = `T${index + 1}`
             }
 
-            results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${s.medianBuchholz} / ${s.winsVsTied}]`)
+            results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${s.score} / ${s.medianBuchholz} / ${s.winsVsTied}]`)
         }
 
-        return interaction.channel.send(results.join('\n'))
+        return interaction.reply(results.join('\n'))
     }
 }
