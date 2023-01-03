@@ -194,9 +194,9 @@ module.exports = {
                 ) && (
                     // and at the beginning or not tied with the previous player
                     index === 0 || (
-                        s.score !== standings[index + 1].score || 
-                        s.medianBuchholz !== standings[index + 1].medianBuchholz || 
-                        s.winsVsTied !== standings[index + 1].winsVsTied
+                        s.score !== standings[index - 1].score || 
+                        s.medianBuchholz !== standings[index - 1].medianBuchholz || 
+                        s.winsVsTied !== standings[index - 1].winsVsTied
                     )
                 )
             ) {
