@@ -141,7 +141,9 @@ module.exports = {
                 if (data[opponentId].score === k.score) k.winsVsTied++
             }
 
-            const arr = data[k].opponentScores.sort().pop().shift()
+            const arr = data[k].opponentScores.sort()
+            arr.shift()
+            arr.pop()
             data[k].rawBuchholz = data[k].opponentScores.reduce((accum, val) => accum + val, 0)
             data[k].medianBuchholz = arr.reduce((accum, val) => accum + val, 0)
         })
