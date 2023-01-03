@@ -847,6 +847,7 @@ const findDuplicateTournamentReports = async () => {
     
             const duplicates = [...await Match.findAll({
                 where: {
+                    id: {[Op.gt]: match.id},
                     winnerId: match.winnerId,
                     loserId: match.loserId,
                     tournament: false,
@@ -856,7 +857,7 @@ const findDuplicateTournamentReports = async () => {
     
             if (duplicates.length) {
                 b += duplicates.length
-                console.log(`Potential Duplicates: ${match.id} and ${duplicates.join(', ')}.`)
+                console.log(`Potential Duplicate: ${match.id} and ${duplicates.join(', ')}. (${match.createdAt.toDateString()})`)
             }
         } catch (err) {
             e++
