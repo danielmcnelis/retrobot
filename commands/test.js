@@ -13,10 +13,10 @@ module.exports = {
     async execute(interaction) {
         if (isProgrammer(interaction.member)) {
             const roles = interaction.guild.roles.cache
-            console.log('roles', roles)
-            console.log('roles.length', roles.length)
             
             for (const role of roles) {
+                console.log('role', role)
+                console.log('role.name', role.name)
                 if (role.name.includes('Grinders')) {
                     const name = role.name.replace(' Grinders', '')
                     const format = await Format.findOne({
