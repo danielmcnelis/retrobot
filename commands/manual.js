@@ -149,7 +149,7 @@
                         isTournamentMatch = true
                         if (tournament.state === 'pending' || tournament.state === 'standby') return interaction.reply({ content: `Sorry, ${tournament.name} has not started yet.`})
                         if (tournament.state !== 'underway') return interaction.reply({ content: `Sorry, ${tournament.name} is not underway.`})
-                        interaction.replay(`Processing tournament match result. Pleaes wait.`)
+                        interaction.reply(`Processing tournament match result. Pleaes wait.`)
                         const success = await processMatchResult(server, interaction, winningMember, winningPlayer, losingMember, losingPlayer, tournament)
                         if (!success) return
                     } else {
