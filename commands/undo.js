@@ -16,7 +16,6 @@ module.exports = {
             await Server.create({ id: interaction.guildId, name: interaction.guild.name })
     
         if (!hasAffiliateAccess(server)) return interaction.reply({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
-        if (!isMod(server, interaction.member)) return interaction.reply({ content: `You do not have permission to do that.`})
         
         const format = await Format.findOne({
             where: {
