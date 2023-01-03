@@ -145,9 +145,9 @@ const sendDeck = async (interaction, entryId) => {
 }
 
 // SELECT TOURNAMENT FOR DECK CHECK
-const selectTournamentForDeckCheck = async (interaction, entries, isAuthor, format) => {
+const selectTournamentForDeckCheck = async (interaction, entries, format) => {
     if (entries.length === 0) {
-        interaction.reply({ content: `${isAuthor ? "You are" : "That player is"} not registered for any ${format.name} format ${format.emoji} tournaments in this server.`})
+        interaction.reply(`That player is not registered for any ${format.name} format ${format.emoji} tournaments in this server.`)
         return false
     } else if (entries.length === 1) {
         return entries[0]
@@ -193,7 +193,7 @@ const selectTournament = async (interaction, tournaments) => {
         const row = new ActionRowBuilder()
             .addComponents(
                 new StringSelectMenuBuilder()
-                    .setCustomId(user ? user.id : 'select')
+                    .setCustomId(user ? user.id : interaction.member.id)
                     .setPlaceholder('Nothing selected')
                     .addOptions(...options),
             )

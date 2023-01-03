@@ -133,6 +133,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
             await undoMatch(interaction.channel, matchId)
             return interaction.message.edit({components: []})
         } else if (command.data.name === 'deck') {
+            if (!isMod(server, interaction.member)) return interaction.channel.send(`<@${interaction.member.id}>, You do not have permission to do that.`)
             const entryId = interaction.values[0]
             await sendDeck(interaction, entryId)
             return interaction.message.edit({components: []})
@@ -147,6 +148,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
             await openTournament(interaction, tournamentId)
             return interaction.message.edit({components: []})
         } else if (command.data.name === 'join') {
+            const userId = interaction.message.components[0].components[0].data.custom_id
+            if (userId !== interaction.member.id) return interaction.channel.send(`<@${interaction.member.id}>, You do not have permission to do that.`)
             const tournamentId = interaction.values[0]
             await joinTournament(interaction, tournamentId)
             return interaction.message.edit({components: []})
@@ -162,6 +165,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
             await initiateStartTournament(interaction, tournamentId)
             return interaction.message.edit({components: []})
         } else if (command.data.name === 'drop') {
+            const userId = interaction.message.components[0].components[0].data.custom_id
+            if (userId !== interaction.member.id) return interaction.channel.send(`<@${interaction.member.id}>, You do not have permission to do that.`)
             const tournamentId = interaction.values[0]
             await dropFromTournament(interaction, tournamentId)
             return interaction.message.edit({ components: []})
@@ -178,10 +183,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
             await processNoShow(interaction, tournamentId, userId)
             return interaction.message.edit({ components: []})
         } else if (command.data.name === 'standings') {
+            const userId = interaction.message.components[0].components[0].data.custom_id
+            if (userId !== interaction.member.id) return interaction.channel.send(`<@${interaction.member.id}>, You do not have permission to do that.`)
             const tournamentId = interaction.values[0]
             await calculateStandings(interaction, tournamentId)
             return interaction.message.edit({components: []})
         } else if (command.data.name === 'timer') {
+            const userId = interaction.message.components[0].components[0].data.custom_id
+            if (userId !== interaction.member.id) return interaction.channel.send(`<@${interaction.member.id}>, You do not have permission to do that.`)
             const tournamentId = interaction.values[0]
             await checkTimer(interaction, tournamentId)
             return interaction.message.edit({components: []})

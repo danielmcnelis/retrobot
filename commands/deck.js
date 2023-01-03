@@ -45,11 +45,10 @@ module.exports = {
         })
 
         const discordId = user.id
-        const isAuthor = discordId === interaction.user.id
-        if (!isMod(server, interaction.member) && !isAuthor) return interaction.reply({ content: `You do not have permission to do that.` })
+        if (!isMod(server, interaction.member)) return interaction.reply({ content: `You do not have permission to do that.` })
 
         const player = await Player.findOne({ where: { discordId: discordId } })
-        if (!player) return interaction.reply({ content: `${isAuthor ? "You are" : "That player is"} not in the database.`})
+        if (!player) return
 
         const entries = []
 
@@ -70,11 +69,11 @@ module.exports = {
             }
         }
 
-        const entry = await selectTournamentForDeckCheck(interaction, entries, isAuthor, format)
+        const entry = await selectTournamentForDeckCheck(interaction, entries, format)
         if (!entry) return
 
         interaction.reply({ content: `Please check your DMs.` })
         const deckAttachments = await drawDeck(entry.ydk) || []
-        return interaction.member.send({ content: `${isAuthor ? 'Your' : `${player.name}\'s` } deck for ${entry.tournament.name} is:\n<${entry.url}>`, files: [...deckAttachments]}).catch((err) => console.log(err))
+        return interaction.member.send({ content: `${player.name}\'s deck for ${entry.tournament.name} is:\n<${entry.url}>`, files: [...deckAttachments]}).catch((err) => console.log(err))
     }
 }
