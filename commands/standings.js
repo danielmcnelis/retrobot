@@ -64,7 +64,7 @@ module.exports = {
 
             data[p.participant.id] = {
                 name: entry.playerName,
-                rank: null,
+                rank: '',
                 wins: 0,
                 losses: 0,
                 ties: 0,
