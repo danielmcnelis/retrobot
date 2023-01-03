@@ -166,7 +166,7 @@ module.exports = {
             }
         })
 
-        const results = [`**Current Rank.  Player  (W-L-T)  [ Score / Median-Buccholz / Wins-vs-Tied ]**`]
+        const results = [ `__${tournament.logo} ${tournament.name} Standings ${tournament.emoji}__` , `**Current Rank.  Player  (W-L-T)  [ Score / Med.-Buch. / TB ]**`]
 
         standings.forEach((s, index) => {
             if (
