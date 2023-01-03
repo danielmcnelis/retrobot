@@ -243,6 +243,7 @@
                 await rPTU.update({ status: 'pending' })
             }
 
+            console.log('interaction', interaction)
             return interaction.reply({ content: `${losingPlayer.name}, your ${server.internalLadder ? 'Internal ' : ''}${format.name} Format ${server.emoji || format.emoji} ${isTournamentMatch ? 'Tournament ' : isIronMatch ? `Iron ${emojis.iron}` : ''}loss to <@${winningPlayer.discordId}> has been recorded.`})
         }
     }
