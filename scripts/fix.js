@@ -830,7 +830,46 @@ const fixStatuses = async () => {
     return console.log(`destroyed ${b} out of ${c} statuses, encountered ${e} errors`)
 }
 
-fixStatuses()
+const findDuplicateTournamentReports = async () => {
+    let b = 0
+    let e = 0
+    const matches = await Match.findAll({
+        where: {
+            tournament: true
+        },
+        order: [["createdAt", "ASC"]]
+    })
+
+    for (let i = 0 ; i < matches.length; i++) {
+        try {
+            const match = matches[i]
+            const fifteenMinutesLater = match.createdAt + (15 * 60 * 1000)
+    
+            const duplicates = [...await Match.findAll({
+                where: {
+                    winnerId: match.winnerId,
+                    loserId: match.loserId,
+                    tournament: false,
+                    createdAt: {[Op.lte]: fifteenMinutesLater}
+                }
+            })].map((m) => m.id)
+    
+            if (duplicates.length) {
+                b += duplicates.length
+                console.log(`Potential Duplicates: ${match.id} and ${duplicates.join(', ')}.`)
+            }
+        } catch (err) {
+            e++
+            console.log(err)
+        }
+    }
+
+    return console.log(`found ${b} potential duplicates, encountered ${e} errors`)
+
+}
+
+findDuplicateTournamentReports()
+// fixStatuses()
 // fixTournmanets()
 // fixPfps()
 // fixBlogs()
