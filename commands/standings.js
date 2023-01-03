@@ -193,7 +193,7 @@ module.exports = {
                 )
             ) {
                 // then assign a unique ranking for this index position
-                if (index >= 32) break
+                if (index >= participants.length / 2) break
                 s.rank = `${index + 1}`
             } else if (index === 0) {
                 // else if at the beginning then assign T1 ranking
@@ -208,11 +208,11 @@ module.exports = {
                 s.rank = standings[index - 1].rank
             } else {
                 // assign a new tied ranking for this index position
-                if (index >= 32) break
+                if (index >= participants.length / 2) break
                 s.rank = `T${index + 1}`
             }
 
-            results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${s.score} / ${s.medianBuchholz} / ${s.winsVsTied}]`)
+            results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${s.score}/${s.medianBuchholz}/${s.winsVsTied}]`)
         }
 
         return interaction.channel.send(results.join('\n'))
