@@ -15,6 +15,7 @@ const duelingbook = require('./duelingbook')
 const end = require('./end')
 const exit = require('./exit')
 const fix = require('./fix')
+const grind = require('./grind')
 const h2h = require('./h2h')
 const help = require('./help')
 const history = require('./history')
@@ -64,6 +65,7 @@ module.exports = {
     end,
     exit,
     fix,
+    grind,
     h2h,
     help,
     history,
