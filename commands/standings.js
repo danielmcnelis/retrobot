@@ -193,7 +193,7 @@ module.exports = {
                 )
             ) {
                 // then assign a unique ranking for this index position
-                if (index >= participants.length / 2) break
+                if (index >= participants.length / 3) break
                 s.rank = `${index + 1}`
             } else if (index === 0) {
                 // else if at the beginning then assign T1 ranking
@@ -208,7 +208,7 @@ module.exports = {
                 s.rank = standings[index - 1].rank
             } else {
                 // assign a new tied ranking for this index position
-                if (index >= participants.length / 2) break
+                if (index >= participants.length / 3) break
                 s.rank = `T${index + 1}`
             }
 
