@@ -12,11 +12,9 @@ module.exports = {
         .setDescription('Performs a test. 🧪'),
     async execute(interaction) {
         if (isProgrammer(interaction.member)) {
-            const roles = interaction.guild.roles.cache
+            const roles = interaction.guild.roles.cache.map((r) => r.Role)
             
             for (const role of roles) {
-                console.log('role', role)
-                console.log('role.name', role.name)
                 if (role.name.includes('Grinders')) {
                     const name = role.name.replace(' Grinders', '')
                     const format = await Format.findOne({
