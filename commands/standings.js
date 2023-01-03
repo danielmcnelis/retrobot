@@ -166,7 +166,7 @@ module.exports = {
             }
         })
 
-        const results = [ `__${tournament.logo} ${tournament.name} Standings ${tournament.emoji}__` , `**Current Rank.  Player  (W-L-T)  [ Score / Med.-Buch. / TB ]**`]
+        const results = [ `${tournament.logo} - ${tournament.name} Standings - ${tournament.emoji}` , `**Rank.  Name  (W-L-T)  [Med.-Buch./TB]**`]
 
         standings.forEach((s, index) => {
             if (
@@ -205,7 +205,7 @@ module.exports = {
             }
 
             console.log('standings', standings)
-            results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [ ${s.score} / ${s.medianBuchholz} / ${s.winsVsTied} ]`)
+            results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${s.medianBuchholz}/${s.winsVsTied}]`)
         })
 
         return interaction.channel.send(results.join('\n'))
