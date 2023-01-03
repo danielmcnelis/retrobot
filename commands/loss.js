@@ -130,11 +130,12 @@
                     }
 
                     if (tournaments.length) {
-                        const tournament = await selectTournament(interaction, tournaments, interaction.member.user.id)
+\                       const tournament = await selectTournament(interaction, tournaments, interaction.member.user.id)
                         if (tournament) {
                             isTournamentMatch = true
                             if (tournament.state === 'pending') return interaction.reply({ content: `Sorry, ${tournament.name} has not started yet.`})
                             if (tournament.state !== 'underway') return interaction.reply({ content: `Sorry, ${tournament.name} is not underway.`})
+                            interaction.reply(`Processing tournament match result. Please wait.`)
                             const success = await processMatchResult(server, interaction, winner, winningPlayer, interaction.member, losingPlayer, tournament)
                             if (!success) return
                         } else {

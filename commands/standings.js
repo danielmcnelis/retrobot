@@ -171,7 +171,7 @@ module.exports = {
             }
         })
 
-        const results = [ `${tournament.logo} - ${tournament.name} Standings - ${tournament.emoji}` , `**Rank.  Name  (W-L-T)  [Median-Buchholz / Wins vs Tied]**`]
+        const results = [ `${tournament.logo} - ${tournament.name} Standings - ${tournament.emoji}` , `**Rank.  Name  (W-L-T)  [Med-Buch / WvT]**`]
 
         for (let index = 0; index < standings.length; index++) {
             const s = standings[index]
