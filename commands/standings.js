@@ -85,8 +85,6 @@ module.exports = {
         for (let i = 0; i < matches.length; i++) {
             const match = matches[i].match
             const round = parseInt(match.round)
-            console.log('round', round)
-            console.log('currentRound', currentRound)
 
             if (match.state === 'pending') {
                 continue
@@ -114,18 +112,12 @@ module.exports = {
             } 
         }
 
-        console.log('currentRound', currentRound)
-
         const rounds = []
         let i = 1
         while (i <= currentRound) {
             rounds.push(i)
             i++
         }
-
-        console.log('rounds', rounds)
-
-        console.log('data', data)
         
         const keys = Object.keys(data)
 
@@ -149,18 +141,10 @@ module.exports = {
             }
 
             const arr = data[k].opponentScores.sort()
-            console.log('data[k].opponentScores.sort()', data[k].opponentScores.sort())
-            arr.pop()
-            arr.shift()
-            console.log('arr', arr)
-
             data[k].rawBuchholz = data[k].opponentScores.reduce((accum, val) => accum + val, 0)
-            console.log('data[k].rawBuchholz', data[k].rawBuchholz)
             data[k].medianBuchholz = arr.reduce((accum, val) => accum + val, 0)
-            console.log('data[k].medianBuchholz', data[k].medianBuchholz)
         })
 
-        console.log('data', data)
 
         const standings = Object.values(data).sort((a, b) => {
             if (a.score > b.score) {
@@ -180,6 +164,8 @@ module.exports = {
             }
         })
 
+        console.log('data', data)
+        console.log('standings before loop', standings)
         const results = []
 
         standings.forEach((s, index) => {
@@ -210,6 +196,7 @@ module.exports = {
                 s.rank = standings[index - 1].rank
             }
 
+            console.log('standings after loop', standings)
             results.push(`${s.rank}. ${s.name} (${s.wins}-${s.losses}-${s.ties}, ${s.byes}B), S: ${s.score}, MB: ${s.medianBuchholz}, WvT: ${s.winsVsTied}`)
         })
 
