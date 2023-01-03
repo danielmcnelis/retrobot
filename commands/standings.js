@@ -85,6 +85,8 @@ module.exports = {
         for (let i = 0; i < matches.length; i++) {
             const match = matches[i]
             const round = parseInt(match.round)
+            console.log('round', round)
+            console.log('currentRound', currentRound)
 
             if (match.state === 'pending') {
                 continue
@@ -122,6 +124,8 @@ module.exports = {
         }
 
         console.log('rounds', rounds)
+
+        console.log('data', data)
         
         const keys = Object.keys(data)
 
@@ -145,9 +149,9 @@ module.exports = {
             }
 
             const arr = data[k].opponentScores.sort()
+            console.log('data[k].opponentScores.sort()', data[k].opponentScores.sort())
             arr.pop()
             arr.shift()
-            console.log('opponentScores.sort()', opponentScores.sort())
             console.log('arr', arr)
 
             data[k].rawBuchholz = data[k].opponentScores.reduce((accum, val) => accum + val, 0)
