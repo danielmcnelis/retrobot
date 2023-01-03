@@ -212,7 +212,7 @@ module.exports = {
                 s.rank = `T${index + 1}`
             }
 
-            results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${Math.round(s.score * 10) / 10} / ${Math.round(s.medianBuchholz * 10) / 10} / ${s.winsVsTied}]`)
+            results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${s.score.toFixed(1)} / ${s.medianBuchholz.toFixed(1)} / ${s.winsVsTied}]`)
         }
 
         return interaction.channel.send(results.join('\n'))
