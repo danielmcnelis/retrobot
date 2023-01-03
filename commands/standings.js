@@ -83,7 +83,7 @@ module.exports = {
         }
 
         for (let i = 0; i < matches.length; i++) {
-            const match = matches[i]
+            const match = matches[i].match
             const round = parseInt(match.round)
             console.log('round', round)
             console.log('currentRound', currentRound)
@@ -203,7 +203,7 @@ module.exports = {
                 s.rank = standings[i - 1].rank
             }
 
-            results.push(`${s.rank}. ${s.name} (${s.wins}-${s.losses}-${s.ties}, ${s.byes} Byes), Score: ${s.score}, Median-Buchholz: ${s.medianBuchholz}, Wins-vs-Tied: ${s.winsVsTied}`)
+            results.push(`${s.rank}. ${s.name} (${s.wins}-${s.losses}-${s.ties}, ${s.byes}B), S: ${s.score}, MB: ${s.medianBuchholz}, WvT: ${s.winsVsTied}`)
         })
 
         return interaction.channel.send(results.join('\n'))
