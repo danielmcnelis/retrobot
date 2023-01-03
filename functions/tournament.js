@@ -1525,7 +1525,7 @@ const calculateStandings = async (interaction, tournamentId) => {
         }
     })
 
-    const results = [ `${tournament.logo} - ${tournament.name} Standings - ${tournament.emoji}` , `**Rk.  Name  ~  Score  (W - L - T)   [Med-Buch / WvT]**`]
+    const results = [ `${tournament.logo} - ${tournament.name} Standings - ${tournament.emoji}` , `__Rk. Name - Score (W-L-T) [Med-Buch / WvT]__`]
 
     for (let index = 0; index < standings.length; index++) {
         const s = standings[index]
@@ -1566,7 +1566,7 @@ const calculateStandings = async (interaction, tournamentId) => {
             s.rank = `T${index + 1}`
         }
 
-        results.push(`${s.rank}.  ${s.name}  ~  ${s.score.toFixed(1)}  (${s.wins} - ${s.losses} - ${s.ties})${s.byes ? ` +BYE` : ''}  [${s.medianBuchholz.toFixed(1)} / ${s.winsVsTied}]`)
+        results.push(`${s.rank}.  ${s.name}  -  ${s.score.toFixed(1)}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${s.medianBuchholz.toFixed(1)} / ${s.winsVsTied}]`)
     }
 
     return interaction.channel.send(results.join('\n'))
