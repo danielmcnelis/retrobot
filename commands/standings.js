@@ -200,7 +200,7 @@ module.exports = {
             } else if (index === 0) {
                 s.rank = 'T1'
             } else {
-                s.rank = standings[i - 1].rank
+                s.rank = standings[index - 1].rank
             }
 
             results.push(`${s.rank}. ${s.name} (${s.wins}-${s.losses}-${s.ties}, ${s.byes}B), S: ${s.score}, MB: ${s.medianBuchholz}, WvT: ${s.winsVsTied}`)
