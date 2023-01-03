@@ -130,7 +130,7 @@
                     }
 
                     if (tournaments.length) {
-\                       const tournament = await selectTournament(interaction, tournaments, interaction.member.user.id)
+                       const tournament = await selectTournament(interaction, tournaments, interaction.member.user.id)
                         if (tournament) {
                             isTournamentMatch = true
                             if (tournament.state === 'pending') return interaction.reply({ content: `Sorry, ${tournament.name} has not started yet.`})
