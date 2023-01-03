@@ -13,6 +13,9 @@ module.exports = {
     async execute(interaction) {
         if (isProgrammer(interaction.member)) {
             const roles = interaction.guild.roles.cache
+            console.log('roles', roles)
+            console.log('roles.length', roles.length)
+            
             for (let i = 0; i < roles.length; i++) {
                 const role = roles[i]
                 if (role.name.includes('Grinders')) {
