@@ -16,8 +16,7 @@ module.exports = {
             console.log('roles', roles)
             console.log('roles.length', roles.length)
             
-            for (let i = 0; i < roles.length; i++) {
-                const role = roles[i]
+            for (const role of roles) {
                 if (role.name.includes('Grinders')) {
                     const name = role.name.replace(' Grinders', '')
                     const format = await Format.findOne({
