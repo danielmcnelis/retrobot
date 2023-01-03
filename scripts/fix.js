@@ -843,7 +843,7 @@ const findDuplicateTournamentReports = async () => {
     for (let i = 0 ; i < matches.length; i++) {
         try {
             const match = matches[i]
-            const fifteenMinutesLater = match.createdAt + (15 * 60 * 1000)
+            const fifteenMinutesLater = match.createdAt + (30 * 60 * 1000)
     
             const duplicates = [...await Match.findAll({
                 where: {
