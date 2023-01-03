@@ -1265,10 +1265,6 @@ const dropFromTournament = async (interaction, tournamentId) => {
         include: Player
     })
 
-    console.log('interaction.user.id', interaction.user.id)
-    console.log('tournament.id', tournament.id)
-    console.log('tournamentId', tournamentId)
-
     return removeParticipant(server, interaction, interaction.member, entry, tournament, true)
 }
 
@@ -1390,13 +1386,19 @@ const processNoShow = async (interaction, tournamentId, userId) => {
 
 //CALCULATE STANDINGS
 const calculateStandings = async (interaction, tournamentId) => {
+    interaction.reply(`Calculating standings, please wait.`)
+
     const server = await Server.findOne({
         where: {
             id: interaction.guildId
         }
     })
 
-    interaction.reply(`Calculating standings, please wait.`)
+    const tournament = await Tournament.findOne({
+        where: {
+            id: tournamentId
+        }
+    })
 
     const matches = await getMatches(server, tournamentId)
     const participants = await getParticipants(server, tournamentId)
@@ -1564,7 +1566,7 @@ const calculateStandings = async (interaction, tournamentId) => {
             s.rank = `T${index + 1}`
         }
 
-        results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${s.score} / ${s.medianBuchholz} / ${s.winsVsTied}]`)
+        results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${Math.round(s.score * 10) / 10} / ${Math.round(s.medianBuchholz * 10) / 10} / ${s.winsVsTied}]`)
     }
 
     return interaction.channel.send(results.join('\n'))

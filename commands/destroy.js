@@ -41,9 +41,6 @@ module.exports = {
         if (!tournament) return interaction.reply({ content: `Could not find tournament: "${name}".`})
         if (tournament.state === 'underway' && !isProgrammer(interaction.member)) return interaction.reply({ content: `This tournament is underway, therefore it may only be deleted by the database manager.`})
         if (tournament.state === 'complete' && !isProgrammer(interaction.member)) return interaction.reply({ content: `This tournament is complete, therefore it may only be deleted by the database manager.`})
-        console.log('tournament.name', tournament.name)
-        console.log('tournament.id', tournament.id)
-        console.log('server.challongeAPIKey', server.challongeAPIKey)
 
         try {
             const { status } = await axios({

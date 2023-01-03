@@ -56,7 +56,6 @@ module.exports = {
         for (let i = 0; i < tournaments.length; i++) {
             try {
                 const tournament = tournaments[i]
-                console.log('tournament.name', tournament.name)
                 const entry = await Entry.findOne({
                     where: {
                         playerId: player.id,
