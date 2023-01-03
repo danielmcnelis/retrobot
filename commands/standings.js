@@ -189,11 +189,19 @@ module.exports = {
                 // then assign a unique ranking for this index position
                 s.rank = `${index + 1}`
             } else if (index === 0) {
-                // else if at the beginning assign T1 ranking
+                // else if at the beginning then assign T1 ranking
                 s.rank = 'T1'
-            } else {
-                // else assign same ranking as the previous player
+            } else if (
+                // else if tied with previous player
+                s.score === standings[index - 1].score || 
+                s.medianBuchholz === standings[index - 1].medianBuchholz || 
+                s.winsVsTied === standings[index - 1].winsVsTied
+            ) {
+                // then assign the same ranking as the previous player
                 s.rank = standings[index - 1].rank
+            } else {
+                // assign a new tied ranking for this index position
+                s.rank = `T${index + 1}`
             }
 
             console.log('standings after loop', standings)
