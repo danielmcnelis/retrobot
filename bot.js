@@ -13,7 +13,7 @@ const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, 
 const { fixDeckFolder } = require('./functions/coverage')
 const { calculateStandings, checkTimer, closeTournament, createTournament, dropFromTournament, initiateStartTournament, joinTournament, openTournament, processNoShow, removeFromTournament, seed, sendDeck, setTimerForTournament, signupForTournament, startTournament } = require('./functions/tournament')
 const { undoMatch } = require('./functions/undo')
-const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
+const { assignRoles, createMembership, createPlayer, fetchCardNames, hasAffiliateAccess, hasPartnerAccess, isMod, isNewMember, isNewUser, setTimers } = require('./functions/utility.js')
 
 // STATIC IMPORTS
 const { client } = require('./static/clients.js')
