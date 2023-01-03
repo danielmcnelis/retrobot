@@ -12,7 +12,27 @@ module.exports = {
         .setDescription('Performs a test. 🧪'),
     async execute(interaction) {
         if (isProgrammer(interaction.member)) {
-            console.log('interaction.guild.roles.cache', interaction.guild.roles.cache)
+            const roles = interaction.guild.roles.cache
+            for (let i = 0; i < roles.length; i++) {
+                const role = roles[i]
+                if (role.name.includes('Grinders')) {
+                    const name = role.name.replace(' Grinders', '')
+                    const format = await Format.findOne({
+                        where: {
+                            name: {[Op.iLike]: name}
+                        }
+                    })
+
+                    if (!format) {
+                        console.log(`could not find format for ${role.name}`)
+                        continue
+                    } else {
+                        await format.update({ grinders: role.id }) 
+                        console.log(`saved ${format.name} grinders roleId`)
+                    }
+                }
+            }
+
             await interaction.reply(emojis.yellow)
         } else {
             await interaction.reply('🧪')

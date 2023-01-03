@@ -35,6 +35,9 @@ const Format = db.define('formats', {
   role: {
     type: Sequelize.STRING
   },
+  grinders: {
+    type: Sequelize.STRING
+  },
   popular: {
     type: Sequelize.BOOLEAN,
     defaultValue: false
