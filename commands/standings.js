@@ -184,7 +184,7 @@ module.exports = {
 
         standings.forEach((s, index) => {
             if (index + 1 === standings.length) {
-                if (!standings[index - 1].startsWith('T')) {
+                if (!standings[index - 1].rank.startsWith('T')) {
                     s.rank = index + 1
                 } else {
                     s.rank = standings[i - 1].rank
@@ -193,7 +193,7 @@ module.exports = {
                 (
                     s.score > standings[index + 1].score || 
                     s.medianBuchholz > standings[index + 1].medianBuchholz || 
-                    s.winsVsTied > standings[index + 1].winsVsTied) && (index === 0 || !standings[index - 1].startsWith('T')
+                    s.winsVsTied > standings[index + 1].winsVsTied) && (index === 0 || !standings[index - 1].rank.startsWith('T')
                 )
             ) {
                 s.rank = index + 1
