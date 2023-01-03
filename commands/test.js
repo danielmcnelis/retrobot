@@ -12,7 +12,7 @@ module.exports = {
         .setDescription('Performs a test. 🧪'),
     async execute(interaction) {
         if (isProgrammer(interaction.member)) {
-            const roles = interaction.guild.roles.cache.keys()
+            const roles = interaction.guild.roles.cache.values()
             
             for (const role of roles) {
                 console.log('role', role)
