@@ -1396,7 +1396,7 @@ const calculateStandings = async (interaction, tournamentId) => {
         }
     })
 
-    // interaction.reply(`Calculating standings, please wait.`)
+    interaction.reply(`Calculating standings, please wait.`)
 
     const matches = await getMatches(server, tournamentId)
     const participants = await getParticipants(server, tournamentId)
@@ -1567,7 +1567,7 @@ const calculateStandings = async (interaction, tournamentId) => {
         results.push(`${s.rank}.  ${s.name}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${s.score} / ${s.medianBuchholz} / ${s.winsVsTied}]`)
     }
 
-    return interaction.reply(results.join('\n'))
+    return interaction.channel.send(results.join('\n'))
 }
 
 module.exports = {
