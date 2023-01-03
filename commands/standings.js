@@ -185,7 +185,7 @@ module.exports = {
         standings.forEach((s, index) => {
             if (index + 1 === standings.length) {
                 if (!standings[index - 1].rank.startsWith('T')) {
-                    s.rank = index + 1
+                    s.rank = `${index + 1}`
                 } else {
                     s.rank = standings[i - 1].rank
                 }
@@ -196,7 +196,7 @@ module.exports = {
                     s.winsVsTied > standings[index + 1].winsVsTied) && (index === 0 || !standings[index - 1].rank.startsWith('T')
                 )
             ) {
-                s.rank = index + 1
+                s.rank = `${index + 1}`
             } else if (index === 0) {
                 s.rank = 'T1'
             } else {
