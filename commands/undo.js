@@ -17,6 +17,7 @@ module.exports = {
     
         if (!hasAffiliateAccess(server)) return interaction.reply({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         
+        console.log('server.format', server.format)
         const format = await Format.findOne({
             where: {
                 [Op.or]: {
@@ -25,13 +26,17 @@ module.exports = {
                 }
             }
         })
+
+        console.log('format', format)
     
         if (!format) return interaction.reply({ content: `Try using **/undo** in channels like: <#414575168174948372> or <#629464112749084673>.`})
         if (!hasAffiliateAccess(server)) return interaction.reply({ content: `This feature is only available with affiliate access. ${emojis.legend}`})
         const serverId = server.internalLadder ? server.id : '414551319031054346'
         
         const matches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [['createdAt', 'DESC']]})
+        console.log('!!matches', !!matches)
         const authorIsMod = isMod(server, interaction.member)
+        console.log('authorIsMod', authorIsMod)
 
         if (authorIsMod) {
             return selectMatch(interaction, matches.slice(0, 10))
