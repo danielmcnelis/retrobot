@@ -215,6 +215,10 @@ module.exports = {
             results.push(`${s.rank}.  ${s.name}  -  ${s.score.toFixed(1)}  (${s.wins}-${s.losses}-${s.ties})${s.byes ? ` +BYE` : ''}  [${s.medianBuchholz.toFixed(1)} / ${s.winsVsTied}]`)
         }
 
-        return interaction.channel.send(results.join('\n'))
+        for (let i = 0; i < results.length; i += 30) {
+            interaction.channel.send(results.slice(i, i + 30).join('\n'))
+        }
+
+        return
     }
 }

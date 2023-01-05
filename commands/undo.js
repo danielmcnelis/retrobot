@@ -44,7 +44,7 @@ module.exports = {
             const losingPlayer = await Player.findOne({ where: { id: loserId } })
             const loserStats = await Stats.findOne({ where: { playerId: losingPlayer.id, format: format.name, serverId: serverId } })
     
-            if (maid !== losingPlayer.discordId) return interaction.reply({ content: `You did not participate in the last recorded match. Please get a Moderator to help you.`})
+            if (interaction.user.id !== losingPlayer.discordId) return interaction.reply({ content: `You did not participate in the last recorded match. Please get a Moderator to help you.`})
             if (!winnerStats.backupElo) return interaction.reply({ content: `Your last opponent, ${winningPlayer.name}, has no backup stats. Please get a Moderator to help you.`})
             if (!loserStats.backupElo) return interaction.reply({ content: `You have no backup stats. Please get a Moderator to help you.`})
     

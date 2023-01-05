@@ -659,7 +659,7 @@ const downloadNewCards = async () => {
                 console.log(`IMAGE SAVED`)
             }
         } catch (err) {
-            e++
+            e++ 
             console.log(err)
         }
     }
