@@ -123,6 +123,7 @@ const getRatedInformation = async (interaction, player) => {
                     const guild = client.guilds.cache.get(server.id)
                     const channelId = server.id === '414551319031054346' ? format.channel : server.ratedChannel
                     const channel = guild.channels.cache.get(channelId)
+                    if (!channel) continue
                     channel.send(`Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
                 } catch (err) {
                     console.log(err)
