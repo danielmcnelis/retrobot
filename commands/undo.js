@@ -35,6 +35,7 @@ module.exports = {
         
         const matches = await Match.findAll({ where: { format: format.name, serverId: serverId }, order: [['createdAt', 'DESC']]})
         console.log('!!matches', !!matches)
+        console.log('matches.slice(0, 10)', matches.slice(0, 10))
         const authorIsMod = isMod(server, interaction.member)
         console.log('authorIsMod', authorIsMod)
 
