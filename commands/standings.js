@@ -143,7 +143,7 @@ module.exports = {
             for (let i = 0; i < data[k].opponents.length; i++) {
                 const opponentId = data[k].opponents[i]
                 data[k].opponentScores.push(data[opponentId].score)
-                if (data[opponentId].score === k.score) k.winsVsTied++
+                if (data[opponentId].score === data[k].score) data[k].winsVsTied++
             }
 
             const arr = data[k].opponentScores.sort()

@@ -581,6 +581,7 @@ const removeParticipant = async (server, interaction, member, entry, tournament,
                 await entry.destroy()
             } else {
                 entry.active = false
+                entry.roundDropped = entry.wins + entry.losses
                 await entry.save()
             }
 
