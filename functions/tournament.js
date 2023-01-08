@@ -1505,7 +1505,7 @@ const calculateStandings = async (interaction, tournamentId) => {
             if (data[opponentId].score === k.score) k.winsVsTied++
         }
 
-        const arr = data[k].opponentScores.sort()
+        const arr = [...data[k].opponentScores.sort()]
         arr.shift()
         arr.pop()
         data[k].rawBuchholz = data[k].opponentScores.reduce((accum, val) => accum + val, 0)
