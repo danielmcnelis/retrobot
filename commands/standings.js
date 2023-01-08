@@ -143,6 +143,10 @@ module.exports = {
             for (let i = 0; i < data[k].opponents.length; i++) {
                 const opponentId = data[k].opponents[i]
                 data[k].opponentScores.push(data[opponentId].score)
+            }
+
+            for (let i = 0; i < data[k].defeated.length; i++) {
+                const opponentId = data[k].defeated[i]
                 if (data[opponentId].score === data[k].score) data[k].winsVsTied++
             }
 
@@ -193,7 +197,7 @@ module.exports = {
                 )
             ) {
                 // then assign a unique ranking for this index position
-                if (index >= participants.length / 3) break
+                if (index >= participants.length / 2 || s.losses > 2) break
                 s.rank = `${index + 1}`
             } else if (index === 0) {
                 // else if at the beginning then assign T1 ranking
@@ -208,7 +212,7 @@ module.exports = {
                 s.rank = standings[index - 1].rank
             } else {
                 // assign a new tied ranking for this index position
-                if (index >= participants.length / 3) break
+                if (index >= participants.length / 2 || s.losses > 2) break
                 s.rank = `T${index + 1}`
             }
 
