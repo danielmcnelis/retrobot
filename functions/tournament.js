@@ -1530,6 +1530,7 @@ const calculateStandings = async (interaction, tournamentId) => {
         }
     })
 
+    console.log('standings', standings)
     const results = [ `${tournament.logo} - ${tournament.name} Standings - ${tournament.emoji}` , `__Rk.  Name  -  Score  (W-L-T)  [Med-Buch / WvT]__`]
 
     for (let index = 0; index < standings.length; index++) {
