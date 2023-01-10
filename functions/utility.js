@@ -157,7 +157,7 @@ const search = async (query, fuzzyCards, format) => {
     let labels = [
 		`\nRelease Date: ${releaseDate}`,
 		`\nFirst Print: ${firstPrint || 'OCG Only'}`,
-        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${capitalize(position, true)} ${emojis[indicator]}` : ''}`
+        `${format && format.name ? `\n${format.name} ${format.emoji} Status: ${capitalize(position, true)} ${indicator}` : ''}`
     ]
 
     if (card.category === 'Monster') {
