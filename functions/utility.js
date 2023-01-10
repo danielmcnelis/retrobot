@@ -112,7 +112,7 @@ const search = async (query, fuzzyCards, format) => {
         order: [[Set, 'tcgDate', 'ASC'], ['marketPrice', 'DESC']]
     })
 
-    const firstPrint = print ? `${emojis[rarities[print.rarity]]} ${print.set.setName}` : null 
+    const firstPrint = print ? `${rarities[print.rarity]} ${print.set.setName}` : null 
 
     const legal = format && card.tcgDate && (card.tcgDate <= format.date || format.name === 'Traditional' || format.name === 'Current')
     const position = format && format.name === 'Traditional' && legal && status && status.restriction === 'Forbidden' ? 'limited' :
