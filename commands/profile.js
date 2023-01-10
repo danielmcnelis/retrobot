@@ -69,7 +69,7 @@
                 
             const embed = new EmbedBuilder()
                 .setColor('#38C368')
-                .setTitle(`${user.username}'s ${format.name} ${format.emoji} Player Profile`)
+                .setTitle(`${user.username}'s (DB: ${player.duelingBook}) Profile ${format.emoji}`)
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
                     { 
@@ -135,7 +135,7 @@
 
             const embed = new EmbedBuilder()
                 .setColor('#38C368')
-                .setTitle(`${user.username}'s Format Library ${emojis.FL} Player Profile`)
+                .setTitle(`${user.username}'s (DB: ${player.duelingBook}) Profile ${emojis.FL} `)
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
                     { name: `Best Formats`, value: medals.length ? medals.join('\n') : 'N/A' },
