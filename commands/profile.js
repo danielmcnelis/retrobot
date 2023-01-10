@@ -25,6 +25,9 @@
             const player = await Player.findOne({ where: { discordId: discordId } })
             if (!player) return interaction.reply({ content: "That user is not in the database."})
 
+            console.log('player.country', player.country)
+            console.log('player.timeZone', player.timeZone)
+
             const format = await Format.findOne({
                 where: {
                     [Op.or]: {
@@ -88,8 +91,8 @@
                     { 
                         name: `Misc. Info`,
                         value: player.duelingBook || player.youTube || player.twitch || player.twitter || player.country || player.timeZone ? (
-                            player.duelingBook ? `DuelingBook: ${player.duelingBook}` : '' +
-                            player.youtube ? `\nYouTube: ${player.youtube}` : '' +
+                            player.youtube ? `YouTube: ${player.youtube}` : '' +
+                            player.duelingBook ? `\nDuelingBook: ${player.duelingBook}` : '' +
                             player.twitch ? `\nTwitch: ${player.twitch}` : '' +
                             player.twitter ? `\nTwitter: ${player.twitter}` : '' +
                             player.country ? `\nCountry: ${player.country}` : '' +
