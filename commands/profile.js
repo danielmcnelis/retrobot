@@ -91,12 +91,12 @@
                     { 
                         name: `Misc. Info`,
                         value: player.duelingBook || player.youTube || player.twitch || player.twitter || player.country || player.timeZone ? (
-                            player.youtube ? `YouTube: ${player.youtube}` : '' +
-                            player.duelingBook ? `\nDuelingBook: ${player.duelingBook}` : '' +
-                            player.twitch ? `\nTwitch: ${player.twitch}` : '' +
-                            player.twitter ? `\nTwitter: ${player.twitter}` : '' +
-                            player.country ? `\nCountry: ${player.country}` : '' +
-                            player.timeZone ? `\nTime Zone: ${player.timeZone}` : ''
+                            `${player.duelingBook ? `DuelingBook: ${player.duelingBook}` : ''}` +
+                            `${player.youtube ? `\nYouTube: ${player.youtuibe}` : ''}` +
+                            `${player.twitch ? `\nTwitch: ${player.twitch}` : ''}` +
+                            `${player.twitter ? `\nTwitter: ${player.twitter}` : ''}` +
+                            `${player.country ? `\nCountry: ${player.country}` : ''}` +
+                            `${player.timeZone ? `\nTime Zone: ${player.timeZone}` : ''}`
                         ) : 'N/A'
                     },
                     { name: `Profile Link`, value: `https://formatlibrary.com/players/${user.username.replaceAll(' ', '_')}#${user.discriminator}` }
@@ -158,12 +158,12 @@
                     { 
                         name: `Misc. Info`,
                         value: player.duelingBook || player.youTube || player.twitch || player.twitter || player.country || player.timeZone ? (
-                            player.duelingBook ? `DuelingBook: ${player.duelingBook}` : '' +
-                            player.youtube ? `\nYouTube: ${player.youtube}` : '' +
-                            player.twitch ? `\nTwitch: ${player.twitch}` : '' +
-                            player.twitter ? `\nTwitter: ${player.twitter}` : '' +
-                            player.country ? `\nCountry: ${player.country}` : '' +
-                            player.timeZone ? `\nTime Zone: ${player.timeZone}` : ''
+                            `${player.duelingBook ? `DuelingBook: ${player.duelingBook}` : ''}` +
+                            `${player.youtube ? `\nYouTube: ${player.youtuibe}` : ''}` +
+                            `${player.twitch ? `\nTwitch: ${player.twitch}` : ''}` +
+                            `${player.twitter ? `\nTwitter: ${player.twitter}` : ''}` +
+                            `${player.country ? `\nCountry: ${player.country}` : ''}` +
+                            `${player.timeZone ? `\nTime Zone: ${player.timeZone}` : ''}`
                         ) : 'N/A'
                     },
                     { name: `Profile Link`, value: `https://formatlibrary.com/players/${user.username.replaceAll(' ', '_')}#${user.discriminator}` }
