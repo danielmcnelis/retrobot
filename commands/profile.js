@@ -69,7 +69,7 @@
                 
             const embed = new EmbedBuilder()
                 .setColor('#38C368')
-                .setTitle(`${user.username}'s (DB: ${player.duelingBook}) Profile ${format.emoji}`)
+                .setTitle(`${user.username}'s ${format.name} ${format.emoji} Player Profile`)
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
                     { 
@@ -84,6 +84,17 @@
                     { 
                         name: `${format.name} Format Trophies`, 
                         value: trophies.length ? trophies.join('\n') : 'N/A'
+                    },
+                    { 
+                        name: `Misc. Info`,
+                        value: player.duelingBook || player.youTube || player.twitch || player.twitter || player.country || player.timeZone ? (
+                            player.duelingBook ? `DuelingBook: ${player.duelingBook}` : '' +
+                            player.youTube ? `\nYouTube: ${player.youTube}` : '' +
+                            player.twitch ? `\nTwitch: ${player.twitch}` : '' +
+                            player.twitter ? `\nTwitter: ${player.twitter}` : '' +
+                            player.country ? `\nCountry: ${player.country}` : '' +
+                            player.timeZone ? `\nTime Zone: ${player.timeZone}` : ''
+                        ) : 'N/A'
                     },
                     { name: `Profile Link`, value: `https://formatlibrary.com/players/${user.username.replaceAll(' ', '_')}#${user.discriminator}` }
                 )
@@ -135,11 +146,23 @@
 
             const embed = new EmbedBuilder()
                 .setColor('#38C368')
-                .setTitle(`${user.username}'s (DB: ${player.duelingBook}) Profile ${emojis.FL} `)
+                .setTitle(`${user.username}'s Format Library ${emojis.FL} Player Profile`)
                 .setThumbnail(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`)
                 .addFields(
                     { name: `Best Formats`, value: medals.length ? medals.join('\n') : 'N/A' },
                     { name: `Best Finishes`, value: trophies.length ? trophies.join('\n') : 'N/A' },
+                    { name: `DuelingBook`, value: `${player.duelingBook}` },
+                    { 
+                        name: `Misc. Info`,
+                        value: player.duelingBook || player.youTube || player.twitch || player.twitter || player.country || player.timeZone ? (
+                            player.duelingBook ? `DuelingBook: ${player.duelingBook}` : '' +
+                            player.youTube ? `\nYouTube: ${player.youTube}` : '' +
+                            player.twitch ? `\nTwitch: ${player.twitch}` : '' +
+                            player.twitter ? `\nTwitter: ${player.twitter}` : '' +
+                            player.country ? `\nCountry: ${player.country}` : '' +
+                            player.timeZone ? `\nTime Zone: ${player.timeZone}` : ''
+                        ) : 'N/A'
+                    },
                     { name: `Profile Link`, value: `https://formatlibrary.com/players/${user.username.replaceAll(' ', '_')}#${user.discriminator}` }
                 )
                
