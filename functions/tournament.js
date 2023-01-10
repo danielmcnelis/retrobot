@@ -427,7 +427,7 @@ const checkTimer = async (interaction, tournamentId) => {
 }
 
 // SET TIMER FOR TOURNAMENT
-const setTimerForTournament = async (interaction, tournamentId) => {
+const setTimerForTournament = async (interaction, tournamentId, hours = null, minutes = null) => {
     const tournament = await Tournament.findOne({
         where: {
             id: tournamentId
@@ -441,8 +441,8 @@ const setTimerForTournament = async (interaction, tournamentId) => {
     })
 
     const timestamp = Date.now()
-    let hours = interaction.options.getNumber('hours')
-    let minutes = interaction.options.getNumber('minutes')
+    if (hours === null) hours = interaction.options.getNumber('hours')
+    if (minutes === null) minutes = interaction.options.getNumber('minutes')
     const timeRemaining = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000)
     const deadline = new Date(timestamp + timeRemaining)
     await tournament.update({ deadline })

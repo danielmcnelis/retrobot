@@ -197,7 +197,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
         } else if (command.data.name === 'settimer') {
             if (!isMod(server, interaction.member)) return interaction.channel.send(`<@${interaction.member.id}>, You do not have permission to do that.`)
             const tournamentId = interaction.values[0]
-            await setTimerForTournament(interaction, tournamentId)
+            const hours = interaction.options.getNumber('hours')
+            const minutes = interaction.options.getNumber('minutes')
+            await setTimerForTournament(interaction, tournamentId, hours, minutes)
             return interaction.message.edit({components: []})
         } else if (command.data.name === 'fix') {
             if (!isMod(server, interaction.member)) return interaction.channel.send(`<@${interaction.member.id}>, You do not have permission to do that.`)
