@@ -67,7 +67,7 @@
                         d.placement === 3 ? emojis.third :
                         emojis.placing
 
-                    return `${d.event.name}: ${ordinalize(d.placement)} ${badge} of ${d.event.size}`
+                    return `${d.event.name}: ${badge} ${ordinalize(d.placement)} of ${d.event.size}`
                 }) || []
                 
             const embed = new EmbedBuilder()

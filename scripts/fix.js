@@ -869,7 +869,32 @@ const findDuplicateTournamentReports = async () => {
 
 }
 
-findDuplicateTournamentReports()
+const fixCards = async () => {
+    let b = 0
+    let e = 0
+
+    const cards = await Card.findAll({
+        where: {
+            description: {[Op.substring]: '.  ●'}
+        }
+    })
+
+    for (let i = 0; i < cards.length; i++) {
+        try {
+            const card = cards[i]
+            await card.update({ description: card.description.replaceAll('.  ●', '.\n●') })
+            b++
+        } catch (err) {
+            console.log(err)
+            e++
+        }
+    }
+
+    return console.log(`fixed ${b} card descriptions; encountered ${e} errors`)
+}
+
+fixCards()
+// findDuplicateTournamentReports()
 // fixStatuses()
 // fixTournmanets()
 // fixPfps()
