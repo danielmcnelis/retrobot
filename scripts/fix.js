@@ -875,14 +875,14 @@ const fixCards = async () => {
 
     const cards = await Card.findAll({
         where: {
-            description: {[Op.substring]: '. ●'}
+            description: {[Op.substring]: '; ●'}
         }
     })
 
     for (let i = 0; i < cards.length; i++) {
         try {
             const card = cards[i]
-            await card.update({ description: card.description.replaceAll('. ●', '.\n●') })
+            await card.update({ description: card.description.replaceAll('; ●', ';\n●') })
             b++
         } catch (err) {
             console.log(err)
