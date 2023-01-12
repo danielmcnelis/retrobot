@@ -6,7 +6,7 @@ const axios = require('axios')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Deck, Format, Player, RatedPool, Stats, Server } = require('../db/index.js')
+const { Deck, Format, Player, Pool, Stats, Server } = require('../db/index.js')
 
 //STATIC IMPORTS
 const emojis = require('../static/emojis.json')
@@ -16,7 +16,7 @@ const yescom = ['yes', 'ye', 'y', 'ya', 'yeah', 'da', 'ja', 'si', 'ok', 'sure']
 const { getIssues } = require('./deck')
 
 
-const getPotentialPairConfirmation = async (client, format, potentialPair, ratedPool, commonGuildId) => {
+const getPotentialPairConfirmation = async (client, format, potentialPair, pool, commonGuildId) => {
     const guild = client.guilds.cache.get(commonGuildId)
     const member = await guild.members.fetch(potentialPair.player.discordId)
     if (!member) return
@@ -26,7 +26,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, rated
         await potentialPair.save()
     } catch (err) {
         console.log(err)
-        return message.channel.send(`Sorry, something went wrong. I've removed you from the Rated ${ratedPool.format} Format player pool.`)
+        return message.channel.send(`Sorry, something went wrong. I've removed you from the Rated ${pool.format} Format player pool.`)
     }
 
     const filter = m => m.author.id === potentialPair.player.discordId
@@ -39,7 +39,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, rated
     }).then(async (collected) => {
         const response = collected.first().content.toLowerCase()
         if (yescom.includes(response)) {
-            const pairStillExists = await RatedPool.count({ where: { id: ratedPool.id }})
+            const pairStillExists = await Pool.count({ where: { id: pool.id }})
             if (!pairStillExists) {
                 potentialPair.status = 'pending'
                 await potentialPair.save()
@@ -50,23 +50,23 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, rated
             const channelId = commonServer.ratedChannel || format.channel
             const channel = guild.channels.cache.get(channelId)
             const player = potentialPair.player
-            const opponent = await Player.findOne({ where: { id: ratedPool.playerId }})
+            const opponent = await Player.findOne({ where: { id: pool.playerId }})
             const opposingMember = await guild.members.fetch(opponent.discordId)
 
             opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${player.name + '#' + player.discriminator}\nDuelingBook: ${player.duelingBook}`).catch((err) => console.log(err))
             message.channel.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.name + '#' + opponent.discriminator}\nDuelingBook: ${opponent.duelingBook}`).catch((err) => console.log(err))
             
             await potentialPair.destroy()
-            await ratedPool.destroy()
+            await pool.destroy()
 
-            const ratedPoolsToDeactivate = await RatedPool.findAll({
+            const poolsToDeactivate = await Pool.findAll({
                 where: {
                     playerId: {[Op.or]: [player.id, opponent.id]}
                 }
             }) || []
 
-            for (let d = 0; d < ratedPoolsToDeactivate.length; d++) {
-                const rPTD = ratedPoolsToDeactivate[d]
+            for (let d = 0; d < poolsToDeactivate.length; d++) {
+                const rPTD = poolsToDeactivate[d]
                 await rPTD.update({ status: 'inactive' })
             }
 
@@ -94,7 +94,7 @@ const getPotentialPairConfirmation = async (client, format, potentialPair, rated
     }).catch(async (err) => {
         console.log(err)
         await potentialPair.destroy()
-        return message.channel.send(`Sorry, time's up. I've removed you from the Rated ${ratedPool.format} Format player pool.`)
+        return message.channel.send(`Sorry, time's up. I've removed you from the Rated ${pool.format} Format player pool.`)
     })   
 }
 

@@ -1,7 +1,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Deck, Match, Membership, Player, RatedPool, Server, Stats } = require('../db')
+const { Deck, Match, Membership, Player, Pool, Server, Stats } = require('../db')
 const { Op } = require('sequelize')
 const { getRatedFormat, getNewRatedDeck, getPotentialPairConfirmation, getPreviousRatedDeck } = require('../functions/rated')
 const { getIssues } = require('../functions/deck')
@@ -92,13 +92,13 @@ const getRatedInformation = async (interaction, player) => {
     const deckAttachments = await drawDeck(ratedDeck.ydk) || []
     interaction.user.send({content: `Okay, ${interaction.user.username}, you will be using this deck if you are paired:` , files: [...deckAttachments] })
     
-    const ratedPool = await RatedPool.findOne({
+    const pool = await Pool.findOne({
         where: {
             name: player.name,
             format: format.name,
             playerId: player.id
         }
-    }) || await RatedPool.create({
+    }) || await Pool.create({
         name: player.name,
         format: format.name,
         status: 'pending',
@@ -106,7 +106,7 @@ const getRatedInformation = async (interaction, player) => {
     })
 
     try {
-        const potentialPairs = await RatedPool.findAll({ 
+        const potentialPairs = await Pool.findAll({ 
             where: { 
                 playerId: {[Op.not]: player.id },
                 status: 'pending',
@@ -182,7 +182,7 @@ const getRatedInformation = async (interaction, player) => {
             if (yourRecentOpponents.includes(potentialPair.playerId)) {
                 continue
             } else if (potentialPair.createdAt < oneMinuteAgo) {
-                getPotentialPairConfirmation(client, format, potentialPair, ratedPool, commonGuildId)
+                getPotentialPairConfirmation(client, format, potentialPair, pool, commonGuildId)
                 continue
             } else {
                 const commonServer = await Server.findOne({ where: { id: commonGuildId }})
@@ -190,23 +190,23 @@ const getRatedInformation = async (interaction, player) => {
                 const guild = client.guilds.cache.get(commonGuildId)
                 const channel = guild.channels.cache.get(channelId)
                 const player = potentialPair.player
-                const opponent = await Player.findOne({ where: { id: ratedPool.playerId }})
+                const opponent = await Player.findOne({ where: { id: pool.playerId }})
                 const opposingMember = await guild.members.fetch(opponent.discordId)
 
                 opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${player.name + '#' + player.discriminator}\nDuelingBook: ${player.duelingBook}`).catch((err) => console.log(err))
                 interaction.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: ${opponent.name + '#' + opponent.discriminator}\nDuelingBook: ${opponent.duelingBook}`).catch((err) => console.log(err))
                 
                 await potentialPair.destroy()
-                await ratedPool.destroy()
+                await pool.destroy()
 
-                const ratedPoolsToDeactivate = await RatedPool.findAll({
+                const poolsToDeactivate = await Pool.findAll({
                     where: {
                         playerId: {[Op.or]: [player.id, opponent.id]}
                     }
                 }) || []
     
-                for (let d = 0; d < ratedPoolsToDeactivate.length; d++) {
-                    const rPTD = ratedPoolsToDeactivate[d]
+                for (let d = 0; d < poolsToDeactivate.length; d++) {
+                    const rPTD = poolsToDeactivate[d]
                     await rPTD.update({ status: 'inactive' })
                 }
     

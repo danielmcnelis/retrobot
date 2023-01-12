@@ -90,9 +90,9 @@
                     },
                     { 
                         name: `Misc. Info`,
-                        value: player.duelingBook || player.youTube || player.twitch || player.twitter || player.country || player.timeZone ? (
+                        value: player.duelingBook || player.youtube || player.twitch || player.twitter || player.country || player.timeZone ? (
                             `${player.duelingBook ? `DuelingBook: ${player.duelingBook}` : ''}` +
-                            `${player.youtube ? `\nYouTube: ${player.youtuibe}` : ''}` +
+                            `${player.youtube ? `\nYouTube: ${player.youtube}` : ''}` +
                             `${player.twitch ? `\nTwitch: ${player.twitch}` : ''}` +
                             `${player.twitter ? `\nTwitter: ${player.twitter}` : ''}` +
                             `${player.country ? `\nCountry: ${player.country}` : ''}` +
@@ -157,9 +157,9 @@
                     { name: `DuelingBook`, value: `${player.duelingBook}` },
                     { 
                         name: `Misc. Info`,
-                        value: player.duelingBook || player.youTube || player.twitch || player.twitter || player.country || player.timeZone ? (
+                        value: player.duelingBook || player.youtube || player.twitch || player.twitter || player.country || player.timeZone ? (
                             `${player.duelingBook ? `DuelingBook: ${player.duelingBook}` : ''}` +
-                            `${player.youtube ? `\nYouTube: ${player.youtuibe}` : ''}` +
+                            `${player.youtube ? `\nYouTube: ${player.youtube}` : ''}` +
                             `${player.twitch ? `\nTwitch: ${player.twitch}` : ''}` +
                             `${player.twitter ? `\nTwitter: ${player.twitter}` : ''}` +
                             `${player.country ? `\nCountry: ${player.country}` : ''}` +

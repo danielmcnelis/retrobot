@@ -4,7 +4,7 @@
     const { postStory } = require('../functions/iron')
     const { checkPairing, getMatches, processMatchResult, selectTournament } = require('../functions/tournament')
     const emojis = require('../static/emojis.json')
-    const { Entry, Format, Iron, Match, Matchup, Player, RatedPool, Server, Stats, Tournament } = require('../db')
+    const { Entry, Format, Iron, Match, Matchup, Player, Pool, Server, Stats, Tournament } = require('../db')
     const { Op } = require('sequelize')
 
     module.exports = {
@@ -231,15 +231,15 @@
                 })
             }
 
-            const ratedPoolsToUpdate = await RatedPool.findAll({
+            const poolsToUpdate = await Pool.findAll({
                 where: {
                     playerId: {[Op.or]: [winningPlayer.id, losingPlayer.id]},
                     status: 'inactive'
                 }
             }) || []
 
-            for (let d = 0; d < ratedPoolsToUpdate.length; d++) {
-                const rPTU = ratedPoolsToUpdate[d]
+            for (let d = 0; d < poolsToUpdate.length; d++) {
+                const rPTU = poolsToUpdate[d]
                 await rPTU.update({ status: 'pending' })
             }
 

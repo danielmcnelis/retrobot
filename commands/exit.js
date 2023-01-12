@@ -2,14 +2,14 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Player, RatedPool } = require('../db')
+const { Player, Pool } = require('../db')
 const { getDropFormats } = require('../functions/rated')
 
 const getExitInformation = async (interaction, player) => {
-    const oldRatedPools = await RatedPool.findAll({ where: {  playerId: player.id } }) || []
-    if (!oldRatedPools.length) return interaction.user.send(`You are not in any Rated Pools.`)
+    const oldPools = await Pool.findAll({ where: {  playerId: player.id } }) || []
+    if (!oldPools.length) return interaction.user.send(`You are not in any Rated Pools.`)
 
-    const pools = oldRatedPools.map((p) => p.format)
+    const pools = oldPools.map((p) => p.format)
 
     const drops = await getDropFormats(interaction, pools)
     if (!drops || !drops.length) return interaction.user.send(`Please specify a valid number.`)
@@ -18,8 +18,8 @@ const getExitInformation = async (interaction, player) => {
     for (let i = 0; i < drops.length; i++) {
         try {
             const format = drops[i]
-            const oldRatedPool = await RatedPool.findOne({ where: { format: format, playerId: player.id } })
-            await oldRatedPool.destroy()
+            const oldPool = await Pool.findOne({ where: { format: format, playerId: player.id } })
+            await oldPool.destroy()
             results.push(format)
         } catch (err) {
             console.log(err)

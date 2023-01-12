@@ -17,7 +17,7 @@ const Membership = require('./Membership')
 const Player = require('./Player')
 const Print = require('./Print')
 const RatedDeck = require('./RatedDeck')
-const RatedPool = require('./RatedPool')
+const Pool = require('./Pool')
 const Role = require('./Role')
 const Server = require('./Server')
 const Set = require('./Set')
@@ -102,11 +102,8 @@ Print.belongsTo(Set)
 Set.hasMany(Print)
 
 //RATED POOL
-RatedPool.belongsTo(Player)
-Player.hasMany(RatedPool)
-
-RatedDeck.belongsTo(Player)
-Player.hasMany(RatedDeck)
+Pool.belongsTo(Player)
+Player.hasMany(Pool)
 
 //ROLE
 Role.belongsTo(Membership)
@@ -155,7 +152,7 @@ module.exports = {
   Print,
   Role,
   RatedDeck,
-  RatedPool,
+  Pool,
   Server,
   Set,
   Stats,

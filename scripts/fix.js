@@ -1,7 +1,7 @@
 
 
 const { Op } = require('sequelize')
-const { BlogPost, Card, Deck, DeckType, DeckThumb, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedDeck, RatedPool, Role, Server, Stats, Status, Tournament } = require('../db/index.js')
+const { BlogPost, Card, Deck, DeckType, DeckThumb, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedDeck, Pool, Role, Server, Stats, Status, Tournament } = require('../db/index.js')
 const { capitalize } = require('../functions/utility')
 const axios = require('axios')
 const Canvas = require('canvas')
@@ -291,16 +291,28 @@ const fixDecks = async () => {
     let a = 0
     let e = 0
     const decks = await Deck.findAll({
-        where: {
-            builder: null
-        },
-        include: Player
+        include: Event
     })
     
     for (let i = 0; i < decks.length; i++) {
         try {
             const deck = decks[i]
-            await deck.update({ builder: deck.player.name })
+            if (!deck.origin) {
+                if (deck.eventId) {
+                    await deck.update({ origin: 'event' })
+                } else {
+                    await deck.update({ origin: 'user' })
+                }
+            }
+
+            if (deck.event && deck.event.abbreviation && deck.eventName !== deck.event.abbreviation) {
+                await deck.update({ eventName: deck.event.abbreviation })
+            }
+
+            if (!deck.publishDate && deck.eventId) {
+                await deck.update({ publishDate: deck.event.endDate })
+            }
+
             a++
         } catch (err) {
             e++
@@ -388,33 +400,14 @@ const fixMemberships = async () => {
     return console.log(`purged ${a} duplicate memberships; encountered ${e} errors`)
 }
 
-const fixRatedDecks = async () => {
+
+const fixPools = async () => {
     let a = 0
     let e = 0
-    const ratedDecks = await RatedDeck.findAll()
-    for (let i = 0; i < ratedDecks.length; i++) {
+    const pools = await Pool.findAll()
+    for (let i = 0; i < pools.length; i++) {
         try {
-            const d = ratedDecks[i]
-            const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
-            d.playerId = player.id
-            await d.save()
-            a++
-        } catch (err) {
-            console.log(err)
-            e++
-        }
-    }
-
-    return console.log(`updated ${a} rated decks; encountered ${e} errors`)
-}
-
-const fixRatedPools = async () => {
-    let a = 0
-    let e = 0
-    const ratedPools = await RatedPool.findAll()
-    for (let i = 0; i < ratedPools.length; i++) {
-        try {
-            const d = ratedPools[i]
+            const d = pools[i]
             const player = await Player.findOne({ where: { discordId: d.playerId.toString() }})
             d.playerId = player.id
             await d.save()
@@ -475,17 +468,7 @@ const fixEvents = async () => {
     for (let i = 0; i < events.length; i++) {
         try {
             const event = events[i]
-            const player = await Player.findOne({
-                where: {
-                    [Op.or]: {
-                        discordId: event.playerId,
-                        firstName: event.playerId
-                    }
-                }
-            })
-
-            event.playerId = player.id
-            await event.save()
+            await event.update({ type: event.type.toLowerCase() })
             b++
         } catch (err) {
             console.log(err)
@@ -893,7 +876,8 @@ const fixCards = async () => {
     return console.log(`fixed ${b} card descriptions; encountered ${e} errors`)
 }
 
-fixCards()
+
+// fixCards()
 // findDuplicateTournamentReports()
 // fixStatuses()
 // fixTournmanets()
@@ -904,12 +888,12 @@ fixCards()
 // saveYDKs()
 // downloadYDKs()
 // fixPlayers()
-// fixDecks()
+fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()
 // fixMemberships()
-// fixRatedPools()
+// fixPools()
 // fixServers()
 // fixStats()
 // fixRatedDecks()

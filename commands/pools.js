@@ -1,7 +1,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Player, RatedPool } = require('../db')
+const { Player, Pool } = require('../db')
 const emojis = require('../static/emojis.json')
 
 module.exports = {
@@ -17,7 +17,7 @@ module.exports = {
 
         const player = await Player.findOne({ where: { discordId: interaction.user.id } })
         if (!player) return interaction.user.send(`You are not in the database. Please join the Format Library ${emojis.FL} Discord server to register.`)
-        const pools = [...await RatedPool.findAll({ where: { playerId: player.id }, order: [['format', 'ASC']] })].map((p) => p.format)
+        const pools = [...await Pool.findAll({ where: { playerId: player.id }, order: [['format', 'ASC']] })].map((p) => p.format)
         if (!pools.length) return interaction.user.send(`You are not in any Rated Pools.`)
         return interaction.user.send({ content: `You are in the following pools:\n${pools.join('\n')}`})
 	}
