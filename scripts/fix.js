@@ -616,12 +616,15 @@ const copyRatedDecksToDecks = async () => {
 
 const fixBlogs = async () => {
     let a = 0
-    const blogposts = await BlogPost.findAll() 
+    const blogposts = await BlogPost.findAll({ include: Event }) 
     for (let i = 0; i < blogposts.length; i++) {
         try {
             const b = blogposts[i]
-            b.content = b.content.replaceAll('https://formatlibrary.s3.us-east-2.amazonaws.com/', 'https://cdn.formatlibrary.com/')
-            await b.save()
+            if (!b.event || !b.event.abbreviation) continue
+            if (!b.title.includes('on winning ')) continue
+            const oldAbbreviation = b.title.slice(b.title.indexOf('on winning ') + 11, -1)
+            const newAbbreviation = b.event.abbreviation
+            await b.update({ content: b.content.replaceAll(oldAbbreviation, newAbbreviation)})
             a++
         } catch (err) {
             console.log(err)
@@ -882,13 +885,13 @@ const fixCards = async () => {
 // fixStatuses()
 // fixTournmanets()
 // fixPfps()
-// fixBlogs()
+fixBlogs()
 // copyRatedDecksToDecks()
 // fixEntries()
 // saveYDKs()
 // downloadYDKs()
 // fixPlayers()
-fixDecks()
+// fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()
@@ -897,7 +900,7 @@ fixDecks()
 // fixServers()
 // fixStats()
 // fixRatedDecks()
-fixEvents()
+// fixEvents()
 // fixBlogposts()
 // composeThumbnails()
 // composePreviews()
