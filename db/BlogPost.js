@@ -17,6 +17,9 @@ const BlogPost = db.define('blogposts', {
   },
   eventDate: {
     type: Sequelize.DATE
+  },
+  eventId: {
+    type: Sequelize.INTEGER
   }
 })
 
