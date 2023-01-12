@@ -67,9 +67,6 @@ const Player = db.define('players', {
     type: Sequelize.BOOLEAN,
     defaultValue: false
   },
-  oldId: {
-      type: Sequelize.STRING
-  },
   youtube: {
       type: Sequelize.STRING
   },
