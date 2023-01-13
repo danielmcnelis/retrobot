@@ -92,13 +92,21 @@ const getRatedInformation = async (interaction, player) => {
     const deckAttachments = await drawDeck(ratedDeck.ydk) || []
     interaction.user.send({content: `Okay, ${interaction.user.username}, you will be using this deck if you are paired:` , files: [...deckAttachments] })
     
-    const pool = await Pool.findOne({
+    const count = await Pool.count({
         where: {
             name: player.name,
             format: format.name,
             playerId: player.id
         }
-    }) || await Pool.create({
+    })
+
+    const pool = count ? await Pool.findOne({
+        where: {
+            name: player.name,
+            format: format.name,
+            playerId: player.id
+        }
+    }) : await Pool.create({
         name: player.name,
         format: format.name,
         status: 'pending',
@@ -116,7 +124,7 @@ const getRatedInformation = async (interaction, player) => {
             order: [['createdAt', 'ASC']]
         }) || []
 
-        if (!potentialPairs.length) {
+        if (!potentialPairs.length && !count) {
             for (let y = 0; y < yourServers.length; y++) {
                 try {
                     const server = yourServers[y]
@@ -132,6 +140,8 @@ const getRatedInformation = async (interaction, player) => {
             }
 
             return interaction.user.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+        } else if (!potentialPairs.length && count) {
+            return interaction.user.send(`You've resubmitted your deck for the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
         }
 
         for (let i = 0; i < potentialPairs.length; i++) {
@@ -160,7 +170,7 @@ const getRatedInformation = async (interaction, player) => {
 
             if (!commonGuildId) continue
             const now = new Date()
-            const oneMinuteAgo = new Date(now - (1 * 60 * 1000))
+            const twoMinutesAgo = new Date(now - (2 * 60 * 1000))
             const oneHourAgo = new Date(now - (60 * 60 * 1000))
 
             const yourRecentOpponents = [...await Match.findAll({
@@ -182,7 +192,7 @@ const getRatedInformation = async (interaction, player) => {
 
             if (yourRecentOpponents.includes(potentialPair.playerId)) {
                 continue
-            } else if (potentialPair.createdAt < oneMinuteAgo) {
+            } else if (potentialPair.updatedAt < twoMinutesAgo) {
                 getPotentialPairConfirmation(client, format, potentialPair, pool, commonGuildId)
                 continue
             } else {
@@ -234,20 +244,25 @@ const getRatedInformation = async (interaction, player) => {
         console.log(err)            
     }
 
-    for (let y = 0; y < yourServers.length; y++) {
-        try {
-            const server = yourServers[y]
-            const guild = client.guilds.cache.get(server.id)
-            const channelId = server.id === '414551319031054346' ? format.channel : server.ratedChannel
-            const channel = guild.channels.cache.get(channelId)
-            const tag = server.id === '414551319031054346' ? `<@&${format.grinders}> ` : ''
-            channel.send(`${tag}Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
-        } catch (err) {
-            console.log(err)
+    if (!count) {
+        for (let y = 0; y < yourServers.length; y++) {
+            try {
+                const server = yourServers[y]
+                const guild = client.guilds.cache.get(server.id)
+                const channelId = server.id === '414551319031054346' ? format.channel : server.ratedChannel
+                const channel = guild.channels.cache.get(channelId)
+                const tag = server.id === '414551319031054346' ? `<@&${format.grinders}> ` : ''
+                channel.send(`${tag}Somebody joined the ${format.name} Format ${format.emoji} Rated Pool! ${emojis.megaphone}`)
+            } catch (err) {
+                console.log(err)
+            }
         }
+
+        return interaction.user.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
+    } else {
+        return interaction.user.send(`You've resubmitted your deck for the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
     }
     
-    return interaction.user.send(`You've joined the ${format.name} Rated Pool. ${format.emoji} You'll receive a DM when you're paired.`)
 }
 
 module.exports = {
