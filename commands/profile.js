@@ -67,7 +67,7 @@
                         d.placement === 3 ? emojis.third :
                         emojis.placing
 
-                    return `${d.event.name}: ${badge} ${ordinalize(d.placement)} of ${d.event.size}`
+                    return `${d.event.name}: ${ordinalize(d.placement)} ${badge} of ${d.event.size}`
                 }) || []
                 
             const embed = new EmbedBuilder()
@@ -78,11 +78,11 @@
                     { 
                         name: `${format.name} Format Stats`,
                         value: 
-                        `Best Medal: ${getMedal(stats.bestElo, true)}` +
-                        `\nHighest Elo: ${stats.bestElo ? stats.bestElo.toFixed(2) : '500.00'}` +
-                        `\nWinrate: ${stats.wins || stats.losses ? `${(100 * stats.wins / (stats.wins + stats.losses)).toFixed(2)}%` : 'N/A'}` +
-                        `\nVanquished Foes: ${stats.vanquished || 0}` +
-                        `\nLongest Win Streak: ${stats.bestStreak || 0}`
+                        `Best Medal: ${getMedal(stats ? stats.bestElo : null, true)}` +
+                        `\nHighest Elo: ${stats && stats.bestElo ? stats.bestElo.toFixed(2) : '500.00'}` +
+                        `\nWinrate: ${stats && (stats.wins || stats.losses) ? `${(100 * stats.wins / (stats.wins + stats.losses)).toFixed(2)}%` : 'N/A'}` +
+                        `\nVanquished Foes: ${stats ? stats.vanquished : 0}` +
+                        `\nLongest Win Streak: ${stats ? stats.bestStreak : 0}`
                     },
                     { 
                         name: `${format.name} Format Trophies`, 
@@ -144,7 +144,7 @@
                         d.placement === 3 ? emojis.third :
                         emojis.placing
 
-                    return `${d.format.emoji} ${d.eventName}: ${badge} ${ordinalize(d.placement)} of ${d.event.size}`
+                    return `${d.format.emoji} ${d.eventName}: ${ordinalize(d.placement)} ${badge} of ${d.event.size}`
                 })
 
             const embed = new EmbedBuilder()
