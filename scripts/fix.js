@@ -590,7 +590,6 @@ const copyRatedDecksToDecks = async () => {
     for (let i = 0; i < ratedDecks.length; i++) {
         try {
             const rd = ratedDecks[i]
-            console.log('rd.dataValues', rd.dataValues)
             const format = await Format.findOne({ where: { name: rd.format }})
     
             const deck = await Deck.create({
@@ -604,8 +603,6 @@ const copyRatedDecksToDecks = async () => {
                 ydk: rd.ydk,
                 display: false
             })
-
-            console.log('deck.dataValues', deck.dataValues)
         
             if (deck) b++
         } catch (err) {
@@ -739,7 +736,6 @@ const fixPfps = async () => {
                 Key: `images/pfps/${player.discordId}`
             }).promise()
 
-            console.log('ETag', ETag)
             if (ETag) continue
         } catch (err) {
             try {
@@ -883,11 +879,11 @@ const fixCards = async () => {
 
 
 // fixCards()
-// findDuplicateTournamentReports()
+findDuplicateTournamentReports()
 // fixStatuses()
 // fixTournmanets()
 // fixPfps()
-fixBlogs()
+// fixBlogs()
 // copyRatedDecksToDecks()
 // fixEntries()
 // saveYDKs()

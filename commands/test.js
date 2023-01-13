@@ -14,7 +14,6 @@ module.exports = {
             const roles = interaction.guild.roles.cache.values()
             
             for (const role of roles) {
-                console.log('role', role)
                 if (role.name.includes('Grinders')) {
                     const name = role.name.replace(' Grinders', '')
                     const format = await Format.findOne({

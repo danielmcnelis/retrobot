@@ -308,9 +308,7 @@ const joinTournament = async (interaction, tournamentId) => {
 // SIGNUP FOR TOURNAMENT 
 const signupForTournament = async (interaction, tournamentId, userId) => {
     if (!userId) userId = await interaction.options.getUser('player').id
-    console.log('userId', userId)
     const member = await interaction.guild.members.fetch(userId)
-    console.log('member', member)
 
     const player = await Player.findOne({
         where: {
@@ -826,9 +824,6 @@ const getPairing = (matchesArr = [], matchId) => {
 //POST PARTICIPANT
 const postParticipant = async (server, tournament, player) => {
     try {
-        console.log('server.challongeAPIKey', server.challongeAPIKey)
-        console.log('tournament.id', tournament.id)
-        console.log('player.name', player.name)
         const { data } = await axios({
             method: 'post',
             url: `https://api.challonge.com/v1/tournaments/${tournament.id}/participants.json?api_key=${server.challongeAPIKey}`,
@@ -839,7 +834,6 @@ const postParticipant = async (server, tournament, player) => {
             }
         })
 
-        console.log('!!data', !!data)
         return data
     } catch (err) {
         console.log(err)
@@ -1060,16 +1054,16 @@ const sendPairings = async (guild, server, tournament, ignoreRound1) => {
     
             try {
                 const p1Member = await guild.members.fetch(player1.discordId)
-                console.log(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${player2.name + '#' + player2.discriminator}\nDuelingBook: ${player2.duelingBook}`)
-                p1Member.user.send(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${player2.name + '#' + player2.discriminator}\nDuelingBook: ${player2.duelingBook}`)
+                console.log(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: <@${player2.discordId}>\nDuelingBook: ${player2.duelingBook}`)
+                p1Member.user.send(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: <@${player2.discordId}>\nDuelingBook: ${player2.duelingBook}`)
             } catch (err) {
                 console.log(err)
             }
     
             try {
                 const p2Member = await guild.members.fetch(player2.discordId)
-                console.log(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${player1.name + '#' + player1.discriminator}\nDuelingBook: ${player1.duelingBook}`)
-                p2Member.user.send(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: ${player1.name + '#' + player1.discriminator}\nDuelingBook: ${player1.duelingBook}`)
+                console.log(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: <@${player1.discordId}>\nDuelingBook: ${player1.duelingBook}`)
+                p2Member.user.send(`New pairing for ${round} of ${tournament.name}! ${tournament.logo}\nServer: ${server.name} ${server.logo}\nFormat: ${tournament.formatName} ${tournament.emoji}\nDiscord: <@${player1.discordId}>\nDuelingBook: ${player1.duelingBook}`)
             } catch (err) {
                 console.log(err)
             }
@@ -1530,7 +1524,6 @@ const calculateStandings = async (interaction, tournamentId) => {
         }
     })
 
-    console.log('standings', standings)
     const results = [ `${tournament.logo} - ${tournament.name} Standings - ${tournament.emoji}` , `__Rk.  Name  -  Score  (W-L-T)  [Med-Buch / WvT]__`]
 
     for (let index = 0; index < standings.length; index++) {
