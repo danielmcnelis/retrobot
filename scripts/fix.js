@@ -534,6 +534,7 @@ const downloadYDKs = async () => {
                 formatName: e.tournament.formatName,
                 ydk: ydk,
                 eventName: e.tournament.name,
+                origin: 'event',
                 display: false,
                 community: e.tournament.community,
                 playerId: e.playerId
@@ -598,6 +599,7 @@ const copyRatedDecksToDecks = async () => {
                 playerId: rd.player.id,
                 formatName: format.name,
                 formatId: format.id,
+                origin: 'user',
                 url: rd.url,
                 ydk: rd.ydk,
                 display: false

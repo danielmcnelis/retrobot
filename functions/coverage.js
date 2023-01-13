@@ -53,6 +53,7 @@ const createDecks = async (event, data) => {
                     ydk: entry.ydk,
                     placement: placement,
                     eventName: event.abbreviation || event.name,
+                    origin: 'event',
                     display: false,
                     community: event.community,
                     playerId: entry.playerId,

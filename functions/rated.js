@@ -230,6 +230,7 @@ const getNewRatedDeck = async (user, player, format) => {
                     name: deckName,
                     url: `https://duelingbook.com/deck?id=${id}`,
                     ydk: ydk,
+                    origin: 'user',
                     playerId: player.id
                 })
 

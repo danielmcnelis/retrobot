@@ -25,9 +25,6 @@
             const player = await Player.findOne({ where: { discordId: discordId } })
             if (!player) return interaction.reply({ content: "That user is not in the database."})
 
-            console.log('player.country', player.country)
-            console.log('player.timeZone', player.timeZone)
-
             const format = await Format.findOne({
                 where: {
                     [Op.or]: {
