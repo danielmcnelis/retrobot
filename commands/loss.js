@@ -1,6 +1,6 @@
 
     const { SlashCommandBuilder } = require('discord.js')    
-    const { isNewUser, hasAffiliateAccess, isIronPlayer, isTourPlayer } = require('../functions/utility')
+    const { createPlayer, isNewUser, hasAffiliateAccess, isIronPlayer, isTourPlayer } = require('../functions/utility')
     const { postStory } = require('../functions/iron')
     const { checkPairing, getMatches, processMatchResult, selectTournament } = require('../functions/tournament')
     const emojis = require('../static/emojis.json')

@@ -179,6 +179,7 @@ module.exports = {
 
         for (let index = 0; index < standings.length; index++) {
             const s = standings[index]
+            if (!s) continue
             if (
                 (
                     // if at the end or has a better score/tie-breakers than the next player

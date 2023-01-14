@@ -6,6 +6,7 @@ const { Format, Match, Player, Server, Stats } = require('../db')
 const QuickChart = require('quickchart-js')
 const { capitalize, hasAffiliateAccess } = require('../functions/utility')
 const { Op } = require('sequelize')
+const emojis = require('../static/emojis.json')
 
 module.exports = {
     data: new SlashCommandBuilder()

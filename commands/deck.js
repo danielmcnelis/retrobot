@@ -44,6 +44,7 @@ module.exports = {
             order: [["createdAt", "ASC"]]
         })
 
+        if (!user) return interaction.reply({ content: `Player not found.` })
         const discordId = user.id
         if (!isMod(server, interaction.member)) return interaction.reply({ content: `You do not have permission to do that.` })
 

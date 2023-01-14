@@ -276,15 +276,17 @@ const drawDeck = async (ydk) => {
         }
     })
 
-    const mainAttachment = await makeCanvasAttachment(main, 57, 80, 10, 'main')
-    const extraAttachment = await makeCanvasAttachment(extra, 38, 53, 15, 'extra')
-    const sideAttachment = await makeCanvasAttachment(side, 38, 53, 15, 'side')
+    const mainAttachment = main.length ? await makeCanvasAttachment(main, 57, 80, 10, 'main') : null
+    const extraAttachment = extra.length ? await makeCanvasAttachment(extra, 38, 53, 15, 'extra'): null
+    const sideAttachment = side.length ? await makeCanvasAttachment(side, 38, 53, 15, 'side'): null
 
-    return [
+    const attachments = [
         mainAttachment,
         extraAttachment,
         sideAttachment
-    ]
+    ].filter((e) => !!e)
+
+    return attachments
 }
 
 const makeCanvasAttachment = async (cardsArr = [], width = 57, height = 80, cardsPerRow = 10, name = 'main') => {
@@ -423,7 +425,7 @@ const getMedal = (stats, title = false) => {
         : (stats > 590 && stats <= 650) ? emojis.diamond
         : (stats > 650 && stats <= 710) ? emojis.master
         : (stats > 710 && stats <= 770) ? emojis.legend
-        : (stats > 770 && stats <= 830) ? emojis.deity
+        : (stats > 770 && stats <= 830) ? emojis.god
         : emojis.treeborn
     }
 }
