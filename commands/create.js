@@ -5,7 +5,7 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Format, Server } = require('../db')
+const { Format, Server } = require('../../formatlibrary/libs/models/src/lib/index.js')
 const emojis = require('../static/emojis.json')
 const { isMod, hasPartnerAccess } = require('../functions/utility')
 const { Op } = require('sequelize')

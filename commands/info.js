@@ -1,6 +1,6 @@
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Format, Server } = require('../db')
+const { Format, Server } = require('../../formatlibrary/libs/models/src/lib/index.js')
 const { urlize } = require('../functions/utility')
 const { Op } = require('sequelize')
 

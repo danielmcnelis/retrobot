@@ -3,7 +3,7 @@
 const { SlashCommandBuilder } = require('discord.js')    
 const { hasAffiliateAccess } = require('../functions/utility')
 const emojis = require('../static/emojis.json')
-const { Format, Match, Player, Server } = require('../db')
+const { Format, Match, Player, Server } = require('../../formatlibrary/libs/models/src/lib/index.js')
 const { Op } = require('sequelize')
 
 module.exports = {

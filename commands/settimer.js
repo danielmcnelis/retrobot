@@ -2,7 +2,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Format, Server, Tournament } = require('../db')
+const { Format, Server, Tournament } = require('../../formatlibrary/libs/models/src/lib/index.js')
 const emojis = require('../static/emojis.json')
 const { isMod, hasPartnerAccess } = require('../functions/utility')
 const { sendPairings, selectTournament } = require('../functions/tournament')

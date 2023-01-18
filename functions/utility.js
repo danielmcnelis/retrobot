@@ -7,7 +7,7 @@ const { ActionRowBuilder, EmbedBuilder, AttachmentBuilder, StringSelectMenuBuild
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Card, Membership, Player, Print, Role, Set, Stats, Status, Tournament } = require('../db/index.js')
+const { Card, Membership, Player, Print, Role, Set, Stats, Status, Tournament } = require('../../formatlibrary/libs/models/src/lib/index.js')
 
 //STATIC IMPORTS
 const emojis = require('../static/emojis.json')

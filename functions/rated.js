@@ -6,7 +6,7 @@ const axios = require('axios')
 const { Op } = require('sequelize')
 
 //DATABASE IMPORTS
-const { Deck, Format, Player, Pool, Stats, Server } = require('../db/index.js')
+const { Deck, Format, Player, Pool, Stats, Server } = require('../../formatlibrary/libs/models/src/lib/index.js')
 
 //STATIC IMPORTS
 const emojis = require('../static/emojis.json')

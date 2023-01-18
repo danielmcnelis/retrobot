@@ -1,5 +1,5 @@
 
-const { Match, Player, Stats } = require('../db/index.js')
+const { Match, Player, Stats } = require('../../formatlibrary/libs/models/src/lib/index.js')
 
 const undoMatch = async (channel, id) => {
     try {

@@ -2,7 +2,7 @@
 const Canvas = require('canvas')
 const { S3 } = require('aws-sdk')
 const { Op } = require('sequelize')
-const { BlogPost, Card, Deck, DeckType, Entry, Event, Format, Player, Tournament, Server }  = require('../db/index.js')
+const { BlogPost, Card, Deck, DeckType, Entry, Event, Format, Player, Tournament, Server }  = require('../../formatlibrary/libs/models/src/lib/index.js')
 const { capitalize, dateToVerbose } = require('./utility')
 const { getDeckType } = require('./deck')
 const { S3Keys } = require('../secrets.json')
@@ -196,7 +196,8 @@ const composeBlogPost = async (interaction, event) => {
             content: content,
             publishDate: publishDate,
             format: event.formatName,
-            eventDate: event.endDate
+            eventDate: event.endDate,
+            eventId: event.id
         })
     
         const buffer = canvas.toBuffer('image/png')

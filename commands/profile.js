@@ -2,7 +2,7 @@
     const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')    
     const { getMedal, ordinalize } = require('../functions/utility')
     const emojis = require('../static/emojis.json')
-    const { Deck, Event, Format, Player, Server, Stats } = require('../db')
+    const { Deck, Event, Format, Player, Server, Stats } = require('../../formatlibrary/libs/models/src/lib/index.js')
     const { Op } = require('sequelize')
 
     module.exports = {

@@ -1,6 +1,6 @@
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Player } = require('../db')
+const { Player } = require('../../formatlibrary/libs/models/src/lib/index.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()

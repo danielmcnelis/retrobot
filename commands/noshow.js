@@ -5,7 +5,7 @@
     const { isMod, isNewUser, hasAffiliateAccess } = require('../functions/utility')
     const { findNoShowOpponent, getMatches, processMatchResult, selectTournament } = require('../functions/tournament')
     const emojis = require('../static/emojis.json')
-    const { Entry, Format, Player, Server, Tournament } = require('../db')
+    const { Entry, Format, Player, Server, Tournament } = require('../../formatlibrary/libs/models/src/lib/index.js')
     const { Op } = require('sequelize')
 
     module.exports = {

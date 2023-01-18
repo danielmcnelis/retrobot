@@ -3,7 +3,7 @@
 
 
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require('discord.js')
-const { Entry, Format, Server, Tournament } = require('../db')
+const { Entry, Format, Server, Tournament } = require('../../formatlibrary/libs/models/src/lib/index.js')
 const { selectTournament, sendPairings } = require('../functions/tournament')
 const { isMod, hasPartnerAccess } = require('../functions/utility')
 const { Op } = require('sequelize')

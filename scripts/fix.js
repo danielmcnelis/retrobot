@@ -1,7 +1,7 @@
 
 
 const { Op } = require('sequelize')
-const { BlogPost, Card, Deck, DeckType, DeckThumb, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedDeck, Pool, Role, Server, Stats, Status, Tournament } = require('../db/index.js')
+const { BlogPost, Card, Deck, DeckType, DeckThumb, Entry, Event, Format, Iron, Match, Matchup, Membership, Player, RatedDeck, Pool, Role, Server, Stats, Status, Tournament } = require('../../formatlibrary/libs/models/src/lib/index.js')
 const { capitalize } = require('../functions/utility')
 const axios = require('axios')
 const Canvas = require('canvas')

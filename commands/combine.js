@@ -4,7 +4,7 @@
     const { SlashCommandBuilder } = require('discord.js')    
     const { isMod, hasFullAccess } = require('../functions/utility')
     const emojis = require('../static/emojis.json')
-    const { Match, Player, Server } = require('../db')
+    const { Match, Player, Server } = require('../../formatlibrary/libs/models/src/lib/index.js')
     const { Op } = require('sequelize')
 
     // COMBINE

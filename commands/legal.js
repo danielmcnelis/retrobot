@@ -1,7 +1,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Format, Server } = require('../db')
+const { Format, Server } = require('../../formatlibrary/libs/models/src/lib/index.js')
 const { Op } = require('sequelize')
 const { checkDeckList } = require('../functions/deck')
 
