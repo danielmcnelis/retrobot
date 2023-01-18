@@ -854,7 +854,6 @@ const findDuplicateTournamentReports = async () => {
     }
 
     return console.log(`found ${b} potential duplicates, encountered ${e} errors`)
-
 }
 
 const fixCards = async () => {
@@ -893,7 +892,7 @@ findDuplicateTournamentReports()
 // saveYDKs()
 // downloadYDKs()
 // fixPlayers()
-fixDecks()
+// fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()
