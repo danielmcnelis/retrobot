@@ -5,7 +5,7 @@
     const { postStory } = require('../functions/iron')
     const { checkPairing, getMatches, processMatchResult, selectTournament } = require('../functions/tournament')
     const emojis = require('../static/emojis.json')
-    const { Entry, Format, Iron, Match, Matchup, Player, Pool, Server, Stats, Tournament } = require('../../formatlibrary/libs/models/src/lib/index.js')
+    const { Entry, Format, Iron, Match, Matchup, Player, Pool, Server, Stats, Tournament } = require('.././db/index.js')
     const { Op } = require('sequelize')
 
     module.exports = {

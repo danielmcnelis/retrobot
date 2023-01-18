@@ -2,7 +2,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Format, Match, Player, Server, Stats } = require('../../formatlibrary/libs/models/src/lib/index.js')
+const { Format, Match, Player, Server, Stats } = require('.././db/index.js')
 const QuickChart = require('quickchart-js')
 const { capitalize, hasAffiliateAccess } = require('../functions/utility')
 const { Op } = require('sequelize')

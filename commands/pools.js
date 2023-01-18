@@ -1,7 +1,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Player, Pool } = require('../../formatlibrary/libs/models/src/lib/index.js')
+const { Player, Pool } = require('.././db/index.js')
 const emojis = require('../static/emojis.json')
 
 module.exports = {

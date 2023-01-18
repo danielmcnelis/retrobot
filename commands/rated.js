@@ -1,7 +1,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Deck, Match, Membership, Player, Pool, Server, Stats } = require('../../formatlibrary/libs/models/src/lib/index.js')
+const { Deck, Match, Membership, Player, Pool, Server, Stats } = require('.././db/index.js')
 const { Op } = require('sequelize')
 const { getRatedFormat, getNewRatedDeck, getPotentialPairConfirmation, getPreviousRatedDeck } = require('../functions/rated')
 const { getIssues } = require('../functions/deck')

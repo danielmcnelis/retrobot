@@ -6,7 +6,7 @@ const { Collection, Events } = require('discord.js');
 const FuzzySet = require('fuzzyset')
 
 // DATABASE IMPORTS 
-const { Membership, Player, Server } = require('../formatlibrary/libs/models/src/lib/index.js')
+const { Membership, Player, Server } = require('./db/index.js')
 
 // FUNCTION IMPORTS
 const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateDeckTypes, updateSets, updateServers } = require('./functions/chron.js')

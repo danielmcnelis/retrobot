@@ -1,6 +1,6 @@
 
 const { Op } = require('sequelize')
-const { Iron, Player, Stats } = require('../../formatlibrary/libs/models/src/lib/index.js')
+const { Iron, Player, Stats } = require('.././db/index.js')
 const emojis = require('../static/emojis.json')
 const roles = require('../static/roles.json')
 const { client } = require('../static/clients.js')

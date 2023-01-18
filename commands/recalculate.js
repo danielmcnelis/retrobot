@@ -3,7 +3,7 @@
     const { SlashCommandBuilder } = require('discord.js')    
     const { isMod, hasAffiliateAccess, trackStats } = require('../functions/utility')
     const emojis = require('../static/emojis.json')
-    const { Format, Match, Player, Server, Stats } = require('../../formatlibrary/libs/models/src/lib/index.js')
+    const { Format, Match, Player, Server, Stats } = require('.././db/index.js')
     const { Op } = require('sequelize')
 
     // RECALCULATE

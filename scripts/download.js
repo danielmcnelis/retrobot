@@ -1,5 +1,5 @@
 
-const { BlogPost, Player } = require('../../formatlibrary/libs/models/src/lib/index.js')
+const { BlogPost, Player } = require('.././db/index.js')
 const Canvas = require('canvas')
 const fs = require('fs')
 const axios = require('axios')

@@ -2,7 +2,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Player, Pool } = require('../../formatlibrary/libs/models/src/lib/index.js')
+const { Player, Pool } = require('.././db/index.js')
 const { getDropFormats } = require('../functions/rated')
 
 const getExitInformation = async (interaction, player) => {

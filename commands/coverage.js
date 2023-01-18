@@ -1,7 +1,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Event, Format, Player, Server } = require('../../formatlibrary/libs/models/src/lib/index.js')
+const { Event, Format, Player, Server } = require('.././db/index.js')
 const { hasFullAccess, isMod } = require('../functions/utility')
 const { Op } = require('sequelize')
 const { composeBlogPost, composeThumbnails, displayDecks } = require('../functions/coverage')

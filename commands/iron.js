@@ -1,7 +1,7 @@
 
 
 const { SlashCommandBuilder } = require('discord.js')
-const { Format, Iron, Player, Server } = require('../../formatlibrary/libs/models/src/lib/index.js')
+const { Format, Iron, Player, Server } = require('.././db/index.js')
 const { hasFullAccess } = require('../functions/utility')
 const { Op } = require('sequelize')
 const emojis = require('../static/emojis.json')
