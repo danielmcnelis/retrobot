@@ -200,8 +200,7 @@ const getRatedInformation = async (interaction, player) => {
                 const channelId = commonServer.ratedChannel || format.channel
                 const guild = client.guilds.cache.get(commonGuildId)
                 const channel = guild.channels.cache.get(channelId)
-                const player = potentialPair.player
-                const opponent = await Player.findOne({ where: { id: pool.playerId }})
+                const opponent = potentialPair.player
                 const opposingMember = await guild.members.fetch(opponent.discordId)
 
                 opposingMember.user.send(`New pairing for Rated ${format.name} Format ${format.emoji}!\nServer: ${commonServer.name} ${commonServer.logo}\nDiscord: <@${player.discordId}>\nDuelingBook: ${player.duelingBook}`).catch((err) => console.log(err))
