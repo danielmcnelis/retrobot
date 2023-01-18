@@ -343,7 +343,7 @@ const assignTourRoles = async (client) => {
 }
 
 // UPDATE DECK TYPES
-const updateDeckTypes = async () => {
+const updateDeckTypes = async (client) => {
     let b = 0
     const decks = await Deck.findAll({
         where: {
