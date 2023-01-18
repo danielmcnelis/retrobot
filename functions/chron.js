@@ -347,7 +347,7 @@ const updateDeckTypes = async (client) => {
     let b = 0
     const decks = await Deck.findAll({
         where: {
-            type: null,
+            type: 'Other',
             suggestedType: {[Op.not]: null }
         }
     })
