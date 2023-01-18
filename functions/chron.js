@@ -3,7 +3,7 @@ const axios = require('axios')
 const Canvas = require('canvas')
 const fs = require('fs')
 const sharp = require('sharp')
-const { Card, Deck, Entry, Tournament, Match, Membership, Player, Print, Role, Server, Set, Stats } = require('../db/index.js')
+const { Card, Deck, Entry, Tournament, Match, Membership, Player, Print, Role, Server, Set, Stats, DeckType } = require('../db/index.js')
 const { tcgPlayerAPI } = require('../secrets.json')
 const { createMembership, createPlayer } = require('./utility')
 const { Op } = require('sequelize')
@@ -340,6 +340,41 @@ const assignTourRoles = async (client) => {
     }
 
     return setTimeout(() => assignTourRoles(client), (24 * 60 * 60 * 1000))
+}
+
+// UPDATE DECK TYPES
+const updateDeckTypes = async () => {
+    let b = 0
+    const decks = await Deck.findAll({
+        where: {
+            type: null,
+            suggestedType: {[Op.not]: null }
+        }
+    })
+
+    for (let i = 0; i < decks.length; i++) {
+        const deck = decks[i]
+        const deckType = await DeckType.findOne({
+            where: {
+                name: {[Op.iLike]: deck.suggestedType }
+            }
+        })
+
+        if (deckType) {
+            await deck.update({
+                type: deckType.name,
+                deckTypeId: deckType.id,
+                suggestedType: null
+            })
+
+            b++
+        } else {
+            continue
+        }
+    }
+
+    console.log(`updated ${b} decks with suggested deck-types`)
+    return setTimeout(() => updateDeckTypes(client), (24 * 60 * 60 * 1000))
 }
 
 // FIND NEW PRINTS
@@ -809,6 +844,7 @@ module.exports = {
     purgeRatedDecks,
     purgeTourRoles,
     updateAvatars,
+    updateDeckTypes,
     updateSets,
     updateServers
 }

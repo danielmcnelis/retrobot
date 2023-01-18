@@ -9,7 +9,7 @@ const FuzzySet = require('fuzzyset')
 const { Membership, Player, Server } = require('./db/index.js')
 
 // FUNCTION IMPORTS
-const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateSets, updateServers } = require('./functions/chron.js')
+const { assignTourRoles, conductCensus, downloadNewCards, getMidnightCountdown, markInactives, purgeEntries, purgeRatedDecks, purgeTourRoles, updateAvatars, updateDeckTypes, updateSets, updateServers } = require('./functions/chron.js')
 const { fixDeckFolder } = require('./functions/coverage')
 const { calculateStandings, checkTimer, closeTournament, createTournament, dropFromTournament, initiateStartTournament, joinTournament, openTournament, processNoShow, removeFromTournament, seed, sendDeck, setTimerForTournament, signupForTournament, startTournament } = require('./functions/tournament')
 const { undoMatch } = require('./functions/undo')
@@ -52,6 +52,7 @@ client.on('ready', async() => {
     setTimeout(() => conductCensus(client), midnightCountdown + (3 * 60 * 1000))
     setTimeout(() => updateAvatars(client), midnightCountdown + (10 * 60 * 1000))
     setTimeout(() => purgeRatedDecks(), midnightCountdown + (12 * 60 * 1000))
+    setTimeout(() => updateDeckTypes(), midnightCountdown + (12.2 * 60 * 1000))
 })
 
 client.on(Events.InteractionCreate, async interaction => {

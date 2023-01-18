@@ -291,7 +291,7 @@ const fixDecks = async () => {
     let a = 0
     let e = 0
     const decks = await Deck.findAll({
-        include: Event
+        include: [Event, DeckType]
     })
     
     for (let i = 0; i < decks.length; i++) {
@@ -311,6 +311,10 @@ const fixDecks = async () => {
 
             if (!deck.publishDate && deck.eventId) {
                 await deck.update({ publishDate: deck.event.endDate })
+            }
+
+            if (deck.deckType && deck.category !== deck.deckType.category) {
+                await deck.update({ category: deck.deckType.category })
             }
 
             a++
@@ -889,7 +893,7 @@ findDuplicateTournamentReports()
 // saveYDKs()
 // downloadYDKs()
 // fixPlayers()
-// fixDecks()
+fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()
