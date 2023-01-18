@@ -24,7 +24,3 @@ const BlogPost = db.define('blogposts', {
 })
 
 module.exports = BlogPost
-Footer
-© 2023 GitHub, Inc.
-Footer navigation
-Terms
