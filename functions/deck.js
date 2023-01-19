@@ -182,15 +182,15 @@ const getDeckType = async (ydk, format) => {
 
     similarityScores.sort((a, b) => {
         if (a[0] > b[0]) {
-            return 1
-        } else if (a[0] < b[0]) {
             return -1
+        } else if (a[0] < b[0]) {
+            return 1
         } else {
             return 0
         }
     })
 
-    console.log('similarityScores.slice(0, 4)', similarityScores.slice(0, 4))
+    console.log('similarityScores.slice(0, 3)', similarityScores.slice(0, 3))
 
     return similarityScores[0][1]    
 }

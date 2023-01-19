@@ -13,12 +13,16 @@ const testGetDeckType = async () => {
     })
 
     for (let i = 0; i < decks.length; i++) {
-        const deck = decks[i]
-        const ydk = deck.ydk
-        const formatName = deck.formatName
-        const type = await getDeckType(ydk, formatName)
-
-        console.log(`Determined deck ${deck.id} to be: ${type}`)
+        try {
+            const deck = decks[i]
+            const ydk = deck.ydk
+            const formatName = deck.formatName
+            const type = await getDeckType(ydk, formatName)
+    
+            console.log(`Determined deck ${deck.id} to be: ${type}`)
+        } catch (err) {
+            console.log(err)
+        }
     }
 }
 
