@@ -177,7 +177,7 @@ const getDeckType = async (ydk, format) => {
         const comparisonDeckArr = otherMain.split('\n').filter(el => el.charAt(0) !== '#' && el.charAt(0) !== '!' && el !== '').sort()
 
         const score = compareDecks(primaryDeckArr, comparisonDeckArr)
-        similarityScores.push(score, otherDeck.type)
+        similarityScores.push([score, otherDeck.type])
     }
 
     similarityScores.sort((a, b) => {
