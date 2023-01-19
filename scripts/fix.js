@@ -883,7 +883,7 @@ const fixCards = async () => {
 
 
 // fixCards()
-findDuplicateTournamentReports()
+// findDuplicateTournamentReports()
 // fixStatuses()
 // fixTournmanets()
 // fixPfps()
@@ -893,7 +893,7 @@ findDuplicateTournamentReports()
 // saveYDKs()
 // downloadYDKs()
 // fixPlayers()
-fixDecks()
+// fixDecks()
 // fixEntries()
 // fixIrons()
 // fixMatches()
