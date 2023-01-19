@@ -33,7 +33,7 @@ const testGetDeckType = async (eventId) => {
                     deckTypeId: deckType.id
                 })
 
-                console.log(`Labeling ${deck.builder}'s deck ${deck.id} as: ${type}`)
+                console.log(`Labeling ${deck.builder}'s deck ${deck.id} as: ${name}`)
             } else {
                 console.log(`<!> Could not determine type for ${deck.builder}'s deck ${deck.id} <!>`)
                 continue
