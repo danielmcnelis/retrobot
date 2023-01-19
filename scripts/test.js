@@ -9,7 +9,8 @@ const testGetDeckType = async () => {
     const decks = await Deck.findAll({
         where: {
             type: {[Op.or]: ['Other', null]}
-        }
+        },
+        order: [['formatId', 'ASC'], ['id', 'ASC']]
     })
 
     for (let i = 0; i < decks.length; i++) {

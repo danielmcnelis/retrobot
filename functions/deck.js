@@ -162,7 +162,7 @@ const getDeckType = async (ydk, format) => {
 
     const labeledDecks = await Deck.findAll({
         where: {
-            type: {[Op.not]: 'other' },
+            type: {[Op.not]: 'Other' },
             deckTypeId: {[Op.not]: null },
             formatName: format
         }
@@ -189,10 +189,13 @@ const getDeckType = async (ydk, format) => {
             return 0
         }
     })
-
-    console.log('similarityScores.slice(0, 3)', similarityScores.slice(0, 3))
-
-    return similarityScores[0][1]    
+    
+    if (similarityScores[0][0] > 0.5) {
+        return similarityScores[0][1]  
+    } else {
+        return null
+    }
+  
 }
 
 module.exports = {
