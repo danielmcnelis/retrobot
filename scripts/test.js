@@ -8,7 +8,7 @@ const { Op } = require('sequelize')
 const testGetDeckType = async (eventId) => {
     const decks = await Deck.findAll({
         where: {
-            eventId: eventId,
+            // eventId: eventId,
             type: {[Op.or]: ['Other', null]}
         },
         order: [['formatId', 'ASC'], ['id', 'ASC']]
@@ -45,4 +45,4 @@ const testGetDeckType = async (eventId) => {
     }
 }
 
-testGetDeckType(580)
+testGetDeckType()
