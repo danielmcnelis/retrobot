@@ -190,7 +190,7 @@ const getDeckType = async (ydk, format) => {
         }
     })
 
-    console.log('similarityScores', similarityScores)
+    console.log('similarityScores.slice(0, 4)', similarityScores.slice(0, 4))
 
     return similarityScores[0][1]    
 }
