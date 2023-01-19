@@ -1,13 +1,14 @@
 
 
 const { getDeckType } = require('../functions/deck')
-const { Deck } = require('../db')
+const { Deck, DeckType } = require('../db')
 const { Op } = require('sequelize')
 
 
-const testGetDeckType = async () => {
+const testGetDeckType = async (eventId) => {
     const decks = await Deck.findAll({
         where: {
+            eventId: eventId,
             type: {[Op.or]: ['Other', null]}
         },
         order: [['formatId', 'ASC'], ['id', 'ASC']]
@@ -18,13 +19,30 @@ const testGetDeckType = async () => {
             const deck = decks[i]
             const ydk = deck.ydk
             const formatName = deck.formatName
-            const type = await getDeckType(ydk, formatName)
+            const name = await getDeckType(ydk, formatName)
+
+            if (name) {
+                const deckType = await DeckType.findOne({
+                    where: {
+                        name: name
+                    }
+                })
+
+                await deck.update({
+                    type: deckType.name,
+                    deckTypeId: deckType.id
+                })
+
+                console.log(`Labeling ${deck.builder}'s deck ${deck.id} as: ${type}`)
+            } else {
+                console.log(`<!> Could not determine type for ${deck.builder}'s deck ${deck.id} <!>`)
+                continue
+            }
     
-            console.log(`Determined deck ${deck.id} to be: ${type}`)
         } catch (err) {
             console.log(err)
         }
     }
 }
 
-testGetDeckType()
+testGetDeckType(580)
