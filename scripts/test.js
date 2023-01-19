@@ -2,6 +2,7 @@
 
 const { getDeckType } = require('../functions/deck')
 const { Deck } = require('../db')
+const { Op } = require('sequelize')
 
 
 const testGetDeckType = async () => {
