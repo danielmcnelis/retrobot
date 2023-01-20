@@ -2,7 +2,6 @@
 const { Op } = require('sequelize')
 const { Iron, Player, Stats } = require('.././db/index.js')
 const emojis = require('../static/emojis.json')
-const roles = require('../static/roles.json')
 const { client } = require('../static/clients.js')
 const yescom = ['yes', 'ye', 'y', 'ya', 'yeah', 'da', 'ja', 'si', 'ok', 'sure']
 
