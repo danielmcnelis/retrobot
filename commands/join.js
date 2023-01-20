@@ -51,7 +51,7 @@ module.exports = {
         if (!dbName) return
 
         const { url, ydk } = await getDeckList(interaction.member, player, format)
-        if (!url) return
+        if (!url || !ydk) return
 
         if (!entry) {
             try {                                
@@ -67,19 +67,18 @@ module.exports = {
                   tournamentId: tournament.id
               })
         
-            } catch (err) {
-              console.log(err)
-              return interaction.member.send({ content: `Error: Could not access database.`})
-            } finally {
               const deckAttachments = await drawDeck(ydk) || []
               interaction.member.roles.add(server.tourRole).catch((err) => console.log(err))
               interaction.member.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament! FYI, this is the deck you submitted:`, files: [...deckAttachments] }).catch((err) => console.log(err))
               return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+            } catch (err) {
+              console.log(err)
+              return interaction.member.send({ content: `${emojis.high_alert} Error: Could not save information to the RetroBot Database. ${emojis.high_alert}`})
             }
         } else if (entry.active === false) {
             try {                                
                 const { participant } = await postParticipant(server, tournament, player)
-                if (!participant) return interaction.member.send({ content: `Error: Unable to register on Challonge for ${tournament.name} ${tournament.logo}.`})
+                if (!participant) return interaction.member.send({ content: `${emojis.high_alert} Error: Unable to register on Challonge for ${tournament.name} ${tournament.logo}. ${emojis.high_alert}`})
                 
                 await entry.update({
                     url: url,
@@ -87,25 +86,25 @@ module.exports = {
                     participantId: participant.id,
                     active: true
                 })
-            } catch (err) {
-                console.log(err)
-                return interaction.member.send({ content: `Error: Could not access database.`})
-            } finally {
+
                 const deckAttachments = await drawDeck(ydk) || []
                 interaction.member.roles.add(server.tourRole).catch((err) => console.log(err))
                 interaction.member.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament! FYI, this is the deck you submitted:`, files: [...deckAttachments] }).catch((err) => console.log(err))
                 return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+            } catch (err) {
+                console.log(err)
+                return interaction.member.send({ content: `${emojis.high_alert} Error: Could not save information to the RetroBot Database. ${emojis.high_alert} `})
             }
         } else {
             try {
                 await entry.update({ url: url, ydk: ydk })
-            } catch (err) {
-                console.log(err)
-                return interaction.member.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
-            } finally {
+
                 const deckAttachments = await drawDeck(ydk) || []
                 interaction.member.send({ content: `Thanks! I have your updated deck list for the tournament:`, files: [...deckAttachments] }).catch((err) => console.log(err))
                 return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> resubmitted their deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+            } catch (err) {
+                console.log(err)
+                return interaction.member.send({ content: `${emojis.high_alert} Error: Could not save information to the RetroBot Database. ${emojis.high_alert}`}).catch((err) => console.log(err))
             }
         }
 	}

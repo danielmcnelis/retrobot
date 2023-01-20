@@ -261,14 +261,13 @@ const joinTournament = async (interaction, tournamentId) => {
               tournamentId: tournament.id
           })
     
-        } catch (err) {
-          console.log(err)
-          return interaction.member.send({ content: `Error: Could not access database.`})
-        } finally {
           const deckAttachments = await drawDeck(ydk) || []
           interaction.member.roles.add(server.tourRole).catch((err) => console.log(err))
           interaction.member.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament! FYI, this is the deck you submitted:`, files: [...deckAttachments] }).catch((err) => console.log(err))
           return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        } catch (err) {
+          console.log(err)
+          return interaction.member.send({ content: `${emojis.high_alert} Error: Could not save information to the RetroBot Database. ${emojis.high_alert}`}).catch((err) => console.log(err))
         }
     } else if (entry.active === false) {
         try {                                
@@ -281,25 +280,25 @@ const joinTournament = async (interaction, tournamentId) => {
                 participantId: participant.id,
                 active: true
             })
-        } catch (err) {
-            console.log(err)
-            return interaction.member.send({ content: `Error: Could not access database.`})
-        } finally {
+
             const deckAttachments = await drawDeck(ydk) || []
             interaction.member.roles.add(server.tourRole).catch((err) => console.log(err))
             interaction.member.send({ content: `Thanks! I have all the information we need from you. Good luck in the tournament! FYI, this is the deck you submitted:`, files: [...deckAttachments] }).catch((err) => console.log(err))
             return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> is now registered for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        } catch (err) {
+            console.log(err)
+            return interaction.member.send({ content: `${emojis.high_alert} Error: Could not save information to the RetroBot Database. ${emojis.high_alert}`}).catch((err) => console.log(err))
         }
     } else {
         try {
             await entry.update({ url: url, ydk: ydk })
-        } catch (err) {
-            console.log(err)
-            return interaction.member.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
-        } finally {
+
             const deckAttachments = await drawDeck(ydk) || []
             interaction.member.send({ content: `Thanks! I have your updated deck list for the tournament:`, files: [...deckAttachments] }).catch((err) => console.log(err))
             return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `<@${player.discordId}> resubmitted their deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        } catch (err) {
+            console.log(err)
+            return interaction.member.send({ content: `${emojis.high_alert} Error: Could not save information to the RetroBot Database. ${emojis.high_alert}`}).catch((err) => console.log(err))
         }
     }
 }
@@ -352,13 +351,12 @@ const signupForTournament = async (interaction, tournamentId, userId) => {
               tournamentId: tournament.id
           })
     
-        } catch (err) {
-          console.log(err)
-          return interaction.member.send({ content: `Error: Could not access database.`})
-        } finally {
           member.roles.add(server.tourRole).catch((err) => console.log(err))
           interaction.member.send({ content: `Thanks! I have all the information we need for ${player.name}.` }).catch((err) => console.log(err))
           return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `A moderator signed up <@${player.discordId}> for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        } catch (err) {
+          console.log(err)
+          return interaction.member.send({ content: `${emojis.high_alert} Error: Could not save information to the RetroBot Database. ${emojis.high_alert}`}).catch((err) => console.log(err))
         }
     } else if (entry.active === false) {
         try {                                
@@ -371,23 +369,23 @@ const signupForTournament = async (interaction, tournamentId, userId) => {
                 participantId: participant.id,
                 active: true
             })
-        } catch (err) {
-            console.log(err)
-            return interaction.member.send({ content: `Error: Could not access database.`})
-        } finally {
+
             member.roles.add(server.tourRole).catch((err) => console.log(err))
             interaction.member.send({ content: `Thanks! I have all the information we need for ${player.name}.` }).catch((err) => console.log(err))
             return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `A moderator signed up <@${player.discordId}> for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        } catch (err) {
+            console.log(err)
+            return interaction.member.send({ content: `${emojis.high_alert} Error: Could not save information to the RetroBot Database. ${emojis.high_alert}`}).catch((err) => console.log(err))
         }
     } else {
         try {
             await entry.update({ url: url, ydk: ydk })
-        } catch (err) {
-            console.log(err)
-            return interaction.member.send({ content: `Error: Could not access database.`}).catch((err) => console.log(err))
-        } finally {
+
             interaction.member.send({ content: `Thanks! I have ${player.name}'s updated deck list for the tournament.` }).catch((err) => console.log(err))
             return interaction.guild.channels.cache.get(tournament.channelId).send({ content: `A moderator resubmitted <@${player.discordId}>'s deck list for ${tournament.name} ${tournament.logo}!`}).catch((err) => console.log(err))
+        } catch (err) {
+            console.log(err)
+            return interaction.member.send({ content: `${emojis.high_alert} Error: Could not save information to the RetroBot Database. ${emojis.high_alert}`}).catch((err) => console.log(err))
         }
     }
 }
@@ -610,7 +608,7 @@ const removeParticipant = async (server, interaction, member, entry, tournament,
         if (drop) {
             return interaction.reply({ content: `Hmm... I don't see you in the participants list for ${tournament.name}. ${tournament.emoji}`})
         } else {
-            return interaction.reply({ content: `I could not find ${member.user.username} in the participants list for ${tournament.name}. ${tournament.emoji}`})
+            return interaction.member.send({ content: `${emojis.high_alert} Error: Could not save information to the RetroBot Database. ${emojis.high_alert}`}).catch((err) => console.log(err))
         }
     }   
 }
