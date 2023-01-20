@@ -56,6 +56,7 @@ module.exports = {
         const tournament = await selectTournament(interaction, tournaments)
         if (!tournament) return
 
+        const ignoreRound1 = !tournament.deadline
         const timestamp = Date.now()
         let hours = interaction.options.getNumber('hours')
         let minutes = interaction.options.getNumber('minutes')
@@ -77,7 +78,7 @@ module.exports = {
             interaction.reply(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
         }
 
-        sendPairings(interaction.guild, server, tournament, true)
+        sendPairings(interaction.guild, server, tournament, ignoreRound1)
         return setTimeout(() => {
             return interaction.channel.send(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} Time is up in the round! ${emojis.vince}`)
         }, timeRemaining)

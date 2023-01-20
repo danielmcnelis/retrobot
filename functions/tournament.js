@@ -436,6 +436,7 @@ const setTimerForTournament = async (interaction, tournamentId, hours = null, mi
         }
     })
 
+    const ignoreRound1 = !tournament.deadline
     const timestamp = Date.now()
     if (hours === null) hours = interaction.options.getNumber('hours')
     if (minutes === null) minutes = interaction.options.getNumber('minutes')
@@ -457,7 +458,7 @@ const setTimerForTournament = async (interaction, tournamentId, hours = null, mi
         interaction.reply(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} The next round begins now! You have ${hours} ${word1} and ${minutes} ${word2} to complete your match. ${emojis.thinkygo}`)
     }
 
-    sendPairings(interaction.guild, server, tournament, true)
+    sendPairings(interaction.guild, server, tournament, ignoreRound1)
     return setTimeout(() => {
         return interaction.reply(`${emojis.high_alert} **Attention: ${tournament.name} Participants!** ${emojis.high_alert} Time is up in the round! ${emojis.vince}`)
     }, timeRemaining)
