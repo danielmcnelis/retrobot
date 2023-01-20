@@ -6,6 +6,7 @@ const { Entry, Format, Player, Server, Tournament } = require('.././db/index.js'
 const { askForDBName, getDeckList, postParticipant, selectTournament } = require('../functions/tournament')
 const { isMod, hasPartnerAccess } = require('../functions/utility')
 const { Op } = require('sequelize')
+const emojis = require('../static/emojis.json')
 
 module.exports = {
 	data: new SlashCommandBuilder()
