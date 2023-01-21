@@ -7,7 +7,7 @@ const {Op} = require('sequelize')
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } = require('discord.js')
 
 //DATABASE IMPORTS
-const { Deck, Entry, Format, Match, Player, Stats, Server, Tournament } = require('.././db/index.js')
+const { Entry, Format, Match, Player, Stats, Server, Tournament } = require('.././db/index.js')
 
 //FUNCTION IMPORTS
 const { getIssues } = require('./deck.js')
