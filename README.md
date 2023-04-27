@@ -6,7 +6,7 @@ Features are gated behind access tiers: Free, Affiliate ($15 setup), Partner ($4
 
 This app was built with Discord.js (user interaction and front-end output), FuzzySet (card search algorithms), Canvas (drawing decks), QuickChart (plotting charts), Axios (fetching external data), PostgreSQL (internal database), and Sequelize (interacting with internal database).
 
-Click here to add this bot to your Discord server: https://discord.bots.gg/bots/730922003296419850<br/>
+Click here to add this bot to your Discord server: https://discord.com/application-directory/730922003296419850<br/>
 For additional help: contact me on Discord at Jazz#2704
 
 ![Bot Profile](/public/Bot-Profile.png)
